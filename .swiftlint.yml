@@ -1,0 +1,43 @@
+excluded: # 린트 과정에서 무시할 파일 경로. `included`보다 우선순위 높음
+    - Projects/App/Sources/AppDelegate.swift
+    - Projects/App/Sources/SceneDelegate.swift
+    - Projects/Feature/**/Demo/
+    - Tuist
+    - Derived
+identifier_name:
+    min_length:
+        - 2 # warning
+        - 3 # error
+    excluded: # 제외할 문자열 목록
+        - f
+        - ws
+        - my
+function_body_length:
+    - 150 # warning
+    - 300 # error
+type_body_length:
+    - 300 # warning
+    - 500 # error
+file_length:
+    - 1000 # warning
+    - 2000 # error
+line_length:
+    - 80  # warning
+    - 400 # error
+disabled_rules: # 제외하고 싶은 룰
+    - trailing_whitespace
+    - type_name
+    - trailing_comma
+#    - conditional_returns_on_newline
+#    - identifier_name
+#    - nesting
+#    - colon
+#    - control_statement
+#    - vertical_parameter_alignment
+#    - cyclomatic_complexity
+#    - void_function_in_ternary
+#    - comment_spacing
+#    - function_parameter_count
+opt_in_rules:
+    - empty_string
+#    - conditional_returns_on_newline
