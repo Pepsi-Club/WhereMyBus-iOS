@@ -1,0 +1,18 @@
+import XCTest
+@testable import {{ name }}Feature
+
+final class {{ name }}FeatureTests: XCTestCase {
+    override func setUpWithError() throws {
+    }
+
+    override func tearDownWithError() throws {
+    }
+
+    func testExample() throws {
+    }
+
+    func testPerformanceExample() throws {
+        self.measure {
+        }
+    }
+}

@@ -1,0 +1,7 @@
+git_url("git@github.com:Pepsi-Club/YamYamPick-Match.git")
+
+storage_mode("git")
+
+type("appstore")
+
+app_identifier("com.Pepsi-Club.YamYamPick")
