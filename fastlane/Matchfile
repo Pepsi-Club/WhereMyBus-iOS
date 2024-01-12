@@ -1,7 +1,8 @@
-git_url("git@github.com:Pepsi-Club/YamYamPick-Match.git")
+url = ENV["MATCH_URL"]
+git_url(url)
 
 storage_mode("git")
 
-type("appstore")
+type("development")
 
-app_identifier("com.Pepsi-Club.YamYamPick")
+app_identifier("com.Pepsi-Club.BusComing")
