@@ -54,8 +54,10 @@ extension Project {
                 let frameworkDependency = TargetDependency.target(framework)
 //                let demoApp = demoAppTarget(name: name, entitlements: entitlements, dependencies: [frameworkDependency])
 //                result.append(demoApp)
-                let test = unitTestTarget(name: name, isFeature: true, dependencies: [frameworkDependency])
-                result.append(test)
+                if isTestable {
+                    let test = unitTestTarget(name: name, isFeature: true, dependencies: [frameworkDependency])
+                    result.append(test)
+                }
                 return result
             }
         }()
@@ -147,7 +149,8 @@ extension Project {
             infoPlist: .frameworkInfoPlist,
             sources: ["Tests/**"],
             scripts: isFeature ? [.featureSwiftLint] : [.swiftLint],
-            dependencies: dependencies
+            dependencies: dependencies,
+            settings: .test
         )
     }
 }
