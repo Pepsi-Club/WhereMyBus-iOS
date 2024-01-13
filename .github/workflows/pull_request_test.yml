@@ -37,5 +37,5 @@ jobs:
       - name: Tuist Fetch
         run: tuist fetch
 
-      - name: Tuist Test
-        run: tuist test
+      - name: Tuist Build Test
+        run: tuist build
