@@ -28,6 +28,9 @@ jobs:
       - name: Install Tuist
         run: curl -Ls https://install.tuist.io|bash
 
+      - name: Install SwiftLint
+        run: brew install swiftlint
+
       - name: Tuist Clean
         run: tuist clean
 
