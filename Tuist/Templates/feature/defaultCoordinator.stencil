@@ -1,0 +1,22 @@
+import UIKit
+
+import FeatureDependency
+
+public final class Default{{ name }}Coordinator: {{ name }}Coordinator {
+    public var childCoordinators: [Coordinator] = []
+    public var navigationController: UINavigationController
+    
+    public init(navigationController: UINavigationController) {
+        self.navigationController = navigationController
+    }
+    
+    public func start() {
+        let {{ name | lowercase }}ViewController = {{ name }}ViewController(
+            viewModel: {{ name }}ViewModel()
+        )
+        navigationController.setViewControllers(
+            [{{ name | lowercase }}ViewController],
+            animated: false
+        )
+    }
+}
