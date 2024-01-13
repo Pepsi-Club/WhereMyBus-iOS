@@ -31,9 +31,6 @@ jobs:
       - name: Install SwiftLint
         run: brew install swiftlint
 
-      - name: Permit to use swiftLint
-        run: chmod +x ./.swiftlint.yml
-
       - name: Tuist Clean
         run: tuist clean
 
