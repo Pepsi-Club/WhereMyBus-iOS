@@ -1,0 +1,53 @@
+name: UploadTestflight
+
+on:
+  push:
+    branches:
+      - release
+jobs:
+  upload_testflight:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_KEY }}
+          known_hosts: ${{ secrets.KNOWN_HOSTS }}
+
+      - name: Setup Xcode version
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: "14.2.0"
+
+      - name: Bring ignored files
+        uses: actions/checkout@v3
+        with:
+          repository: Pepsi-Club/YamYamPick-ignored
+          path: XCConfig/
+          token: ${{ secrets.ACTION_TOKEN }}
+
+      - name: Install Tuist
+        run: curl -Ls https://install.tuist.io|bash
+
+      - name: Install Fastlane
+        run: brew install fastlane
+
+      - name: Tuist clean
+        run: tuist clean
+
+      - name: Tuist fetch
+        run: tuist fetch
+
+      - name: Tuist generate
+        run: tuist generate
+
+      - name: Fastlane Upload Testflight
+        run: fastlane tf_remote
+        env:
+          KEYCHAIN_NAME: ${{ secrets.KEYCHAIN_NAME }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          APP_STORE_KEY_ID: ${{ secrets.APP_STORE_KEY_ID }}
+          APP_STORE_ISSUER_ID: ${{ secrets.APP_STORE_ISSUER_ID }}
+          APP_STORE_PRIVATE_KEY: ${{ secrets.APP_STORE_PRIVATE_KEY }}
