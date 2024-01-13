@@ -4,6 +4,9 @@ on:
   pull_request:
     branches:
       - release
+  push:
+    branches:
+      - test/action
 jobs:
   upload_testflight:
     runs-on: macos-latest
@@ -33,4 +36,3 @@ jobs:
 
       - name: Tuist Test
         run: tuist test
-      
