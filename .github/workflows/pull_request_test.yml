@@ -4,9 +4,6 @@ on:
   pull_request:
     branches:
       - release
-  push:
-    branches:
-      - test/action
 jobs:
   build_test:
     runs-on: macos-latest
@@ -21,7 +18,7 @@ jobs:
       - name: Bring ignored files
         uses: actions/checkout@v3
         with:
-          repository: Pepsi-Club/YamYamPick-ignored
+          repository: Pepsi-Club/BusComing-ignored
           path: XCConfig/
           token: ${{ secrets.ACTION_TOKEN }}
 

@@ -23,7 +23,7 @@ jobs:
       - name: Bring ignored files
         uses: actions/checkout@v3
         with:
-          repository: Pepsi-Club/YamYamPick-ignored
+          repository: Pepsi-Club/BusComing-ignored
           path: XCConfig/
           token: ${{ secrets.ACTION_TOKEN }}
 
