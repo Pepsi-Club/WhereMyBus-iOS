@@ -9,7 +9,6 @@ final class MainFeatureTests: XCTestCase {
     }
 
     func testExample() throws {
-        XCTAssertEqual("1", "2")
     }
 
     func testPerformanceExample() throws {

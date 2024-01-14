@@ -14,6 +14,5 @@ let workspace = Workspace(
     additionalFiles: [
         "README.md",
         ".swiftlint.yml",
-        "Scripts/**",
     ]
 )
