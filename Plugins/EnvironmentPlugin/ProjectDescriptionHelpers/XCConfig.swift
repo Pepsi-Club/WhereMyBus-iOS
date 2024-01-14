@@ -9,7 +9,8 @@ import ProjectDescription
 
 public extension Settings {
     static let appDebug: Self = .settings(
-        base: .allLoadSetting.setVersion()
+        base: .allLoadSetting
+            .setVersion()
             .setCodeSignManual()
             .setProvisioning(),
         configurations: [
@@ -26,9 +27,7 @@ public extension Settings {
     )
     
     static let frameworkDebug: Self = .settings(
-        base: .baseSetting.setVersion()
-            .setCodeSignManual()
-            .setProvisioning(),
+        base: .baseSetting,
         configurations: [
             .debug(
                 name: .debug,
@@ -43,7 +42,10 @@ public extension Settings {
     )
     
     static let test: Self = .settings(
-        base: .baseSetting.setVersion()
+        base: .baseSetting
+            .setVersion()
+            .setCodeSignManual()
+            .setProvisioning()
             .enableTestabilty(),
         configurations: [
             .debug(

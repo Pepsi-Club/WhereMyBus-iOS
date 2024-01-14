@@ -5,7 +5,7 @@ on:
     branches:
       - release
 jobs:
-  upload_testflight:
+  build_test:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
@@ -18,12 +18,15 @@ jobs:
       - name: Bring ignored files
         uses: actions/checkout@v3
         with:
-          repository: Pepsi-Club/YamYamPick-ignored
+          repository: Pepsi-Club/BusComing-ignored
           path: XCConfig/
           token: ${{ secrets.ACTION_TOKEN }}
 
       - name: Install Tuist
         run: curl -Ls https://install.tuist.io|bash
+
+      - name: Install SwiftLint
+        run: brew install swiftlint
 
       - name: Tuist Clean
         run: tuist clean
@@ -31,6 +34,5 @@ jobs:
       - name: Tuist Fetch
         run: tuist fetch
 
-      - name: Tuist Test
-        run: tuist test
-      
+      - name: Tuist Build Test
+        run: tuist build

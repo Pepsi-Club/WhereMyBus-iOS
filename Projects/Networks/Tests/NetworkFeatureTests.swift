@@ -6,7 +6,7 @@ import RxSwift
 
 final class NetworksTests: XCTestCase {
     var sut: NetworkService!
-    var endPoint: KISEndPoint!
+    var endPoint: EndPoint!
     var disposeBag: DisposeBag!
     
     override func setUpWithError() throws {
@@ -15,31 +15,6 @@ final class NetworksTests: XCTestCase {
     }
 
     override func tearDownWithError() throws {
-    }
-
-    func test_KISAccessOAuthEndPoint() throws {
-//        endPoint = KISCheckBalanceEndPoint(
-//            investType: .simulation,
-//            query: .init(accountNumber: ""),
-//            authorization: ""
-//        )
-    }
-    
-    func test_KISOAuthEndPoint() throws {
-//        endPoint = KISOAuthEndPoint(
-//            oAuthType: .webSocket,
-//            investType: .simulation
-//        )
-        sut.request(endPoint: endPoint)
-            .subscribe { _ in
-                print("Success")
-            } onError: { error in
-                print(error.localizedDescription)
-            } onCompleted: {
-                print("Completed")
-            } onDisposed: {
-                print("Disposed")
-            }.disposed(by: disposeBag)
     }
 
     func testPerformanceExample() throws {

@@ -12,6 +12,7 @@ let workspace = Workspace(
     name: .appName,
     projects: ["Projects/**"],
     additionalFiles: [
-        .glob(pattern: .relativeToRoot(".swiftlint.yml")),
+        "README.md",
+        ".swiftlint.yml",
     ]
 )
