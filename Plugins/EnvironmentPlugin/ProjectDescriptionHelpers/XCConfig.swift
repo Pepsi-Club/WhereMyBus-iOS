@@ -27,10 +27,7 @@ public extension Settings {
     )
     
     static let frameworkDebug: Self = .settings(
-        base: .baseSetting
-            .setVersion()
-            .setCodeSignManual()
-            .setProvisioning(),
+        base: .baseSetting,
         configurations: [
             .debug(
                 name: .debug,

@@ -1,29 +1,34 @@
+included:
+    - Projects
 excluded: # 린트 과정에서 무시할 파일 경로. `included`보다 우선순위 높음
     - Projects/App/Sources/AppDelegate.swift
     - Projects/App/Sources/SceneDelegate.swift
-    - Projects/Feature/**/Demo/
+    - Projects/Feature/**/Demo/AppDelegate.swift
+    - Projects/Feature/**/Demo/SceneDelegate.swift
     - Tuist
     - Derived
+    - Plugins
+    - XCConfig
 identifier_name:
     min_length:
-        - 2 # warning
-        - 3 # error
+        warning: 2
+        error: 3
     excluded: # 제외할 문자열 목록
         - f
         - ws
         - my
 function_body_length:
-    - 150 # warning
-    - 300 # error
+    warning: 150
+    error: 300
 type_body_length:
-    - 300 # warning
-    - 500 # error
+    warning: 300
+    error: 500
 file_length:
-    - 1000 # warning
-    - 2000 # error
+    warning: 1000
+    error: 2000
 line_length:
-    - 80  # warning
-    - 400 # error
+    warning: 80
+    error: 400
 disabled_rules: # 제외하고 싶은 룰
     - trailing_whitespace
     - type_name

@@ -23,47 +23,51 @@ extension Project {
         hasResource: Bool = false,
         dependencies: [TargetDependency]
     ) -> Self {
+        var schemes = [Scheme]()
         var targets = [Target]()
-        targets = {
-            switch moduleType {
-            case .app:
-                var result = [Target]()
-                let app = appTarget(name: name, entitlements: entitlements, dependencies: dependencies)
-                result.append(app)
-                if isTestable {
-                    let test = unitTestTarget(name: name, dependencies: dependencies)
-                    result.append(test)
-                }
-                return result
-            case .framework:
-                var result = [Target]()
-                let framework = frameworkTarget(name: name, entitlements: entitlements, hasResource: hasResource, dependencies: dependencies)
-                result.append(framework)
-                if isTestable {
-                    let test = unitTestTarget(
-                        name: name,
-                        dependencies: [.target(framework)]
-                    )
-                    result.append(test)
-                }
-                return result
-            case .feature:
-                var result = [Target]()
-                let framework = frameworkTarget(name: name, entitlements: entitlements, hasResource: hasResource, isFeature: true, dependencies: dependencies)
-                result.append(framework)
-                let frameworkDependency = TargetDependency.target(framework)
-//                let demoApp = demoAppTarget(name: name, entitlements: entitlements, dependencies: [frameworkDependency])
-//                result.append(demoApp)
-                if isTestable {
-                    let test = unitTestTarget(name: name, isFeature: true, dependencies: [frameworkDependency])
-                    result.append(test)
-                }
-                return result
-            }
-        }()
-        return Project(name: name,
-                organizationName: .organizationName,
-                targets: targets
+        var targetModule: Target
+        switch moduleType {
+        case .app:
+            targetModule = appTarget(
+                name: name,
+                entitlements: entitlements,
+                dependencies: dependencies
+            )
+        case .framework:
+            targetModule = frameworkTarget(
+                name: name,
+                entitlements: entitlements,
+                hasResource: hasResource,
+                dependencies: dependencies
+            )
+        case .feature:
+            targetModule = frameworkTarget(
+                name: name,
+                entitlements: entitlements,
+                hasResource: hasResource,
+                isFeature: true,
+                dependencies: dependencies
+            )
+//            let demoTarget = demoAppTarget(
+//                name: name,
+//                dependencies: [.target(targetModule)]
+//            )
+//            targets.append(demoTarget)
+        }
+        targets.append(targetModule)
+        schemes.append(.moduleScheme(name: name))
+        if isTestable {
+            let test = unitTestTarget(
+                name: name,
+                dependencies: [.target(targetModule)]
+            )
+            targets.append(test)
+        }
+        return Project(
+            name: name,
+            organizationName: .organizationName,
+            targets: targets,
+            schemes: schemes
         )
     }
     
@@ -72,7 +76,7 @@ extension Project {
         entitlements: Path?,
         dependencies: [TargetDependency]
     ) -> Target {
-        let target: Target = .init(
+        Target(
             name: name,
             platform: .iOS,
             product: .app,
@@ -86,7 +90,6 @@ extension Project {
             dependencies: dependencies,
             settings: .appDebug
         )
-        return target
     }
 
     private static func demoAppTarget(
@@ -94,7 +97,7 @@ extension Project {
         entitlements: Path? = nil,
         dependencies: [TargetDependency]
     ) -> Target {
-        let target: Target = .init(
+        Target(
             name: "\(name)DemoApp",
             platform: .iOS,
             product: .app,
@@ -109,7 +112,6 @@ extension Project {
             scripts: [.featureSwiftLint],
             dependencies: dependencies
         )
-        return target
     }
 
     private static func frameworkTarget(
@@ -119,7 +121,7 @@ extension Project {
         isFeature: Bool = false,
         dependencies: [TargetDependency]
     ) -> Target {
-        let target: Target = .init(
+        Target(
             name: name,
             platform: .iOS,
             product: .framework,
@@ -132,7 +134,6 @@ extension Project {
             scripts: isFeature ? [.featureSwiftLint] : [.swiftLint],
             dependencies: dependencies
         )
-        return target
     }
     
     private static func unitTestTarget(
@@ -140,7 +141,7 @@ extension Project {
         isFeature: Bool = false,
         dependencies: [TargetDependency]
     ) -> Target {
-        return Target(
+        Target(
             name: "\(name)Tests",
             platform: .iOS,
             product: .unitTests,
