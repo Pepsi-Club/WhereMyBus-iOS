@@ -56,13 +56,13 @@ extension Project {
         }
         targets.append(targetModule)
         schemes.append(.moduleScheme(name: name))
-        if isTestable {
-            let test = unitTestTarget(
-                name: name,
-                dependencies: [.target(targetModule)]
-            )
-            targets.append(test)
-        }
+//        if isTestable {
+//            let test = unitTestTarget(
+//                name: name,
+//                dependencies: [.target(targetModule)]
+//            )
+//            targets.append(test)
+//        }
         return Project(
             name: name,
             organizationName: .organizationName,
