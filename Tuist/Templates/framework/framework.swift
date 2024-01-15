@@ -20,7 +20,7 @@ private let template = Template(
         // MARK: EmptyFile
         .string(path: projectPath(with: "Sources/Temp.swift"), contents: "// "),
         // MARK: UnitTests
-        .file(path: projectPath(with: "Tests/\(nameAttribute)FeatureTests.swift"), templatePath: "tests.stencil"),
+//        .file(path: projectPath(with: "Tests/\(nameAttribute)FeatureTests.swift"), templatePath: "tests.stencil"),
     ]
 )
 
