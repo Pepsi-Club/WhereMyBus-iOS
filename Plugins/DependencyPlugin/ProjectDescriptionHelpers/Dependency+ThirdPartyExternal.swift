@@ -9,7 +9,7 @@ import ProjectDescription
 
 public extension Array<TargetDependency> {
     enum ThirdPartyExternal: CaseIterable {
-        case rxSwift, rxCocoa
+        case rxSwift, rxCocoa, kakaoMap
         
         public var name: String {
             switch self {
@@ -17,6 +17,8 @@ public extension Array<TargetDependency> {
                 return "RxSwift"
             case .rxCocoa:
                 return "RxCocoa"
+            case .kakaoMap:
+                return "KakaoMapsSDK_SPM"
             }
         }
     }

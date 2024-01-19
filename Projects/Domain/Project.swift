@@ -4,7 +4,7 @@ import ProjectDescriptionHelpers
 
 let project = Project.makeProject(
     name: "Domain",
-    moduleType: .framework,
+    moduleType: .dynamicFramework,
     dependencies: [
         .core
     ]

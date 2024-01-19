@@ -4,7 +4,7 @@ import ProjectDescriptionHelpers
 
 let project = Project.makeProject(
     name: "Data",
-    moduleType: .framework,
+    moduleType: .staticFramework,
     dependencies: [
         .networks
     ]

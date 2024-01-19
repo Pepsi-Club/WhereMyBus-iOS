@@ -3,7 +3,7 @@ import ProjectDescriptionHelpers
 
 let project = Project.makeProject(
     name: "Networks",
-    moduleType: .framework,
+    moduleType: .staticFramework,
     dependencies: [
         .domain,
     ]

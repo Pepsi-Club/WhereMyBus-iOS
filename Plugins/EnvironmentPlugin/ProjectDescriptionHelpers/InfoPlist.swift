@@ -47,7 +47,7 @@ public extension [String: InfoPlist.Value] {
         "CFBundleDisplayName": .bundleDisplayName,
         "CFBundleShortVersionString": .bundleShortVersionString,
         "CFBundleVersion": .bundleVersion,
-        "UILaunchStoryboardName": "LaunchScreen",
+        "UILaunchStoryboardName": "LaunchScreen.storyboard",
         "UIApplicationSceneManifest": [
             "UIApplicationSupportsMultipleScenes": false,
             "UISceneConfigurations": [

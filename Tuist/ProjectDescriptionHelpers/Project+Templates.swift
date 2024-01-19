@@ -21,6 +21,7 @@ extension Project {
         entitlements: Path? = nil,
         isTestable: Bool = false,
         hasResource: Bool = false,
+        additionalPath: String = "",
         dependencies: [TargetDependency]
     ) -> Self {
         var schemes = [Scheme]()
@@ -33,19 +34,23 @@ extension Project {
                 entitlements: entitlements,
                 dependencies: dependencies
             )
-        case .framework:
+        case .dynamicFramework, .staticFramework:
             targetModule = frameworkTarget(
                 name: name,
                 entitlements: entitlements,
-                hasResource: hasResource,
+                hasResource: hasResource, 
+                productType: moduleType.product,
+                additionalPath: additionalPath, 
                 dependencies: dependencies
             )
-        case .feature:
+        case .presentation:
             targetModule = frameworkTarget(
                 name: name,
                 entitlements: entitlements,
                 hasResource: hasResource,
-                isFeature: true,
+                productType: moduleType.product,
+                isPresentation: true,
+                additionalPath: additionalPath,
                 dependencies: dependencies
             )
 //            let demoTarget = demoAppTarget(
@@ -118,10 +123,16 @@ extension Project {
         name: String,
         entitlements: Path?,
         hasResource: Bool,
-        isFeature: Bool = false,
+        productType: Product,
+        isPresentation: Bool = false,
+        additionalPath: String,
         dependencies: [TargetDependency]
     ) -> Target {
-        Target(
+        let scripts: [TargetScript] = isPresentation ?
+        [.featureSwiftLint] :
+            additionalPath.isEmpty ? [.swiftLint] :
+            [.featureSwiftLint]
+        return Target(
             name: name,
             platform: .iOS,
             product: .framework,
@@ -131,7 +142,7 @@ extension Project {
             sources: ["Sources/**"],
             resources: hasResource ? ["Resources/**"] : nil,
             entitlements: entitlements,
-            scripts: isFeature ? [.featureSwiftLint] : [.swiftLint],
+            scripts: scripts,
             dependencies: dependencies
         )
     }
