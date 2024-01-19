@@ -8,20 +8,20 @@
 import ProjectDescription
 
 public extension Array<TargetDependency> {
-    enum Feature: String, CaseIterable {
-        case home, map, my
+    enum Presentation: String, CaseIterable {
+        case home, alarm, settings
         
         public var dependency: TargetDependency {
             var name = rawValue.map { $0 }
             name.removeFirst()
             name.insert(Character(rawValue.first!.uppercased()), at: 0)
-            return featureModule(name: String(name))
+            return presentationModule(name: String(name))
         }
         
-        private func featureModule(name: String) -> TargetDependency {
+        private func presentationModule(name: String) -> TargetDependency {
             .project(
-                target: "\(name)Feature",
-                path: .relativeToRoot("Projects/Feature/\(name)Feature")
+                target: "\(name)",
+                path: .relativeToRoot("Projects/Presentation/\(name)")
             )
         }
     }

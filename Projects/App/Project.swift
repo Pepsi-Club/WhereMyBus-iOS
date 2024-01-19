@@ -7,7 +7,7 @@ let project = Project.makeProject(
     moduleType: .app,
     hasResource: true,
     dependencies: [
-        .mainFeature,
+        .mainPresentation,
         .data,
         .domain,
     ]

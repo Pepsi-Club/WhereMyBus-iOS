@@ -8,16 +8,16 @@
 import ProjectDescription
 
 public enum ModuleType {
-    case app, framework, feature
+    case app, dynamicFramework, staticFramework, presentation
     
     var product: Product {
         switch self {
         case .app:
             return .app
-        case .framework:
+        case .dynamicFramework:
             return .framework
-        case .feature:
-            return .app
+        case .staticFramework, .presentation:
+            return .staticFramework
         }
     }
 }

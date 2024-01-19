@@ -3,8 +3,6 @@ included:
 excluded: # 린트 과정에서 무시할 파일 경로. `included`보다 우선순위 높음
     - Projects/App/Sources/AppDelegate.swift
     - Projects/App/Sources/SceneDelegate.swift
-    - Projects/Feature/**/Demo/AppDelegate.swift
-    - Projects/Feature/**/Demo/SceneDelegate.swift
     - Tuist
     - Derived
     - Plugins

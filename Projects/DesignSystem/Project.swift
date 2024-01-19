@@ -3,9 +3,7 @@ import ProjectDescriptionHelpers
 
 let project = Project.makeProject(
     name: "DesignSystem",
-    moduleType: .framework,
+    moduleType: .staticFramework,
     hasResource: true,
-    dependencies: [
-        .core
-    ]
+    dependencies: []
 )

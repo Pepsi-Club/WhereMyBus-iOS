@@ -19,4 +19,11 @@ public extension String {
         }
         return date
     }
+    
+    static var serverKey: Self {
+        guard let any = Bundle.main.object(forInfoDictionaryKey: "SERVER_KEY"),
+              let serverKey = any as? String
+        else { fatalError("Can't Not Find Server Key") }
+        return serverKey
+    }
 }

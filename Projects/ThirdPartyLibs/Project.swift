@@ -4,7 +4,7 @@ import ProjectDescriptionHelpers
 
 let project = Project.makeProject(
     name: "ThirdPartyLibs",
-    moduleType: .framework,
+    moduleType: .dynamicFramework,
     dependencies: .ThirdPartyExternal.allCases.map {
         .external(name: $0.name)
     }
