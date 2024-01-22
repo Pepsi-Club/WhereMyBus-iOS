@@ -1,6 +1,6 @@
 import UIKit
 
-import {{ name }}Feature
+import NearMapFeature
 
 final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
@@ -16,10 +16,10 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.rootViewController = navigationController
         window?.makeKeyAndVisible()
                 
-        let {{ name | lowercase }}Coordinator = Default{{ name }}Coordinator(
+        let nearmapCoordinator = DefaultNearMapCoordinator(
             navigationController: navigationController
         )
-        {{ name | lowercase }}Coordinator.start()
+        nearmapCoordinator.start()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

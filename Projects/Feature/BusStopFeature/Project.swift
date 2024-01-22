@@ -1,13 +1,10 @@
 import ProjectDescription
-import DependencyPlugin
 import ProjectDescriptionHelpers
 
 let project = Project.makeProject(
-    name: "App",
-    moduleType: .app,
-    hasResource: true,
+    name: "BusStopFeature",
+    moduleType: .feature,
     dependencies: [
-        .mainFeature,
-        .data,
+        .featureDependency
     ]
 )

@@ -8,8 +8,8 @@
 
 import UIKit
 
-import PresentationDependency
-import MainPresentation
+import FeatureDependency
+import MainFeature
 
 final class AppCoordinator: Coordinator {
     var childCoordinators: [Coordinator] = []
