@@ -14,8 +14,6 @@ identifier_name:
         error: 3
     excluded: # 제외할 문자열 목록
         - f
-        - ws
-        - my
 function_body_length:
     warning: 150
     error: 300
@@ -30,18 +28,7 @@ line_length:
     error: 400
 disabled_rules: # 제외하고 싶은 룰
     - trailing_whitespace
-    - type_name
-    - trailing_comma
-#    - conditional_returns_on_newline
-#    - identifier_name
-#    - nesting
-#    - colon
-#    - control_statement
-#    - vertical_parameter_alignment
-#    - cyclomatic_complexity
-#    - void_function_in_ternary
-#    - comment_spacing
-#    - function_parameter_count
+    - type_name # 타입명에 _가 들어가면 경고
+    - trailing_comma # 배열 마지막 아이템에 ,가 붙으면 경고
 opt_in_rules:
     - empty_string
-#    - conditional_returns_on_newline

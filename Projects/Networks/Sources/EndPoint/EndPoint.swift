@@ -20,7 +20,7 @@ public protocol EndPoint {
 }
 
 public enum Scheme: String {
-    case http, https, ws
+    case http, https
 }
 
 extension EndPoint {

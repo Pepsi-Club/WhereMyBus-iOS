@@ -30,6 +30,7 @@ public extension [String: InfoPlist.Value] {
     static let secrets: Self = [
         "SERVER_KEY": "$(SERVER_KEY)"
     ]
+    
     static let additionalInfoPlist: Self = [
         "ITSAppUsesNonExemptEncryption": "NO",
         "NSAppTransportSecurity": [
@@ -37,7 +38,6 @@ public extension [String: InfoPlist.Value] {
                 "ws.bus.go.kr": [
                     "NSIncludesSubdomains": true,
                     "NSExceptionAllowsInsecureHTTPLoads": true,
-                    "NSTemporaryExceptionAllowsInsecureWebSocketLoads": true
                 ]
             ]
         ]
