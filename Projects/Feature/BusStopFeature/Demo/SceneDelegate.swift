@@ -1,12 +1,12 @@
 import UIKit
 
-import {{ name }}Feature
+import BusStopFeature
 
 final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
 
     func scene(
-        _ scene: UIScene,
+        _ scene: UIScene, 
         willConnectTo session: UISceneSession,
         options connectionOptions: UIScene.ConnectionOptions
     ) {
@@ -16,10 +16,10 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.rootViewController = navigationController
         window?.makeKeyAndVisible()
                 
-        let {{ name | lowercase }}Coordinator = Default{{ name }}Coordinator(
+        let busstopCoordinator = DefaultBusStopCoordinator(
             navigationController: navigationController
         )
-        {{ name | lowercase }}Coordinator.start()
+        busstopCoordinator.start()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

@@ -21,7 +21,6 @@ extension Project {
         entitlements: Path? = nil,
         isTestable: Bool = false,
         hasResource: Bool = false,
-        additionalPath: String = "",
         dependencies: [TargetDependency]
     ) -> Self {
         var schemes = [Scheme]()
@@ -34,33 +33,32 @@ extension Project {
                 entitlements: entitlements,
                 dependencies: dependencies
             )
+            schemes.append(.moduleScheme(name: name))
         case .dynamicFramework, .staticFramework:
             targetModule = frameworkTarget(
                 name: name,
                 entitlements: entitlements,
                 hasResource: hasResource, 
                 productType: moduleType.product,
-                additionalPath: additionalPath, 
                 dependencies: dependencies
             )
-        case .presentation:
+        case .feature:
             targetModule = frameworkTarget(
                 name: name,
                 entitlements: entitlements,
                 hasResource: hasResource,
                 productType: moduleType.product,
                 isPresentation: true,
-                additionalPath: additionalPath,
                 dependencies: dependencies
             )
-//            let demoTarget = demoAppTarget(
-//                name: name,
-//                dependencies: [.target(targetModule)]
-//            )
-//            targets.append(demoTarget)
+            let demoTarget = demoAppTarget(
+                name: name,
+                dependencies: [.target(targetModule)]
+            )
+            targets.append(demoTarget)
+            schemes.append(.moduleScheme(name: demoTarget.name))
         }
         targets.append(targetModule)
-        schemes.append(.moduleScheme(name: name))
 //        if isTestable {
 //            let test = unitTestTarget(
 //                name: name,
@@ -103,15 +101,14 @@ extension Project {
         dependencies: [TargetDependency]
     ) -> Target {
         Target(
-            name: "\(name)DemoApp",
+            name: "\(name)Demo",
             platform: .iOS,
             product: .app,
-            bundleId: .bundleID + ".\(name)DemoApp",
+            bundleId: .bundleID + ".\(name)Demo",
             deploymentTarget: .deploymentTarget,
             infoPlist: .appInfoPlist,
             sources: [
                 "Demo/**",
-                "Sources/**"
             ],
             entitlements: entitlements,
             scripts: [.featureSwiftLint],
@@ -125,13 +122,10 @@ extension Project {
         hasResource: Bool,
         productType: Product,
         isPresentation: Bool = false,
-        additionalPath: String,
         dependencies: [TargetDependency]
     ) -> Target {
         let scripts: [TargetScript] = isPresentation ?
-        [.featureSwiftLint] :
-            additionalPath.isEmpty ? [.swiftLint] :
-            [.featureSwiftLint]
+        [.featureSwiftLint] : [.swiftLint]
         return Target(
             name: name,
             platform: .iOS,

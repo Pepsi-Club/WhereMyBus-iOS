@@ -9,12 +9,8 @@ import ProjectDescription
 
 public extension TargetDependency {
     static let app: Self = .module(name: "App")
-    static let mainPresentation: Self = .module(name: "MainPresentation")
-    static let feature: Self = .moduleWithAdditionalPath(
-        name: "Feature",
-        path: "Presentation"
-    )
-    static let presentationDependency: Self = .module(name: "PresentationDependency")
+    static let mainFeature: Self = .module(name: "MainFeature")
+    static let featureDependency: Self = .module(name: "FeatureDependency")
     static let core: Self = .module(name: "Core")
     static let data: Self = .module(name: "Data")
     static let domain: Self = .module(name: "Domain")
