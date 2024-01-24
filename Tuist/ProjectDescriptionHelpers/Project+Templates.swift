@@ -104,15 +104,16 @@ extension Project {
             name: "\(name)Demo",
             platform: .iOS,
             product: .app,
-            bundleId: .bundleID + ".\(name)Demo",
+            bundleId: .bundleID,
             deploymentTarget: .deploymentTarget,
-            infoPlist: .appInfoPlist,
+            infoPlist: .demoAppInfoPlist(name: name),
             sources: [
                 "Demo/**",
             ],
             entitlements: entitlements,
             scripts: [.featureSwiftLint],
-            dependencies: dependencies
+            dependencies: dependencies,
+            settings: .appDebug
         )
     }
 

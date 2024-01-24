@@ -18,6 +18,24 @@ public extension InfoPlist {
                 newValue
             }
     )
+    
+    static func demoAppInfoPlist(name: String) -> Self {
+        .extendingDefault(
+            with: .baseInfoPlist
+                .merging(.additionalInfoPlist) { oldValue, newValue in
+                    newValue
+                }
+                .merging(.secrets) { oldValue, newValue in
+                    newValue
+                }
+                .merging([
+                    "CFBundleDisplayName": "\(name)"
+                ]) { oldValue, newValue in
+                    newValue
+                }
+        )
+    }
+    
     static let frameworkInfoPlist: Self = .extendingDefault(
         with: .framework
             .merging(.secrets) { oldValue, newValue in
