@@ -1,8 +1,8 @@
 //
-//  Temp.swift
+//  StationArrivalInfoDTO.swift
 //  Data
 //
-//  Created by gnksbm on 2024/01/12.
+//  Created by gnksbm on 1/25/24.
 //  Copyright © 2024 Pepsi-Club. All rights reserved.
 //
 
