@@ -19,6 +19,12 @@ public final class HomeViewModel: ViewModel {
 
 extension HomeViewModel {
     public struct Input {
+        let viewDidLoadEvent: Observable<Void>
+        let searchBtnTapEvent: Observable<Void>
+        let refreshBtnTapEvent: Observable<Void>
+        let likeBtnTapEvent: Observable<IndexPath>
+        let alarmBtnTapEvent: Observable<IndexPath>
+        let stationTapEvent: Observable<Int>
     }
     
     public struct Output {

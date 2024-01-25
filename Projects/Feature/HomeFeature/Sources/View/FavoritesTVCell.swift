@@ -12,7 +12,7 @@ import Core
 import DesignSystem
 
 class FavoritesTVCell: UITableViewCell {
-    private let likeBtn: UIButton = {
+    let likeBtn: UIButton = {
         var config = UIButton.Configuration.plain()
         let image = UIImage(systemName: "star")
         let imgConfig = UIImage.SymbolConfiguration(
@@ -47,7 +47,7 @@ class FavoritesTVCell: UITableViewCell {
         return stackView
     }()
     
-    private let alarmBtn: UIButton = {
+    let alarmBtn: UIButton = {
         var config = UIButton.Configuration.plain()
         let image = UIImage(systemName: "deskclock")
         let imgConfig = UIImage.SymbolConfiguration(

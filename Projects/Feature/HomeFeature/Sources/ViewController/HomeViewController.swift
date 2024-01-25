@@ -4,9 +4,14 @@ import Core
 import DesignSystem
 
 import RxSwift
+import RxCocoa
 
 public final class HomeViewController: UIViewController {
     private let viewModel: HomeViewModel
+    
+    private let disposeBag = DisposeBag()
+    private let likeBtnTapEvent = PublishSubject<IndexPath>()
+    private let alarmBtnTapEvent = PublishSubject<IndexPath>()
     
     private let busIconView: UIImageView = {
         let imageView = UIImageView()
@@ -119,7 +124,18 @@ public final class HomeViewController: UIViewController {
     
     private func bind() {
         let output = viewModel.transform(
-            input: .init()
+            input: .init(
+                viewDidLoadEvent: rx
+                    .methodInvoked(#selector(UIViewController.viewDidLoad))
+                    .map { _ in },
+                searchBtnTapEvent: searchBtn.rx.tap.asObservable(),
+                refreshBtnTapEvent: refreshBtn.rx.tap.asObservable(),
+                likeBtnTapEvent: likeBtnTapEvent.asObservable(),
+                alarmBtnTapEvent: alarmBtnTapEvent.asObservable(),
+                stationTapEvent: favoritesTableView.rx
+                    .itemSelected
+                    .map { $0.section }
+            )
         )
     }
 }
@@ -147,6 +163,14 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate {
             firstArrivalRemaining: "테스트",
             secondArrivalRemaining: "테스트"
         )
+        cell.alarmBtn.rx.tap
+            .map { _ in indexPath }
+            .bind(to: alarmBtnTapEvent)
+            .disposed(by: disposeBag)
+        cell.likeBtn.rx.tap
+            .map { _ in indexPath }
+            .bind(to: likeBtnTapEvent)
+            .disposed(by: disposeBag)
         return cell
     }
     
