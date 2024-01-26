@@ -18,17 +18,3 @@ public final class NearMapViewController: UIViewController {
         super.viewDidLoad()
     }
 }
-
-#if DEBUG
-import SwiftUI
-import FeatureDependency
-struct NearMapViewController_Preview: PreviewProvider {
-    static var previews: some View {
-        UIKitPreview(
-            NearMapViewController(
-                viewModel: NearMapViewModel()
-            )
-        )
-    }
-}
-#endif

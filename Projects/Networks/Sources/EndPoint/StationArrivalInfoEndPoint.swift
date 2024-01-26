@@ -29,18 +29,18 @@ public struct StationArrivalInfoEndPoint: EndPoint {
         "/api/rest/arrive/getLowArrInfoByStId"
     }
     
-    public var query: [String : String] {
+    public var query: [String: String] {
         [
             "ServiceKey": .serverKey,
             "stId": stationId
         ]
     }
     
-    public var header: [String : String] {
+    public var header: [String: String] {
         [:]
     }
     
-    public var body: [String : String] {
+    public var body: [String: String] {
         [:]
     }
     

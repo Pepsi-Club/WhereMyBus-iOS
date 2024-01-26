@@ -14,9 +14,9 @@ public final class DefaultSearchCoordinator: SearchCoordinator {
         let searchViewController = SearchViewController(
             viewModel: SearchViewModel()
         )
-        navigationController.setViewControllers(
-            [searchViewController],
-            animated: false
+        navigationController.pushViewController(
+            searchViewController,
+            animated: true
         )
     }
 }
