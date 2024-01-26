@@ -44,7 +44,7 @@ public final class SearchStationBtn: UIButton {
         image: UIImage?
     ) -> UIButton.Configuration {
         var config = UIButton.Configuration.plain()
-        config.background.backgroundColor = DesignSystemAsset.gray2.color
+        config.background.backgroundColor = DesignSystemAsset.gray3.color
         config.baseForegroundColor = DesignSystemAsset.mainColor.color
         config.cornerStyle = .large
         config.contentInsets = .init(
