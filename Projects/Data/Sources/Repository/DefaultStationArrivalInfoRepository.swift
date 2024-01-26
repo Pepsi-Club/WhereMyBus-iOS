@@ -12,7 +12,7 @@ import Domain
 import Networks
 
 import RxSwift
-XMLParserDelegate
+
 public final class DefaultStationArrivalInfoRepository
 : StationArrivalInfoRepository {
     private let networkService: NetworkService
@@ -21,7 +21,7 @@ public final class DefaultStationArrivalInfoRepository
         self.networkService = networkService
     }
     
-    func fetchArrivalList(stationId: String) -> Observable<Data> {
+    public func fetchArrivalList(stationId: String) -> Observable<Data> {
         networkService.request(
             endPoint: StationArrivalInfoEndPoint(stationId: stationId)
         ).map {

@@ -10,6 +10,7 @@ public final class HomeViewController: UIViewController {
     private let viewModel: HomeViewModel
     
     private let disposeBag = DisposeBag()
+    private let headerTapEvent = PublishSubject<Int>()
     private let likeBtnTapEvent = PublishSubject<IndexPath>()
     private let alarmBtnTapEvent = PublishSubject<IndexPath>()
     
@@ -132,11 +133,18 @@ public final class HomeViewController: UIViewController {
                 refreshBtnTapEvent: refreshBtn.rx.tap.asObservable(),
                 likeBtnTapEvent: likeBtnTapEvent.asObservable(),
                 alarmBtnTapEvent: alarmBtnTapEvent.asObservable(),
-                stationTapEvent: favoritesTableView.rx
-                    .itemSelected
-                    .map { $0.section }
+                stationTapEvent: headerTapEvent
             )
         )
+        
+        output.model
+            .withUnretained(self)
+            .subscribe(
+                onNext: { viewController, model in
+                    viewController.title = model.name
+                }
+            )
+            .disposed(by: disposeBag)
     }
 }
 
@@ -201,6 +209,12 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate {
             withIdentifier: FavoritesHeaderView.identifier
         ) as? FavoritesHeaderView
         header?.updateUI(name: "테스트", direction: "테스트")
+        let tapGesture = UITapGestureRecognizer()
+        header?.contentView.addGestureRecognizer(tapGesture)
+        tapGesture.rx.event
+            .map { _ in section }
+            .bind(to: headerTapEvent)
+            .disposed(by: disposeBag)
         return header
     }
 }
