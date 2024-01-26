@@ -5,7 +5,7 @@ import FeatureDependency
 
 import RxSwift
 
-public final class HomeViewModel: ViewModel {
+public final class FavoritesViewModel: ViewModel {
     private let coordinator: HomeCoordinator
     
     private let disposeBag = DisposeBag()
@@ -15,7 +15,7 @@ public final class HomeViewModel: ViewModel {
     }
     
     public func transform(input: Input) -> Output {
-        let output = Output(model: .init())
+        let output = Output()
         
         input.searchBtnTapEvent
             .withUnretained(self)
@@ -26,22 +26,11 @@ public final class HomeViewModel: ViewModel {
             )
             .disposed(by: disposeBag)
         
-        input.searchBtnTapEvent
-            .subscribe(
-                onNext: { _ in
-                    output.model.onNext(.init(name: "이벤트처리"))
-                }
-            )
-            .disposed(by: disposeBag)
-        
         return output
     }
 }
-struct Model {
-    let name: String
-}
 
-extension HomeViewModel {
+extension FavoritesViewModel {
     public struct Input {
         let viewDidLoadEvent: Observable<Void>
         let searchBtnTapEvent: Observable<Void>
@@ -52,6 +41,5 @@ extension HomeViewModel {
     }
     
     public struct Output {
-        let model: PublishSubject<Model>
     }
 }

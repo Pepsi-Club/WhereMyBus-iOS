@@ -6,8 +6,8 @@ import DesignSystem
 import RxSwift
 import RxCocoa
 
-public final class HomeViewController: UIViewController {
-    private let viewModel: HomeViewModel
+public final class FavoritesViewController: UIViewController {
+    private let viewModel: FavoritesViewModel
     
     private let disposeBag = DisposeBag()
     private let headerTapEvent = PublishSubject<Int>()
@@ -58,7 +58,7 @@ public final class HomeViewController: UIViewController {
         return tableView
     }()
     
-    public init(viewModel: HomeViewModel) {
+    public init(viewModel: FavoritesViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -136,19 +136,10 @@ public final class HomeViewController: UIViewController {
                 stationTapEvent: headerTapEvent
             )
         )
-        
-        output.model
-            .withUnretained(self)
-            .subscribe(
-                onNext: { viewController, model in
-                    viewController.title = model.name
-                }
-            )
-            .disposed(by: disposeBag)
     }
 }
 
-extension HomeViewController: UITableViewDataSource, UITableViewDelegate {
+extension FavoritesViewController: UITableViewDataSource, UITableViewDelegate {
     public func tableView(
         _ tableView: UITableView,
         numberOfRowsInSection section: Int
