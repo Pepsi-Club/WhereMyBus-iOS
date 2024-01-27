@@ -78,11 +78,12 @@ class FavoritesTVCell: UITableViewCell {
     }
     
     func updateUI(
-        busRoute: String?,
-        firstArrivalTime: String?,
-        secondArrivalTime: String?,
-        firstArrivalRemaining: String?,
-        secondArrivalRemaining: String?
+        busRoute: String,
+        busDirection: String,
+        firstArrivalTime: String,
+        firstArrivalRemaining: String,
+        secondArrivalTime: String,
+        secondArrivalRemaining: String
     ) {
         routeLabel.text = busRoute
         firstArrivalInfoView.updateUI(

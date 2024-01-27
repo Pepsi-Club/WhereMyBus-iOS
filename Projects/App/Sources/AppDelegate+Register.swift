@@ -15,6 +15,18 @@ import Networks
 
 extension AppDelegate {
     func registerDependencies() {
+        DIContainer.register(
+            type: FavoritesUseCase.self,
+            DefaultFavoritesUseCase(
+                stationArrivalInfoRepository: stationArrivalInfoRepository
+            )
+        )
+    }
+}
+
+extension AppDelegate {
+    var stationArrivalInfoRepository: StationArrivalInfoRepository {
+        DefaultStationArrivalInfoRepository(networkService: networkService)
     }
 }
 

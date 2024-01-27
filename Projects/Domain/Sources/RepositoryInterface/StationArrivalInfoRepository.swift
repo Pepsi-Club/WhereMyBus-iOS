@@ -11,5 +11,7 @@ import Foundation
 import RxSwift
 
 public protocol StationArrivalInfoRepository {
-    func fetchArrivalList(stationId: String) -> Observable<Data>
+    var responses: BehaviorSubject<[StationArrivalInfoResponse]> { get }
+    
+    func fetchArrivalList(request: StationArrivalInfoRequest)
 }

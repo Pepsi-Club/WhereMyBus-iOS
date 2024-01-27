@@ -75,8 +75,6 @@ public final class FavoritesViewController: UIViewController {
     
     private func configureUI() {
         view.backgroundColor = .white
-        favoritesTableView.delegate = self
-        favoritesTableView.dataSource = self
         
         [busIconView, searchBtn, refreshBtn, favoritesTableView].forEach {
             view.addSubview($0)
@@ -126,8 +124,8 @@ public final class FavoritesViewController: UIViewController {
     private func bind() {
         let output = viewModel.transform(
             input: .init(
-                viewDidLoadEvent: rx
-                    .methodInvoked(#selector(UIViewController.viewDidLoad))
+                viewWillAppearEvent: rx
+                    .methodInvoked(#selector(UIViewController.viewWillAppear))
                     .map { _ in },
                 searchBtnTapEvent: searchBtn.rx.tap.asObservable(),
                 refreshBtnTapEvent: refreshBtn.rx.tap.asObservable(),
@@ -136,6 +134,25 @@ public final class FavoritesViewController: UIViewController {
                 stationTapEvent: headerTapEvent
             )
         )
+        
+        output.arrivalInfoList
+            .bind(
+                to: favoritesTableView.rx.items(
+                    cellIdentifier: FavoritesTVCell.identifier,
+                    cellType: FavoritesTVCell.self
+                ),
+                curriedArgument: { _, item, cell in
+                    cell.updateUI(
+                        busRoute: item.busRoute,
+                        busDirection: item.busDirection,
+                        firstArrivalTime: item.firstArrivalTime,
+                        firstArrivalRemaining: item.firstArrivalRemaining,
+                        secondArrivalTime: item.secondArrivalTime,
+                        secondArrivalRemaining: item.secondArrivalRemaining
+                    )
+                }
+            )
+            .disposed(by: disposeBag)
     }
 }
 
@@ -155,13 +172,6 @@ extension FavoritesViewController: UITableViewDataSource, UITableViewDelegate {
             withIdentifier: FavoritesTVCell.identifier,
             for: indexPath
         ) as? FavoritesTVCell ?? .init()
-        cell.updateUI(
-            busRoute: "테스트", 
-            firstArrivalTime: "7분전",
-            secondArrivalTime: "1분. 전",
-            firstArrivalRemaining: "테스트",
-            secondArrivalRemaining: "테스트"
-        )
         cell.alarmBtn.rx.tap
             .map { _ in indexPath }
             .bind(to: alarmBtnTapEvent)

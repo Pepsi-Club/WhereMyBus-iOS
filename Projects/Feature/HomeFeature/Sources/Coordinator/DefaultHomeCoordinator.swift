@@ -38,9 +38,9 @@ public final class DefaultHomeCoordinator: HomeCoordinator {
         
         switch UserDefaults.standard.object(forKey: "즐겨찾기있는지") {
         case .none:
-            favoritesStatus.onNext(.empty)
-        case .some:
             favoritesStatus.onNext(.nonEmpty)
+        case .some:
+            favoritesStatus.onNext(.empty)
         }
     }
     

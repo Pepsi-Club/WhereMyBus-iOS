@@ -58,16 +58,16 @@ final class ArrivalInfoView: UIView {
     }
     
     func updateUI(
-        time: String?,
-        remainingStops: String?
+        time: String,
+        remainingStops: String
     ) {
-        guard let timePrefix = time?.prefix(while: { Int(String($0)) != nil }),
-              let minute = Int(String(timePrefix))
-        else { return }
-        let isArriving = minute < 2
+        var isContainTime = false
+        if time.contains(where: { Int(String($0)) != nil }) {
+            isContainTime = true
+        }
         let carrotOrange = DesignSystemAsset.carrotOrange.color
-        timeLabel.text = isArriving ? "곧 도착" : time
-        timeLabel.textColor = isArriving ? carrotOrange : .black
+        timeLabel.text = time
+        timeLabel.textColor = isContainTime ? .black : carrotOrange
         remainingLabel.text = remainingStops
     }
 }

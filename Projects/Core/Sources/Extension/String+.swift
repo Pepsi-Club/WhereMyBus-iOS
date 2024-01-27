@@ -22,7 +22,7 @@ public extension String {
     
     static var serverKey: Self {
         guard let any = Bundle.main.object(forInfoDictionaryKey: "SERVER_KEY"),
-              let serverKey = any as? String
+              let serverKey = (any as? String)?.removingPercentEncoding
         else { fatalError("Can't Not Find Server Key") }
         return serverKey
     }
