@@ -74,8 +74,6 @@ extension DefaultStationArrivalInfoRepository: XMLParserDelegate {
         qualifiedName qName: String?
     ) {
         switch elementName {
-        case "msgBody":
-            responses.onCompleted()
         case "itemList":
             if let busRouteAbrv = xmlDic?["busRouteAbrv"],
                let arrmsg1 = xmlDic?["arrmsg1"],
@@ -130,8 +128,15 @@ extension DefaultStationArrivalInfoRepository: XMLParserDelegate {
         guard xmlDic != nil,
               let key
         else { return }
-        if key == "arrmsg1" && Int(string) != nil {
-            print(string)
+        if key == "arrmsg1",
+           let value = xmlDic?["arrmsg1"] {
+            xmlDic?.updateValue(value + string, forKey: key)
+            return
+        }
+        if key == "arrmsg2",
+           let value = xmlDic?["arrmsg2"] {
+            xmlDic?.updateValue(value + string, forKey: key)
+            return
         }
         xmlDic?.updateValue(string, forKey: key)
     }
