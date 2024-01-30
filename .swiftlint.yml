@@ -28,5 +28,6 @@ disabled_rules: # 제외하고 싶은 룰
     - trailing_whitespace
     - type_name # 타입명에 _가 들어가면 경고
     - trailing_comma # 배열 마지막 아이템에 ,가 붙으면 경고
+    - nesting # 중첩타입
 opt_in_rules:
     - empty_string
