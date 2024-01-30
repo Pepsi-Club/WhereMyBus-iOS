@@ -15,6 +15,23 @@ import Networks
 
 extension AppDelegate {
     func registerDependencies() {
+        DIContainer.register(
+            type: FavoritesUseCase.self,
+            DefaultFavoritesUseCase(
+                busStopArrivalInfoRepository: busStopArrivalInfoRepository,
+                favoritesRepository: favoritesRepository
+            )
+        )
+    }
+}
+
+extension AppDelegate {
+    var favoritesRepository: FavoritesRepository {
+        DefaultFavoritesRepository()
+    }
+    
+    var busStopArrivalInfoRepository: BusStopArrivalInfoRepository {
+        DefaultBusStopArrivalInfoRepository(networkService: networkService)
     }
 }
 

@@ -16,9 +16,14 @@ import SettingsFeature
 public final class TabBarCoordinator: Coordinator {
     public var childCoordinators: [Coordinator] = []
     public var navigationController: UINavigationController
+    public let coordinatorProvider: CoordinatorProvider
     
-    public init(navigationController: UINavigationController) {
+    public init(
+        navigationController: UINavigationController,
+        coordinatorProvider: CoordinatorProvider
+    ) {
         self.navigationController = navigationController
+        self.coordinatorProvider = coordinatorProvider
     }
     
     public func start() {
@@ -59,7 +64,8 @@ public final class TabBarCoordinator: Coordinator {
         switch tabKind {
         case .home:
             coordinator = DefaultHomeCoordinator(
-                navigationController: navigationController
+                navigationController: navigationController, 
+                coordinatorProvider: coordinatorProvider
             )
         case .settings:
             coordinator = DefaultSettingsCoordinator(

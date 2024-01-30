@@ -1,5 +1,6 @@
 import UIKit
 
+import FeatureDependency
 import HomeFeature
 
 final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -17,7 +18,9 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.makeKeyAndVisible()
                 
         let homeCoordinator = DefaultHomeCoordinator(
-            navigationController: navigationController
+            parent: nil,
+            navigationController: navigationController, 
+            coordinatorProvider: MockCoordinatorProvider()
         )
         homeCoordinator.start()
     }
@@ -36,4 +39,49 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func sceneDidEnterBackground(_ scene: UIScene) {
     }
+}
+
+final class MockCoordinatorProvider: CoordinatorProvider {
+    func makeSearchCoordinator(
+        navigationController: UINavigationController
+    ) -> SearchCoordinator {
+        MockCoordinator(
+            testMessage: "SearchVC",
+            navigationController: navigationController
+        )
+    }
+}
+
+final class MockCoordinator: Coordinator {
+    var parent: Coordinator?
+    var childs: [Coordinator] = []
+    
+    let testMessage: String
+    var navigationController: UINavigationController
+    
+    init(
+        testMessage: String,
+        navigationController: UINavigationController
+    ) {
+        self.testMessage = testMessage
+        self.navigationController = navigationController
+    }
+    
+    func start() {
+        let testViewController = UIViewController()
+        testViewController.view.backgroundColor = .white
+        testViewController.title = testMessage
+        navigationController.pushViewController(
+            testViewController,
+            animated: true
+        )
+    }
+    
+    func finish() {
+        
+    }
+}
+
+extension MockCoordinator: SearchCoordinator {
+    
 }
