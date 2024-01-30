@@ -14,7 +14,8 @@ import AlarmFeature
 import SettingsFeature
 
 public final class TabBarCoordinator: Coordinator {
-    public var childCoordinators: [Coordinator] = []
+    public var parent: Coordinator?
+    public var childs: [Coordinator] = []
     public var navigationController: UINavigationController
     public let coordinatorProvider: CoordinatorProvider
     
@@ -64,7 +65,8 @@ public final class TabBarCoordinator: Coordinator {
         switch tabKind {
         case .home:
             coordinator = DefaultHomeCoordinator(
-                navigationController: navigationController, 
+                parent: self, 
+                navigationController: navigationController,
                 coordinatorProvider: coordinatorProvider
             )
         case .settings:
@@ -76,7 +78,11 @@ public final class TabBarCoordinator: Coordinator {
                 navigationController: navigationController
             )
         }
-        childCoordinators.append(coordinator)
+        childs.append(coordinator)
         coordinator.start()
+    }
+    
+    public func finish() {
+        
     }
 }

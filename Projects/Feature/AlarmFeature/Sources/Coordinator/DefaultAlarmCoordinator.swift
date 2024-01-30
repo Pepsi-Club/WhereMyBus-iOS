@@ -3,7 +3,8 @@ import UIKit
 import FeatureDependency
 
 public final class DefaultAlarmCoordinator: AlarmCoordinator {
-    public var childCoordinators: [Coordinator] = []
+    public var parent: Coordinator?
+    public var childs: [Coordinator] = []
     public var navigationController: UINavigationController
     
     public init(navigationController: UINavigationController) {
@@ -18,5 +19,9 @@ public final class DefaultAlarmCoordinator: AlarmCoordinator {
             [homeViewController],
             animated: false
         )
+    }
+    
+    public func finish() {
+        
     }
 }

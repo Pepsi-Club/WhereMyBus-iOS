@@ -52,4 +52,3 @@ public struct BusStopArrivalInfoEndPoint: EndPoint {
         self.busStopId = busStopId
     }
 }
-// http://ws.bus.go.kr/api/rest/arrive/getLowArrInfoByStId?ServiceKey=Lk%2FrcEMNxmVQdKclcu7dRxe5KiRfBGRdxiZMI3lNDwuvwYbs1VCVrSg8dCGBieouCSEs4%2FBArQAHyUBv65sP5Q%3D%3D&stId=121000214

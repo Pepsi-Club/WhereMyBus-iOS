@@ -12,7 +12,8 @@ import FeatureDependency
 import MainFeature
 
 final class AppCoordinator: Coordinator {
-    var childCoordinators: [Coordinator] = []
+    var parent: Coordinator?
+    var childs: [Coordinator] = []
     var navigationController: UINavigationController
     
     init(navigationController: UINavigationController) {
@@ -24,7 +25,11 @@ final class AppCoordinator: Coordinator {
             navigationController: navigationController, 
             coordinatorProvider: DefaultCoordinatorProvider()
         )
-        childCoordinators.append(tabBarCoordinator)
+        childs.append(tabBarCoordinator)
         tabBarCoordinator.start()
+    }
+    
+    func finish() {
+        
     }
 }

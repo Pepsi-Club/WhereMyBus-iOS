@@ -35,9 +35,8 @@ public final class DefaultBusStopArrivalInfoRepository
         networkService.request(
             endPoint: BusStopArrivalInfoEndPoint(busStopId: busStopId)
         )
-        .withUnretained(self)
         .subscribe(
-            onNext: { repository, data in
+            onNext: { data in
                 let xmlParser = XMLParser(data: data)
                 xmlParser.delegate = self
                 xmlParser.parse()
@@ -121,7 +120,6 @@ extension DefaultBusStopArrivalInfoRepository: XMLParserDelegate {
     }
     
     public func parserDidEndDocument(_ parser: XMLParser) {
-        let response = try? responses.value()
         responses.onCompleted()
     }
     

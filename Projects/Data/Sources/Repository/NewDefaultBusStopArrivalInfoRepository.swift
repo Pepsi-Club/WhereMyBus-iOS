@@ -40,8 +40,11 @@ public final class NewDefaultBusStopArrivalInfoRepository:
         )
         .map { data in
             let xml = XML.parse(data)
-            let busResponses: [BusArrivalInfoResponse?] = xml.ServiceResult.msgBody.itemList
-                .map {
+            let busResponses: [BusArrivalInfoResponse] = xml
+                .ServiceResult
+                .msgBody
+                .itemList
+                .compactMap {
                     guard let routeId = $0.busRouteId.text,
                           let routeName = $0.busRouteAbrv.text,
                           let busType = $0.routeType.text,
