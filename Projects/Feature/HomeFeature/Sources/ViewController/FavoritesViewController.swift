@@ -1,12 +1,16 @@
 import UIKit
+import Domain
 
 import Core
 import DesignSystem
 
 import RxSwift
 import RxCocoa
+import RxDataSources
 
 public final class FavoritesViewController: UIViewController {
+    typealias FavoritesDataSource =
+    RxTableViewSectionedReloadDataSource<ArrivalInfoResponse>
     private let viewModel: FavoritesViewModel
     
     private let disposeBag = DisposeBag()
@@ -20,7 +24,7 @@ public final class FavoritesViewController: UIViewController {
         return imageView
     }()
     
-    private let searchBtn = SearchStationBtn(
+    private let searchBtn = SearchBusStopBtn(
         title: "버스 정류장을 검색하세요",
         image: UIImage(systemName: "magnifyingglass")
     )
@@ -131,9 +135,31 @@ public final class FavoritesViewController: UIViewController {
                 refreshBtnTapEvent: refreshBtn.rx.tap.asObservable(),
                 likeBtnTapEvent: likeBtnTapEvent.asObservable(),
                 alarmBtnTapEvent: alarmBtnTapEvent.asObservable(),
-                stationTapEvent: headerTapEvent
+                busStopTapEvent: headerTapEvent
             )
         )
+        
+//        let dataSource = FavoritesDataSource
+//        { dataSource, tableView, indexPath, item in
+//            let cell = tableView.dequeueReusableCell(
+//                withIdentifier: FavoritesTVCell.identifier,
+//                for: indexPath
+//            ) as? FavoritesTVCell ?? .init()
+//            cell.updateUI(
+//                routeName: item.routeName,
+//                firstArrivalTime: item.firstArrivalTime,
+//                firstArrivalRemaining: item.firstArrivalRemaining,
+//                secondArrivalTime: item.secondArrivalTime,
+//                secondArrivalRemaining: item.secondArrivalRemaining
+//            )
+//            return cell
+//        }
+        
+//        output.arrivalInfoResponse.bind(
+//            to: favoritesTableView.rx.items(
+//                dataSource: dataSource
+//            )
+//        )
         
         output.arrivalInfoList
             .bind(
@@ -143,8 +169,7 @@ public final class FavoritesViewController: UIViewController {
                 ),
                 curriedArgument: { _, item, cell in
                     cell.updateUI(
-                        busRoute: item.busRoute,
-                        busDirection: item.busDirection,
+                        routeName: item.routeName,
                         firstArrivalTime: item.firstArrivalTime,
                         firstArrivalRemaining: item.firstArrivalRemaining,
                         secondArrivalTime: item.secondArrivalTime,

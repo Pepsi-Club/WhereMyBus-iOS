@@ -16,7 +16,7 @@ import RxCocoa
 final class EmptyFavoritesViewController: UIViewController {
     private let viewModel: EmptyFavoritesViewModel
     
-    private let searchBtn = SearchStationBtn(
+    private let searchBtn = SearchBusStopBtn(
         title: "버스 정류장을 검색하세요",
         image: UIImage(systemName: "magnifyingglass")
     )
@@ -184,6 +184,9 @@ final class EmptyFavoritesViewController: UIViewController {
     private func bind() {
         _ = viewModel.transform(
             input: .init(
+                viewWillAppearEvent: rx
+                    .methodInvoked(#selector(UIViewController.viewWillAppear))
+                    .map { _ in },
                 searchBtnTapEvent: searchBtn.rx.tap.asObservable()
             )
         )

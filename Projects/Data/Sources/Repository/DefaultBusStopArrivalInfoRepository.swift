@@ -1,5 +1,5 @@
 //
-//  DefaultStationArrivalInfoRepository.swift
+//  DefaultBusStopArrivalInfoRepository.swift
 //  Data
 //
 //  Created by gnksbm on 1/25/24.
@@ -13,13 +13,11 @@ import Networks
 
 import RxSwift
 
-public final class DefaultStationArrivalInfoRepository
-: NSObject, StationArrivalInfoRepository {
+public final class DefaultBusStopArrivalInfoRepository
+: NSObject, BusStopArrivalInfoRepository {
     private let networkService: NetworkService
     
-    public let responses = BehaviorSubject<[StationArrivalInfoResponse]>(
-        value: []
-    )
+    public let responses = BehaviorSubject<[RouteArrivalInfo]>(value: [])
     private let disposeBag = DisposeBag()
     
     private var key: String?
@@ -30,12 +28,16 @@ public final class DefaultStationArrivalInfoRepository
         self.networkService = networkService
     }
     
-    public func fetchArrivalList(request: StationArrivalInfoRequest) {
+    public func fetchArrivalList(
+        busStopId: String,
+        busStopName: String
+    ) {
         networkService.request(
-            endPoint: StationArrivalInfoEndPoint(stationId: request.stationId)
+            endPoint: BusStopArrivalInfoEndPoint(busStopId: busStopId)
         )
+        .withUnretained(self)
         .subscribe(
-            onNext: { data in
+            onNext: { repository, data in
                 let xmlParser = XMLParser(data: data)
                 xmlParser.delegate = self
                 xmlParser.parse()
@@ -45,7 +47,7 @@ public final class DefaultStationArrivalInfoRepository
     }
 }
 
-extension DefaultStationArrivalInfoRepository: XMLParserDelegate {
+extension DefaultBusStopArrivalInfoRepository: XMLParserDelegate {
     public func parser(
         _ parser: XMLParser,
         didStartElement elementName: String,
@@ -74,6 +76,8 @@ extension DefaultStationArrivalInfoRepository: XMLParserDelegate {
         qualifiedName qName: String?
     ) {
         switch elementName {
+        case "stNm", "stId": // stationName, stationId
+            break
         case "itemList":
             if let busRouteAbrv = xmlDic?["busRouteAbrv"],
                let arrmsg1 = xmlDic?["arrmsg1"],
@@ -90,9 +94,8 @@ extension DefaultStationArrivalInfoRepository: XMLParserDelegate {
                     secondArrivalRemaining = mss2Arr[1]
                     secondArrivalRemaining.removeLast()
                 }
-                let response = StationArrivalInfoResponse(
-                    busRoute: busRouteAbrv,
-                    busDirection: "XX 방면",
+                let response = RouteArrivalInfo(
+                    routeName: busRouteAbrv,
                     firstArrivalTime: mss1Arr[0],
                     firstArrivalRemaining: firstArrivalRemaining,
                     secondArrivalTime: mss2Arr[0],
@@ -118,6 +121,7 @@ extension DefaultStationArrivalInfoRepository: XMLParserDelegate {
     }
     
     public func parserDidEndDocument(_ parser: XMLParser) {
+        let response = try? responses.value()
         responses.onCompleted()
     }
     

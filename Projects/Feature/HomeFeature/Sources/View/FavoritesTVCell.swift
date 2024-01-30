@@ -14,13 +14,13 @@ import DesignSystem
 class FavoritesTVCell: UITableViewCell {
     let likeBtn: UIButton = {
         var config = UIButton.Configuration.plain()
-        let image = UIImage(systemName: "star")
+        let image = UIImage(systemName: "star.fill")
         let imgConfig = UIImage.SymbolConfiguration(
             font: .systemFont(ofSize: 13)
         )
         config.image = image
         config.preferredSymbolConfigurationForImage = imgConfig
-        config.baseForegroundColor = DesignSystemAsset.mainColor.color
+        config.baseForegroundColor = DesignSystemAsset.favoritesOrange.color
         let button = UIButton(configuration: config)
         return button
     }()
@@ -70,7 +70,7 @@ class FavoritesTVCell: UITableViewCell {
     }
     
     override func prepareForReuse() {
-        likeBtn.configuration?.image = UIImage(systemName: "star")
+        likeBtn.configuration?.image = UIImage(systemName: "star.fill")
         alarmBtn.configuration?.image = UIImage(systemName: "deskclock")
         [routeLabel].forEach {
             $0.text = nil
@@ -78,14 +78,13 @@ class FavoritesTVCell: UITableViewCell {
     }
     
     func updateUI(
-        busRoute: String,
-        busDirection: String,
+        routeName: String,
         firstArrivalTime: String,
         firstArrivalRemaining: String,
         secondArrivalTime: String,
         secondArrivalRemaining: String
     ) {
-        routeLabel.text = busRoute
+        routeLabel.text = routeName
         firstArrivalInfoView.updateUI(
             time: firstArrivalTime, remainingStops: firstArrivalRemaining
         )

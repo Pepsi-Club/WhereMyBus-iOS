@@ -1,5 +1,5 @@
 //
-//  SearchStationBtn.swift
+//  SearchBusStopBtn.swift
 //  DesignSystem
 //
 //  Created by gnksbm on 1/23/24.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-public final class SearchStationBtn: UIButton {
+public final class SearchBusStopBtn: UIButton {
     private var config = UIButton.Configuration.plain()
     private var titleContainer = AttributeContainer()
     
@@ -18,7 +18,7 @@ public final class SearchStationBtn: UIButton {
     ) {
         super.init(frame: .zero)
         let attributedTitle = makeAttributedTitle(title: title)
-        var config = makeConfiguration(
+        let config = makeConfiguration(
             attributedTitle: attributedTitle,
             image: image
         )

@@ -1,5 +1,5 @@
 //
-//  StationArrivalInfoEndPoint.swift
+//  BusStopArrivalInfoEndPoint.swift
 //  Networks
 //
 //  Created by gnksbm on 1/25/24.
@@ -10,8 +10,8 @@ import Foundation
 
 import Core
 
-public struct StationArrivalInfoEndPoint: EndPoint {
-    let stationId: String
+public struct BusStopArrivalInfoEndPoint: EndPoint {
+    let busStopId: String
     
     public var scheme: Scheme {
         .http
@@ -32,7 +32,7 @@ public struct StationArrivalInfoEndPoint: EndPoint {
     public var query: [String: String] {
         [
             "ServiceKey": .serverKey,
-            "stId": stationId
+            "stId": busStopId
         ]
     }
     
@@ -48,8 +48,8 @@ public struct StationArrivalInfoEndPoint: EndPoint {
         .get
     }
     
-    public init(stationId: String) {
-        self.stationId = stationId
+    public init(busStopId: String) {
+        self.busStopId = busStopId
     }
 }
 // http://ws.bus.go.kr/api/rest/arrive/getLowArrInfoByStId?ServiceKey=Lk%2FrcEMNxmVQdKclcu7dRxe5KiRfBGRdxiZMI3lNDwuvwYbs1VCVrSg8dCGBieouCSEs4%2FBArQAHyUBv65sP5Q%3D%3D&stId=121000214

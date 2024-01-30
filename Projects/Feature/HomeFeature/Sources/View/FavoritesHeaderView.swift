@@ -12,7 +12,7 @@ import Core
 import DesignSystem
 
 internal final class FavoritesHeaderView: UITableViewHeaderFooterView {
-    private let stationNameLabel: UILabel = {
+    private let busStopNameLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 14)
         label.textAlignment = .left
@@ -47,26 +47,26 @@ internal final class FavoritesHeaderView: UITableViewHeaderFooterView {
     private func configureUI() {
         contentView.backgroundColor = DesignSystemAsset.gray1.color
         
-        [stationNameLabel, directionLabel].forEach {
+        [busStopNameLabel, directionLabel].forEach {
             contentView.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         
         NSLayoutConstraint.activate([
-            stationNameLabel.leadingAnchor.constraint(
+            busStopNameLabel.leadingAnchor.constraint(
                 equalTo: contentView.leadingAnchor,
                 constant: 10
             ),
-            stationNameLabel.topAnchor.constraint(
+            busStopNameLabel.topAnchor.constraint(
                 equalTo: contentView.topAnchor,
                 constant: 10
             ),
-            stationNameLabel.bottomAnchor.constraint(
+            busStopNameLabel.bottomAnchor.constraint(
                 equalTo: contentView.centerYAnchor
             ),
             
             directionLabel.leadingAnchor.constraint(
-                equalTo: stationNameLabel.leadingAnchor
+                equalTo: busStopNameLabel.leadingAnchor
             ),
             directionLabel.topAnchor.constraint(
                 equalTo: contentView.centerYAnchor
@@ -82,13 +82,13 @@ internal final class FavoritesHeaderView: UITableViewHeaderFooterView {
         name: String,
         direction: String
     ) {
-        stationNameLabel.text = name
+        busStopNameLabel.text = name
         directionLabel.text = direction
     }
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        [stationNameLabel, directionLabel].forEach {
+        [busStopNameLabel, directionLabel].forEach {
             $0.text = nil
         }
     }

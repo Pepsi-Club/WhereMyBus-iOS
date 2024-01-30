@@ -9,5 +9,6 @@
 import Foundation
 
 public protocol HomeCoordinator: Coordinator {
+    func updateFavoritesState(isEmpty: Bool)
     func startSearchFlow()
 }

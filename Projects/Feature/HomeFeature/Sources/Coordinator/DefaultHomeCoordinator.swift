@@ -6,7 +6,8 @@ import FeatureDependency
 import RxSwift
 
 public final class DefaultHomeCoordinator: HomeCoordinator {
-    public var childCoordinators: [Coordinator] = []
+    public var parent: Coordinator?
+    public var childs: [Coordinator] = []
     public var navigationController: UINavigationController
     public let coordinatorProvider: CoordinatorProvider
     
@@ -14,9 +15,11 @@ public final class DefaultHomeCoordinator: HomeCoordinator {
     private let disposeBag = DisposeBag()
     
     public init(
+        parent: Coordinator?,
         navigationController: UINavigationController,
         coordinatorProvider: CoordinatorProvider
     ) {
+        self.parent = parent
         self.navigationController = navigationController
         self.coordinatorProvider = coordinatorProvider
     }
@@ -35,16 +38,12 @@ public final class DefaultHomeCoordinator: HomeCoordinator {
                 }
             )
             .disposed(by: disposeBag)
-        
-        switch UserDefaults.standard.object(forKey: "즐겨찾기있는지") {
-        case .none:
-            favoritesStatus.onNext(.nonEmpty)
-        case .some:
-            favoritesStatus.onNext(.empty)
-        }
+        setFavoritesVC()
     }
     
     private func setFavoritesVC() {
+        guard !hasViewController(vcType: FavoritesViewController.self)
+        else { return }
         let homeViewController = FavoritesViewController(
             viewModel: FavoritesViewModel(coordinator: self)
         )
@@ -55,6 +54,8 @@ public final class DefaultHomeCoordinator: HomeCoordinator {
     }
     
     private func setEmptyVC() {
+        guard !hasViewController(vcType: EmptyFavoritesViewController.self)
+        else { return }
         let emptyFavoritesVC = EmptyFavoritesViewController(
             viewModel: EmptyFavoritesViewModel(coordinator: self)
         )
@@ -64,14 +65,34 @@ public final class DefaultHomeCoordinator: HomeCoordinator {
         )
     }
     
+    private func hasViewController(vcType: UIViewController.Type) -> Bool {
+        navigationController.viewControllers
+            .contains(
+                where: { viewController in
+                    type(of: viewController) == vcType
+                }
+            )
+    }
+}
+
+extension DefaultHomeCoordinator {
+    public func updateFavoritesState(isEmpty: Bool) {
+        favoritesStatus.onNext(isEmpty ? .empty : .nonEmpty)
+    }
+    
     public func startSearchFlow() {
         let searchCoordinator = coordinatorProvider.makeSearchCoordinator(
             navigationController: navigationController
         )
-        childCoordinators.append(searchCoordinator)
+        childs.append(searchCoordinator)
         searchCoordinator.start()
     }
+    
+    public func finish() {
+        
+    }
 }
+
 extension DefaultHomeCoordinator {
     enum FavoritesStatus {
         case empty, nonEmpty

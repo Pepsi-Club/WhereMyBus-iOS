@@ -9,14 +9,16 @@ import ProjectDescription
 
 public extension Array<TargetDependency> {
     enum ThirdPartyExternal: CaseIterable {
-        case rxCocoa, kakaoMap
+        case rxDataSources, kakaoMap, swiftyXMLParser
         
         public var name: String {
             switch self {
-            case .rxCocoa:
-                return "RxCocoa"
+            case .rxDataSources:
+                return "RxDataSources"
             case .kakaoMap:
                 return "KakaoMapsSDK_SPM"
+            case .swiftyXMLParser:
+                return "SwiftyXMLParser"
             }
         }
     }

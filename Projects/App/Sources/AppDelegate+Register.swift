@@ -18,15 +18,20 @@ extension AppDelegate {
         DIContainer.register(
             type: FavoritesUseCase.self,
             DefaultFavoritesUseCase(
-                stationArrivalInfoRepository: stationArrivalInfoRepository
+                busStopArrivalInfoRepository: busStopArrivalInfoRepository,
+                favoritesRepository: favoritesRepository
             )
         )
     }
 }
 
 extension AppDelegate {
-    var stationArrivalInfoRepository: StationArrivalInfoRepository {
-        DefaultStationArrivalInfoRepository(networkService: networkService)
+    var favoritesRepository: FavoritesRepository {
+        DefaultFavoritesRepository()
+    }
+    
+    var busStopArrivalInfoRepository: BusStopArrivalInfoRepository {
+        DefaultBusStopArrivalInfoRepository(networkService: networkService)
     }
 }
 

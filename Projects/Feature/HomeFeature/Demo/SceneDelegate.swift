@@ -18,6 +18,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.makeKeyAndVisible()
                 
         let homeCoordinator = DefaultHomeCoordinator(
+            parent: nil,
             navigationController: navigationController, 
             coordinatorProvider: MockCoordinatorProvider()
         )
@@ -52,7 +53,8 @@ final class MockCoordinatorProvider: CoordinatorProvider {
 }
 
 final class MockCoordinator: Coordinator {
-    var childCoordinators: [Coordinator] = []
+    var parent: Coordinator?
+    var childs: [Coordinator] = []
     
     let testMessage: String
     var navigationController: UINavigationController
@@ -73,6 +75,10 @@ final class MockCoordinator: Coordinator {
             testViewController,
             animated: true
         )
+    }
+    
+    func finish() {
+        
     }
 }
 

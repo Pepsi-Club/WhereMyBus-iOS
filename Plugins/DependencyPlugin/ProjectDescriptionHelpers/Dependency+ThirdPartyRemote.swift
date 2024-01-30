@@ -14,23 +14,27 @@ public extension Array<Package> {
 
 public extension Array<Package>.ThirdPartyRemote {
     enum SPM: CaseIterable {
-        case rxSwift, kakaoMap
+        case rxDataSources, kakaoMap, swiftyXMLParser
         
         public var url: String {
             switch self {
-            case .rxSwift:
-                return "https://github.com/ReactiveX/RxSwift"
+            case .rxDataSources:
+                return "https://github.com/RxSwiftCommunity/RxDataSources"
             case .kakaoMap:
                 return "https://github.com/kakao-mapsSDK/KakaoMapsSDK-SPM"
+            case .swiftyXMLParser:
+                return "https://github.com/yahoojapan/SwiftyXMLParser"
             }
         }
         
         public var upToNextMajor: Version {
             switch self {
-            case .rxSwift:
-                return "6.0.0"
+            case .rxDataSources:
+                return "5.0.2"
             case .kakaoMap:
                 return "2.6.3"
+            case .swiftyXMLParser:
+                return "5.6.0"
             }
         }
     }

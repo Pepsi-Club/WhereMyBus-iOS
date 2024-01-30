@@ -8,6 +8,7 @@
 
 import Foundation
 
+import Core
 import Domain
 import FeatureDependency
 
@@ -15,6 +16,7 @@ import RxSwift
 
 public final class EmptyFavoritesViewModel: ViewModel {
     private let coordinator: HomeCoordinator
+    @Injected(FavoritesUseCase.self) var useCase: FavoritesUseCase
     
     private let disposeBag = DisposeBag()
     
@@ -34,12 +36,24 @@ public final class EmptyFavoritesViewModel: ViewModel {
             )
             .disposed(by: disposeBag)
         
+        useCase.favorites
+            .withUnretained(self)
+            .subscribe(
+                onNext: { viewModel, favorites in
+                    viewModel.coordinator.updateFavoritesState(
+                        isEmpty: favorites.busStops.isEmpty
+                    )
+                }
+            )
+            .disposed(by: disposeBag)
+        
         return output
     }
 }
 
 extension EmptyFavoritesViewModel {
     public struct Input {
+        let viewWillAppearEvent: Observable<Void>
         let searchBtnTapEvent: Observable<Void>
     }
     
