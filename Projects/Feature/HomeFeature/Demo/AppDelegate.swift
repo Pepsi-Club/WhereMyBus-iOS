@@ -73,7 +73,7 @@ final class MockFavoritesRepository: FavoritesRepository {
     }
 }
 
-final class MockBusStopArrivalInfoRepository: NewBusStopArrivalInfoRepository {
+final class MockBusStopArrivalInfoRepository: BusStopArrivalInfoRepository {
     var responses: BehaviorSubject<[RouteArrivalInfo]> = .init(value: [
         .init(
             routeName: "테스트",

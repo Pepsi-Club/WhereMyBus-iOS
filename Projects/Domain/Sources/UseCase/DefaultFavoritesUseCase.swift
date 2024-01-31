@@ -12,20 +12,17 @@ import RxSwift
 import RxCocoa
 
 public final class DefaultFavoritesUseCase: FavoritesUseCase {
-    private let busStopArrivalInfoRepository: NewBusStopArrivalInfoRepository
+    private let busStopArrivalInfoRepository: BusStopArrivalInfoRepository
     private let favoritesRepository: FavoritesRepository
     
-    public let arrivalInfoList = PublishSubject<[RouteArrivalInfo]>()
-    public let busArrivalInfoResponse = 
-    PublishSubject<[BusArrivalInfoResponse]>()
-    public let favorites = BehaviorSubject<FavoritesResponse>(
+    public var favorites = BehaviorSubject<FavoritesResponse>(
         value: .init(busStops: [])
     )
-    
+    public let favoritesSections = PublishSubject<[FavoritesSection]>()
     private let disposeBag = DisposeBag()
     
     public init(
-        busStopArrivalInfoRepository: NewBusStopArrivalInfoRepository,
+        busStopArrivalInfoRepository: BusStopArrivalInfoRepository,
         favoritesRepository: FavoritesRepository
     ) {
         self.busStopArrivalInfoRepository = busStopArrivalInfoRepository
@@ -33,37 +30,34 @@ public final class DefaultFavoritesUseCase: FavoritesUseCase {
         bindFavorites()
     }
     
-    public func requestBusStopArrivalInfo() {
+    public func fetchFavoritesArrivals() {
         do {
-            let favorites = try favorites.value()
-            // Mock
-            let request = ArrivalInfoRequest(
-                busStopId: "테스트",
-                busStopName: "테스트",
-                routeName: ["테스트"]
+            let favoritesBusStops = try favoritesRepository.favorites
+                .value()
+                .busStops
+            Observable.combineLatest(
+                favoritesBusStops
+                    .map { response in
+                        busStopArrivalInfoRepository.fetchArrivalList(
+                            busStopId: response.busStopId,
+                            busStopName: response.busStopName
+                        )
+                    }
             )
-            busStopArrivalInfoRepository.fetchArrivalList(
-                busStopId: request.busStopId,
-                busStopName: request.busStopName
-            )
-            .map { response in
-                response.buses.filter { response in
-                    request.routeName
-                        .contains { requestRouteName in
-                            requestRouteName == response.routeName
-                        }
-                }
-            }
             .withUnretained(self)
-            .subscribe(
-                onNext: { useCase, responses in
-                    useCase.busArrivalInfoResponse.onNext(responses)
-                    useCase.arrivalInfoList.onNext(useCase.convert(responses))
-                }
-            )
+            .map { useCase, responses in
+                useCase.filterFavorites(
+                    responses: responses,
+                    favoritesBusStops: favoritesBusStops
+                )
+            }
+            .map { responses in
+                responses.toSection
+            }
+            .bind(to: favoritesSections)
             .disposed(by: disposeBag)
         } catch {
-            print(#function, "Fail to favorites.value()")
+            favoritesSections.onError(error)
         }
     }
     
@@ -73,35 +67,18 @@ public final class DefaultFavoritesUseCase: FavoritesUseCase {
             .disposed(by: disposeBag)
     }
     
-    private func convert(
-        _ input: [BusArrivalInfoResponse]
-    ) -> [RouteArrivalInfo] {
-        input.map { response in
-            let splittedMsg1 = response.firstArrivalTime
-                .split(separator: "[")
-                .map { String($0) }
-            let splittedMsg2 = response.secondArrivalTime
-                .split(separator: "[")
-                .map { String($0) }
-            let firstArrivalTime = splittedMsg1[0]
-            let secondArrivalTime = splittedMsg2[0]
-            var firstArrivalRemaining = ""
-            var secondArrivalRemaining = ""
-            if splittedMsg1.count > 1 {
-                firstArrivalRemaining = splittedMsg1[1]
-                firstArrivalRemaining.removeLast()
+    private func filterFavorites(
+        responses: [BusStopArrivalInfoResponse],
+        favoritesBusStops: [BusStopArrivalInfoResponse]
+    ) -> [BusStopArrivalInfoResponse] {
+        responses.filter { busStop in
+            busStop.buses.contains { bus in
+                favoritesBusStops.contains { busStop in
+                    busStop.buses.contains { busRequest in
+                        busRequest.routeId == bus.routeId
+                    }
+                }
             }
-            if splittedMsg2.count > 1 {
-                secondArrivalRemaining = splittedMsg2[1]
-                secondArrivalRemaining.removeLast()
-            }
-            return RouteArrivalInfo(
-                routeName: response.routeName,
-                firstArrivalTime: firstArrivalTime,
-                firstArrivalRemaining: firstArrivalRemaining,
-                secondArrivalTime: secondArrivalTime,
-                secondArrivalRemaining: secondArrivalRemaining
-            )
         }
     }
 }

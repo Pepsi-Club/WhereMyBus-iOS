@@ -22,15 +22,32 @@ public final class FavoritesViewModel: ViewModel {
     
     public func transform(input: Input) -> Output {
         let output = Output(
-            arrivalInfoList: .init(), 
+            favoritesSections: .init(),
             arrivalInfoResponse: .init()
         )
+        
+        Observable.combineLatest(
+            input.viewWillAppearEvent,
+            input.refreshBtnTapEvent
+        )
+        .withUnretained(self)
+        .subscribe(
+            onNext: { viewModel, _ in
+                viewModel.useCase.fetchFavoritesArrivals()
+            }
+        )
+        .disposed(by: disposeBag)
         
         input.viewWillAppearEvent
             .withUnretained(self)
             .subscribe(
                 onNext: { viewModel, _ in
-                    viewModel.useCase.requestBusStopArrivalInfo()
+                    guard let favorites = try? viewModel.useCase.favorites
+                        .value()
+                    else { return }
+                    viewModel.coordinator.updateFavoritesState(
+                        isEmpty: favorites.busStops.isEmpty
+                    )
                 }
             )
             .disposed(by: disposeBag)
@@ -44,21 +61,6 @@ public final class FavoritesViewModel: ViewModel {
             )
             .disposed(by: disposeBag)
         
-        input.refreshBtnTapEvent
-            .withUnretained(self)
-            .subscribe(
-                onNext: { viewModel, _ in
-                    viewModel.useCase.requestBusStopArrivalInfo()
-                }
-            )
-            .disposed(by: disposeBag)
-        
-        useCase.arrivalInfoList
-            .bind(
-                to: output.arrivalInfoList
-            )
-            .disposed(by: disposeBag)
-        
         useCase.favorites
             .withUnretained(self)
             .subscribe(
@@ -67,6 +69,12 @@ public final class FavoritesViewModel: ViewModel {
                         isEmpty: favorites.busStops.isEmpty
                     )
                 }
+            )
+            .disposed(by: disposeBag)
+        
+        useCase.favoritesSections
+            .bind(
+                to: output.favoritesSections
             )
             .disposed(by: disposeBag)
         
@@ -85,7 +93,7 @@ extension FavoritesViewModel {
     }
     
     public struct Output {
-        var arrivalInfoList: PublishSubject<[RouteArrivalInfo]>
+        var favoritesSections: PublishSubject<[FavoritesSection]>
         var arrivalInfoResponse: PublishSubject<ArrivalInfoResponse>
     }
 }
