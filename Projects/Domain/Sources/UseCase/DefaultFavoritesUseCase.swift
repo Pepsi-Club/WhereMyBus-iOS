@@ -18,7 +18,8 @@ public final class DefaultFavoritesUseCase: FavoritesUseCase {
     public var favorites = BehaviorSubject<FavoritesResponse>(
         value: .init(busStops: [])
     )
-    public let favoritesSections = PublishSubject<[FavoritesSection]>()
+    public let busStopArrivalInfoResponse 
+    = BehaviorSubject<[BusStopArrivalInfoResponse]>(value: [])
     private let disposeBag = DisposeBag()
     
     public init(
@@ -51,19 +52,21 @@ public final class DefaultFavoritesUseCase: FavoritesUseCase {
                     favoritesBusStops: favoritesBusStops
                 )
             }
-            .map { responses in
-                responses.toSection
-            }
-            .bind(to: favoritesSections)
+            .bind(to: busStopArrivalInfoResponse)
             .disposed(by: disposeBag)
         } catch {
-            favoritesSections.onError(error)
+            busStopArrivalInfoResponse.onError(error)
         }
     }
     
     private func bindFavorites() {
         favoritesRepository.favorites
-            .bind(to: favorites)
+            .withUnretained(self)
+            .subscribe(
+                onNext: { useCase, favorites in
+                    useCase.favorites.onNext(favorites)
+                }
+            )
             .disposed(by: disposeBag)
     }
     

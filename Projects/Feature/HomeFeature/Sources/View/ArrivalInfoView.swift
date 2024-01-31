@@ -13,19 +13,17 @@ import DesignSystem
 final class ArrivalInfoView: UIView {
     private let timeLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(
-            ofSize: 10,
-            weight: .bold
+        label.font = DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(
+            size: 14
         )
-        label.textColor = .black
+        label.textColor = DesignSystemAsset.routeTimeColor.color
         return label
     }()
     
     private let remainingLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(
-            ofSize: 8,
-            weight: .light
+        label.font = DesignSystemFontFamily.NanumSquareNeoOTF.light.font(
+            size: 12
         )
         label.textColor = DesignSystemAsset.remainingColor.color
         return label
@@ -44,15 +42,17 @@ final class ArrivalInfoView: UIView {
         [timeLabel, remainingLabel].forEach {
             addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
-            $0.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
         }
         
         NSLayoutConstraint.activate([
-            timeLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
+            timeLabel.bottomAnchor.constraint(
+                equalTo: centerYAnchor,
+                constant: -3
+            ),
             
-            remainingLabel.leadingAnchor.constraint(
-                equalTo: timeLabel.trailingAnchor,
-                constant: 10
+            remainingLabel.topAnchor.constraint(
+                equalTo: centerYAnchor,
+                constant: 3
             )
         ])
     }
@@ -65,9 +65,11 @@ final class ArrivalInfoView: UIView {
         if time.contains(where: { Int(String($0)) != nil }) {
             isContainTime = true
         }
+        let routeTimeColor = DesignSystemAsset.routeTimeColor.color
         let carrotOrange = DesignSystemAsset.carrotOrange.color
         timeLabel.text = time
-        timeLabel.textColor = isContainTime ? .black : carrotOrange
+        timeLabel.textColor = isContainTime ?
+        routeTimeColor : carrotOrange
         remainingLabel.text = remainingStops
     }
 }

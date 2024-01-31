@@ -33,17 +33,20 @@ public final class DefaultBusStopArrivalInfoRepository:
         )
         .map { data in
             let xml = XML.parse(data)
-            let busResponses: [BusArrivalInfoResponse] = xml
+            let busResponses: [BusArrivalInfoResponse?] = xml
                 .ServiceResult
                 .msgBody
                 .itemList
-                .compactMap {
+                .map {
                     guard let routeId = $0.busRouteId.text,
                           let routeName = $0.busRouteAbrv.text,
                           let busType = $0.routeType.text,
                           let firstArrivalTime = $0.arrmsg1.text,
                           let secondArrivalTime = $0.arrmsg2.text
-                    else { return nil }
+                    else {
+                        print("Fail to XML Parse")
+                        return nil
+                    }
                     return BusArrivalInfoResponse(
                         routeId: routeId,
                         isFavorites: false,

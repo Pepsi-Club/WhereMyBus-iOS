@@ -59,7 +59,7 @@ extension FavoritesResponse {
     }
 }
 
-public struct BusStopArrivalInfoResponse: Codable {
+public struct BusStopArrivalInfoResponse: Codable, Hashable {
     public let busStopId: String
     public let busStopName: String
     public let direction: String
@@ -106,8 +106,8 @@ extension Array<BusStopArrivalInfoResponse> {
                         return .init(
                             routeName: bus.routeName,
                             firstArrivalTime: firstArrivalTime,
-                            firstArrivalRemaining: secondArrivalTime,
-                            secondArrivalTime: firstArrivalRemaining,
+                            firstArrivalRemaining: firstArrivalRemaining,
+                            secondArrivalTime: secondArrivalTime,
                             secondArrivalRemaining: secondArrivalRemaining
                         )
                     }
@@ -122,7 +122,7 @@ extension Array<BusStopArrivalInfoResponse> {
     }
 }
 
-public struct BusArrivalInfoResponse: Codable, Equatable {
+public struct BusArrivalInfoResponse: Codable, Hashable {
     public let routeId: String
     public let isFavorites: Bool
     public let routeName: String

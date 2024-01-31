@@ -12,24 +12,10 @@ import Core
 import DesignSystem
 
 class FavoritesTVCell: UITableViewCell {
-    let likeBtn: UIButton = {
-        var config = UIButton.Configuration.plain()
-        let image = UIImage(systemName: "star.fill")
-        let imgConfig = UIImage.SymbolConfiguration(
-            font: .systemFont(ofSize: 13)
-        )
-        config.image = image
-        config.preferredSymbolConfigurationForImage = imgConfig
-        config.baseForegroundColor = DesignSystemAsset.favoritesOrange.color
-        let button = UIButton(configuration: config)
-        return button
-    }()
-    
     private let routeLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(
-            ofSize: 18,
-            weight: .bold
+        label.font = DesignSystemFontFamily.NanumSquareNeoOTF.extraBold.font(
+            size: 22
         )
         label.textColor = DesignSystemAsset.limeGreen.color
         return label
@@ -37,15 +23,6 @@ class FavoritesTVCell: UITableViewCell {
     
     private let firstArrivalInfoView = ArrivalInfoView()
     private let secondArrivalInfoView = ArrivalInfoView()
-    
-    private lazy var arrivalInfoStackView: UIStackView = {
-        let stackView = UIStackView(
-            arrangedSubviews: [firstArrivalInfoView, secondArrivalInfoView]
-        )
-        stackView.spacing = 10
-        stackView.axis = .vertical
-        return stackView
-    }()
     
     let alarmBtn: UIButton = {
         var config = UIButton.Configuration.plain()
@@ -70,8 +47,8 @@ class FavoritesTVCell: UITableViewCell {
     }
     
     override func prepareForReuse() {
-        likeBtn.configuration?.image = UIImage(systemName: "star.fill")
-        alarmBtn.configuration?.image = UIImage(systemName: "deskclock")
+        let mainColor = DesignSystemAsset.mainColor.color
+        alarmBtn.configuration?.baseForegroundColor = mainColor
         [routeLabel].forEach {
             $0.text = nil
         }
@@ -96,7 +73,12 @@ class FavoritesTVCell: UITableViewCell {
     private func configureUI() {
         contentView.backgroundColor = DesignSystemAsset.gray1.color
         
-        [likeBtn, alarmBtn, routeLabel, arrivalInfoStackView].forEach {
+        [
+            routeLabel,
+            firstArrivalInfoView,
+            secondArrivalInfoView,
+            alarmBtn
+        ].forEach {
             contentView.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
             $0.centerYAnchor.constraint(
@@ -105,24 +87,24 @@ class FavoritesTVCell: UITableViewCell {
         }
         
         NSLayoutConstraint.activate([
-            likeBtn.leadingAnchor.constraint(
+            routeLabel.leadingAnchor.constraint(
                 equalTo: contentView.leadingAnchor,
-                constant: 10
-            ),
-            
-            routeLabel.trailingAnchor.constraint(
-                equalTo: contentView.centerXAnchor,
-                constant: -30
-            ),
-            
-            arrivalInfoStackView.trailingAnchor.constraint(
-                equalTo: contentView.centerXAnchor,
-                constant: 10
+                constant: 20
             ),
             
             alarmBtn.trailingAnchor.constraint(
                 equalTo: contentView.trailingAnchor,
-                constant: -10
+                constant: -15
+            ),
+            
+            secondArrivalInfoView.trailingAnchor.constraint(
+                equalTo: contentView.trailingAnchor,
+                constant: .screenWidth * -0.35
+            ),
+            
+            firstArrivalInfoView.trailingAnchor.constraint(
+                equalTo: contentView.trailingAnchor,
+                constant: .screenWidth * -0.6
             ),
         ])
     }
