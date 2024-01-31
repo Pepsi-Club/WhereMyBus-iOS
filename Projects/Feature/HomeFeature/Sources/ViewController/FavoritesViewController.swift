@@ -10,7 +10,7 @@ import RxDataSources
 
 public final class FavoritesViewController: UIViewController {
     typealias FavoritesDataSource =
-    RxTableViewSectionedReloadDataSource<ArrivalInfoResponse>
+    RxTableViewSectionedReloadDataSource<FavoritesSection>
     private let viewModel: FavoritesViewModel
     
     private let disposeBag = DisposeBag()
@@ -33,14 +33,14 @@ public final class FavoritesViewController: UIViewController {
         var config = UIButton.Configuration.plain()
         config.baseForegroundColor = .black
         config.imagePadding = 5
-        // MARK: Image
+        // Image
         let image = UIImage(systemName: "arrow.triangle.2.circlepath")
         let imgConfig = UIImage.SymbolConfiguration(
             font: .systemFont(ofSize: 13)
         )
         config.image = image
         config.preferredSymbolConfigurationForImage = imgConfig
-        // MARK: Title
+        // Title
         var titleContainer = AttributeContainer()
         titleContainer.font = .systemFont(
             ofSize: 12
@@ -139,12 +139,12 @@ public final class FavoritesViewController: UIViewController {
             )
         )
         
-//        let dataSource = FavoritesDataSource
-//        { dataSource, tableView, indexPath, item in
-//            let cell = tableView.dequeueReusableCell(
+//        let dataSource = FavoritesDataSource { _, tableView, indexPath, item in
+//            guard let cell = tableView.dequeueReusableCell(
 //                withIdentifier: FavoritesTVCell.identifier,
 //                for: indexPath
-//            ) as? FavoritesTVCell ?? .init()
+//            ) as? FavoritesTVCell
+//            else { return UITableViewCell() }
 //            cell.updateUI(
 //                routeName: item.routeName,
 //                firstArrivalTime: item.firstArrivalTime,
@@ -154,26 +154,26 @@ public final class FavoritesViewController: UIViewController {
 //            )
 //            return cell
 //        }
-        
-//        output.arrivalInfoResponse.bind(
-//            to: favoritesTableView.rx.items(
-//                dataSource: dataSource
+//        
+//        output.favoritesSections
+//            .bind(
+//                to: favoritesTableView.rx.items(dataSource: dataSource)
 //            )
-//        )
+//            .disposed(by: disposeBag)
         
-        output.arrivalInfoList
+        output.favoritesSections
             .bind(
                 to: favoritesTableView.rx.items(
                     cellIdentifier: FavoritesTVCell.identifier,
-                    cellType: FavoritesTVCell.self
-                ),
-                curriedArgument: { _, item, cell in
+                    cellType: FavoritesTVCell.self),
+                curriedArgument: { row, item, cell in
+                    let bus = item.items[row]
                     cell.updateUI(
-                        routeName: item.routeName,
-                        firstArrivalTime: item.firstArrivalTime,
-                        firstArrivalRemaining: item.firstArrivalRemaining,
-                        secondArrivalTime: item.secondArrivalTime,
-                        secondArrivalRemaining: item.secondArrivalRemaining
+                        routeName: bus.routeName,
+                        firstArrivalTime: bus.firstArrivalTime,
+                        firstArrivalRemaining: bus.firstArrivalRemaining,
+                        secondArrivalTime: bus.secondArrivalTime,
+                        secondArrivalRemaining: bus.secondArrivalRemaining
                     )
                 }
             )

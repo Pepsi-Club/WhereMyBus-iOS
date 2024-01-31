@@ -79,6 +79,42 @@ public struct BusStopArrivalInfoResponse: Codable {
 }
 
 extension Array<BusStopArrivalInfoResponse> {
+    public var toSection: [FavoritesSection] {
+        map { element in
+                .init(
+                    busStopName: element.busStopName,
+                    busStopDirection: "XX 방면",
+                    items: element.buses.map { bus in
+                        let splittedMsg1 = bus.firstArrivalTime
+                            .split(separator: "[")
+                            .map { String($0) }
+                        let splittedMsg2 = bus.secondArrivalTime
+                            .split(separator: "[")
+                            .map { String($0) }
+                        let firstArrivalTime = splittedMsg1[0]
+                        let secondArrivalTime = splittedMsg2[0]
+                        var firstArrivalRemaining = ""
+                        var secondArrivalRemaining = ""
+                        if splittedMsg1.count > 1 {
+                            firstArrivalRemaining = splittedMsg1[1]
+                            firstArrivalRemaining.removeLast()
+                        }
+                        if splittedMsg2.count > 1 {
+                            secondArrivalRemaining = splittedMsg2[1]
+                            secondArrivalRemaining.removeLast()
+                        }
+                        return .init(
+                            routeName: bus.routeName,
+                            firstArrivalTime: firstArrivalTime,
+                            firstArrivalRemaining: secondArrivalTime,
+                            secondArrivalTime: firstArrivalRemaining,
+                            secondArrivalRemaining: secondArrivalRemaining
+                        )
+                    }
+                )
+        }
+    }
+    
     func hasBusStop(busStopId: String) -> Bool {
         contains { station in
             station.busStopId == busStopId

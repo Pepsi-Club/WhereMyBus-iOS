@@ -11,8 +11,8 @@ import Foundation
 import RxSwift
 
 public protocol FavoritesUseCase {
-    var arrivalInfoList: PublishSubject<[RouteArrivalInfo]> { get }
     var favorites: BehaviorSubject<FavoritesResponse> { get }
+    var favoritesSections: PublishSubject<[FavoritesSection]> { get }
     
-    func requestBusStopArrivalInfo()
+    func fetchFavoritesArrivals()
 }

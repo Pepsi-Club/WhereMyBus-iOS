@@ -30,8 +30,8 @@ extension AppDelegate {
         DefaultFavoritesRepository()
     }
     
-    var busStopArrivalInfoRepository: NewBusStopArrivalInfoRepository {
-        NewDefaultBusStopArrivalInfoRepository(networkService: networkService)
+    var busStopArrivalInfoRepository: BusStopArrivalInfoRepository {
+        DefaultBusStopArrivalInfoRepository(networkService: networkService)
     }
 }
 

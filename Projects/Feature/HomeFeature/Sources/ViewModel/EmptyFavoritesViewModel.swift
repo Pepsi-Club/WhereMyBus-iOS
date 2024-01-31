@@ -36,6 +36,20 @@ public final class EmptyFavoritesViewModel: ViewModel {
             )
             .disposed(by: disposeBag)
         
+        input.viewWillAppearEvent
+            .withUnretained(self)
+            .subscribe(
+                onNext: { viewModel, _ in
+                    guard let favorites = try? viewModel.useCase.favorites
+                        .value()
+                    else { return }
+                    viewModel.coordinator.updateFavoritesState(
+                        isEmpty: favorites.busStops.isEmpty
+                    )
+                }
+            )
+            .disposed(by: disposeBag)
+        
         useCase.favorites
             .withUnretained(self)
             .subscribe(

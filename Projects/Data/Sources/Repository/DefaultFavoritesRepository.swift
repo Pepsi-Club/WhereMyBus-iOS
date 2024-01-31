@@ -20,6 +20,7 @@ public final class DefaultFavoritesRepository: FavoritesRepository {
     
     public init() {
         fetchFavorites()
+        bindUpdate()
     }
     
     public func addRoute(
@@ -71,5 +72,16 @@ public final class DefaultFavoritesRepository: FavoritesRepository {
         } catch {
             favorites.onError(error)
         }
+    }
+    
+    private func bindUpdate() {
+        favorites
+            .subscribe(
+                onNext: { response in
+                    guard let data = response.encode() else { return }
+                    UserDefaults.standard.setValue(data, forKey: "Favorites")
+                }
+            )
+            .disposed(by: disposeBag)
     }
 }
