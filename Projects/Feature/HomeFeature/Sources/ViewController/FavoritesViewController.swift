@@ -9,14 +9,16 @@ import RxCocoa
 import RxDataSources
 
 public final class FavoritesViewController: UIViewController {
-    typealias FavoritesDataSource =
-    RxTableViewSectionedReloadDataSource<FavoritesSection>
     private let viewModel: FavoritesViewModel
     
     private let disposeBag = DisposeBag()
     private let headerTapEvent = PublishSubject<Int>()
-    private let likeBtnTapEvent = PublishSubject<IndexPath>()
     private let alarmBtnTapEvent = PublishSubject<IndexPath>()
+    private let isTableViewEditMode = BehaviorSubject(value: false)
+    
+    private var dataSource: FavoritesDataSource!
+    private var snapshot: FavoritesSnapshot!
+    private var headerInfoList: [[String: String]] = []
     
     private let busIconView: UIImageView = {
         let imageView = UIImageView()
@@ -54,11 +56,29 @@ public final class FavoritesViewController: UIViewController {
         return button
     }()
     
-    private let favoritesTableView: UITableView = {
+    private let editBtn: UIButton = {
+        var config = UIButton.Configuration.plain()
+        config.baseForegroundColor = .black
+        config.imagePadding = 5
+        var titleContainer = AttributeContainer()
+        titleContainer.font = .systemFont(
+            ofSize: 13
+        )
+        config.attributedTitle = AttributedString(
+            "편집",
+            attributes: titleContainer
+        )
+        let button = UIButton(configuration: config)
+        return button
+    }()
+    
+    private lazy var favoritesTableView: UITableView = {
         let tableView = UITableView()
         tableView.backgroundColor = .white
         tableView.register(FavoritesHeaderView.self)
         tableView.register(FavoritesTVCell.self)
+        tableView.dataSource = dataSource
+        tableView.delegate = self
         return tableView
     }()
     
@@ -66,21 +86,29 @@ public final class FavoritesViewController: UIViewController {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
-        
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     public override func viewDidLoad() {
         super.viewDidLoad()
+        configureDataSource()
         configureUI()
         bind()
     }
     
     private func configureUI() {
         view.backgroundColor = .white
+        navigationController?.isNavigationBarHidden = true
         
-        [busIconView, searchBtn, refreshBtn, favoritesTableView].forEach {
+        [
+            busIconView,
+            searchBtn,
+            editBtn,
+            refreshBtn,
+            favoritesTableView
+        ].forEach {
             view.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
@@ -103,9 +131,22 @@ public final class FavoritesViewController: UIViewController {
                 multiplier: 0.95
             ),
             
-            refreshBtn.topAnchor.constraint(equalTo: searchBtn.bottomAnchor),
-            refreshBtn.trailingAnchor.constraint(
-                equalTo: safeArea.trailingAnchor
+            refreshBtn.topAnchor.constraint(
+                equalTo: searchBtn.bottomAnchor,
+                constant: 10
+            ),
+            refreshBtn.leadingAnchor.constraint(
+                equalTo: safeArea.leadingAnchor,
+                constant: 15
+            ),
+            
+            editBtn.topAnchor.constraint(
+                equalTo: searchBtn.bottomAnchor,
+                constant: 10
+            ),
+            editBtn.trailingAnchor.constraint(
+                equalTo: safeArea.trailingAnchor,
+                constant: -20
             ),
             
             favoritesTableView.topAnchor.constraint(
@@ -129,90 +170,117 @@ public final class FavoritesViewController: UIViewController {
         let output = viewModel.transform(
             input: .init(
                 viewWillAppearEvent: rx
-                    .methodInvoked(#selector(UIViewController.viewWillAppear))
+                    .methodInvoked(
+                        #selector(UIViewController.viewWillAppear)
+                    )
                     .map { _ in },
                 searchBtnTapEvent: searchBtn.rx.tap.asObservable(),
                 refreshBtnTapEvent: refreshBtn.rx.tap.asObservable(),
-                likeBtnTapEvent: likeBtnTapEvent.asObservable(),
                 alarmBtnTapEvent: alarmBtnTapEvent.asObservable(),
                 busStopTapEvent: headerTapEvent
             )
         )
         
-//        let dataSource = FavoritesDataSource { _, tableView, indexPath, item in
-//            guard let cell = tableView.dequeueReusableCell(
-//                withIdentifier: FavoritesTVCell.identifier,
-//                for: indexPath
-//            ) as? FavoritesTVCell
-//            else { return UITableViewCell() }
-//            cell.updateUI(
-//                routeName: item.routeName,
-//                firstArrivalTime: item.firstArrivalTime,
-//                firstArrivalRemaining: item.firstArrivalRemaining,
-//                secondArrivalTime: item.secondArrivalTime,
-//                secondArrivalRemaining: item.secondArrivalRemaining
-//            )
-//            return cell
-//        }
-//        
-//        output.favoritesSections
-//            .bind(
-//                to: favoritesTableView.rx.items(dataSource: dataSource)
-//            )
-//            .disposed(by: disposeBag)
-        
-        output.favoritesSections
-            .bind(
-                to: favoritesTableView.rx.items(
-                    cellIdentifier: FavoritesTVCell.identifier,
-                    cellType: FavoritesTVCell.self),
-                curriedArgument: { row, item, cell in
-                    let bus = item.items[row]
-                    cell.updateUI(
-                        routeName: bus.routeName,
-                        firstArrivalTime: bus.firstArrivalTime,
-                        firstArrivalRemaining: bus.firstArrivalRemaining,
-                        secondArrivalTime: bus.secondArrivalTime,
-                        secondArrivalRemaining: bus.secondArrivalRemaining
+        output.busStopArrivalInfoResponse
+            .withUnretained(self)
+            .subscribe(
+                onNext: { viewController, response in
+                    response.forEach { response in
+                        viewController.updateHeaderInfo(
+                            name: response.busStopName,
+                            direction: response.direction
+                        )
+                        let header = viewController.favoritesTableView
+                            .tableHeaderView as? FavoritesHeaderView
+                        header?.updateUI(
+                            name: response.busStopName,
+                            direction: response.direction
+                        )
+                    }
+                    viewController.updateSnapshot(busStopResponse: response)
+                    let timeStr = Date().toString(dateFormat: "HH:mm")
+                    viewController.refreshBtn.setTitle(
+                        "\(timeStr) 업데이트",
+                        for: .normal
                     )
                 }
             )
             .disposed(by: disposeBag)
-    }
-}
-
-extension FavoritesViewController: UITableViewDataSource, UITableViewDelegate {
-    public func tableView(
-        _ tableView: UITableView,
-        numberOfRowsInSection section: Int
-    ) -> Int {
-        2
+        
+        editBtn.rx.tap
+            .asObservable()
+            .withUnretained(self)
+            .subscribe(
+                onNext: { viewController, _ in
+                    guard let isEditMode = try? viewController
+                        .isTableViewEditMode.value()
+                    else { return }
+                    viewController.isTableViewEditMode
+                        .onNext(!isEditMode)
+                }
+            )
+            .disposed(by: disposeBag)
+        
+        isTableViewEditMode
+            .withUnretained(self)
+            .subscribe(
+                onNext: { viewController, isEditMode in
+                    viewController.editBtn.setTitle(
+                        isEditMode ? "완료" : "편집",
+                        for: .normal
+                    )
+                    viewController.favoritesTableView.isEditing = isEditMode
+                }
+            )
+            .disposed(by: disposeBag)
     }
     
-    public func tableView(
-        _ tableView: UITableView,
-        cellForRowAt indexPath: IndexPath
-    ) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(
+    private func configureDataSource() {
+        dataSource = .init(
+            tableView: favoritesTableView
+        ) { [weak self] tableView, indexPath, response in
+            guard let self else { return UITableViewCell() }
+            let cell = self.configureCell(
+                tableView: tableView,
+                indexPath: indexPath,
+                response: response
+            )
+            cell?.alarmBtn.rx.tap
+                .map { _ in indexPath }
+                .bind(to: self.alarmBtnTapEvent)
+                .disposed(by: self.disposeBag)
+            return cell
+        }
+    }
+    
+    private func configureCell(
+        tableView: UITableView,
+        indexPath: IndexPath,
+        response: BusArrivalInfoResponse
+    ) -> FavoritesTVCell? {
+        guard let cell = tableView.dequeueReusableCell(
             withIdentifier: FavoritesTVCell.identifier,
             for: indexPath
-        ) as? FavoritesTVCell ?? .init()
-        cell.alarmBtn.rx.tap
-            .map { _ in indexPath }
-            .bind(to: alarmBtnTapEvent)
-            .disposed(by: disposeBag)
-        cell.likeBtn.rx.tap
-            .map { _ in indexPath }
-            .bind(to: likeBtnTapEvent)
-            .disposed(by: disposeBag)
-        return cell
-    }
-    
-    public func tableView(
-        _ tableView: UITableView,
-        willDisplay cell: UITableViewCell,
-        forRowAt indexPath: IndexPath
-    ) {
+        ) as? FavoritesTVCell
+        else { return nil }
+        let splittedMsg1 = response.firstArrivalTime
+            .split(separator: "[")
+            .map { String($0) }
+        let splittedMsg2 = response.secondArrivalTime
+            .split(separator: "[")
+            .map { String($0) }
+        let firstArrivalTime = splittedMsg1[0]
+        let secondArrivalTime = splittedMsg2[0]
+        var firstArrivalRemaining = ""
+        var secondArrivalRemaining = ""
+        if splittedMsg1.count > 1 {
+            firstArrivalRemaining = splittedMsg1[1]
+            firstArrivalRemaining.removeLast()
+        }
+        if splittedMsg2.count > 1 {
+            secondArrivalRemaining = splittedMsg2[1]
+            secondArrivalRemaining.removeLast()
+        }
         let isLastCell = tableView.numberOfRows(
             inSection: indexPath.section
         ) - 1 == indexPath.row
@@ -221,10 +289,53 @@ extension FavoritesViewController: UITableViewDataSource, UITableViewDelegate {
                 corners: [.bottomLeft, .bottomRight]
             )
         }
+        cell.updateUI(
+            routeName: response.routeName,
+            firstArrivalTime: firstArrivalTime,
+            firstArrivalRemaining: firstArrivalRemaining,
+            secondArrivalTime: secondArrivalTime,
+            secondArrivalRemaining: secondArrivalRemaining
+        )
+        return cell
     }
     
-    public func numberOfSections(in tableView: UITableView) -> Int {
-        2
+    private func updateHeaderInfo(
+        name: String,
+        direction: String
+    ) {
+        headerInfoList += [
+            [
+                "name": name,
+                "direction": direction
+            ]
+        ]
+    }
+    
+    private func updateSnapshot(busStopResponse: [BusStopArrivalInfoResponse]) {
+        snapshot = .init()
+        snapshot.appendSections(busStopResponse)
+        busStopResponse.forEach { response in
+            snapshot.appendItems(
+                response.buses, toSection: response
+            )
+        }
+        dataSource.apply(snapshot)
+    }
+}
+
+extension FavoritesViewController: UITableViewDelegate {
+    public func tableView(
+        _ tableView: UITableView,
+        heightForRowAt indexPath: IndexPath
+    ) -> CGFloat {
+        60
+    }
+    
+    public func tableView(
+        _ tableView: UITableView,
+        heightForHeaderInSection section: Int
+    ) -> CGFloat {
+        60
     }
     
     public func tableView(
@@ -234,7 +345,12 @@ extension FavoritesViewController: UITableViewDataSource, UITableViewDelegate {
         let header = tableView.dequeueReusableHeaderFooterView(
             withIdentifier: FavoritesHeaderView.identifier
         ) as? FavoritesHeaderView
-        header?.updateUI(name: "테스트", direction: "테스트")
+        if section < headerInfoList.count {
+            header?.updateUI(
+                name: headerInfoList[section]["name"],
+                direction: headerInfoList[section]["direction"]
+            )
+        }
         let tapGesture = UITapGestureRecognizer()
         header?.contentView.addGestureRecognizer(tapGesture)
         tapGesture.rx.event
@@ -243,4 +359,14 @@ extension FavoritesViewController: UITableViewDataSource, UITableViewDelegate {
             .disposed(by: disposeBag)
         return header
     }
+}
+
+extension FavoritesViewController {
+    typealias FavoritesDataSource =
+    UITableViewDiffableDataSource
+    <BusStopArrivalInfoResponse, BusArrivalInfoResponse>
+    
+    typealias FavoritesSnapshot =
+    NSDiffableDataSourceSnapshot
+    <BusStopArrivalInfoResponse, BusArrivalInfoResponse>
 }

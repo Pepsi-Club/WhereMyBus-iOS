@@ -22,21 +22,10 @@ public final class FavoritesViewModel: ViewModel {
     
     public func transform(input: Input) -> Output {
         let output = Output(
-            favoritesSections: .init(),
-            arrivalInfoResponse: .init()
+            busStopArrivalInfoResponse: .init(),
+            arrivalInfoResponse: .init(), 
+            onError: .init()
         )
-        
-        Observable.combineLatest(
-            input.viewWillAppearEvent,
-            input.refreshBtnTapEvent
-        )
-        .withUnretained(self)
-        .subscribe(
-            onNext: { viewModel, _ in
-                viewModel.useCase.fetchFavoritesArrivals()
-            }
-        )
-        .disposed(by: disposeBag)
         
         input.viewWillAppearEvent
             .withUnretained(self)
@@ -45,9 +34,14 @@ public final class FavoritesViewModel: ViewModel {
                     guard let favorites = try? viewModel.useCase.favorites
                         .value()
                     else { return }
-                    viewModel.coordinator.updateFavoritesState(
-                        isEmpty: favorites.busStops.isEmpty
-                    )
+                    let isEmpty = favorites.busStops.isEmpty
+                    if isEmpty {
+                        viewModel.coordinator.updateFavoritesState(
+                            isEmpty: favorites.busStops.isEmpty
+                        )
+                    } else {
+                        viewModel.useCase.fetchFavoritesArrivals()
+                    }
                 }
             )
             .disposed(by: disposeBag)
@@ -57,6 +51,46 @@ public final class FavoritesViewModel: ViewModel {
             .subscribe(
                 onNext: { viewModel, _ in
                     viewModel.coordinator.startSearchFlow()
+                }
+            )
+            .disposed(by: disposeBag)
+        
+        input.refreshBtnTapEvent
+        .withUnretained(self)
+        .subscribe(
+            onNext: { viewModel, _ in
+                viewModel.useCase.fetchFavoritesArrivals()
+            }
+        )
+        .disposed(by: disposeBag)
+        
+        input.busStopTapEvent
+            .withUnretained(self)
+            .subscribe(
+                onNext: { viewModel, sectionIndex in
+                    do {
+                        let response = try viewModel.useCase
+                            .busStopArrivalInfoResponse.value()
+                        viewModel.coordinator.startBusStopFlow(
+                            stationId: response[sectionIndex].busStopId
+                        )
+                    } catch {
+                        output.onError.onNext(error)
+                    }
+                }
+            )
+            .disposed(by: disposeBag)
+        
+        input.busStopTapEvent
+            .withUnretained(self)
+            .subscribe(
+                onNext: { viewModel, index in
+                    guard let response = try? viewModel.useCase
+                        .busStopArrivalInfoResponse.value()
+                    else { return }
+                    viewModel.coordinator.startBusStopFlow(
+                        stationId: response[index].busStopId
+                    )
                 }
             )
             .disposed(by: disposeBag)
@@ -72,9 +106,9 @@ public final class FavoritesViewModel: ViewModel {
             )
             .disposed(by: disposeBag)
         
-        useCase.favoritesSections
+        useCase.busStopArrivalInfoResponse
             .bind(
-                to: output.favoritesSections
+                to: output.busStopArrivalInfoResponse
             )
             .disposed(by: disposeBag)
         
@@ -87,13 +121,14 @@ extension FavoritesViewModel {
         let viewWillAppearEvent: Observable<Void>
         let searchBtnTapEvent: Observable<Void>
         let refreshBtnTapEvent: Observable<Void>
-        let likeBtnTapEvent: Observable<IndexPath>
         let alarmBtnTapEvent: Observable<IndexPath>
         let busStopTapEvent: Observable<Int>
     }
     
     public struct Output {
-        var favoritesSections: PublishSubject<[FavoritesSection]>
+        var busStopArrivalInfoResponse
+        : PublishSubject<[BusStopArrivalInfoResponse]>
         var arrivalInfoResponse: PublishSubject<ArrivalInfoResponse>
+        var onError: PublishSubject<Error>
     }
 }

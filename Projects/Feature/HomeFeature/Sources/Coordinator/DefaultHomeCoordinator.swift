@@ -5,7 +5,7 @@ import FeatureDependency
 
 import RxSwift
 
-public final class DefaultHomeCoordinator: HomeCoordinator {
+public final class DefaultHomeCoordinator {
     public var parent: Coordinator?
     public var childs: [Coordinator] = []
     public var navigationController: UINavigationController
@@ -39,6 +39,10 @@ public final class DefaultHomeCoordinator: HomeCoordinator {
             )
             .disposed(by: disposeBag)
         setFavoritesVC()
+    }
+    
+    public func finish() {
+        
     }
     
     private func setFavoritesVC() {
@@ -75,7 +79,7 @@ public final class DefaultHomeCoordinator: HomeCoordinator {
     }
 }
 
-extension DefaultHomeCoordinator {
+extension DefaultHomeCoordinator: HomeCoordinator {
     public func updateFavoritesState(isEmpty: Bool) {
         favoritesStatus.onNext(isEmpty ? .empty : .nonEmpty)
     }
@@ -88,8 +92,8 @@ extension DefaultHomeCoordinator {
         searchCoordinator.start()
     }
     
-    public func finish() {
-        
+    public func startBusStopFlow(stationId: String) {
+        // BusStopCoordinatorFlow
     }
 }
 

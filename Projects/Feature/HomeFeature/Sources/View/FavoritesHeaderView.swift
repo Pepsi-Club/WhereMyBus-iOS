@@ -14,7 +14,9 @@ import DesignSystem
 internal final class FavoritesHeaderView: UITableViewHeaderFooterView {
     private let busStopNameLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 14)
+        label.font = DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(
+            size: 18
+        )
         label.textAlignment = .left
         label.textColor = .black
         return label
@@ -22,7 +24,9 @@ internal final class FavoritesHeaderView: UITableViewHeaderFooterView {
     
     private let directionLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 10)
+        label.font = DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(
+            size: 13
+        )
         label.textAlignment = .left
         label.textColor = .gray
         return label
@@ -53,34 +57,27 @@ internal final class FavoritesHeaderView: UITableViewHeaderFooterView {
         }
         
         NSLayoutConstraint.activate([
-            busStopNameLabel.leadingAnchor.constraint(
-                equalTo: contentView.leadingAnchor,
-                constant: 10
-            ),
-            busStopNameLabel.topAnchor.constraint(
-                equalTo: contentView.topAnchor,
-                constant: 10
-            ),
-            busStopNameLabel.bottomAnchor.constraint(
-                equalTo: contentView.centerYAnchor
-            ),
-            
             directionLabel.leadingAnchor.constraint(
-                equalTo: busStopNameLabel.leadingAnchor
-            ),
-            directionLabel.topAnchor.constraint(
-                equalTo: contentView.centerYAnchor
+                equalTo: contentView.leadingAnchor,
+                constant: 25
             ),
             directionLabel.bottomAnchor.constraint(
                 equalTo: contentView.bottomAnchor,
-                constant: -5
+                constant: -10
+            ),
+            
+            busStopNameLabel.leadingAnchor.constraint(
+                equalTo: directionLabel.leadingAnchor
+            ),
+            busStopNameLabel.bottomAnchor.constraint(
+                equalTo: directionLabel.topAnchor
             ),
         ])
     }
     
     func updateUI(
-        name: String,
-        direction: String
+        name: String?,
+        direction: String?
     ) {
         busStopNameLabel.text = name
         directionLabel.text = direction
