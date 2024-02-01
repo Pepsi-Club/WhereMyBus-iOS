@@ -18,7 +18,7 @@ extension Project {
     public static func makeProject(
         name: String,
         moduleType: ModuleType,
-        entitlements: Path? = nil,
+        entitlementsPath: Path? = nil,
         isTestable: Bool = false,
         hasResource: Bool = false,
         dependencies: [TargetDependency]
@@ -26,6 +26,10 @@ extension Project {
         var schemes = [Scheme]()
         var targets = [Target]()
         var targetModule: Target
+        var entitlements: Entitlements?
+        if let entitlementsPath {
+            entitlements = .file(path: entitlementsPath)
+        }
         switch moduleType {
         case .app:
             targetModule = appTarget(
@@ -38,7 +42,7 @@ extension Project {
             targetModule = frameworkTarget(
                 name: name,
                 entitlements: entitlements,
-                hasResource: hasResource, 
+                hasResource: hasResource,
                 productType: moduleType.product,
                 dependencies: dependencies
             )
@@ -76,7 +80,7 @@ extension Project {
     
     private static func appTarget(
         name: String,
-        entitlements: Path?,
+        entitlements: Entitlements?,
         dependencies: [TargetDependency]
     ) -> Target {
         Target(
@@ -97,7 +101,7 @@ extension Project {
 
     private static func demoAppTarget(
         name: String,
-        entitlements: Path? = nil,
+        entitlements: Entitlements? = nil,
         dependencies: [TargetDependency]
     ) -> Target {
         Target(
@@ -119,7 +123,7 @@ extension Project {
 
     private static func frameworkTarget(
         name: String,
-        entitlements: Path?,
+        entitlements: Entitlements?,
         hasResource: Bool,
         productType: Product,
         isPresentation: Bool = false,
