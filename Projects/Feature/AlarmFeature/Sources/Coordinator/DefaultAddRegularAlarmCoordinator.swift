@@ -10,13 +10,13 @@ import UIKit
 
 import FeatureDependency
 
-final class DefaultAddRegularAlarmCoordinator {
-    var parent: Coordinator?
-    var childs: [Coordinator] = []
-    var navigationController: UINavigationController
-    let coordinatorProvider: CoordinatorProvider
+public final class DefaultAddRegularAlarmCoordinator {
+    public var parent: Coordinator?
+    public var childs: [Coordinator] = []
+    public var navigationController: UINavigationController
+    public let coordinatorProvider: CoordinatorProvider
     
-    init(
+    public init(
         navigationController: UINavigationController,
         coordinatorProvider: CoordinatorProvider
     ) {
@@ -24,7 +24,7 @@ final class DefaultAddRegularAlarmCoordinator {
         self.coordinatorProvider = coordinatorProvider
     }
     
-    func start() {
+    public func start() {
         let addRegularAlarmViewController = AddRegularAlarmViewController(
             viewModel: .init(coordinator: self)
         )
@@ -34,14 +34,14 @@ final class DefaultAddRegularAlarmCoordinator {
         )
     }
     
-    func finish() {
+    public func finish() {
         
     }
 }
 
 extension DefaultAddRegularAlarmCoordinator: AddRegularAlarmCoordinator {
     // TODO: Alarm 모델링 후 인자 타입 수정
-    func start(with: String) {
+    public func start(with: String) {
         let addRegularAlarmViewController = AddRegularAlarmViewController(
             viewModel: .init(alarmToEdit: with, coordinator: self)
         )
@@ -51,7 +51,7 @@ extension DefaultAddRegularAlarmCoordinator: AddRegularAlarmCoordinator {
         )
     }
     
-    func startSearchFlow() {
+    public func startSearchFlow() {
         let searchCoordinator = coordinatorProvider.makeSearchCoordinator(
             navigationController: navigationController
         )
@@ -59,7 +59,7 @@ extension DefaultAddRegularAlarmCoordinator: AddRegularAlarmCoordinator {
         searchCoordinator.start()
     }
     
-    func complete() {
+    public func complete() {
         
     }
 }
