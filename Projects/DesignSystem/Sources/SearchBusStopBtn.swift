@@ -9,18 +9,25 @@
 import UIKit
 
 public final class SearchBusStopBtn: UIButton {
-    private var config = UIButton.Configuration.plain()
-    private var titleContainer = AttributeContainer()
+    private let font: UIFont
     
     public init(
         title: String? = nil,
-        image: UIImage? = nil
+        image: UIImage? = nil,
+        font: UIFont = DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(
+            size: 14
+        ),
+        color: UIColor = DesignSystemAsset.mainColor.color
     ) {
+        self.font = font
         super.init(frame: .zero)
-        let attributedTitle = makeAttributedTitle(title: title)
+        let attributedTitle = makeAttributedTitle(
+            title: title
+        )
         let config = makeConfiguration(
             attributedTitle: attributedTitle,
-            image: image
+            image: image,
+            color: color
         )
         configuration = config
     }
@@ -41,11 +48,12 @@ public final class SearchBusStopBtn: UIButton {
     
     private func makeConfiguration(
         attributedTitle: AttributedString?,
-        image: UIImage?
+        image: UIImage?,
+        color: UIColor
     ) -> UIButton.Configuration {
         var config = UIButton.Configuration.plain()
         config.background.backgroundColor = DesignSystemAsset.gray3.color
-        config.baseForegroundColor = DesignSystemAsset.mainColor.color
+        config.baseForegroundColor = color
         config.cornerStyle = .large
         config.contentInsets = .init(
             top: 12,
@@ -63,19 +71,22 @@ public final class SearchBusStopBtn: UIButton {
         return config
     }
     
-    private func makeAttributedTitle(title: String?) -> AttributedString? {
+    public func updateTitle(title: String) {
+        configuration?.attributedTitle = makeAttributedTitle(
+            title: title
+        )
+    }
+    
+    private func makeAttributedTitle(
+        title: String?
+    ) -> AttributedString? {
         var attributedString: AttributedString?
         var titleContainer = AttributeContainer()
-        titleContainer.foregroundColor = .gray
-        titleContainer.font = .systemFont(
-            ofSize: 14
+        titleContainer.font = font
+        attributedString = AttributedString(
+            title ?? "a",
+            attributes: titleContainer
         )
-        if let title {
-            attributedString = AttributedString(
-                title,
-                attributes: titleContainer
-            )
-        }
         return attributedString
     }
     
