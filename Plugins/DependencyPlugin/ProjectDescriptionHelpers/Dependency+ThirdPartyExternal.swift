@@ -8,18 +8,14 @@
 import ProjectDescription
 
 public extension Array<TargetDependency> {
-    enum ThirdPartyExternal: CaseIterable {
-        case rxDataSources, kakaoMap, swiftyXMLParser
+    enum ThirdPartyExternal: String, CaseIterable {
+        case rxCocoa, swiftyXMLParser
         
         public var name: String {
-            switch self {
-            case .rxDataSources:
-                return "RxDataSources"
-            case .kakaoMap:
-                return "KakaoMapsSDK_SPM"
-            case .swiftyXMLParser:
-                return "SwiftyXMLParser"
-            }
+            var name = rawValue.map { $0 }
+            name.removeFirst()
+            name.insert(Character(rawValue.first!.uppercased()), at: 0)
+            return "\(String(name))"
         }
     }
 }
