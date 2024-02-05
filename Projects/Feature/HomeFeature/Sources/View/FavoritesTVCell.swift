@@ -14,8 +14,8 @@ import DesignSystem
 class FavoritesTVCell: UITableViewCell {
     private let routeLabel: UILabel = {
         let label = UILabel()
-        label.font = DesignSystemFontFamily.NanumSquareNeoOTF.extraBold.font(
-            size: 22
+        label.font = DesignSystemFontFamily.NanumSquareNeoOTF.heavy.font(
+            size: 20
         )
         label.textColor = DesignSystemAsset.limeGreen.color
         return label

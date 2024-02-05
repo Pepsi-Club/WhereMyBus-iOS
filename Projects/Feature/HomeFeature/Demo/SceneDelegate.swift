@@ -42,6 +42,15 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 }
 
 final class MockCoordinatorProvider: CoordinatorProvider {
+    func makeAddRegularAlarmCoordinator(
+        navigationController: UINavigationController
+    ) -> AddRegularAlarmCoordinator {
+        MockCoordinator(
+            testMessage: "SearchVC",
+            navigationController: navigationController
+        )
+    }
+    
     func makeSearchCoordinator(
         navigationController: UINavigationController
     ) -> SearchCoordinator {
@@ -82,6 +91,9 @@ final class MockCoordinator: Coordinator {
     }
 }
 
-extension MockCoordinator: SearchCoordinator {
+protocol AddRegularAlarmCoordinator {
+    
+}
+extension MockCoordinator: SearchCoordinator, AddRegularAlarmCoordinator {
     
 }
