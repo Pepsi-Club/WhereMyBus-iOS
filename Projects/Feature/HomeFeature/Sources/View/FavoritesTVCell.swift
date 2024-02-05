@@ -52,6 +52,9 @@ class FavoritesTVCell: UITableViewCell {
         [routeLabel].forEach {
             $0.text = nil
         }
+        [firstArrivalInfoView, secondArrivalInfoView].forEach {
+            $0.updateUI(time: "", remainingStops: "")
+        }
     }
     
     func updateUI(
@@ -91,20 +94,24 @@ class FavoritesTVCell: UITableViewCell {
                 equalTo: contentView.leadingAnchor,
                 constant: 20
             ),
+            routeLabel.widthAnchor.constraint(
+                equalTo: contentView.widthAnchor,
+                multiplier: 0.3
+            ),
+            
+            secondArrivalInfoView.leadingAnchor.constraint(
+                equalTo: routeLabel.trailingAnchor,
+                constant: 20
+            ),
+            
+            firstArrivalInfoView.leadingAnchor.constraint(
+                equalTo: secondArrivalInfoView.trailingAnchor,
+                constant: 30
+            ),
             
             alarmBtn.trailingAnchor.constraint(
                 equalTo: contentView.trailingAnchor,
                 constant: -15
-            ),
-            
-            secondArrivalInfoView.trailingAnchor.constraint(
-                equalTo: contentView.trailingAnchor,
-                constant: .screenWidth * -0.35
-            ),
-            
-            firstArrivalInfoView.trailingAnchor.constraint(
-                equalTo: contentView.trailingAnchor,
-                constant: .screenWidth * -0.6
             ),
         ])
     }
