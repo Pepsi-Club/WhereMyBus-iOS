@@ -17,7 +17,7 @@ let spm = SwiftPackageManagerDependencies(
     .ThirdPartyRemote.SPM.allCases.map {
         Package.remote(
             url: $0.url,
-            requirement: .upToNextMajor(from: $0.upToNextMajor)
+            requirement: .branch($0.branch)
         )
     }, productTypes: [
         "RxCocoa": .framework,
