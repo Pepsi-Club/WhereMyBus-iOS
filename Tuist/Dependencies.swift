@@ -24,6 +24,8 @@ let spm = SwiftPackageManagerDependencies(
         "RxCocoaRuntime": .framework,
         "RxDataSources": .framework,
         "Differentiator": .framework,
+		"KakaoMapsSDK-SPM": .framework,
+		"KakaoMapsSDKBundle": .bundle,
     ]
 )
 

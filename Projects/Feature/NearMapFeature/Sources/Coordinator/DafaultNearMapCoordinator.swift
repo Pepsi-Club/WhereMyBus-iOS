@@ -7,13 +7,17 @@ public final class DefaultNearMapCoordinator: NearMapCoordinator {
     public var childs: [Coordinator] = []
     public var navigationController: UINavigationController
     
-    public init(navigationController: UINavigationController) {
+    public init(
+		parent: Coordinator?,
+		navigationController: UINavigationController
+	) {
+		self.parent = parent
         self.navigationController = navigationController
     }
     
     public func start() {
         let nearmapViewController = NearMapViewController(
-            viewModel: NearMapViewModel()
+			viewModel: NearMapViewModel(coordinator: self)
         )
         navigationController.setViewControllers(
             [nearmapViewController],

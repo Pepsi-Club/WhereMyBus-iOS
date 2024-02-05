@@ -17,7 +17,8 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.makeKeyAndVisible()
                 
         let nearmapCoordinator = DefaultNearMapCoordinator(
-            navigationController: navigationController
+			parent: nil, 
+			navigationController: navigationController
         )
         nearmapCoordinator.start()
     }

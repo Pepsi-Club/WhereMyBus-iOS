@@ -6,9 +6,12 @@ import FeatureDependency
 import RxSwift
 
 public final class NearMapViewModel: ViewModel {
+	
+	private let coordinator: NearMapCoordinator
     private let disposeBag = DisposeBag()
     
-    public init() {
+	public init(coordinator: NearMapCoordinator) {
+		self.coordinator = coordinator
     }
     
     public func transform(input: Input) -> Output {
