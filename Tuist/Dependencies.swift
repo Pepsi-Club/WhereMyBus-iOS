@@ -17,13 +17,12 @@ let spm = SwiftPackageManagerDependencies(
     .ThirdPartyRemote.SPM.allCases.map {
         Package.remote(
             url: $0.url,
-            requirement: .branch($0.branch)
+            requirement: .upToNextMajor(from: $0.upToNextMajor)
         )
     }, productTypes: [
         "RxCocoa": .framework,
         "RxCocoaRuntime": .framework,
-        "RxDataSources": .framework,
-        "Differentiator": .framework,
+        "SwiftyXMLParser": .framework,
     ]
 )
 

@@ -25,12 +25,12 @@ public extension Array<Package>.ThirdPartyRemote {
             }
         }
         
-        public var branch: String {
+        public var upToNextMajor: Version {
             switch self {
             case .rxSwift:
-                return "main"
+                return "6.0.0"
             case .swiftyXMLParser:
-                return "master"
+                return "5.6.0"
             }
         }
     }
