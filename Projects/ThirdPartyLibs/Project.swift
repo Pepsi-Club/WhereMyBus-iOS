@@ -13,5 +13,5 @@ let project = Project.makeProject(
     ],
     dependencies: .ThirdPartyExternal.allCases.map {
         .external(name: $0.name)
-    } + [.package(product: "KakaoMapsSDK-SPM")]
+    } + [.package(product: "KakaoMapsSDK_SPM")]
 )

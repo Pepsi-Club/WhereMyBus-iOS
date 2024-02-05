@@ -44,9 +44,11 @@ public extension InfoPlist {
     )
 }
 
-public extension [String: InfoPlist.Value] {
+public extension [String: Plist.Value] {
     static let secrets: Self = [
-        "SERVER_KEY": "$(SERVER_KEY)"
+        "SERVER_KEY": "$(SERVER_KEY)",
+        "KAKAO_APP_KEY": "$(KAKAO_APP_KEY)",
+        "KAKAO_PHASE": "alpha",
     ]
     
     static let additionalInfoPlist: Self = [
