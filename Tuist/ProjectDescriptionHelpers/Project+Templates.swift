@@ -21,6 +21,7 @@ extension Project {
         entitlementsPath: Path? = nil,
         isTestable: Bool = false,
         hasResource: Bool = false,
+        packages: [Package] = [],
         dependencies: [TargetDependency]
     ) -> Self {
         var schemes = [Scheme]()
@@ -73,6 +74,7 @@ extension Project {
         return Project(
             name: name,
             organizationName: .organizationName,
+            packages: packages,
             targets: targets,
             schemes: schemes
         )
