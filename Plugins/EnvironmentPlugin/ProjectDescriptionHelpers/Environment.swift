@@ -26,7 +26,7 @@ public extension String {
     static let targetVersion: Self = "16.0"
 }
 
-extension InfoPlist.Value {
+extension Plist.Value {
     static let bundleDisplayName: Self = .string(.displayName)
     static let bundleShortVersionString: Self = .string(.marketingVersion)
     static let bundleVersion: Self = .string(.buildVersion)
