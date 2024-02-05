@@ -59,7 +59,7 @@ internal final class FavoritesHeaderView: UITableViewHeaderFooterView {
         NSLayoutConstraint.activate([
             directionLabel.leadingAnchor.constraint(
                 equalTo: contentView.leadingAnchor,
-                constant: 25
+                constant: 20
             ),
             directionLabel.bottomAnchor.constraint(
                 equalTo: contentView.bottomAnchor,

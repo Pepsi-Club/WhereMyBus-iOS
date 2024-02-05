@@ -14,8 +14,8 @@ import DesignSystem
 class FavoritesTVCell: UITableViewCell {
     private let routeLabel: UILabel = {
         let label = UILabel()
-        label.font = DesignSystemFontFamily.NanumSquareNeoOTF.extraBold.font(
-            size: 22
+        label.font = DesignSystemFontFamily.NanumSquareNeoOTF.heavy.font(
+            size: 20
         )
         label.textColor = DesignSystemAsset.limeGreen.color
         return label
@@ -51,6 +51,9 @@ class FavoritesTVCell: UITableViewCell {
         alarmBtn.configuration?.baseForegroundColor = mainColor
         [routeLabel].forEach {
             $0.text = nil
+        }
+        [firstArrivalInfoView, secondArrivalInfoView].forEach {
+            $0.updateUI(time: "", remainingStops: "")
         }
     }
     
@@ -91,20 +94,24 @@ class FavoritesTVCell: UITableViewCell {
                 equalTo: contentView.leadingAnchor,
                 constant: 20
             ),
+            routeLabel.widthAnchor.constraint(
+                equalTo: contentView.widthAnchor,
+                multiplier: 0.3
+            ),
+            
+            secondArrivalInfoView.leadingAnchor.constraint(
+                equalTo: routeLabel.trailingAnchor,
+                constant: 20
+            ),
+            
+            firstArrivalInfoView.leadingAnchor.constraint(
+                equalTo: secondArrivalInfoView.trailingAnchor,
+                constant: 30
+            ),
             
             alarmBtn.trailingAnchor.constraint(
                 equalTo: contentView.trailingAnchor,
                 constant: -15
-            ),
-            
-            secondArrivalInfoView.trailingAnchor.constraint(
-                equalTo: contentView.trailingAnchor,
-                constant: .screenWidth * -0.35
-            ),
-            
-            firstArrivalInfoView.trailingAnchor.constraint(
-                equalTo: contentView.trailingAnchor,
-                constant: .screenWidth * -0.6
             ),
         ])
     }

@@ -264,22 +264,22 @@ public final class FavoritesViewController: UIViewController {
         ) as? FavoritesTVCell
         else { return nil }
         let splittedMsg1 = response.firstArrivalTime
-            .split(separator: "[")
-            .map { String($0) }
+            .components(separatedBy: "[")
         let splittedMsg2 = response.secondArrivalTime
-            .split(separator: "[")
-            .map { String($0) }
+            .components(separatedBy: "[")
         let firstArrivalTime = splittedMsg1[0]
+            .components(separatedBy: "분")[0]
         let secondArrivalTime = splittedMsg2[0]
+            .components(separatedBy: "분")[0]
         var firstArrivalRemaining = ""
         var secondArrivalRemaining = ""
         if splittedMsg1.count > 1 {
             firstArrivalRemaining = splittedMsg1[1]
-            firstArrivalRemaining.removeLast()
+            firstArrivalRemaining.removeLast() // "]" 제거
         }
         if splittedMsg2.count > 1 {
             secondArrivalRemaining = splittedMsg2[1]
-            secondArrivalRemaining.removeLast()
+            secondArrivalRemaining.removeLast() // "]" 제거
         }
         let isLastCell = tableView.numberOfRows(
             inSection: indexPath.section
