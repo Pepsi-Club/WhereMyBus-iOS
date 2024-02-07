@@ -12,29 +12,59 @@ import Core
 import DesignSystem
 
 final class SearchNearStopView: UIButton {
-    //    private let nearStopLabel: UILabel = {
-    //        let label = UILabel()
-    //        label.font = DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(size: 16)
-    //
-    //        return label
-    //    }()
-    
-    private let busStopImage: UIImageView = {
-        let originalImage = UIImage(named: "star")
-        let resizedImage = originalImage?.withRenderingMode(.alwaysTemplate)
-        let imageSize = CGSize(width: 20, height: 20)
-        
-        let imageView = UIImageView(image: resizedImage)
-        imageView.tintColor = .black
-        imageView.contentMode = .scaleAspectFit
 
-        return imageView
-    }()
+    private let totalStack1: UIStackView = {
+            let stack = UIStackView()
+            stack.axis = .horizontal
+            stack.distribution = .fill
+            stack.alignment = .center
+            stack.spacing = 20
+            return stack
+        }()
     
+    private let totalStack2: UIStackView = {
+            let stack = UIStackView()
+            stack.axis = .vertical
+            stack.distribution = .fill
+            stack.alignment = .leading
+            stack.spacing = 5
+            return stack
+        }()
+    
+    private let totalStack3: UIStackView = {
+            let stack = UIStackView()
+            stack.axis = .horizontal
+            stack.distribution = .fill
+            stack.alignment = .center
+            stack.spacing = 180
+            return stack
+        }()
+    
+    // MARK: 이거 도대체 왜 이미지 사이즈가 조절이 안될까요? 
+    private let busStopImageView: UIImageView = {
+        let symbolName = "pin.fill"
+
+        var configuration = UIImage.SymbolConfiguration(pointSize: 35,
+                                                        weight: .bold)
+        configuration = configuration.applying(UIImage.SymbolConfiguration(
+                            font: UIFont.systemFont(ofSize: 25, weight: .bold),
+                            scale: .default))
+        
+        let pinImage = UIImage(
+            systemName: symbolName,
+            withConfiguration: configuration)?.withTintColor(.black)
+
+        let pinImageView = UIImageView(image: pinImage)
+        pinImageView.tintColor = .black
+
+        return pinImageView
+    }()
+
     private let nearStopLabel: UILabel = {
         let label = UILabel()
         label.font =
-        DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(size: 18)
+        DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(size: 16)
+        label.text = "주변정류장"
         
         return label
     }()
@@ -42,8 +72,9 @@ final class SearchNearStopView: UIButton {
     private let nearStopNameLabel: UILabel = {
         let label = UILabel()
         label.font =
-        DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(size: 15)
+        DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(size: 14)
         label.textColor = DesignSystemAsset.gray6.color
+        label.text = "홍대입구역"
         
         return label
     }()
@@ -53,6 +84,7 @@ final class SearchNearStopView: UIButton {
         label.font =
         DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(size: 15)
         label.textColor = DesignSystemAsset.lightRed.color
+        label.text = "200m"
         
         return label
     }()
@@ -67,32 +99,51 @@ final class SearchNearStopView: UIButton {
     }
     
     private func configureUI() {
-        busStopImage
-            .translatesAutoresizingMaskIntoConstraints = false
-        nearStopLabel
-            .translatesAutoresizingMaskIntoConstraints = false
-        nearStopNameLabel.translatesAutoresizingMaskIntoConstraints = false
-        distanceLabel
-            .translatesAutoresizingMaskIntoConstraints = false
+        
+        [busStopImageView, nearStopLabel, nearStopNameLabel, distanceLabel,
+         totalStack3, totalStack2, totalStack1]
+            .forEach { components in
+                components.translatesAutoresizingMaskIntoConstraints = false
+            }
+        
+        [nearStopNameLabel, distanceLabel]
+            .forEach { components in
+                totalStack3.addArrangedSubview(components)
+            }
+        
+        [nearStopLabel, totalStack3]
+            .forEach { components in
+                totalStack2.addArrangedSubview(components)
+            }
+        
+        [busStopImageView, totalStack2]
+            .forEach { components in
+                totalStack1.addArrangedSubview(components)
+            }
 
-        addSubview(nearStopLabel)
-        addSubview(nearStopNameLabel)
-        addSubview(distanceLabel)
-        addSubview(busStopImage)
+        addSubview(totalStack1)
+        self.backgroundColor = UIColor.white
 
+        layer.masksToBounds = false
+        layer.cornerRadius = 10
+        layer.shadowColor = UIColor.black.cgColor
+        layer.shadowOffset = CGSize(width: 0, height: 4)
+        layer.shadowOpacity = 0.4
+        layer.shadowRadius = 4
+        
         NSLayoutConstraint.activate([
-            busStopImage.leadingAnchor.constraint(equalTo: leadingAnchor,
-                                                  constant: 40),
-            
-            nearStopNameLabel.leadingAnchor.constraint(
-                equalTo: busStopImage.trailingAnchor, constant: 30),
-            nearStopNameLabel.topAnchor.constraint(
-                equalTo: distanceLabel.bottomAnchor, constant: 10),
-            
-            distanceLabel.topAnchor.constraint(
-                equalTo: distanceLabel.bottomAnchor, constant: 10),
-            distanceLabel.leadingAnchor.constraint(
-                equalTo: trailingAnchor, constant: 20),
+            totalStack1.topAnchor.constraint(
+                equalTo: topAnchor,
+                constant: 20
+            ),
+            totalStack1.leadingAnchor.constraint(
+                equalTo: leadingAnchor,
+                constant: 15
+            ),
+            totalStack1.bottomAnchor.constraint(
+                equalTo: bottomAnchor,
+                constant: -20
+            ),
         ])
     }
 }

@@ -16,7 +16,13 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let navigationController = UINavigationController()
         window?.rootViewController = navigationController
         window?.makeKeyAndVisible()
-                
+        
+//        let searchViewModel = SearchViewModel()
+//        let searchViewController = SearchViewController(
+//            viewModel: searchViewModel)
+//
+//        window?.rootViewController = searchViewController
+//
         let searchCoordinator = DefaultSearchCoordinator(
             navigationController: navigationController
         )

@@ -9,73 +9,208 @@ import RxDataSources
 
 public final class SearchViewController: UIViewController {
     private let viewModel: SearchViewModel
+    
+    private let recentSearchView = RecentSearchView()
+    private let searchNearStopView = SearchNearStopView()
+    private let searchTextFieldView = SearchTextFieldView()
+    
+    private let backBtn: UIButton = {
+        let btn = UIButton()
+        let starImage = UIImage(systemName: "chevron.backward")
+        btn.setImage(starImage, for: .normal)
+        btn.tintColor = .black
+        
+        return btn
+    }()
+    
+    private let recentSearchlabel: UILabel = {
+        let label = UILabel()
+        label.font =
+        DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(size: 15)
+        label.textColor = .black
+        label.text = "최근 검색 정류장"
+        
+        return label
+    }()
+    
+    private let magniImage: UIImageView = {
+        let symbolName = "magnifyingglass"
 
-    private lazy var recentSearchView = RecentSearchView()
-    private lazy var afterSearchView = AfterSearchView()
-    private lazy var serachBoxView = SearchBoxView()
+        var configuration = UIImage.SymbolConfiguration(pointSize: 8,
+                                                        weight: .light)
+        configuration = configuration.applying(UIImage.SymbolConfiguration(
+                            font: UIFont.systemFont(ofSize: 20, weight: .light),
+                            scale: .default))
+
+        let migImage = UIImage(
+            systemName: symbolName,
+            withConfiguration: configuration)?.withTintColor(.black)
+
+        let migImageView = UIImageView(image: migImage)
+        migImageView.tintColor = DesignSystemAsset.gray4.color
+
+        return migImageView
+    }()
+    
+    private let editBtn: UIButton = {
+        var config = UIButton.Configuration.plain()
+        config.baseForegroundColor = DesignSystemAsset.gray5.color
+        config.imagePadding = 5
+        var titleContainer = AttributeContainer()
+        titleContainer.font =
+        DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(size: 15)
+        config.attributedTitle = AttributedString( "삭제",
+                                                   attributes: titleContainer
+        )
+        
+        let button = UIButton(configuration: config)
+        
+        return button
+    }()
+    
+    private let coloredRectangleView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor(red: 230/255,
+                                       green: 237/255,
+                                       blue: 255/255,
+                                       alpha: 1.0)
+        return view
+    }()
+    
+    private let textFieldStack: UIStackView = {
+            let stack = UIStackView()
+            stack.axis = .horizontal
+            stack.alignment = .center
+            return stack
+        }()
+    
+    private let headerStack: UIStackView = {
+            let stack = UIStackView()
+            stack.axis = .horizontal
+            stack.alignment = .center
+            stack.spacing = 100
+            return stack
+        }()
+    
+    private let magniStack: UIStackView = {
+        let stack = UIStackView()
+        stack.axis = .horizontal
+        stack.alignment = .center
+        stack.spacing = 100
+        
+        return stack
+    }()
     
     private let disposeBag = DisposeBag()
-    private let searchTapEvent = PublishSubject<String>()
-
-    private let searchBtn = SearchBusStopBtn(
-        title: "버스 정류장을 검색하세요",
-        image: UIImage(systemName: "magnifyingglass")
-    )
-
+    private let searchEnterEvent = PublishSubject<String>()
     public init(viewModel: SearchViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     public override func viewDidLoad() {
         super.viewDidLoad()
-
-        let tableView = UITableView()
-//        tableView.register(RecentSearchView.self,
-//        forHeaderFooterViewReuseIdentifier: "RecentSearchView")
-
-        tableView.tableHeaderView = searchBtn
-        tableView.tableFooterView = UIView()
-//        tableView.delegate = self
-// tableView.dataSource = self
-
-        view.addSubview(tableView)
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-
+        
+        view.backgroundColor = .systemBackground
+        
+        [searchTextFieldView, backBtn, textFieldStack, recentSearchlabel,
+         recentSearchView, coloredRectangleView, searchNearStopView, editBtn,
+         headerStack, magniStack, magniImage]
+            .forEach {
+            view.addSubview($0)
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
+        
+        [backBtn, searchTextFieldView]
+            .forEach { components in
+                textFieldStack.addArrangedSubview(components)
+            }
+        
+        [recentSearchlabel, editBtn]
+            .forEach { components in
+                headerStack.addArrangedSubview(components)
+            }
+        
+//        MARK: 왜 안됨??
+//        [backBtn, magniImage]
+//            .forEach { components in
+//                magniImage.addArrangedSubview(components)
+//            }
+        
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.topAnchor),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
-    }
-}
+        searchTextFieldView.heightAnchor.constraint(
+                equalToConstant: 39),
+           
+        textFieldStack.topAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.topAnchor,
+                constant: -14
+            ),
+        textFieldStack.leadingAnchor.constraint(
+                equalTo: view.leadingAnchor,
+                constant: 10
+            ),
+        
+        magniImage.topAnchor.constraint(
+            equalTo: view.safeAreaLayoutGuide.topAnchor,
+            constant: -5
+        ),
+        magniImage.trailingAnchor.constraint(
+            equalTo: view.trailingAnchor,
+            constant: -20
+        ),
+        
+        headerStack.topAnchor.constraint(
+                equalTo: textFieldStack.bottomAnchor, constant: 15),
+        headerStack.leadingAnchor.constraint(
+                equalTo: view.leadingAnchor, constant: 15),
+        headerStack.trailingAnchor.constraint(
+                equalTo: view.trailingAnchor, constant: -13),
+        //MARK: 왜 같은 숫자로 놔도 다르게 적용이 됨?
+     
+        recentSearchView.topAnchor.constraint(
+                equalTo: recentSearchlabel.bottomAnchor, constant: -30),
+        recentSearchView.leadingAnchor.constraint(
+                                    equalTo: view.leadingAnchor),
+        recentSearchView.trailingAnchor.constraint(
+                                    equalTo: view.trailingAnchor),
 
-//extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
-//    public func tableView(_ tableView: UITableView,
-//numberOfRowsInSection section: Int) -> Int {
-//        return 0 //edit
-//    }
-//
-//    public func tableView(_ tableView: UITableView,
-// cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//    }
-//
-//    public func tableView(_ tableView: UITableView,
-// viewForHeaderInSection section: Int) -> UIView? {
-//        if section == 0 {
-//            // return recentSearchView
-//        } else {
-//           // return afterSearchView
-//        }
-//    }
-//
-//    public func tableView(_ tableView: UITableView,
-// heightForHeaderInSection section: Int) -> CGFloat {
-//        return 100
-//    }
-//}
+        recentSearchView.widthAnchor.constraint(
+                                    equalTo: view.widthAnchor),
+        
+        coloredRectangleView.topAnchor.constraint(
+                                    equalTo: recentSearchView.bottomAnchor,
+                                    constant: 300),
+        coloredRectangleView.leadingAnchor.constraint(
+                                        equalTo: view.leadingAnchor,
+                                        constant: 0),
+        coloredRectangleView.trailingAnchor.constraint(
+                                        equalTo: view.trailingAnchor,
+                                        constant: 0),
+        coloredRectangleView.widthAnchor.constraint(
+                                        equalToConstant: .screenWidth),
+            
+        searchNearStopView.topAnchor.constraint(
+                                    equalTo: coloredRectangleView.topAnchor,
+                                    constant: 10),
+        searchNearStopView.bottomAnchor.constraint(
+                                    equalTo: coloredRectangleView.bottomAnchor,
+                                    constant: -10),
+        searchNearStopView.leadingAnchor.constraint(
+                                    equalTo: view.leadingAnchor,
+                                    constant: 10),
+        searchNearStopView.heightAnchor.constraint(
+                                    equalToConstant: 87),
+        searchNearStopView.widthAnchor.constraint(
+                                    equalTo: view.widthAnchor,
+                                    multiplier: 0.95),
+        searchNearStopView.trailingAnchor.constraint(
+                                    equalTo: view.trailingAnchor,
+                                    constant: 10)
+   
+           ])
+       }
+}
