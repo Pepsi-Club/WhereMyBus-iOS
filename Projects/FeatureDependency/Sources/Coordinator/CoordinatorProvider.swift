@@ -12,4 +12,8 @@ public protocol CoordinatorProvider {
     func makeSearchCoordinator(
         navigationController: UINavigationController
     ) -> SearchCoordinator
+    
+    func makeAddRegularAlarmCoordinator(
+        navigationController: UINavigationController
+    ) -> AddRegularAlarmCoordinator
 }
