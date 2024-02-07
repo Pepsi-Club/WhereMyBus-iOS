@@ -10,9 +10,10 @@ import RxDataSources
 public final class SearchViewController: UIViewController {
     private let viewModel: SearchViewModel
 
-   // private lazy var recentSearchView = RecentSearchView()
-   // private lazy var afterSearchView = AfterSearchView()
-
+    private lazy var recentSearchView = RecentSearchView()
+    private lazy var afterSearchView = AfterSearchView()
+    private lazy var serachBoxView = SearchBoxView()
+    
     private let disposeBag = DisposeBag()
     private let searchTapEvent = PublishSubject<String>()
 
@@ -34,8 +35,8 @@ public final class SearchViewController: UIViewController {
         super.viewDidLoad()
 
         let tableView = UITableView()
-        //tableView.register(RecentSearchView.self,
-        //forHeaderFooterViewReuseIdentifier: "RecentSearchView")
+//        tableView.register(RecentSearchView.self,
+//        forHeaderFooterViewReuseIdentifier: "RecentSearchView")
 
         tableView.tableHeaderView = searchBtn
         tableView.tableFooterView = UIView()
@@ -55,14 +56,17 @@ public final class SearchViewController: UIViewController {
 }
 
 //extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
-//    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+//    public func tableView(_ tableView: UITableView,
+//numberOfRowsInSection section: Int) -> Int {
 //        return 0 //edit
 //    }
 //
-//    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+//    public func tableView(_ tableView: UITableView,
+// cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 //    }
 //
-//    public func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+//    public func tableView(_ tableView: UITableView,
+// viewForHeaderInSection section: Int) -> UIView? {
 //        if section == 0 {
 //            // return recentSearchView
 //        } else {
@@ -70,7 +74,8 @@ public final class SearchViewController: UIViewController {
 //        }
 //    }
 //
-//    public func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+//    public func tableView(_ tableView: UITableView,
+// heightForHeaderInSection section: Int) -> CGFloat {
 //        return 100
 //    }
 //}
