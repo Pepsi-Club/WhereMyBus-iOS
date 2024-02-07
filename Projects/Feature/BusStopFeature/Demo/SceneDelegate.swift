@@ -1,5 +1,6 @@
 import UIKit
 
+import FeatureDependency
 import BusStopFeature
 
 final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -17,7 +18,9 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.makeKeyAndVisible()
                 
         let busstopCoordinator = DefaultBusStopCoordinator(
+            parent: nil,
             navigationController: navigationController
+//            coordinatorProvider: CoordinatorProvider.self
         )
         busstopCoordinator.start()
     }
