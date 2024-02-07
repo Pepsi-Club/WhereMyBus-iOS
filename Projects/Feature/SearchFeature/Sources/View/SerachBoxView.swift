@@ -8,9 +8,10 @@
 
 import UIKit
 
-public final class SearchTextFieldView: UIView {
+final class SearchTextFieldView: UIView {
+    
     private var titleContainer = AttributeContainer()
-    private let titleLabel: UILabel = {	
+    private let titleLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 1
         return label
