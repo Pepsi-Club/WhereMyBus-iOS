@@ -24,7 +24,7 @@ final class BusTableViewCell: UITableViewCell {
             bottom: 10,
             trailing: 5
         )
-        config.baseForegroundColor = .black
+        config.baseForegroundColor = DesignSystemAsset.mainColor.color
         config.baseBackgroundColor = .clear
         let btn = UIButton(configuration: config)
         return btn
@@ -39,7 +39,7 @@ final class BusTableViewCell: UITableViewCell {
             bottom: 10,
             trailing: 5
         )
-        config.baseForegroundColor = .black
+        config.baseForegroundColor = DesignSystemAsset.mainColor.color
         config.baseBackgroundColor = .clear
         let btn = UIButton(configuration: config)
         return btn
@@ -85,15 +85,15 @@ final class BusTableViewCell: UITableViewCell {
         let label = UILabel()
         label.font = DesignSystemFontFamily.NanumSquareNeoOTF
             .bold.font(size: 18)
-        label.textColor = .black
+        label.textColor = DesignSystemAsset.blueBus.color
         return label
     }()
     
     private let nextStopName: UILabel = {
         let label = UILabel()
         label.font = DesignSystemFontFamily.NanumSquareNeoOTF
-            .bold.font(size: 15)
-        label.textColor = .black
+            .regular.font(size: 15)
+        label.textColor = DesignSystemAsset.routeTimeColor.color
         return label
     }()
     
@@ -101,7 +101,7 @@ final class BusTableViewCell: UITableViewCell {
         let label = UILabel()
         label.font = DesignSystemFontFamily.NanumSquareNeoOTF
             .regular.font(size: 15)
-        label.textColor = .black
+        label.textColor = DesignSystemAsset.routeTimeColor.color
         return label
     }()
     
@@ -109,7 +109,7 @@ final class BusTableViewCell: UITableViewCell {
         let label = UILabel()
         label.font = DesignSystemFontFamily.NanumSquareNeoOTF
             .regular.font(size: 15)
-        label.textColor = .black
+        label.textColor = DesignSystemAsset.routeTimeColor.color
         return label
     }()
     
@@ -117,7 +117,7 @@ final class BusTableViewCell: UITableViewCell {
         let label = UILabel()
         label.font = DesignSystemFontFamily.NanumSquareNeoOTF
             .regular.font(size: 11)
-        label.textColor = .black
+        label.textColor = DesignSystemAsset.remainingColor.color
         return label
     }()
     
@@ -125,7 +125,7 @@ final class BusTableViewCell: UITableViewCell {
         let label = UILabel()
         label.font = DesignSystemFontFamily.NanumSquareNeoOTF
             .regular.font(size: 11)
-        label.textColor = .black
+        label.textColor = DesignSystemAsset.remainingColor.color
         return label
     }()
     

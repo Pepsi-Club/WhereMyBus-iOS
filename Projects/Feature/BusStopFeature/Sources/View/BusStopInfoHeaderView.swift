@@ -24,7 +24,7 @@ final class BusStopInfoHeaderView: UIView {
     
     private let btnStack: UIStackView = {
         let stack = UIStackView()
-        stack.backgroundColor = .systemBlue
+        stack.backgroundColor = DesignSystemAsset.headerBlue.color
         stack.axis = .horizontal
         stack.distribution = .fillEqually
         stack.alignment = .center
@@ -117,7 +117,7 @@ final class BusStopInfoHeaderView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        backgroundColor = .systemBlue
+        backgroundColor = DesignSystemAsset.headerBlue.color
         configureUI()
     }
     
@@ -171,7 +171,7 @@ extension BusStopInfoHeaderView {
             ),
             textStack.bottomAnchor.constraint(
                 equalTo: bottomAnchor,
-                constant: -10
+                constant: -15
             )
         ])
     }

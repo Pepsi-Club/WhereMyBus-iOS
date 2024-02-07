@@ -12,7 +12,7 @@ import RxSwift
 import RxCocoa
 
 public final class DefaultBusStopUseCase: BusStopUseCase {
-    public let busStopSection: PublishSubject<[BusStopArrivalInfoResponse]>
+    public let busStopSection = PublishSubject<[BusStopArrivalInfoResponse]>()
     private let disposeBag = DisposeBag()
     
     // mock data
@@ -82,11 +82,7 @@ public final class DefaultBusStopUseCase: BusStopUseCase {
         )
     ]
     
-    public init(
-        busStopSection: PublishSubject<[BusStopArrivalInfoResponse]> 
-        = PublishSubject<[BusStopArrivalInfoResponse]>()
-    ) {
-        self.busStopSection = busStopSection
+    public init() {
         fetchBusArrivals()
     }
     

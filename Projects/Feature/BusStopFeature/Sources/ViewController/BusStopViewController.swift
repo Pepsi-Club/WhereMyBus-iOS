@@ -1,6 +1,7 @@
 import UIKit
 
 import Domain
+import DesignSystem
 
 import RxSwift
 import RxCocoa
@@ -74,6 +75,17 @@ public final class BusStopViewController: UIViewController {
             likeBusStopBtnTapEvent: likeBusStopBtnTapEvent.asObservable(),
             mapBtnTapEvent: mapBtnTapEvent.asObservable()
         )
+        
+        rx.methodInvoked(#selector(UIViewController.viewWillAppear))
+            .subscribe(onNext: { [weak self] _ in
+                guard let naviController = self?.navigationController
+                else { return }
+                naviController.navigationBar.barTintColor
+                = DesignSystemAsset.headerBlue.color
+                naviController.navigationController?
+                    .navigationBar.isTranslucent = false
+            })
+            .disposed(by: disposeBag)
         
         let output = viewModel.transform(input: input)
         bindTableView(output: output)
