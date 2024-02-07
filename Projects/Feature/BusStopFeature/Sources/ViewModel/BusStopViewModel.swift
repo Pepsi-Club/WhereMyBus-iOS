@@ -21,8 +21,7 @@ public final class BusStopViewModel: ViewModel {
     
     public func transform(input: Input) -> Output {
         let output = Output(
-            busStopArrivalInfoResponse: .init(),
-            busStopInfoResponse: .init()
+            busStopArrivalInfoResponse: .init()
         )
         
         input.viewWillAppearEvent
@@ -54,18 +53,14 @@ public final class BusStopViewModel: ViewModel {
 extension BusStopViewModel {
     public struct Input {
         let viewWillAppearEvent: Observable<Void>
-        var likeBusBtnTapEvent: Observable<IndexPath>
-        var alarmBtnTapEvent: Observable<IndexPath>
+        let likeBusBtnTapEvent: Observable<IndexPath>
+        let alarmBtnTapEvent: Observable<IndexPath>
         let likeBusStopBtnTapEvent: Observable<Int>
         let mapBtnTapEvent: Observable<Int>
     }
     
     public struct Output {
-        // Cell header에 대한
         var busStopArrivalInfoResponse
         : PublishSubject<[BusStopArrivalInfoResponse]>
-        // Cell data
-        var busStopInfoResponse
-        : PublishSubject<BusStopInfoResponse>
     }
 }
