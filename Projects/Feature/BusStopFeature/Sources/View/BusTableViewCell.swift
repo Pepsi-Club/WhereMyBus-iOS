@@ -12,8 +12,8 @@ import DesignSystem
 
 import RxSwift
 
-class BusTableViewCell: UITableViewCell {
-    var disposeBag = DisposeBag()
+final class BusTableViewCell: UITableViewCell {
+    private var disposeBag = DisposeBag()
 
     let starBtn: UIButton = {
         var config = UIButton.Configuration.filled()
@@ -139,7 +139,7 @@ class BusTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func updateUI(
+    public func updateUI(
         routeName: String,
         nextRouteName: String,
         firstArrivalTime: String,
@@ -160,7 +160,7 @@ class BusTableViewCell: UITableViewCell {
 }
 
 extension BusTableViewCell {
-    func configureUI() {
+    private func configureUI() {
         [starBtn, alarmBtn, totalStack,
          busNumStack, arrMinStack, arrStopStack,
          busNumber, nextStopName, arr1stMsgSt,

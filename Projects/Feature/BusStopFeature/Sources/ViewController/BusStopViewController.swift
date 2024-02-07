@@ -1,4 +1,5 @@
 import UIKit
+
 import Domain
 
 import RxSwift
@@ -10,8 +11,8 @@ public final class BusStopViewController: UIViewController {
     let disposeBag = DisposeBag()
     let mapBtnTapEvent = PublishSubject<Int>()
     let likeBusStopBtnTapEvent = PublishSubject<Int>()
-    var likeBusBtnTapEvent = PublishSubject<IndexPath>()
-    var alarmBtnTapEvent = PublishSubject<IndexPath>()
+    let likeBusBtnTapEvent = PublishSubject<IndexPath>()
+    let alarmBtnTapEvent = PublishSubject<IndexPath>()
     
     private var dataSource: BusStopDataSource!
     private var snapshot: BusStopSnapshot!

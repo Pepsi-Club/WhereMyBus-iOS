@@ -10,9 +10,9 @@ import UIKit
 
 import DesignSystem
 
-class BusStopInfoHeaderView: UIView {
+final class BusStopInfoHeaderView: UIView {
     
-    let textStack: UIStackView = {
+    private let textStack: UIStackView = {
         let stack = UIStackView()
         stack.axis = .vertical
         stack.distribution = .fill
@@ -22,7 +22,7 @@ class BusStopInfoHeaderView: UIView {
         return stack
     }()
     
-    let btnStack: UIStackView = {
+    private let btnStack: UIStackView = {
         let stack = UIStackView()
         stack.backgroundColor = .systemBlue
         stack.axis = .horizontal
@@ -36,7 +36,6 @@ class BusStopInfoHeaderView: UIView {
     var busStopNumLb: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-//        label.text = "23290"
         label.font = DesignSystemFontFamily.NanumSquareNeoOTF
             .regular.font(size: 15)
         label.textColor = .white
@@ -46,7 +45,6 @@ class BusStopInfoHeaderView: UIView {
     var busStopNameLb: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-//        label.text = "강남구 보건소"
         label.font = DesignSystemFontFamily.NanumSquareNeoOTF
             .heavy.font(size: 20)
         label.textColor = .white
@@ -56,7 +54,6 @@ class BusStopInfoHeaderView: UIView {
     var nextStopNameLb: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-//        label.text = "강남구청역 방면"
         label.font = DesignSystemFontFamily.NanumSquareNeoOTF
             .bold.font(size: 16)
         label.textColor = .white
@@ -140,12 +137,12 @@ class BusStopInfoHeaderView: UIView {
 }
 
 extension BusStopInfoHeaderView {
-    func configureUI() {
+    private func configureUI() {
         configureSetup()
         configureLayouts()
     }
     
-    func configureSetup() {
+    private func configureSetup() {
         addSubview(textStack)
         
         [busStopNumLb, busStopNameLb, nextStopNameLb, btnStack]
@@ -159,7 +156,7 @@ extension BusStopInfoHeaderView {
             }
     }
     
-    func configureLayouts() {
+    private func configureLayouts() {
         
         NSLayoutConstraint.activate([
             textStack.leadingAnchor.constraint(

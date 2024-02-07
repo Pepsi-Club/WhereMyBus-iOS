@@ -6,7 +6,7 @@ public final class DefaultBusStopCoordinator: BusStopCoordinator {
     public var parent: Coordinator?
     public var childs: [Coordinator] = []
     public var navigationController: UINavigationController
-//    var coordinatorProvider: CoordinatorProvider
+//    public var coordinatorProvider: CoordinatorProvider
     
     public init(
         parent: Coordinator?,

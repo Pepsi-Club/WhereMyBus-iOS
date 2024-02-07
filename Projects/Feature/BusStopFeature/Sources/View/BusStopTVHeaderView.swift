@@ -10,7 +10,7 @@ import UIKit
 
 import DesignSystem
 
-class BusStopTVHeaderView: UITableViewHeaderFooterView {
+final class BusStopTVHeaderView: UITableViewHeaderFooterView {
     
     private let titleLabel: UILabel = {
         let label = UILabel()
@@ -29,11 +29,11 @@ class BusStopTVHeaderView: UITableViewHeaderFooterView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func bind(with title: String) {
+    public func bind(with title: String) {
         titleLabel.text = title
     }
     
-    func configureUI() {
+    private func configureUI() {
         addSubview(titleLabel)
         
         NSLayoutConstraint.activate([
