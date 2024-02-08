@@ -40,14 +40,13 @@ final class SearchNearStopView: UIButton {
             return stack
         }()
     
-    // MARK: 이거 도대체 왜 이미지 사이즈가 조절이 안될까요? 
     private let busStopImageView: UIImageView = {
         let symbolName = "pin.fill"
 
         var configuration = UIImage.SymbolConfiguration(pointSize: 35,
                                                         weight: .bold)
         configuration = configuration.applying(UIImage.SymbolConfiguration(
-                            font: UIFont.systemFont(ofSize: 25, weight: .bold),
+            font: UIFont.systemFont(ofSize: 25, weight: .bold),
                             scale: .default))
         
         let pinImage = UIImage(

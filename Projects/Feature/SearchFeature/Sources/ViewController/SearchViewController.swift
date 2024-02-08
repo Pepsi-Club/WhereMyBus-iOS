@@ -19,7 +19,7 @@ public final class SearchViewController: UIViewController {
         let starImage = UIImage(systemName: "chevron.backward")
         btn.setImage(starImage, for: .normal)
         btn.tintColor = .black
-        
+//        btn.backgroundColor = .red
         return btn
     }()
     
@@ -55,7 +55,6 @@ public final class SearchViewController: UIViewController {
     private let editBtn: UIButton = {
         var config = UIButton.Configuration.plain()
         config.baseForegroundColor = DesignSystemAsset.gray5.color
-        config.imagePadding = 5
         var titleContainer = AttributeContainer()
         titleContainer.font =
         DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(size: 15)
@@ -81,6 +80,7 @@ public final class SearchViewController: UIViewController {
             let stack = UIStackView()
             stack.axis = .horizontal
             stack.alignment = .center
+        
             return stack
         }()
     
@@ -89,7 +89,9 @@ public final class SearchViewController: UIViewController {
             stack.axis = .horizontal
             stack.alignment = .center
             stack.spacing = 100
-            return stack
+            stack.distribution = .fill
+            
+        return stack
         }()
     
     private let magniStack: UIStackView = {
@@ -135,13 +137,24 @@ public final class SearchViewController: UIViewController {
                 headerStack.addArrangedSubview(components)
             }
         
-//        MARK: 왜 안됨??
-//        [backBtn, magniImage]
-//            .forEach { components in
-//                magniImage.addArrangedSubview(components)
-//            }
-        
         NSLayoutConstraint.activate([
+        
+        backBtn.widthAnchor.constraint(equalToConstant: 20),
+        
+        magniImage.topAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.topAnchor,
+                constant: -5
+            ),
+        
+        magniImage.widthAnchor.constraint(
+                equalToConstant: 20
+            ),
+        
+        magniImage.trailingAnchor.constraint(
+                equalTo: view.trailingAnchor,
+                constant: -20
+            ),
+            
         searchTextFieldView.heightAnchor.constraint(
                 equalToConstant: 39),
            
@@ -154,22 +167,18 @@ public final class SearchViewController: UIViewController {
                 constant: 10
             ),
         
-        magniImage.topAnchor.constraint(
-            equalTo: view.safeAreaLayoutGuide.topAnchor,
-            constant: -5
-        ),
-        magniImage.trailingAnchor.constraint(
-            equalTo: view.trailingAnchor,
-            constant: -20
-        ),
+        textFieldStack.trailingAnchor.constraint(
+            equalTo: magniImage.trailingAnchor,
+            constant: 10
+            ),
         
+
         headerStack.topAnchor.constraint(
                 equalTo: textFieldStack.bottomAnchor, constant: 15),
         headerStack.leadingAnchor.constraint(
                 equalTo: view.leadingAnchor, constant: 15),
         headerStack.trailingAnchor.constraint(
-                equalTo: view.trailingAnchor, constant: -13),
-        //MARK: 왜 같은 숫자로 놔도 다르게 적용이 됨?
+                equalTo: view.trailingAnchor, constant: -15),
      
         recentSearchView.topAnchor.constraint(
                 equalTo: recentSearchlabel.bottomAnchor, constant: -30),
