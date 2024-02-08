@@ -8,11 +8,16 @@ import RxSwift
 
 public final class BusStopViewModel: ViewModel {
     private let coordinator: BusStopCoordinator
-    private let disposeBag = DisposeBag()
     @Injected(BusStopUseCase.self) var useCase: BusStopUseCase
+    private let disposeBag = DisposeBag()
+    private var fetchData: ArrivalInfoRequest
     
-    public init(coordinator: BusStopCoordinator) {
+    public init(
+        coordinator: BusStopCoordinator,
+        fetchData: ArrivalInfoRequest
+    ) {
         self.coordinator = coordinator
+        self.fetchData = fetchData
     }
     
     deinit {
@@ -28,7 +33,9 @@ public final class BusStopViewModel: ViewModel {
             .withUnretained(self)
             .subscribe(
                 onNext: { viewModel, _ in
-                    viewModel.useCase.fetchBusArrivals()
+                    viewModel.useCase.fetchBusArrivals(
+                        request: viewModel.fetchData
+                    )
                 }
             ).disposed(by: disposeBag)
         

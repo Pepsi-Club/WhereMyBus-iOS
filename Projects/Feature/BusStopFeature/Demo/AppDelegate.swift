@@ -25,7 +25,83 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     func register() {
         DIContainer.register(
             type: BusStopUseCase.self,
-            DefaultBusStopUseCase()
+            DefaultBusStopUseCase(busStopArrivalInfoRepository: MockBusStopArrivalInfoRepository())
         )
+    }
+}
+
+final class MockBusStopArrivalInfoRepository: BusStopArrivalInfoRepository {
+    func fetchArrivalList(
+        busStopId: String,
+        busStopName: String
+    ) -> Observable<BusStopArrivalInfoResponse> {
+        .create { observer in
+            observer.onNext(
+                BusStopArrivalInfoResponse(
+                    busStopId: "23290",
+                    busStopName: "강남구보건소",
+                    direction: "강남구청역 방면",
+                    buses: [
+                        BusArrivalInfoResponse(
+                            routeId: "",
+                            isFavorites: false,
+                            routeName: "342",
+                            busType: "0",
+                            firstArrivalTime: "7분[3정거장전]",
+                            secondArrivalTime: "18분[9정거장전]",
+                            isAlarmOn: false),
+                        BusArrivalInfoResponse(
+                            routeId: "",
+                            isFavorites: false,
+                            routeName: "3412",
+                            busType: "1",
+                            firstArrivalTime: "7분[3정거장전]",
+                            secondArrivalTime: "18분[9정거장전]",
+                            isAlarmOn: false),
+                        BusArrivalInfoResponse(
+                            routeId: "",
+                            isFavorites: false,
+                            routeName: "471",
+                            busType: "1",
+                            firstArrivalTime: "7분[3정거장전]",
+                            secondArrivalTime: "18분[9정거장전]",
+                            isAlarmOn: false),
+                        BusArrivalInfoResponse(
+                            routeId: "",
+                            isFavorites: false,
+                            routeName: "3412",
+                            busType: "0",
+                            firstArrivalTime: "7분[3정거장전]",
+                            secondArrivalTime: "18분[9정거장전]",
+                            isAlarmOn: false),
+                        BusArrivalInfoResponse(
+                            routeId: "",
+                            isFavorites: false,
+                            routeName: "471",
+                            busType: "0",
+                            firstArrivalTime: "7분[3정거장전]",
+                            secondArrivalTime: "18분[9정거장전]",
+                            isAlarmOn: false),
+                        BusArrivalInfoResponse(
+                            routeId: "",
+                            isFavorites: false,
+                            routeName: "471",
+                            busType: "2",
+                            firstArrivalTime: "7분[3정거장전]",
+                            secondArrivalTime: "18분[9정거장전]",
+                            isAlarmOn: false),
+                        BusArrivalInfoResponse(
+                            routeId: "",
+                            isFavorites: false,
+                            routeName: "541",
+                            busType: "2",
+                            firstArrivalTime: "7분[3정거장전]",
+                            secondArrivalTime: "18분[9정거장전]",
+                            isAlarmOn: false),
+                    ]
+                )
+            )
+            return Disposables.create()
+        }
     }
 }

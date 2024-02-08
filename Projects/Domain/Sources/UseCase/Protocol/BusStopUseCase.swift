@@ -14,5 +14,5 @@ public protocol BusStopUseCase {
     var busStopSection
     : PublishSubject<[BusStopArrivalInfoResponse]> { get }
     
-    func fetchBusArrivals()
+    func fetchBusArrivals(request: ArrivalInfoRequest)
 }
