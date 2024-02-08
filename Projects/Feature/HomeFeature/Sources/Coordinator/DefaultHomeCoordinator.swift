@@ -56,7 +56,7 @@ public final class DefaultHomeCoordinator {
             animated: false
         )
     }
-    
+	
     private func setEmptyVC() {
         guard !hasViewController(vcType: EmptyFavoritesViewController.self)
         else { return }
