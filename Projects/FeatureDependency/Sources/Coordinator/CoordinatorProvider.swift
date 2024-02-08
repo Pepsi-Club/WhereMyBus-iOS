@@ -13,7 +13,12 @@ public protocol CoordinatorProvider {
         navigationController: UINavigationController
     ) -> SearchCoordinator
     
+//    func makeBusStopMapCoordinator(
+//        navigationController: UINavigationController
+//    ) -> NearMapCoordinator
+
     func makeAddRegularAlarmCoordinator(
         navigationController: UINavigationController
     ) -> AddRegularAlarmCoordinator
+
 }

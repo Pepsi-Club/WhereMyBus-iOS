@@ -124,12 +124,12 @@ extension Array<BusStopArrivalInfoResponse> {
 
 public struct BusArrivalInfoResponse: Codable, Hashable {
     public let routeId: String
-    public let isFavorites: Bool
+    public var isFavorites: Bool
     public let routeName: String
     public let busType: BusType
     public let firstArrivalTime: String
     public let secondArrivalTime: String
-    public let isAlarmOn: Bool
+    public var isAlarmOn: Bool
     
     public init(
         routeId: String, 
