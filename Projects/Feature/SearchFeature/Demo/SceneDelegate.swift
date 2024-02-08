@@ -1,5 +1,6 @@
 import UIKit
 
+import FeatureDependency
 import SearchFeature
 
 final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -15,7 +16,13 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let navigationController = UINavigationController()
         window?.rootViewController = navigationController
         window?.makeKeyAndVisible()
-                
+        
+//        let searchViewModel = SearchViewModel()
+//        let searchViewController = SearchViewController(
+//            viewModel: searchViewModel)
+//
+//        window?.rootViewController = searchViewController
+//
         let searchCoordinator = DefaultSearchCoordinator(
             navigationController: navigationController
         )
@@ -35,5 +42,35 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     func sceneDidEnterBackground(_ scene: UIScene) {
+    }
+    
+    final class MockCoordinator: Coordinator {
+        var parent: Coordinator?
+        var childs: [Coordinator] = []
+        
+        let testMessage: String
+        var navigationController: UINavigationController
+        
+        init(
+            testMessage: String,
+            navigationController: UINavigationController
+        ) {
+            self.testMessage = testMessage
+            self.navigationController = navigationController
+        }
+        
+        func start() {
+            let testViewController = UIViewController()
+            testViewController.view.backgroundColor = .white
+            testViewController.title = testMessage
+            navigationController.pushViewController(
+                testViewController,
+                animated: true
+            )
+        }
+        
+        func finish() {
+            
+        }
     }
 }
