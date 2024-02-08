@@ -2,18 +2,28 @@ import UIKit
 
 import FeatureDependency
 
+import RxSwift
+import KakaoMapsSDK
+
 public final class DefaultNearMapCoordinator: NearMapCoordinator {
     public var parent: Coordinator?
     public var childs: [Coordinator] = []
     public var navigationController: UINavigationController
+	
+	private let disposeBag = DisposeBag()
     
-    public init(navigationController: UINavigationController) {
+    public init(
+		parent: Coordinator?,
+		navigationController: UINavigationController
+	) {
+		self.parent = parent
         self.navigationController = navigationController
     }
     
     public func start() {
         let nearmapViewController = NearMapViewController(
-            viewModel: NearMapViewModel()
+			viewModel: NearMapViewModel(coordinator: self),
+			kakaoMap: KMViewContainer()
         )
         navigationController.setViewControllers(
             [nearmapViewController],
