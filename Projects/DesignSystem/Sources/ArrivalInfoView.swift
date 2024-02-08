@@ -8,9 +8,7 @@
 
 import UIKit
 
-import DesignSystem
-
-final class ArrivalInfoView: UIStackView {
+public final class ArrivalInfoView: UIStackView {
     private let timeLabel: UILabel = {
         let label = UILabel()
         label.font = DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(
@@ -29,7 +27,7 @@ final class ArrivalInfoView: UIStackView {
         return label
     }()
     
-    init() {
+    public init() {
         super.init(frame: .zero)
         configureUI()
     }
@@ -45,7 +43,7 @@ final class ArrivalInfoView: UIStackView {
         spacing = 6
     }
     
-    func updateUI(
+    public func updateUI(
         time: String,
         remainingStops: String
     ) {
