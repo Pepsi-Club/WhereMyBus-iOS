@@ -15,15 +15,22 @@ import RxSwift
 final class BusTableViewCell: UITableViewCell {
     private var disposeBag = DisposeBag()
 
+    private let firstArrivalInfoView = ArrivalInfoView()
+    private let secondArrivalInfoView = ArrivalInfoView()
+    
     let starBtn: UIButton = {
         var config = UIButton.Configuration.filled()
         config.image = UIImage(systemName: "star")
         config.contentInsets = NSDirectionalEdgeInsets(
             top: 10,
-            leading: 5,
+            leading: 15,
             bottom: 10,
             trailing: 5
         )
+        let imgConfig = UIImage.SymbolConfiguration(
+            font: .systemFont(ofSize: 13)
+        )
+        config.preferredSymbolConfigurationForImage = imgConfig
         config.baseForegroundColor = DesignSystemAsset.mainColor.color
         config.baseBackgroundColor = .clear
         let btn = UIButton(configuration: config)
@@ -37,8 +44,12 @@ final class BusTableViewCell: UITableViewCell {
             top: 10,
             leading: 5,
             bottom: 10,
-            trailing: 5
+            trailing: 15
         )
+        let imgConfig = UIImage.SymbolConfiguration(
+            font: .systemFont(ofSize: 13)
+        )
+        config.preferredSymbolConfigurationForImage = imgConfig
         config.baseForegroundColor = DesignSystemAsset.mainColor.color
         config.baseBackgroundColor = .clear
         let btn = UIButton(configuration: config)
@@ -63,24 +74,6 @@ final class BusTableViewCell: UITableViewCell {
         return stack
     }()
     
-    private let arrMinStack: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .vertical
-        stack.distribution = .fill
-        stack.alignment = .leading
-        stack.spacing = 5
-        return stack
-    }()
-    
-    private let arrStopStack: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .vertical
-        stack.distribution = .fillProportionally
-        stack.alignment = .leading
-        stack.spacing = 10
-        return stack
-    }()
-    
     private let busNumber: UILabel = {
         let label = UILabel()
         label.font = DesignSystemFontFamily.NanumSquareNeoOTF
@@ -92,39 +85,7 @@ final class BusTableViewCell: UITableViewCell {
     private let nextStopName: UILabel = {
         let label = UILabel()
         label.font = DesignSystemFontFamily.NanumSquareNeoOTF
-            .regular.font(size: 15)
-        label.textColor = DesignSystemAsset.routeTimeColor.color
-        return label
-    }()
-    
-    private let arr1stMsgMin: UILabel = {
-        let label = UILabel()
-        label.font = DesignSystemFontFamily.NanumSquareNeoOTF
-            .regular.font(size: 15)
-        label.textColor = DesignSystemAsset.routeTimeColor.color
-        return label
-    }()
-    
-    private let arr2ndMsgMin: UILabel = {
-        let label = UILabel()
-        label.font = DesignSystemFontFamily.NanumSquareNeoOTF
-            .regular.font(size: 15)
-        label.textColor = DesignSystemAsset.routeTimeColor.color
-        return label
-    }()
-    
-    private let arr1stMsgSt: UILabel = {
-        let label = UILabel()
-        label.font = DesignSystemFontFamily.NanumSquareNeoOTF
-            .regular.font(size: 11)
-        label.textColor = DesignSystemAsset.remainingColor.color
-        return label
-    }()
-    
-    private let arr2ndMsgSt: UILabel = {
-        let label = UILabel()
-        label.font = DesignSystemFontFamily.NanumSquareNeoOTF
-            .regular.font(size: 11)
+            .regular.font(size: 14)
         label.textColor = DesignSystemAsset.remainingColor.color
         return label
     }()
@@ -149,10 +110,12 @@ final class BusTableViewCell: UITableViewCell {
     ) {
         busNumber.text = routeName
         nextStopName.text = nextRouteName
-        arr1stMsgMin.text = firstArrivalTime
-        arr2ndMsgMin.text = secondArrivalTime
-        arr1stMsgSt.text = firstArrivalRemaining
-        arr2ndMsgSt.text = secondArrivalRemaining
+        firstArrivalInfoView.updateUI(
+            time: firstArrivalTime, remainingStops: firstArrivalRemaining
+        )
+        secondArrivalInfoView.updateUI(
+            time: secondArrivalTime, remainingStops: secondArrivalRemaining
+        )
     }
     override func prepareForReuse() {
         super.prepareForReuse()
@@ -161,35 +124,28 @@ final class BusTableViewCell: UITableViewCell {
 
 extension BusTableViewCell {
     private func configureUI() {
-        [starBtn, alarmBtn, totalStack,
-         busNumStack, arrMinStack, arrStopStack,
-         busNumber, nextStopName, arr1stMsgSt,
-         arr1stMsgMin, arr2ndMsgSt, arr2ndMsgMin]
-            .forEach { components in
-                components.translatesAutoresizingMaskIntoConstraints = false
-            }
-        
-        [busNumber, nextStopName]
-            .forEach { components in
-                busNumStack.addArrangedSubview(components)
-            }
-        
-        [arr1stMsgMin, arr2ndMsgMin]
-            .forEach { components in
-                arrMinStack.addArrangedSubview(components)
-            }
-        
-        [arr1stMsgSt, arr2ndMsgSt]
-            .forEach { components in
-                arrStopStack.addArrangedSubview(components)
-            }
-        
-        [starBtn, busNumStack, arrMinStack, arrStopStack, alarmBtn]
-            .forEach { components in
-                totalStack.addArrangedSubview(components)
-            }
-        
         contentView.addSubview(totalStack)
+        
+        [
+            starBtn, alarmBtn, busNumStack,
+            totalStack, busNumber, nextStopName,
+            firstArrivalInfoView, secondArrivalInfoView
+        ].forEach { components in
+            components.translatesAutoresizingMaskIntoConstraints = false
+        }
+        
+        [
+            busNumber, nextStopName
+        ].forEach { components in
+            busNumStack.addArrangedSubview(components)
+        }
+        
+        [
+            starBtn, busNumStack, firstArrivalInfoView,
+            secondArrivalInfoView, alarmBtn
+        ].forEach { components in
+            totalStack.addArrangedSubview(components)
+        }
         
         NSLayoutConstraint.activate([
             totalStack.topAnchor.constraint(
@@ -201,13 +157,13 @@ extension BusTableViewCell {
                 constant: -10
             ),
             totalStack.leadingAnchor.constraint(
-                equalTo: leadingAnchor,
-                constant: 5
+                equalTo: leadingAnchor
             ),
             totalStack.bottomAnchor.constraint(
                 equalTo: bottomAnchor,
                 constant: -10
             )
         ])
+        
     }
 }
