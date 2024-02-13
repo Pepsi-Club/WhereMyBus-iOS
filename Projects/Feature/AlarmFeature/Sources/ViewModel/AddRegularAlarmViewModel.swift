@@ -15,14 +15,13 @@ import RxSwift
 import RxRelay
 
 final class AddRegularAlarmViewModel: ViewModel {
-    // TODO: Alarm 모델링 후 alarmToEdit 타입 수정 및 Output 바인딩
-    private let alarmToEdit: String?
+    private let alarmToEdit: RegularAlarmResponse?
     private let coordinator: AddRegularAlarmCoordinator
     
     private let disposeBag = DisposeBag()
     
     init(
-        alarmToEdit: String? = nil,
+        alarmToEdit: RegularAlarmResponse? = nil,
         coordinator: AddRegularAlarmCoordinator
     ) {
         self.alarmToEdit = alarmToEdit
@@ -39,7 +38,12 @@ final class AddRegularAlarmViewModel: ViewModel {
             selectedDate: .init(),
             selectedWeekDay: .init(value: [])
         )
-        
+        if let alarmToEdit {
+// TODO: busStopID, busID로 모델링 된다면 busStopID로 API통신을 해야 busID를 확인할 수 있음
+            output.selectedBusInfo.accept(alarmToEdit.busStopId)
+            output.selectedDate.onNext(alarmToEdit.time)
+            output.selectedWeekDay.accept(alarmToEdit.weekDay)
+        }
         input.searchBtnTapEvent
             .withUnretained(self)
             .subscribe(
