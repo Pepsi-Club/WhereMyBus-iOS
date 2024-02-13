@@ -79,42 +79,6 @@ public struct BusStopArrivalInfoResponse: Codable, Hashable {
 }
 
 extension Array<BusStopArrivalInfoResponse> {
-    public var toSection: [FavoritesSection] {
-        map { element in
-                .init(
-                    busStopName: element.busStopName,
-                    busStopDirection: "XX 방면",
-                    items: element.buses.map { bus in
-                        let splittedMsg1 = bus.firstArrivalTime
-                            .split(separator: "[")
-                            .map { String($0) }
-                        let splittedMsg2 = bus.secondArrivalTime
-                            .split(separator: "[")
-                            .map { String($0) }
-                        let firstArrivalTime = splittedMsg1[0]
-                        let secondArrivalTime = splittedMsg2[0]
-                        var firstArrivalRemaining = ""
-                        var secondArrivalRemaining = ""
-                        if splittedMsg1.count > 1 {
-                            firstArrivalRemaining = splittedMsg1[1]
-                            firstArrivalRemaining.removeLast()
-                        }
-                        if splittedMsg2.count > 1 {
-                            secondArrivalRemaining = splittedMsg2[1]
-                            secondArrivalRemaining.removeLast()
-                        }
-                        return .init(
-                            routeName: bus.routeName,
-                            firstArrivalTime: firstArrivalTime,
-                            firstArrivalRemaining: firstArrivalRemaining,
-                            secondArrivalTime: secondArrivalTime,
-                            secondArrivalRemaining: secondArrivalRemaining
-                        )
-                    }
-                )
-        }
-    }
-    
     func hasBusStop(busStopId: String) -> Bool {
         contains { station in
             station.busStopId == busStopId
@@ -143,7 +107,7 @@ public struct BusArrivalInfoResponse: Codable, Hashable {
         self.routeId = routeId
         self.isFavorites = isFavorites
         self.routeName = routeName
-        self.busType = BusType(rawValue: busType) ?? .normal
+        self.busType = BusType(rawValue: busType) ?? .abolition
         self.firstArrivalTime = firstArrivalTime
         self.secondArrivalTime = secondArrivalTime
         self.isAlarmOn = isAlarmOn
@@ -151,25 +115,39 @@ public struct BusArrivalInfoResponse: Codable, Hashable {
 }
 
 public enum BusType: String, Codable {
-    case normal = "0", lowFloor = "1", articulated = "2"
-//    case 공용 = "0"
-//    case 공항 = "1"
-//    case 마을 = "2"
-//    case 간선 = "3"
-//    case 지선 = "4"
-//    case 순환 = "5"
-//    case 광역 = "6"
-//    case 인천 = "7"
-//    case 경기 = "8"
-//    case 폐지 = "9"
+    case common = "0"
+    case airport = "1"
+    case village = "2"
+    case trunkLine = "3"
+    case branchLine = "4"
+    case circulation = "5"
+    case wideArea = "6"
+    case incheon = "7"
+    case gyeonggi = "8"
+    case abolition = "9"
+    
     public var toString: String {
         switch self {
-        case .normal:
-            return "일반버스"
-        case .lowFloor:
-            return "저상버스"
-        case .articulated:
-            return "굴절버스"
+        case .common:
+            return "공용"
+        case .airport:
+            return "공항"
+        case .village:
+            return "마을"
+        case .trunkLine:
+            return "간선"
+        case .branchLine:
+            return "지선"
+        case .circulation:
+            return "순환"
+        case .wideArea:
+            return "광역"
+        case .incheon:
+            return "인천"
+        case .gyeonggi:
+            return "경기"
+        case .abolition:
+            return "폐지"
         }
     }
 }
