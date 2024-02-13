@@ -2,7 +2,7 @@ import UIKit
 
 import FeatureDependency
 
-public final class DefaultAlarmCoordinator: AlarmCoordinator {
+public final class DefaultRegularAlarmCoordinator: RegularAlarmCoordinator {
     public var parent: Coordinator?
     public var childs: [Coordinator] = []
     public var navigationController: UINavigationController
@@ -12,8 +12,8 @@ public final class DefaultAlarmCoordinator: AlarmCoordinator {
     }
     
     public func start() {
-        let homeViewController = AlarmViewController(
-            viewModel: AlarmViewModel()
+        let homeViewController = RegularAlarmViewController(
+            viewModel: RegularAlarmViewModel()
         )
         navigationController.setViewControllers(
             [homeViewController],
