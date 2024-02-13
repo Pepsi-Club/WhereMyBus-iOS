@@ -1,5 +1,6 @@
 import UIKit
 
+import Domain
 import FeatureDependency
 import HomeFeature
 
@@ -91,9 +92,16 @@ final class MockCoordinator: Coordinator {
     }
 }
 
-protocol AddRegularAlarmCoordinator {
-    
-}
 extension MockCoordinator: SearchCoordinator, AddRegularAlarmCoordinator {
+    func start(with: RegularAlarmResponse) {
+        
+    }
     
+    func startSearchFlow() {
+        
+    }
+    
+    func complete() {
+        
+    }
 }

@@ -6,7 +6,6 @@ import DesignSystem
 
 import RxSwift
 import RxCocoa
-import RxDataSources
 
 public final class FavoritesViewController: UIViewController {
     private let viewModel: FavoritesViewModel
@@ -207,6 +206,15 @@ public final class FavoritesViewController: UIViewController {
             )
             .disposed(by: disposeBag)
         
+        output.favoritesState
+            .withUnretained(self)
+            .subscribe(
+                onNext: { viewController, state in
+                    viewController.updateState(state: state)
+                }
+            )
+            .disposed(by: disposeBag)
+        
         editBtn.rx.tap
             .asObservable()
             .withUnretained(self)
@@ -320,6 +328,23 @@ public final class FavoritesViewController: UIViewController {
             )
         }
         dataSource.apply(snapshot)
+    }
+    
+    private func updateState(state: FavoritesViewModel.FavoritesState) {
+        switch state {
+        case .emptyFavorites:
+            favoritesTableView.backgroundView = EmptyFavoritesView()
+            refreshBtn.isHidden = true
+            editBtn.isHidden = true
+        case .fetching:
+            let activityIndicatorView = UIActivityIndicatorView(style: .large)
+            favoritesTableView.backgroundView = activityIndicatorView
+            activityIndicatorView.startAnimating()
+            refreshBtn.isHidden = false
+            editBtn.isHidden = false
+        case .fetchComplete:
+            favoritesTableView.backgroundView = nil
+        }
     }
 }
 
