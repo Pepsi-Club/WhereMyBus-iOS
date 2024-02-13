@@ -78,6 +78,7 @@ public final class FavoritesViewController: UIViewController {
         tableView.register(FavoritesTVCell.self)
         tableView.dataSource = dataSource
         tableView.delegate = self
+        tableView.sectionHeaderTopPadding = .zero
         return tableView
     }()
     
@@ -116,14 +117,18 @@ public final class FavoritesViewController: UIViewController {
         
         NSLayoutConstraint.activate([
             busIconView.topAnchor.constraint(
-                equalTo: safeArea.topAnchor
+                equalTo: safeArea.topAnchor,
+                constant: 10
             ),
             busIconView.leadingAnchor.constraint(
                 equalTo: safeArea.leadingAnchor,
-                constant: .screenWidth * 0.1
+                constant: .screenWidth * 0.07
             ),
             
-            searchBtn.topAnchor.constraint(equalTo: busIconView.bottomAnchor),
+            searchBtn.topAnchor.constraint(
+                equalTo: busIconView.bottomAnchor,
+                constant: -10
+            ),
             searchBtn.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
             searchBtn.widthAnchor.constraint(
                 equalTo: safeArea.widthAnchor,
@@ -337,9 +342,7 @@ public final class FavoritesViewController: UIViewController {
             refreshBtn.isHidden = true
             editBtn.isHidden = true
         case .fetching:
-            let activityIndicatorView = UIActivityIndicatorView(style: .large)
-            favoritesTableView.backgroundView = activityIndicatorView
-            activityIndicatorView.startAnimating()
+            favoritesTableView.loadingBackground()
             refreshBtn.isHidden = false
             editBtn.isHidden = false
         case .fetchComplete:
