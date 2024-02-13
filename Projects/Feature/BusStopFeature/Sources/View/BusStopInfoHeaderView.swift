@@ -17,7 +17,7 @@ final class BusStopInfoHeaderView: UIView {
         stack.axis = .vertical
         stack.distribution = .fill
         stack.alignment = .center
-        stack.spacing = 10
+        stack.spacing = 7
         stack.translatesAutoresizingMaskIntoConstraints = false
         return stack
     }()
@@ -27,7 +27,7 @@ final class BusStopInfoHeaderView: UIView {
         stack.axis = .vertical
         stack.distribution = .fillProportionally
         stack.alignment = .center
-        stack.spacing = 3
+        stack.spacing = -2
         stack.translatesAutoresizingMaskIntoConstraints = false
         return stack
     }()
@@ -36,9 +36,9 @@ final class BusStopInfoHeaderView: UIView {
         let stack = UIStackView()
         stack.backgroundColor = DesignSystemAsset.headerBlue.color
         stack.axis = .horizontal
-        stack.distribution = .fillEqually
-        stack.alignment = .center
-        stack.spacing = 20
+        stack.distribution = .fill
+        stack.alignment = .fill
+        stack.spacing = 10
         stack.translatesAutoresizingMaskIntoConstraints = false
         return stack
     }()
@@ -56,7 +56,7 @@ final class BusStopInfoHeaderView: UIView {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = DesignSystemFontFamily.NanumSquareNeoOTF
-            .heavy.font(size: 20)
+            .heavy.font(size: 18)
         label.textColor = .white
         return label
     }()
@@ -65,7 +65,7 @@ final class BusStopInfoHeaderView: UIView {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = DesignSystemFontFamily.NanumSquareNeoOTF
-            .bold.font(size: 16)
+            .bold.font(size: 12)
         label.textColor = .white
         return label
     }()
@@ -75,25 +75,17 @@ final class BusStopInfoHeaderView: UIView {
         config.image = UIImage(systemName: "star")
         var title = AttributedString.init(stringLiteral: "즐겨찾기")
         title.font = DesignSystemFontFamily.NanumSquareNeoOTF
-            .regular.font(size: 11)
+            .regular.font(size: 10)
         config.attributedTitle = title
         config.baseBackgroundColor = .white
         config.baseForegroundColor = .orange
         config.imagePadding = 3
-        config.contentInsets = NSDirectionalEdgeInsets.init(
-            top: 10,
-            leading: 10,
-            bottom: 10,
-            trailing: 10
-        )
         let imgConfig = UIImage.SymbolConfiguration(
             font: .systemFont(ofSize: 11)
         )
         config.preferredSymbolConfigurationForImage = imgConfig
         config.cornerStyle = .capsule
-        config.buttonSize = .mini
         let btn = UIButton(configuration: config)
-        btn.tintColor = .orange
         return btn
     }()
     
@@ -104,25 +96,17 @@ final class BusStopInfoHeaderView: UIView {
         
         var title = AttributedString.init(stringLiteral: "지도")
         title.font = DesignSystemFontFamily.NanumSquareNeoOTF
-            .regular.font(size: 11)
+            .regular.font(size: 10)
         config.attributedTitle = title
         config.baseBackgroundColor = .white
         config.baseForegroundColor = .orange
         config.imagePadding = 7
-        config.contentInsets = NSDirectionalEdgeInsets.init(
-            top: 10,
-            leading: 10,
-            bottom: 10,
-            trailing: 10
-        )
         let imgConfig = UIImage.SymbolConfiguration(
             font: .systemFont(ofSize: 11)
         )
         config.preferredSymbolConfigurationForImage = imgConfig
         config.cornerStyle = .capsule
-        
         let btn = UIButton(configuration: config)
-        btn.tintColor = .orange
         return btn
     }()
     

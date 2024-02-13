@@ -70,7 +70,7 @@ final class BusTableViewCell: UITableViewCell {
         stack.axis = .vertical
         stack.distribution = .fillEqually
         stack.alignment = .leading
-        stack.spacing = 5
+        stack.spacing = 3
         return stack
     }()
     
