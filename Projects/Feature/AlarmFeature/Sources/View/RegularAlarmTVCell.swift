@@ -79,12 +79,18 @@ final class RegularAlarmTVCell: UITableViewCell {
     }
     
     func updateUI(response: RegularAlarmResponse) {
-        let weekDayMessage = response.weekDay.compactMap {
-            AddRegularAlarmViewController.WeekDay(rawValue: $0)?.toString
-        }.joined(separator: ", ")
+        let weekDayMessage = response.weekDay
+            .sorted()
+            .compactMap {
+                AddRegularAlarmViewController.WeekDay(rawValue: $0)?.toString
+            }
+            .joined(separator: ", ")
+        var timeMessage = response.time.toString(dateFormat: "a hh시 mm분")
+        timeMessage.replace("AM", with: "오전")
+        timeMessage.replace("PM", with: "오후")
         updateAlarm(
             weekDay: weekDayMessage,
-            time: response.time.toString(dateFormat: "hhmma")
+            time: timeMessage
         )
         updateBusInfo(
             busStop: response.busStopName,
@@ -97,7 +103,7 @@ final class RegularAlarmTVCell: UITableViewCell {
         time: String
     ) {
         let weekDayString = NSAttributedString(
-            string: weekDay + "\n",
+            string: "매주 \(weekDay)요일\n",
             attributes: [
                 .font: DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(
                     size: 15
@@ -124,8 +130,8 @@ final class RegularAlarmTVCell: UITableViewCell {
         busStop: String,
         bus: String
     ) {
-        let busStopString = NSAttributedString(
-            string: busStop + "\n",
+        let busString = NSAttributedString(
+            string: bus + "\n",
             attributes: [
                 .font: DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(
                     size: 26
@@ -133,8 +139,8 @@ final class RegularAlarmTVCell: UITableViewCell {
                 .foregroundColor: DesignSystemAsset.regularAlarmBlue.color
             ]
         )
-        let busString = NSAttributedString(
-            string: bus,
+        let busStopString = NSAttributedString(
+            string: busStop,
             attributes: [
                 .font: DesignSystemFontFamily.NanumSquareNeoOTF.light.font(
                     size: 12
@@ -143,8 +149,8 @@ final class RegularAlarmTVCell: UITableViewCell {
             ]
         )
         let attrString = NSMutableAttributedString()
-        attrString.append(busStopString)
         attrString.append(busString)
+        attrString.append(busStopString)
         busInfoLabel.attributedText = attrString
     }
     
