@@ -20,7 +20,7 @@ public final class SettingsViewModel: ViewModel {
             .withUnretained(self)
             .subscribe(onNext: { viewModel, _ in
                 // 뷰 이동
-//                viewModel.coordinator.
+                viewModel.coordinator.setDefaultAlarm()
                 print("taptap")
             })
             .disposed(by: disposeBag)
