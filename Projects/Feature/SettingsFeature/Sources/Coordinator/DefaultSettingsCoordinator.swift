@@ -2,7 +2,7 @@ import UIKit
 
 import FeatureDependency
 
-public final class DefaultSettingsCoordinator: SettingsCoordinator {
+public final class DefaultSettingsCoordinator {
     public var parent: Coordinator?
     public var childs: [Coordinator] = []
     public var navigationController: UINavigationController
@@ -12,16 +12,26 @@ public final class DefaultSettingsCoordinator: SettingsCoordinator {
     }
     
     public func start() {
-        let homeViewController = SettingsViewController(
-            viewModel: SettingsViewModel()
+        let settingsViewController = SettingsViewController(
+            viewModel: SettingsViewModel(coordinator: self)
         )
         navigationController.setViewControllers(
-            [homeViewController],
+            [settingsViewController],
             animated: false
         )
     }
     
     public func finish() {
         
+    }
+}
+
+extension DefaultSettingsCoordinator: SettingsCoordinator {
+    public func setDefaultAlarm() {
+        // 다음 view로 이동 (예시)
+//        let secondVC = SecondViewController(
+//            viewModel: SettingsViewModel(coordinator: self)
+//        )
+//        navigationController.pushViewController(secondVC, animated: true)
     }
 }
