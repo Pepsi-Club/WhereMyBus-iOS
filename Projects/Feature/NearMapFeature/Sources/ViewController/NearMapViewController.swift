@@ -1,19 +1,27 @@
 import UIKit
 
+import DesignSystem
+
 import KakaoMapsSDK
-
 import RxSwift
+import RxCocoa
 
-public final class NearMapViewController: UIViewController,
-										  MapControllerDelegate {
+public final class NearMapViewController: UIViewController {
+	
+	// MARK: - Property
 	
 	private let viewModel: NearMapViewModel
 	
-	var kakaoMap = KMViewContainer()
-	var mapController: KMController?
-	var observerAdded = false
-	var auth = false
-	var appear = false
+	private var disposeBag = DisposeBag()
+	
+	// MARK: - UI Property
+	
+	private var kakaoMap: KMViewContainer = {
+		var view = KMViewContainer()
+		view.clipsToBounds = true
+		view.layer.cornerRadius = 15
+		return view
+	}()
 	
 	private let nearBusStopLabel: NearBusStopLabel = {
 		var label = NearBusStopLabel()
@@ -22,20 +30,24 @@ public final class NearMapViewController: UIViewController,
 		return label
 	}()
 	
-	init(viewModel: NearMapViewModel, kakaoMap: KMViewContainer) {
-		self.viewModel = viewModel
-		self.kakaoMap = kakaoMap
-		
-		super.init(nibName: nil, bundle: nil)
-	}
+	private lazy var separationView: UIView = {
+		let view = UIView()
+		view.backgroundColor = .black
+		return view
+	}()
 	
-	// MARK: - viewCylce
+	// MARK: - View Cycle
 	
 	deinit {
-		mapController?.stopRendering()
-		mapController?.stopEngine()
+		print("\(Self.description()) 해제")
+	}
+	
+	init(
+		viewModel: NearMapViewModel
+	) {
+		self.viewModel = viewModel
 		
-		print("deinit")
+		super.init(nibName: nil, bundle: nil)
 	}
 	
 	required init?(coder: NSCoder) {
@@ -43,46 +55,29 @@ public final class NearMapViewController: UIViewController,
 	}
 	
 	public override func viewDidLoad() {
-		
 		super.viewDidLoad()
 		
-		self.navigationItem.title = "가까운 버스정류장 찾기"
-		
-		mapController = KMController(viewContainer: kakaoMap)
-		mapController!.delegate = self
-		mapController?.initEngine()
-		
+		viewModel.mapController = KMController(viewContainer: kakaoMap)
+		viewModel.initKakaoMap()
 		configureUI()
-		
+		bind()
 	}
 	
-	public override func viewWillAppear(_ animated: Bool) {
-		//		addObservers()
-		appear = true
-		if mapController?.engineStarted == false {
-			mapController?.startEngine()
-		}
-		
-		if mapController?.rendering == false {
-			mapController?.startRendering()
-		}
-	}
-	
-	public override func viewWillDisappear(_ animated: Bool) {
-		appear = false
-		mapController?.stopRendering()
-	}
-	
-	public override func viewDidDisappear(_ animated: Bool) {
-		mapController?.stopEngine()
-	}
-	
-	// MARK: - setUI
+	// MARK: - Function
 	
 	public func configureUI() {
+		
+		self.navigationItem.title = "주변 정류장"
+		self.navigationController!.navigationBar.titleTextAttributes = [
+			.font: DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(
+				size: 16
+			)
+		]
+		
 		view.backgroundColor = .white
 		
 		[
+			separationView,
 			kakaoMap,
 			nearBusStopLabel,
 		].forEach {
@@ -91,6 +86,23 @@ public final class NearMapViewController: UIViewController,
 		}
 		
 		NSLayoutConstraint.activate([
+			
+			// separationView
+			separationView.topAnchor.constraint(
+				equalTo: view.safeAreaLayoutGuide.topAnchor,
+				constant: 0
+			),
+			separationView.leftAnchor.constraint(
+				equalTo: view.safeAreaLayoutGuide.leftAnchor,
+				constant: 0
+			),
+			separationView.rightAnchor.constraint(
+				equalTo: view.safeAreaLayoutGuide.rightAnchor,
+				constant: 0
+			),
+			separationView.heightAnchor.constraint(
+				equalToConstant: 0.2
+			),
 			
 			// NearBusStopLabel
 			nearBusStopLabel.bottomAnchor.constraint(
@@ -111,8 +123,8 @@ public final class NearMapViewController: UIViewController,
 			
 			// kakaoMap
 			kakaoMap.topAnchor.constraint(
-				equalTo: view.safeAreaLayoutGuide.topAnchor,
-				constant: 0
+				equalTo: separationView.safeAreaLayoutGuide.topAnchor,
+				constant: 8
 			),
 			kakaoMap.bottomAnchor.constraint(
 				equalTo: nearBusStopLabel.topAnchor,
@@ -120,95 +132,36 @@ public final class NearMapViewController: UIViewController,
 			),
 			kakaoMap.leftAnchor.constraint(
 				equalTo: view.safeAreaLayoutGuide.leftAnchor,
-				constant: 0
+				constant: 5
 			),
 			kakaoMap.rightAnchor.constraint(
 				equalTo: view.safeAreaLayoutGuide.rightAnchor,
-				constant: 0
+				constant: -5
 			),
 			
 		])
 	}
 	
-	// MARK: - kakaoMap
-	
-	public func authenticationSucceeded() {
-		if auth == false && appear {
-			auth = true
-			mapController?.startEngine()
-			mapController?.startRendering()
-		}
-	}
-	
-	// 인증 실패시 호출.
-//	public func authenticationFailed(_ errorCode: Int, desc: String) {
-//		print("error code: \(errorCode)")
-//		print("desc: \(desc)")
-//		auth = false
-//		switch errorCode {
-//			case 400: 
-//				showToast(self.view, message: "지도 종료(API인증 파라미터 오류)")
-//			case 401:
-//				showToast(self.view, message: "지도 종료(API인증 키 오류)")
-//			case 403:
-//				showToast(self.view, message: "지도 종료(API인증 권한 오류)")
-//			case 429:
-//				showToast(self.view, message: "지도 종료(API 사용쿼터 초과)")
-//			case 499:
-//				showToast(self.view, message: "지도 종료(네트워크 오류) 5초 후 재시도..")
-//				
-//				// 인증 실패 delegate 호출 이후 5초뒤에 재인증 시도..
-//				DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
-//					print("retry auth...")
-//					
-//					self.mapController?.authenticate()
-//				}
-//			default: break
-//		}
-//	}
-	
-	public func addViews() {
+	private func bind() {
+		let labelTapGesture = UITapGestureRecognizer()
+		nearBusStopLabel.addGestureRecognizer(labelTapGesture)
 		
-		let defaultPosition = MapPoint(
-			longitude: 127.041924,
-			latitude: 37.516348
+		labelTapGesture.rx.event
+			.bind(onNext: { _ in
+				print("버스정류장 detail View로 넘어가기")
+			})
+			.disposed(by: disposeBag)
+		
+		let output = viewModel.transform(input:
+				.init(
+					clickBusStopIcon: .just({}()),
+					moveToBusStopDetailView: labelTapGesture.rx.event.map { _ in }
+				)
 		)
 		
-		let mapviewInfo = MapviewInfo(
-			viewName: "mapview",
-			viewInfoName: "map",
-			defaultPosition: defaultPosition,
-			defaultLevel: 8
-		)
-		
-		if mapController?.addView(mapviewInfo) == Result.OK {
-			print("맵 추가")
-		}
+		output.busStopName
+			.bind(to: nearBusStopLabel.busStopNameLabel.rx.text)
+			.disposed(by: disposeBag)
 	}
-	
-	public func containerDidResized(_ size: CGSize) {
-		
-		let mapView: KakaoMap? = mapController?
-			.getView("mapview") as? KakaoMap
-		
-		mapView?.viewRect = CGRect(
-			origin: CGPoint(x: 0.0, y: 0.0),
-			size: size
-		)
-	}
-	
-	public func viewWillDestroyed(_ view: ViewBase) {
-		
-	}
-	
-	@objc func willResignActive() {
-		mapController?.stopRendering()
-	}
-	
-	@objc func didBecomeActive() {
-		mapController?.startRendering()
-	}
-	
-	
 	
 }

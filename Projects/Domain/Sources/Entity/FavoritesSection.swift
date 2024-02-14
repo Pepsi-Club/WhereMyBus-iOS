@@ -8,7 +8,7 @@
 
 import Foundation
 
-import RxDataSources
+//import RxDataSources
 
 public struct FavoritesSection {
     public let busStopName: String
@@ -16,14 +16,14 @@ public struct FavoritesSection {
     public var items: [RouteArrivalInfo]
 }
 
-extension FavoritesSection: SectionModelType {
-    public typealias Item = RouteArrivalInfo
-    
-    public init(
-        original: FavoritesSection,
-        items: [RouteArrivalInfo]
-    ) {
-        self = original
-        self.items = items
-    }
-}
+//extension FavoritesSection: SectionModelType {
+//    public typealias Item = RouteArrivalInfo
+//    
+//    public init(
+//        original: FavoritesSection,
+//        items: [RouteArrivalInfo]
+//    ) {
+//        self = original
+//        self.items = items
+//    }
+//}

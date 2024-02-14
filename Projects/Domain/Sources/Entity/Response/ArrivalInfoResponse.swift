@@ -8,7 +8,7 @@
 
 import Foundation
 
-import RxDataSources
+//import RxDataSources
 
 public struct ArrivalInfoResponse {
     public let busStopName: String
@@ -26,17 +26,17 @@ public struct ArrivalInfoResponse {
     }
 }
 
-extension ArrivalInfoResponse: SectionModelType {
-    public init(
-        original: ArrivalInfoResponse,
-        items: [RouteArrivalInfo]
-    ) {
-        self = original
-        self.items = items
-    }
-    
-    public typealias Item = RouteArrivalInfo
-}
+//extension ArrivalInfoResponse: SectionModelType {
+//    public init(
+//        original: ArrivalInfoResponse,
+//        items: [RouteArrivalInfo]
+//    ) {
+//        self = original
+//        self.items = items
+//    }
+//    
+//    public typealias Item = RouteArrivalInfo
+//}
 
 public struct RouteArrivalInfo {
     public let routeName: String
