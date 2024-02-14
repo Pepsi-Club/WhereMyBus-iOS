@@ -3,9 +3,13 @@ import UIKit
 import DesignSystem
 
 import RxSwift
+import RxCocoa
 
 public final class SettingsViewController: UIViewController {
     private let viewModel: SettingsViewModel
+    
+    private let disposeBag = DisposeBag()
+    private let defaultAlarmSetBtn = PublishSubject<Void>()
     
     private let titleLabel: UILabel = {
         let label = UILabel()
@@ -54,6 +58,7 @@ public final class SettingsViewController: UIViewController {
         view.backgroundColor = .systemBackground
         
         configureUI()
+        bind()
     }
     
     private func configureUI() {
@@ -83,9 +88,12 @@ public final class SettingsViewController: UIViewController {
                 equalTo: view.safeAreaLayoutGuide.trailingAnchor,
                 constant: -20
             ),
+            basicAlarmSetting.heightAnchor.constraint(
+                equalToConstant: 30
+            ),
             developVersion.topAnchor.constraint(
                 equalTo: basicAlarmSetting.bottomAnchor,
-                constant: 50
+                constant: 20
             ),
             developVersion.leadingAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.leadingAnchor,
@@ -95,6 +103,25 @@ public final class SettingsViewController: UIViewController {
                 equalTo: view.safeAreaLayoutGuide.trailingAnchor,
                 constant: -20
             ),
+            developVersion.heightAnchor.constraint(
+                equalToConstant: 30
+            ),
         ])
+    }
+    
+    private func bind() {
+        let tapGesture = UITapGestureRecognizer()
+        basicAlarmSetting.addGestureRecognizer(tapGesture)
+        
+        tapGesture.rx.event
+            .map({ _ in
+                print(" ?????? ")
+            })
+            .bind(to: defaultAlarmSetBtn)
+            .disposed(by: disposeBag)
+    
+        _ = viewModel.transform(input: .init(
+            defaultAlarmTapEvent: defaultAlarmSetBtn.asObservable())
+        )
     }
 }

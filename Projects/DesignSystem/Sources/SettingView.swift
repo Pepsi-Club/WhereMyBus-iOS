@@ -15,6 +15,9 @@ public final class SettingView: UIView {
     private let rightTitle: String?
     private let isHiddenArrowRight: Bool
     
+    // public으로 event를 가지고 있어도 좋겠다 ! -> View에서 불러서 맵핑시키면
+    // 여러 버튼으로 늘어났을때 이벤트 적용하면 더 좋겠다 !!
+    
     private lazy var leftIconLabel: UIImageView = {
         let title = iconName
         let view = UIImageView(image: UIImage(systemName: title))

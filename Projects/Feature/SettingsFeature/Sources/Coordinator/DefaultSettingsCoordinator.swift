@@ -13,7 +13,7 @@ public final class DefaultSettingsCoordinator: SettingsCoordinator {
     
     public func start() {
         let homeViewController = SettingsViewController(
-            viewModel: SettingsViewModel()
+            viewModel: SettingsViewModel(coordinator: self)
         )
         navigationController.setViewControllers(
             [homeViewController],
