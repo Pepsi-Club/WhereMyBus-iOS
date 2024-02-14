@@ -8,6 +8,8 @@
 
 import UIKit
 
+import DesignSystem
+
 public final class SettingView: UIView {
     
     private let iconName: String
