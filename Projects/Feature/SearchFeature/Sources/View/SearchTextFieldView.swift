@@ -37,6 +37,6 @@ public final class SearchTextFieldView: UITextField {
     
     //TODO: 꼭,, 고쳐야 됨~
     private func setPlaceholder(_ placeholder: String?) {
-    self.placeholder = "버스 정류장을 검색하세요"
+    self.placeholder = "  버스 정류장을 검색하세요"
     }
 }

@@ -20,5 +20,4 @@ public protocol CoordinatorProvider {
     func makeAddRegularAlarmCoordinator(
         navigationController: UINavigationController
     ) -> AddRegularAlarmCoordinator
-
 }

@@ -8,7 +8,7 @@
 
 import UIKit
 
-final class SearchTextFieldView: UIView {
+final class SearchTextFieldBoxView: UIView {
     
     private var titleContainer = AttributeContainer()
     private let titleLabel: UILabel = {
@@ -49,13 +49,15 @@ final class SearchTextFieldView: UIView {
             titleLabel.topAnchor.constraint(equalTo: topAnchor),
             titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
             
-            textField.leadingAnchor.constraint(equalTo: titleLabel.trailingAnchor, constant: 5),
+            textField.leadingAnchor.constraint(
+                equalTo: titleLabel.trailingAnchor, constant: 5),
             textField.trailingAnchor.constraint(equalTo: trailingAnchor),
             textField.topAnchor.constraint(equalTo: topAnchor),
             textField.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
         
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))
+        let tapGesture = UITapGestureRecognizer(target: self,
+                                                action: #selector(handleTap))
         addGestureRecognizer(tapGesture)
     }
     

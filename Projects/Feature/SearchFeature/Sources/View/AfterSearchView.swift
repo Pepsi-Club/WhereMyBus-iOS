@@ -11,23 +11,14 @@ import UIKit
 import Core
 import DesignSystem
 
-final class AfterSearchView: UITableViewHeaderFooterView {
-    
-    private let regionNameLabel: UILabel = {
-        let label = UILabel()
-        label.font =
-        DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(size: 16)
-        label.textColor =
-        DesignSystemAsset.routeTimeColor.color
-        return label
-    }()
-    
+final class AfterSearchView: UIScrollView {
     private let busStopNameLabel: UILabel = {
         let label = UILabel()
         label.font =
-        DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(size: 14)
+        DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(size: 16)
         label.textAlignment = .left
         label.textColor = .black
+        label.text = "강남CC"
         
         return label
     }()
@@ -35,34 +26,11 @@ final class AfterSearchView: UITableViewHeaderFooterView {
     private let numberDirectionLabel: UILabel = {
         let label = UILabel()
         label.font =
-        DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(size: 11)
+        DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(size: 13)
         label.textAlignment = .left
         label.textColor = DesignSystemAsset.gray5.color
+        label.text = "1234 | 어쩌구방면"
         
         return label
     }()
-    
-    override init(reuseIdentifier: String?) {
-        super.init(reuseIdentifier: reuseIdentifier)
-        configureUI()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    private func configureUI() {
-        [busStopNameLabel, numberDirectionLabel].forEach {
-            contentView.addSubview($0)
-            $0.translatesAutoresizingMaskIntoConstraints = false
-        }
-        
-        NSLayoutConstraint.activate([
-            busStopNameLabel.leadingAnchor
-            .constraint(equalTo: contentView.leadingAnchor,
-                       constant: 30),
-            numberDirectionLabel.leadingAnchor
-                .constraint(equalTo: busStopNameLabel.leadingAnchor)
-        ])
-    }
 }
