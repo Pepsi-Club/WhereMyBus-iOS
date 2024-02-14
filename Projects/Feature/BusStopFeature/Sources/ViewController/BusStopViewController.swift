@@ -295,6 +295,7 @@ extension BusStopViewController: UITableViewDelegate {
         
         let sectionIdentifier = dataSource.snapshot()
             .sectionIdentifiers[section]
+        //리로드가 되지 않고, apply를 통해서 바로바로 넘겨줌, 데이터 소스가 있고 snapShot을 통해서 데이터 소스를 넘겨줌 
         
         headerView.bind(with: sectionIdentifier.toString)
         
