@@ -10,13 +10,14 @@ public final class SettingsViewController: UIViewController {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "설정"
-        label.textColor = .black
+        label.textColor = DesignSystemAsset.settingColor.color
         label.font
-        = DesignSystemFontFamily.NanumSquareNeoOTF.heavy.font(size: 25)
+        = DesignSystemFontFamily.NanumSquareNeoOTF.extraBold.font(size: 25)
         return label
     }()
     private let basicAlarmSetting: SettingView = {
         let view = SettingView(
+            iconName: "alarm",
             title: "알람 설정",
             rightTitle: "",
             isHiddenArrowRight: false
@@ -25,7 +26,8 @@ public final class SettingsViewController: UIViewController {
     }()
     private lazy var developVersion: SettingView = {
         let view = SettingView(
-            title: "개발 버전",
+            iconName: "exclamationmark.circle",
+            title: "프로그램 정보",
             rightTitle: "v \(appVersion ?? "")",
             isHiddenArrowRight: true
         )
@@ -71,27 +73,27 @@ public final class SettingsViewController: UIViewController {
             ),
             basicAlarmSetting.topAnchor.constraint(
                 equalTo: titleLabel.bottomAnchor,
-                constant: 20
+                constant: 40
             ),
             basicAlarmSetting.leadingAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.leadingAnchor,
-                constant: 15
+                constant: 18
             ),
             basicAlarmSetting.trailingAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.trailingAnchor,
-                constant: -15
+                constant: -20
             ),
             developVersion.topAnchor.constraint(
                 equalTo: basicAlarmSetting.bottomAnchor,
-                constant: 10
+                constant: 50
             ),
             developVersion.leadingAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.leadingAnchor,
-                constant: 15
+                constant: 18
             ),
             developVersion.trailingAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.trailingAnchor,
-                constant: -15
+                constant: -20
             ),
         ])
     }

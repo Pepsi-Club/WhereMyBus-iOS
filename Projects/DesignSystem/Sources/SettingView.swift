@@ -10,16 +10,24 @@ import UIKit
 
 public final class SettingView: UIView {
     
+    private let iconName: String
     private let title: String
     private let rightTitle: String?
     private let isHiddenArrowRight: Bool
+    
+    private lazy var leftIconLabel: UIImageView = {
+        let title = iconName
+        let view = UIImageView(image: UIImage(systemName: title))
+        view.tintColor = DesignSystemAsset.routeTimeColor.color
+        return view
+    }()
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 1
         label.font 
-        = DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(size: 18)
-        label.textColor = DesignSystemAsset.mainColor.color
+        = DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(size: 15)
+        label.textColor = DesignSystemAsset.settingColor.color
         label.text = title
         return label
     }()
@@ -28,35 +36,25 @@ public final class SettingView: UIView {
         let label = UILabel()
         label.numberOfLines = 1
         label.font 
-        = DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(size: 15)
-        label.textColor = DesignSystemAsset.mainColor.color
+        = DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(size: 13)
+        label.textColor = DesignSystemAsset.settingColor.color
         label.text = rightTitle
         return label
     }()
 
-    private lazy var arrowRightLabel: UIImageView = {
+    private let arrowRightLabel: UIImageView = {
         let view = UIImageView(image: UIImage(systemName: "chevron.right"))
-        view.contentMode = .scaleAspectFit
         view.tintColor = DesignSystemAsset.routeTimeColor.color
         return view
     }()
     
-    private let separateBar: UIView = {
-        let view = UIView()
-        view.backgroundColor = DesignSystemAsset.remainingColor.color
-        return view
-    }()
-    
-    private let totalStack: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .horizontal
-        stack.distribution = .fill
-        stack.alignment = .leading
-        stack.spacing = 10
-        return stack
-    }()
-    
-    public init(title: String, rightTitle: String?, isHiddenArrowRight: Bool) {
+    public init(
+        iconName: String,
+        title: String,
+        rightTitle: String?,
+        isHiddenArrowRight: Bool
+    ) {
+        self.iconName = iconName
         self.title = title
         self.rightTitle = rightTitle
         self.isHiddenArrowRight = isHiddenArrowRight
@@ -71,49 +69,47 @@ public final class SettingView: UIView {
     }
     
     private func configureUI() {
-        [titleLabel, rightLabel, arrowRightLabel, separateBar, totalStack]
+        [titleLabel, rightLabel, arrowRightLabel, leftIconLabel]
             .forEach {
                 $0.translatesAutoresizingMaskIntoConstraints = false
             }
-        [totalStack, separateBar]
-            .forEach {
-                addSubview($0)
-            }
-        totalStack.addArrangedSubview(titleLabel)
+        [leftIconLabel, titleLabel]
+            .forEach { addSubview($0) }
         
         if isHiddenArrowRight {
-            totalStack.addArrangedSubview(rightLabel)
+            addSubview(rightLabel)
+            rightLabel.topAnchor.constraint(
+                equalTo: topAnchor,
+                constant: 2
+            ).isActive = true
+            rightLabel.trailingAnchor.constraint(
+                equalTo: trailingAnchor
+            ).isActive = true
             
         } else {
-            totalStack.addArrangedSubview(arrowRightLabel)
-            
+            addSubview(arrowRightLabel)
+            arrowRightLabel.topAnchor.constraint(
+                equalTo: topAnchor
+            ).isActive = true
+            arrowRightLabel.trailingAnchor.constraint(
+                equalTo: trailingAnchor
+            ).isActive = true
         }
         
         NSLayoutConstraint.activate([
-            totalStack.topAnchor.constraint(
+            leftIconLabel.topAnchor.constraint(
                 equalTo: topAnchor
             ),
-            totalStack.leadingAnchor.constraint(
+            leftIconLabel.leadingAnchor.constraint(
                 equalTo: leadingAnchor
             ),
-            totalStack.trailingAnchor.constraint(
-                equalTo: trailingAnchor
+            titleLabel.topAnchor.constraint(
+                equalTo: topAnchor,
+                constant: 2
             ),
-            separateBar.topAnchor.constraint(
-                equalTo: totalStack.bottomAnchor,
-                constant: 10
-            ),
-            separateBar.leadingAnchor.constraint(
-                equalTo: leadingAnchor
-            ),
-            separateBar.trailingAnchor.constraint(
-                equalTo: trailingAnchor
-            ),
-            separateBar.bottomAnchor.constraint(
-                equalTo: bottomAnchor
-            ),
-            separateBar.heightAnchor.constraint(
-                equalToConstant: 1
+            titleLabel.leadingAnchor.constraint(
+                equalTo: leftIconLabel.trailingAnchor,
+                constant: 15
             ),
         ])
     }
