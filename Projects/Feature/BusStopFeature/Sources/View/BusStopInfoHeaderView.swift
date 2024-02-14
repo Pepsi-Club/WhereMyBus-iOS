@@ -36,8 +36,8 @@ final class BusStopInfoHeaderView: UIView {
         let stack = UIStackView()
         stack.backgroundColor = DesignSystemAsset.headerBlue.color
         stack.axis = .horizontal
-        stack.distribution = .fill
-        stack.alignment = .fill
+        stack.distribution = .fillEqually
+        stack.alignment = .center
         stack.spacing = 10
         stack.translatesAutoresizingMaskIntoConstraints = false
         return stack
@@ -56,7 +56,7 @@ final class BusStopInfoHeaderView: UIView {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = DesignSystemFontFamily.NanumSquareNeoOTF
-            .heavy.font(size: 18)
+            .extraBold.font(size: 18)
         label.textColor = .white
         return label
     }()
@@ -65,7 +65,7 @@ final class BusStopInfoHeaderView: UIView {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = DesignSystemFontFamily.NanumSquareNeoOTF
-            .bold.font(size: 12)
+            .regular.font(size: 14)
         label.textColor = .white
         return label
     }()
@@ -147,13 +147,14 @@ extension BusStopInfoHeaderView {
     
     private func configureSetup() {
         addSubview(totalStack)
+        addSubview(btnStack)
         
         [busStopIcon, busStopNumLb]
             .forEach { components in
                 busIconStack.addArrangedSubview(components)
             }
         
-        [busIconStack, busStopNameLb, nextStopNameLb, btnStack]
+        [busIconStack, busStopNameLb, nextStopNameLb]
             .forEach { components in
                 totalStack.addArrangedSubview(components)
             }
@@ -177,9 +178,13 @@ extension BusStopInfoHeaderView {
                 equalTo: topAnchor,
                 constant: 30
             ),
-            totalStack.bottomAnchor.constraint(
-                equalTo: bottomAnchor,
-                constant: -15
+            btnStack.topAnchor.constraint(
+                equalTo: totalStack.bottomAnchor,
+                constant: 15
+            ),
+            btnStack.centerXAnchor.constraint(equalTo: centerXAnchor),
+            btnStack.bottomAnchor.constraint(
+                equalTo: bottomAnchor, constant: -15
             )
         ])
     }
