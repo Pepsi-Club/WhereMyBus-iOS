@@ -80,10 +80,8 @@ public final class BusStopViewController: UIViewController {
             .subscribe(onNext: { [weak self] _ in
                 guard let naviController = self?.navigationController
                 else { return }
-                naviController.navigationBar.barTintColor
-                = DesignSystemAsset.headerBlue.color
-                naviController.navigationController?
-                    .navigationBar.isTranslucent = false
+                
+                naviController.navigationBar.isHidden = true
             })
             .disposed(by: disposeBag)
         
@@ -192,9 +190,9 @@ public final class BusStopViewController: UIViewController {
         cell.updateUI(
             routeName: response.routeName,
             nextRouteName: "강남구청역 방면",
-            firstArrivalTime: "\(firstArrivalTime) 분",
+            firstArrivalTime: firstArrivalTime,
             firstArrivalRemaining: firstArrivalRemaining,
-            secondArrivalTime: "\(secondArrivalTime) 분",
+            secondArrivalTime: secondArrivalTime,
             secondArrivalRemaining: secondArrivalRemaining
         )
         return cell

@@ -12,12 +12,22 @@ import DesignSystem
 
 final class BusStopInfoHeaderView: UIView {
     
-    private let textStack: UIStackView = {
+    private let totalStack: UIStackView = {
         let stack = UIStackView()
         stack.axis = .vertical
         stack.distribution = .fill
         stack.alignment = .center
-        stack.spacing = 20
+        stack.spacing = 7
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        return stack
+    }()
+    
+    private let busIconStack: UIStackView = {
+        let stack = UIStackView()
+        stack.axis = .vertical
+        stack.distribution = .fillProportionally
+        stack.alignment = .center
+        stack.spacing = -2
         stack.translatesAutoresizingMaskIntoConstraints = false
         return stack
     }()
@@ -28,12 +38,12 @@ final class BusStopInfoHeaderView: UIView {
         stack.axis = .horizontal
         stack.distribution = .fillEqually
         stack.alignment = .center
-        stack.spacing = 20
+        stack.spacing = 10
         stack.translatesAutoresizingMaskIntoConstraints = false
         return stack
     }()
     
-    var busStopNumLb: UILabel = {
+    private let busStopNumLb: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = DesignSystemFontFamily.NanumSquareNeoOTF
@@ -42,20 +52,20 @@ final class BusStopInfoHeaderView: UIView {
         return label
     }()
     
-    var busStopNameLb: UILabel = {
+    private let busStopNameLb: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = DesignSystemFontFamily.NanumSquareNeoOTF
-            .heavy.font(size: 20)
+            .extraBold.font(size: 18)
         label.textColor = .white
         return label
     }()
     
-    var nextStopNameLb: UILabel = {
+    private let nextStopNameLb: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = DesignSystemFontFamily.NanumSquareNeoOTF
-            .bold.font(size: 16)
+            .regular.font(size: 14)
         label.textColor = .white
         return label
     }()
@@ -65,24 +75,17 @@ final class BusStopInfoHeaderView: UIView {
         config.image = UIImage(systemName: "star")
         var title = AttributedString.init(stringLiteral: "즐겨찾기")
         title.font = DesignSystemFontFamily.NanumSquareNeoOTF
-            .regular.font(size: 15)
+            .regular.font(size: 10)
         config.attributedTitle = title
-        
         config.baseBackgroundColor = .white
         config.baseForegroundColor = .orange
-        
-        config.titlePadding = 10
-        config.imagePadding = 10
-        config.contentInsets = NSDirectionalEdgeInsets.init(
-            top: 10,
-            leading: 10,
-            bottom: 10,
-            trailing: 10
+        config.imagePadding = 3
+        let imgConfig = UIImage.SymbolConfiguration(
+            font: .systemFont(ofSize: 11)
         )
+        config.preferredSymbolConfigurationForImage = imgConfig
         config.cornerStyle = .capsule
-        
         let btn = UIButton(configuration: config)
-        btn.tintColor = .orange
         return btn
     }()
     
@@ -93,25 +96,25 @@ final class BusStopInfoHeaderView: UIView {
         
         var title = AttributedString.init(stringLiteral: "지도")
         title.font = DesignSystemFontFamily.NanumSquareNeoOTF
-            .regular.font(size: 15)
+            .regular.font(size: 10)
         config.attributedTitle = title
-        
         config.baseBackgroundColor = .white
         config.baseForegroundColor = .orange
-        
-        config.titlePadding = 10
-        config.imagePadding = 10
-        config.contentInsets = NSDirectionalEdgeInsets.init(
-            top: 10,
-            leading: 10,
-            bottom: 10,
-            trailing: 10
+        config.imagePadding = 7
+        let imgConfig = UIImage.SymbolConfiguration(
+            font: .systemFont(ofSize: 11)
         )
+        config.preferredSymbolConfigurationForImage = imgConfig
         config.cornerStyle = .capsule
-        
         let btn = UIButton(configuration: config)
-        btn.tintColor = .orange
         return btn
+    }()
+    
+    private let busStopIcon: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = DesignSystemAsset.busStop.image
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
     }()
     
     override init(frame: CGRect) {
@@ -143,11 +146,17 @@ extension BusStopInfoHeaderView {
     }
     
     private func configureSetup() {
-        addSubview(textStack)
+        addSubview(totalStack)
+        addSubview(btnStack)
         
-        [busStopNumLb, busStopNameLb, nextStopNameLb, btnStack]
+        [busStopIcon, busStopNumLb]
             .forEach { components in
-                textStack.addArrangedSubview(components)
+                busIconStack.addArrangedSubview(components)
+            }
+        
+        [busIconStack, busStopNameLb, nextStopNameLb]
+            .forEach { components in
+                totalStack.addArrangedSubview(components)
             }
         
         [favoriteBtn, mapBtn]
@@ -159,19 +168,23 @@ extension BusStopInfoHeaderView {
     private func configureLayouts() {
         
         NSLayoutConstraint.activate([
-            textStack.leadingAnchor.constraint(
+            totalStack.leadingAnchor.constraint(
                 equalTo: leadingAnchor
             ),
-            textStack.trailingAnchor.constraint(
+            totalStack.trailingAnchor.constraint(
                 equalTo: trailingAnchor
             ),
-            textStack.topAnchor.constraint(
+            totalStack.topAnchor.constraint(
                 equalTo: topAnchor,
-                constant: 50
+                constant: 30
             ),
-            textStack.bottomAnchor.constraint(
-                equalTo: bottomAnchor,
-                constant: -15
+            btnStack.topAnchor.constraint(
+                equalTo: totalStack.bottomAnchor,
+                constant: 15
+            ),
+            btnStack.centerXAnchor.constraint(equalTo: centerXAnchor),
+            btnStack.bottomAnchor.constraint(
+                equalTo: bottomAnchor, constant: -15
             )
         ])
     }
