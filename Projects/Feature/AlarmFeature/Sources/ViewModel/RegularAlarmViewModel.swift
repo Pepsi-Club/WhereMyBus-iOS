@@ -14,6 +14,10 @@ public final class RegularAlarmViewModel: ViewModel {
         self.coordinator = coordinator
     }
     
+    deinit {
+        coordinator.finish()
+    }
+    
     public func transform(input: Input) -> Output {
         let output = Output(
             regularAlarmList: .init()
