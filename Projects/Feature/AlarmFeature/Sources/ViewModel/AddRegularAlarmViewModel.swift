@@ -34,16 +34,20 @@ final class AddRegularAlarmViewModel: ViewModel {
     
     func transform(input: Input) -> Output {
         let output = Output(
+            title: .init(value: "추가하기"),
             selectedBusInfo: .init(value: "정류장 및 버스 찾기"),
             selectedDate: .init(),
             selectedWeekDay: .init(value: [])
         )
         if let alarmToEdit {
-// TODO: busStopID, busID로 모델링 된다면 busStopID로 API통신을 해야 busID를 확인할 수 있음
-            output.selectedBusInfo.accept(alarmToEdit.busStopId)
+            output.title.accept("수정하기")
+            output.selectedBusInfo.accept(
+                "\(alarmToEdit.busStopName), \(alarmToEdit.busName)"
+            )
             output.selectedDate.onNext(alarmToEdit.time)
             output.selectedWeekDay.accept(alarmToEdit.weekDay)
         }
+        
         input.searchBtnTapEvent
             .withUnretained(self)
             .subscribe(
@@ -96,6 +100,7 @@ extension AddRegularAlarmViewModel {
     }
     
     struct Output { 
+        let title: BehaviorRelay<String>
         let selectedBusInfo: BehaviorRelay<String>
         let selectedDate: PublishSubject<Date>
         let selectedWeekDay: BehaviorRelay<[Int]>

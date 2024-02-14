@@ -1,6 +1,8 @@
 import UIKit
 
 import AlarmFeature
+import Domain
+import FeatureDependency
 
 final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
@@ -16,8 +18,9 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.rootViewController = navigationController
         window?.makeKeyAndVisible()
                 
-        let alarmCoordinator = DefaultAlarmCoordinator(
-            navigationController: navigationController
+        let alarmCoordinator = DefaultRegularAlarmCoordinator(
+            navigationController: navigationController,
+            coordinatorProvider: MockCoordinatorProvider()
         )
         alarmCoordinator.start()
     }
@@ -35,5 +38,44 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     func sceneDidEnterBackground(_ scene: UIScene) {
+    }
+}
+
+final class MockCoordinatorProvider: CoordinatorProvider {
+    func makeSearchCoordinator(navigationController: UINavigationController) -> FeatureDependency.SearchCoordinator {
+        MockCoordinator(navigationController: navigationController)
+    }
+    
+    func makeAddRegularAlarmCoordinator(navigationController: UINavigationController) -> FeatureDependency.AddRegularAlarmCoordinator {
+        MockCoordinator(navigationController: navigationController)
+    }
+}
+
+final class MockCoordinator
+: Coordinator, SearchCoordinator ,AddRegularAlarmCoordinator {
+    func start(with: RegularAlarmResponse) {
+    }
+    
+    func startSearchFlow() {
+    }
+    
+    func complete() {
+        
+    }
+    
+    var parent: FeatureDependency.Coordinator?
+    var childs: [FeatureDependency.Coordinator] = []
+    var navigationController: UINavigationController
+    
+    init(navigationController: UINavigationController) {
+        self.navigationController = navigationController
+    }
+    
+    func start() {
+        navigationController.pushViewController(.init(), animated: true)
+    }
+    
+    func finish() {
+        
     }
 }

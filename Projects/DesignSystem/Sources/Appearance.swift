@@ -15,6 +15,7 @@ public final class Appearance {
         let backgroundColor = DesignSystemAsset.backgroundColor.color
         let tabBackgroundColor = DesignSystemAsset.tabBackgroundColor.color
         UINavigationBar.appearance().backgroundColor = backgroundColor
+        UINavigationBar.appearance().tintColor = .black
         UITabBar.appearance().backgroundColor = tabBackgroundColor
         UITabBar.appearance().tintColor = accentColor
         UITabBar.appearance().unselectedItemTintColor = mainColor

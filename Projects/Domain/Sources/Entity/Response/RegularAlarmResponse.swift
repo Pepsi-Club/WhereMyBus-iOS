@@ -15,4 +15,20 @@ public struct RegularAlarmResponse: Hashable {
     public let busName: String
     public let time: Date
     public let weekDay: [Int]
+    
+    public init(
+        busStopId: String,
+        busStopName: String, 
+        busId: String, 
+        busName: String,
+        time: Date,
+        weekDay: [Int]
+    ) {
+        self.busStopId = busStopId
+        self.busStopName = busStopName
+        self.busId = busId
+        self.busName = busName
+        self.time = time
+        self.weekDay = weekDay
+    }
 }

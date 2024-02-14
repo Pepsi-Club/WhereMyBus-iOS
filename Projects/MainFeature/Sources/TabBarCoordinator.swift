@@ -74,7 +74,7 @@ public final class TabBarCoordinator: Coordinator {
                 navigationController: navigationController
             )
         case .alarm:
-            coordinator = DefaultAlarmCoordinator(
+            coordinator = DefaultRegularAlarmCoordinator(
                 navigationController: navigationController
             )
         }
