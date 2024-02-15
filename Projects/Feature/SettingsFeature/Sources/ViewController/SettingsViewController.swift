@@ -10,6 +10,7 @@ public final class SettingsViewController: UIViewController {
     
     private let disposeBag = DisposeBag()
     private let defaultAlarmSetBtn = PublishSubject<Void>()
+    private let termsPrivacyBtnTap = PublishSubject<Void>()
     
     private let titleLabel: UILabel = {
         let label = UILabel()
@@ -19,8 +20,8 @@ public final class SettingsViewController: UIViewController {
         = DesignSystemFontFamily.NanumSquareNeoOTF.extraBold.font(size: 25)
         return label
     }()
-    private let basicAlarmSetting: SettingView = {
-        let view = SettingView(
+    private let basicAlarmSetting: SettingButton = {
+        let view = SettingButton(
             iconName: "alarm",
             title: "알람 설정",
             rightTitle: "",
@@ -28,8 +29,8 @@ public final class SettingsViewController: UIViewController {
         )
         return view
     }()
-    private lazy var developVersion: SettingView = {
-        let view = SettingView(
+    private lazy var developVersion: SettingButton = {
+        let view = SettingButton(
             iconName: "exclamationmark.circle",
             title: "프로그램 정보",
             rightTitle: "v \(appVersion ?? "")",
@@ -37,9 +38,26 @@ public final class SettingsViewController: UIViewController {
         )
         return view
     }()
+    private lazy var termsPrivacyBtn: SettingButton = {
+        let view = SettingButton(
+            iconName: "lock.shield",
+            title: "이용약관 및 개인정보처리방침",
+            rightTitle: "",
+            isHiddenArrowRight: false
+        )
+        return view
+    }()
+    private let totalStack: UIStackView = {
+        let stack = UIStackView()
+        stack.axis = .vertical
+        stack.distribution = .equalSpacing
+        stack.alignment = .leading
+        stack.spacing = 20
+        return stack
+    }()
     private var appVersion: String? {
         guard let dictionary = Bundle.main.infoDictionary,
-              let version = dictionary["CFBundleShortVersionString"] as? String 
+              let version = dictionary["CFBundleShortVersionString"] as? String
         else { return nil }
         return version
     }
@@ -62,7 +80,8 @@ public final class SettingsViewController: UIViewController {
     }
     
     private func configureUI() {
-        [titleLabel, basicAlarmSetting, developVersion]
+        [titleLabel, basicAlarmSetting,
+         developVersion, termsPrivacyBtn]
             .forEach {
                 $0.translatesAutoresizingMaskIntoConstraints = false
                 view.addSubview($0)
@@ -91,8 +110,23 @@ public final class SettingsViewController: UIViewController {
             basicAlarmSetting.heightAnchor.constraint(
                 equalToConstant: 30
             ),
-            developVersion.topAnchor.constraint(
+            termsPrivacyBtn.topAnchor.constraint(
                 equalTo: basicAlarmSetting.bottomAnchor,
+                constant: 20
+            ),
+            termsPrivacyBtn.leadingAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.leadingAnchor,
+                constant: 18
+            ),
+            termsPrivacyBtn.trailingAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.trailingAnchor,
+                constant: -20
+            ),
+            termsPrivacyBtn.heightAnchor.constraint(
+                equalToConstant: 30
+            ),
+            developVersion.topAnchor.constraint(
+                equalTo: termsPrivacyBtn.bottomAnchor,
                 constant: 20
             ),
             developVersion.leadingAnchor.constraint(
@@ -110,18 +144,18 @@ public final class SettingsViewController: UIViewController {
     }
     
     private func bind() {
-        let tapGesture = UITapGestureRecognizer()
-        basicAlarmSetting.addGestureRecognizer(tapGesture)
         
-        tapGesture.rx.event
-            .map({ _ in
-                print(" ?????? ")
-            })
+        basicAlarmSetting.rx.tap
             .bind(to: defaultAlarmSetBtn)
             .disposed(by: disposeBag)
-    
+        
+        termsPrivacyBtn.rx.tap
+            .bind(to: termsPrivacyBtnTap)
+            .disposed(by: disposeBag)
+        
         _ = viewModel.transform(input: .init(
-            defaultAlarmTapEvent: defaultAlarmSetBtn.asObservable())
+            defaultAlarmTapEvent: defaultAlarmSetBtn.asObservable(),
+            termsTapEvent: termsPrivacyBtnTap.asObservable())
         )
     }
 }

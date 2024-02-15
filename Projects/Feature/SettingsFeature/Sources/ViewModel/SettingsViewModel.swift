@@ -21,7 +21,15 @@ public final class SettingsViewModel: ViewModel {
             .subscribe(onNext: { viewModel, _ in
                 // 뷰 이동
                 viewModel.coordinator.setDefaultAlarm()
-                print("taptap")
+                print("알람설정 tap")
+            })
+            .disposed(by: disposeBag)
+        
+        input.termsTapEvent
+            .withUnretained(self)
+            .subscribe(onNext: { viewModel, _ in
+//                viewModel.coordinator.
+                print("이용약관 tap")
             })
             .disposed(by: disposeBag)
         
@@ -32,6 +40,7 @@ public final class SettingsViewModel: ViewModel {
 extension SettingsViewModel {
     public struct Input {
         let defaultAlarmTapEvent: Observable<Void>
+        let termsTapEvent: Observable<Void>
     }
     
     public struct Output {
