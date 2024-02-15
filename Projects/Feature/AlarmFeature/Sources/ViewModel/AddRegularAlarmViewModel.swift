@@ -15,14 +15,13 @@ import RxSwift
 import RxRelay
 
 final class AddRegularAlarmViewModel: ViewModel {
-    // TODO: Alarm 모델링 후 alarmToEdit 타입 수정 및 Output 바인딩
-    private let alarmToEdit: String?
+    private let alarmToEdit: RegularAlarmResponse?
     private let coordinator: AddRegularAlarmCoordinator
     
     private let disposeBag = DisposeBag()
     
     init(
-        alarmToEdit: String? = nil,
+        alarmToEdit: RegularAlarmResponse? = nil,
         coordinator: AddRegularAlarmCoordinator
     ) {
         self.alarmToEdit = alarmToEdit
@@ -35,10 +34,19 @@ final class AddRegularAlarmViewModel: ViewModel {
     
     func transform(input: Input) -> Output {
         let output = Output(
+            title: .init(value: "추가하기"),
             selectedBusInfo: .init(value: "정류장 및 버스 찾기"),
             selectedDate: .init(),
             selectedWeekDay: .init(value: [])
         )
+        if let alarmToEdit {
+            output.title.accept("수정하기")
+            output.selectedBusInfo.accept(
+                "\(alarmToEdit.busStopName), \(alarmToEdit.busName)"
+            )
+            output.selectedDate.onNext(alarmToEdit.time)
+            output.selectedWeekDay.accept(alarmToEdit.weekDay)
+        }
         
         input.searchBtnTapEvent
             .withUnretained(self)
@@ -92,6 +100,7 @@ extension AddRegularAlarmViewModel {
     }
     
     struct Output { 
+        let title: BehaviorRelay<String>
         let selectedBusInfo: BehaviorRelay<String>
         let selectedDate: PublishSubject<Date>
         let selectedWeekDay: BehaviorRelay<[Int]>

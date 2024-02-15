@@ -6,7 +6,6 @@ import DesignSystem
 
 import RxSwift
 import RxCocoa
-import RxDataSources
 
 public final class FavoritesViewController: UIViewController {
     private let viewModel: FavoritesViewModel
@@ -79,6 +78,7 @@ public final class FavoritesViewController: UIViewController {
         tableView.register(FavoritesTVCell.self)
         tableView.dataSource = dataSource
         tableView.delegate = self
+        tableView.sectionHeaderTopPadding = .zero
         return tableView
     }()
     
@@ -117,14 +117,18 @@ public final class FavoritesViewController: UIViewController {
         
         NSLayoutConstraint.activate([
             busIconView.topAnchor.constraint(
-                equalTo: safeArea.topAnchor
+                equalTo: safeArea.topAnchor,
+                constant: 10
             ),
             busIconView.leadingAnchor.constraint(
                 equalTo: safeArea.leadingAnchor,
-                constant: .screenWidth * 0.1
+                constant: .screenWidth * 0.07
             ),
             
-            searchBtn.topAnchor.constraint(equalTo: busIconView.bottomAnchor),
+            searchBtn.topAnchor.constraint(
+                equalTo: busIconView.bottomAnchor,
+                constant: -10
+            ),
             searchBtn.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
             searchBtn.widthAnchor.constraint(
                 equalTo: safeArea.widthAnchor,
@@ -203,6 +207,15 @@ public final class FavoritesViewController: UIViewController {
                         "\(timeStr) 업데이트",
                         for: .normal
                     )
+                }
+            )
+            .disposed(by: disposeBag)
+        
+        output.favoritesState
+            .withUnretained(self)
+            .subscribe(
+                onNext: { viewController, state in
+                    viewController.updateState(state: state)
                 }
             )
             .disposed(by: disposeBag)
@@ -320,6 +333,21 @@ public final class FavoritesViewController: UIViewController {
             )
         }
         dataSource.apply(snapshot)
+    }
+    
+    private func updateState(state: FavoritesViewModel.FavoritesState) {
+        switch state {
+        case .emptyFavorites:
+            favoritesTableView.backgroundView = EmptyFavoritesView()
+            refreshBtn.isHidden = true
+            editBtn.isHidden = true
+        case .fetching:
+            favoritesTableView.loadingBackground()
+            refreshBtn.isHidden = false
+            editBtn.isHidden = false
+        case .fetchComplete:
+            favoritesTableView.backgroundView = nil
+        }
     }
 }
 

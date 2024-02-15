@@ -107,7 +107,7 @@ public struct BusArrivalInfoResponse: Codable, Hashable {
         self.routeId = routeId
         self.isFavorites = isFavorites
         self.routeName = routeName
-        self.busType = BusType(rawValue: busType) ?? .normal
+        self.busType = BusType(rawValue: busType) ?? .abolition
         self.firstArrivalTime = firstArrivalTime
         self.secondArrivalTime = secondArrivalTime
         self.isAlarmOn = isAlarmOn
@@ -115,25 +115,39 @@ public struct BusArrivalInfoResponse: Codable, Hashable {
 }
 
 public enum BusType: String, Codable {
-    case normal = "0", lowFloor = "1", articulated = "2"
-//    case 공용 = "0"
-//    case 공항 = "1"
-//    case 마을 = "2"
-//    case 간선 = "3"
-//    case 지선 = "4"
-//    case 순환 = "5"
-//    case 광역 = "6"
-//    case 인천 = "7"
-//    case 경기 = "8"
-//    case 폐지 = "9"
+    case common = "0"
+    case airport = "1"
+    case village = "2"
+    case trunkLine = "3"
+    case branchLine = "4"
+    case circulation = "5"
+    case wideArea = "6"
+    case incheon = "7"
+    case gyeonggi = "8"
+    case abolition = "9"
+    
     public var toString: String {
         switch self {
-        case .normal:
-            return "일반버스"
-        case .lowFloor:
-            return "저상버스"
-        case .articulated:
-            return "굴절버스"
+        case .common:
+            return "공용"
+        case .airport:
+            return "공항"
+        case .village:
+            return "마을"
+        case .trunkLine:
+            return "간선"
+        case .branchLine:
+            return "지선"
+        case .circulation:
+            return "순환"
+        case .wideArea:
+            return "광역"
+        case .incheon:
+            return "인천"
+        case .gyeonggi:
+            return "경기"
+        case .abolition:
+            return "폐지"
         }
     }
 }

@@ -23,8 +23,7 @@ public final class FavoritesViewModel: ViewModel {
     public func transform(input: Input) -> Output {
         let output = Output(
             busStopArrivalInfoResponse: .init(),
-            arrivalInfoResponse: .init(), 
-            onError: .init()
+            favoritesState: .init()
         )
         
         input.viewWillAppearEvent
@@ -34,12 +33,10 @@ public final class FavoritesViewModel: ViewModel {
                     guard let favorites = try? viewModel.useCase.favorites
                         .value()
                     else { return }
-                    let isEmpty = favorites.busStops.isEmpty
-                    if isEmpty {
-                        viewModel.coordinator.updateFavoritesState(
-                            isEmpty: favorites.busStops.isEmpty
-                        )
+                    if favorites.busStops.isEmpty {
+                        output.favoritesState.onNext(.emptyFavorites)
                     } else {
+                        output.favoritesState.onNext(.fetching)
                         viewModel.useCase.fetchFavoritesArrivals()
                     }
                 }
@@ -75,22 +72,8 @@ public final class FavoritesViewModel: ViewModel {
                             stationId: response[sectionIndex].busStopId
                         )
                     } catch {
-                        output.onError.onNext(error)
+                        print(error.localizedDescription)
                     }
-                }
-            )
-            .disposed(by: disposeBag)
-        
-        input.busStopTapEvent
-            .withUnretained(self)
-            .subscribe(
-                onNext: { viewModel, index in
-                    guard let response = try? viewModel.useCase
-                        .busStopArrivalInfoResponse.value()
-                    else { return }
-                    viewModel.coordinator.startBusStopFlow(
-                        stationId: response[index].busStopId
-                    )
                 }
             )
             .disposed(by: disposeBag)
@@ -99,9 +82,12 @@ public final class FavoritesViewModel: ViewModel {
             .withUnretained(self)
             .subscribe(
                 onNext: { viewModel, favorites in
-                    viewModel.coordinator.updateFavoritesState(
-                        isEmpty: favorites.busStops.isEmpty
-                    )
+                    if favorites.busStops.isEmpty {
+                        output.favoritesState.onNext(.emptyFavorites)
+                    } else {
+                        output.favoritesState.onNext(.fetching)
+                        viewModel.useCase.fetchFavoritesArrivals()
+                    }
                 }
             )
             .disposed(by: disposeBag)
@@ -128,7 +114,10 @@ extension FavoritesViewModel {
     public struct Output {
         var busStopArrivalInfoResponse
         : PublishSubject<[BusStopArrivalInfoResponse]>
-        var arrivalInfoResponse: PublishSubject<ArrivalInfoResponse>
-        var onError: PublishSubject<Error>
+        var favoritesState: PublishSubject<FavoritesState>
+    }
+    
+    enum FavoritesState {
+        case emptyFavorites, fetching, fetchComplete
     }
 }

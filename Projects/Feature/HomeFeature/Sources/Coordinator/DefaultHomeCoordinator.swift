@@ -25,29 +25,6 @@ public final class DefaultHomeCoordinator {
     }
     
     public func start() {
-        favoritesStatus
-            .withUnretained(self)
-            .subscribe(
-                onNext: { coordinator, status in
-                    switch status {
-                    case .empty:
-                        coordinator.setEmptyVC()
-                    case .nonEmpty:
-                        coordinator.setFavoritesVC()
-                    }
-                }
-            )
-            .disposed(by: disposeBag)
-        setFavoritesVC()
-    }
-    
-    public func finish() {
-        
-    }
-    
-    private func setFavoritesVC() {
-        guard !hasViewController(vcType: FavoritesViewController.self)
-        else { return }
         let homeViewController = FavoritesViewController(
             viewModel: FavoritesViewModel(coordinator: self)
         )
@@ -56,17 +33,9 @@ public final class DefaultHomeCoordinator {
             animated: false
         )
     }
-	
-    private func setEmptyVC() {
-        guard !hasViewController(vcType: EmptyFavoritesViewController.self)
-        else { return }
-        let emptyFavoritesVC = EmptyFavoritesViewController(
-            viewModel: EmptyFavoritesViewModel(coordinator: self)
-        )
-        navigationController.setViewControllers(
-            [emptyFavoritesVC],
-            animated: false
-        )
+    
+    public func finish() {
+        
     }
     
     private func hasViewController(vcType: UIViewController.Type) -> Bool {

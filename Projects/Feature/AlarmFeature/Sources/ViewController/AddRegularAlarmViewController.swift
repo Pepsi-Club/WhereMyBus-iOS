@@ -20,11 +20,11 @@ final class AddRegularAlarmViewController: UIViewController {
     
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "추가하기"
         label.font = DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(
             size: 22
         )
         label.textAlignment = .left
+        label.textColor = .black
         return label
     }()
     
@@ -35,6 +35,7 @@ final class AddRegularAlarmViewController: UIViewController {
             size: 16
         )
         label.textAlignment = .left
+        label.textColor = .black
         return label
     }()
     
@@ -56,6 +57,7 @@ final class AddRegularAlarmViewController: UIViewController {
             size: 16
         )
         label.textAlignment = .left
+        label.textColor = .black
         return label
     }()
     
@@ -63,6 +65,7 @@ final class AddRegularAlarmViewController: UIViewController {
         let picker = UIDatePicker()
         picker.datePickerMode = .time
         picker.preferredDatePickerStyle = .wheels
+        picker.setValue(UIColor.black, forKey: "textColor")
         return picker
     }()
     
@@ -73,6 +76,7 @@ final class AddRegularAlarmViewController: UIViewController {
             size: 16
         )
         label.textAlignment = .left
+        label.textColor = .black
         return label
     }()
     
@@ -199,7 +203,9 @@ final class AddRegularAlarmViewController: UIViewController {
                 equalToConstant: 40
             ),
             
-            completeBtn.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
+            completeBtn.centerXAnchor.constraint(
+                equalTo: safeArea.centerXAnchor
+            ),
             completeBtn.widthAnchor.constraint(
                 equalTo: safeArea.widthAnchor,
                 multiplier: 0.5
@@ -228,6 +234,10 @@ final class AddRegularAlarmViewController: UIViewController {
                 completeBtnTapEvent: completeBtn.rx.tap.asObservable()
             )
         )
+        
+        output.title
+            .bind(to: titleLabel.rx.text)
+            .disposed(by: disposeBag)
         
         output.selectedBusInfo
             .withUnretained(self)

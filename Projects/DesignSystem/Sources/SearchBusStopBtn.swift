@@ -30,6 +30,8 @@ public final class SearchBusStopBtn: UIButton {
             color: color
         )
         configuration = config
+        layer.cornerRadius = 15
+        clipsToBounds = true
     }
     
     required init?(coder: NSCoder) {

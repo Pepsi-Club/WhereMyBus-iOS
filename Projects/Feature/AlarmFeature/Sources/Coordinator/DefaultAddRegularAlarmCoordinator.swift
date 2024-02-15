@@ -8,6 +8,7 @@
 
 import UIKit
 
+import Domain
 import FeatureDependency
 
 public final class DefaultAddRegularAlarmCoordinator {
@@ -40,8 +41,7 @@ public final class DefaultAddRegularAlarmCoordinator {
 }
 
 extension DefaultAddRegularAlarmCoordinator: AddRegularAlarmCoordinator {
-    // TODO: Alarm 모델링 후 인자 타입 수정
-    public func start(with: String) {
+    public func start(with: RegularAlarmResponse) {
         let addRegularAlarmViewController = AddRegularAlarmViewController(
             viewModel: .init(alarmToEdit: with, coordinator: self)
         )
