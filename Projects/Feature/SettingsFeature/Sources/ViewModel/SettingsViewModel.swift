@@ -28,7 +28,7 @@ public final class SettingsViewModel: ViewModel {
         input.termsTapEvent
             .withUnretained(self)
             .subscribe(onNext: { viewModel, _ in
-//                viewModel.coordinator.
+                viewModel.coordinator.presentTermsPrivacy()
                 print("이용약관 tap")
             })
             .disposed(by: disposeBag)

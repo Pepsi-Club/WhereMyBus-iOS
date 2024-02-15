@@ -31,9 +31,15 @@ public final class DefaultSettingsCoordinator {
 extension DefaultSettingsCoordinator: SettingsCoordinator {
     public func setDefaultAlarm() {
         // 다음 view로 이동 (예시)
-//        let secondVC = SecondViewController(
+//        let setAlarmVC = AlarmSettingViewController(
 //            viewModel: SettingsViewModel(coordinator: self)
 //        )
-//        navigationController.pushViewController(secondVC, animated: true)
+//        navigationController.pushViewController(setAlarmVC, animated: true)
+    }
+    public func presentTermsPrivacy() {
+        let termsVC = TermsPrivacyViewController(
+            viewModel: TermsPrivacyViewModel(coordinator: self)
+        )
+        navigationController.pushViewController(termsVC, animated: true)
     }
 }
