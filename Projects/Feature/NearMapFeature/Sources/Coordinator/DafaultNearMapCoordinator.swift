@@ -6,6 +6,7 @@ import RxSwift
 import KakaoMapsSDK
 
 public final class DefaultNearMapCoordinator: NearMapCoordinator {
+	
     public var parent: Coordinator?
     public var childs: [Coordinator] = []
     public var navigationController: UINavigationController
@@ -22,8 +23,7 @@ public final class DefaultNearMapCoordinator: NearMapCoordinator {
     
     public func start() {
         let nearmapViewController = NearMapViewController(
-			viewModel: NearMapViewModel(coordinator: self),
-			kakaoMap: KMViewContainer()
+			viewModel: NearMapViewModel(coordinator: self)
         )
         navigationController.setViewControllers(
             [nearmapViewController],

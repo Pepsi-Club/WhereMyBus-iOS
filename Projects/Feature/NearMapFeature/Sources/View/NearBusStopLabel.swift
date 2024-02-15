@@ -12,7 +12,7 @@ import DesignSystem
 
 public final class NearBusStopLabel: UIView {
 	
-	// MARK: - property
+	// MARK: - UI Property
 	
 	private let symbolSize = 50
 	
@@ -24,7 +24,7 @@ public final class NearBusStopLabel: UIView {
 		return image
 	}()
 	
-	private lazy var busStopNameLabel: UILabel = {
+	 lazy var busStopNameLabel: UILabel = {
 		let label = UILabel()
 		label.text = "강남구 보건소"
 		label.font = DesignSystemFontFamily.NanumSquareNeoOTF.extraBold.font(
@@ -33,7 +33,7 @@ public final class NearBusStopLabel: UIView {
 		return label
 	}()
 	
-	private lazy var busStopDescription: UILabel = {
+	lazy var busStopDescription: UILabel = {
 		let label = UILabel()
 		label.text = "23290 | 강남구청역 방면"
 		label.font = DesignSystemFontFamily.NanumSquareNeoOTF.light.font(
@@ -42,7 +42,7 @@ public final class NearBusStopLabel: UIView {
 		return label
 	}()
 	
-	private lazy var distanceFromBusStopLabel: UILabel = {
+	lazy var distanceFromBusStopLabel: UILabel = {
 		let label = UILabel()
 		label.text = "현재위치에서 1m"
 		label.font = DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(
@@ -69,7 +69,7 @@ public final class NearBusStopLabel: UIView {
 		return stackView
 	}()
 	
-	// MARK: - life cycle
+	// MARK: - Life Cycle
 	
 	override init(frame: CGRect) {
 		super.init(frame: frame)
@@ -80,7 +80,7 @@ public final class NearBusStopLabel: UIView {
 		fatalError("init(coder:) has not been implemented")
 	}
 	
-	// MARK: - function
+	// MARK: - Function
 	
 	private func configureUI() {
 		self.backgroundColor = .systemGray6
