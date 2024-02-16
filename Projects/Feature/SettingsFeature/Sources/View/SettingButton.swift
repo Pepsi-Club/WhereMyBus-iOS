@@ -21,6 +21,7 @@ public final class SettingButton: UIButton {
         let title = iconName
         let view = UIImageView(image: UIImage(systemName: title))
         view.tintColor = DesignSystemAsset.routeTimeColor.color
+        view.contentMode = .scaleAspectFill
         return view
     }()
     
@@ -105,6 +106,8 @@ public final class SettingButton: UIButton {
             leftIconLabel.leadingAnchor.constraint(
                 equalTo: leadingAnchor
             ),
+            leftIconLabel.widthAnchor.constraint(equalToConstant: 20),
+            leftIconLabel.heightAnchor.constraint(equalToConstant: 20),
             titleLabels.topAnchor.constraint(
                 equalTo: topAnchor,
                 constant: 2
