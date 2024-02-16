@@ -13,7 +13,7 @@ import FeatureDependency
 
 import RxSwift
 
-public final class TermsPrivacyViewModel {
+public final class TermsPrivacyViewModel: ViewModel {
     private let coordinator: SettingsCoordinator
     private let disposeBag = DisposeBag()
     
@@ -25,8 +25,17 @@ public final class TermsPrivacyViewModel {
         print("viewmodel deinit?")
     }
     
-    public func transform() -> Output {
-        let output = Output()
+    public func transform(input: Input) -> Output {
+        let output = Output(
+            termsOfPrivacyString: .init() 
+        )
+        
+        input.viewWillAppearEvent
+            .subscribe(onNext: {
+                let termsURL = "https://www.youtube.com/watch?v=92f_BNFNHNw"
+                output.termsOfPrivacyString.onNext(termsURL)
+            })
+            .disposed(by: disposeBag)
         
         return output
     }
@@ -34,10 +43,10 @@ public final class TermsPrivacyViewModel {
 
 extension TermsPrivacyViewModel {
     public struct Input {
-        
+        let viewWillAppearEvent: Observable<Void>
     }
     
     public struct Output {
-        let urlString = "아무튼 스트링"
+        var termsOfPrivacyString: PublishSubject<String>
     }
 }

@@ -8,18 +8,27 @@
 
 import UIKit
 
+import WebKit
+
 import RxSwift
 
-public final class TermsPrivacyViewController: UIViewController {
+public final class TermsPrivacyViewController
+: UIViewController, WKNavigationDelegate {
     private let viewModel: TermsPrivacyViewModel
     
     private let disposeBag = DisposeBag()
     
-    private let label: UILabel = {
-        let label = UILabel()
-        label.textColor = .blue
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
+    private let webView: WKWebView = {
+        let webView = WKWebView()
+        webView.frame = .zero
+        webView.translatesAutoresizingMaskIntoConstraints = false
+        webView.allowsBackForwardNavigationGestures = true
+        return webView
+    }()
+    private let indicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView()
+        indicator.translatesAutoresizingMaskIntoConstraints = false
+        return indicator
     }()
     
     init(viewModel: TermsPrivacyViewModel) {
@@ -35,26 +44,79 @@ public final class TermsPrivacyViewController: UIViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .cyan
+        view.backgroundColor = .systemBackground
         
-        view.addSubview(label)
+        webView.navigationDelegate = self
+        
+        configureUI()
         bind()
     }
     
     private func bind() {
+        let input = TermsPrivacyViewModel.Input(
+            viewWillAppearEvent: rx
+                .methodInvoked(#selector(UIViewController.viewWillAppear))
+                .map { _ in }
+        )
+        
+        let output = viewModel.transform(input: input)
+        
+        output.termsOfPrivacyString
+            .bind { [weak self] str in
+                self?.updateUI(urlString: str)
+            }
+            .disposed(by: disposeBag)
+    }
+    
+    private func configureUI() {
+        view.addSubview(webView)
+        
+        view.insertSubview(indicator, aboveSubview: webView)
         
         NSLayoutConstraint.activate([
-            label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            label.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            webView.topAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.topAnchor
+            ),
+            webView.leadingAnchor.constraint(
+                equalTo: view.leadingAnchor
+            ),
+            webView.trailingAnchor.constraint(
+                equalTo: view.trailingAnchor
+            ),
+            webView.bottomAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.bottomAnchor
+            ),
+            indicator.centerXAnchor.constraint(
+                equalTo: webView.centerXAnchor
+            ),
+            indicator.centerYAnchor.constraint(
+                equalTo: webView.centerYAnchor
+            )
         ])
-        
-        let output = viewModel.transform()
-        
-        configureUI(text: output.urlString)
     }
     
-    private func configureUI(text: String) {
-        label.text = text
+    private func updateUI(urlString: String) {
+        guard let url = URL(string: urlString) ?? URL(string: "") 
+        else { return }
+        
+        let request = URLRequest(url: url)
+        webView.load(request)
     }
     
+}
+
+extension TermsPrivacyViewController {
+    public func webView(
+        _ webView: WKWebView,
+        didCommit navigation: WKNavigation!
+    ) {
+        indicator.startAnimating()
+    }
+    
+    public func webView(
+        _ webView: WKWebView,
+        didFinish navigation: WKNavigation!
+    ) {
+        indicator.stopAnimating()
+    }
 }
