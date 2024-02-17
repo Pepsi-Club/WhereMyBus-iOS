@@ -14,11 +14,17 @@ import RxSwift
 
 public final class BusTableViewCell: UITableViewCell {
     public var disposeBag = DisposeBag()
-
+    
     private let firstArrivalInfoView = ArrivalInfoView()
     private let secondArrivalInfoView = ArrivalInfoView()
+    //    public let starBtnTapEvent = PublishSubject<Void>()
+    public let starBtnTapEvent = BehaviorSubject<Bool>(value: false)
+    public let alarmBtnTapEvent = PublishSubject<Void>()
     
-    let starBtn: UIButton = {
+    private var favoriteToggle = false
+    private var alarmToggle = false
+    
+    private lazy var starBtn: UIButton = {
         var config = UIButton.Configuration.filled()
         config.image = UIImage(systemName: "star")
         config.contentInsets = NSDirectionalEdgeInsets(
@@ -37,7 +43,7 @@ public final class BusTableViewCell: UITableViewCell {
         return btn
     }()
     
-    let alarmBtn: UIButton = {
+    private lazy var alarmBtn: UIButton = {
         var config = UIButton.Configuration.filled()
         config.image = UIImage(systemName: "alarm")
         config.contentInsets = NSDirectionalEdgeInsets(
@@ -94,25 +100,42 @@ public final class BusTableViewCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         configureUI()
+        buttonTap()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    public func updateUI(
+    public func updateBtn(
+        favorite: Bool,
+        alarm: Bool
+    ) {
+        favoriteToggle = favorite
+        alarmToggle = alarm
+    }
+    
+    public func updateBusRoute(
         routeName: String,
-        nextRouteName: String,
-        firstArrivalTime: String,
-        firstArrivalRemaining: String,
-        secondArrivalTime: String,
-        secondArrivalRemaining: String
+        nextRouteName: String
     ) {
         busNumber.text = routeName
         nextStopName.text = nextRouteName
+    }
+    
+    public func updateFirstArrival(
+        firstArrivalTime: String,
+        firstArrivalRemaining: String
+    ) {
         firstArrivalInfoView.updateUI(
             time: firstArrivalTime, remainingStops: firstArrivalRemaining
         )
+    }
+    
+    public func updateSecondArrival(
+        secondArrivalTime: String,
+        secondArrivalRemaining: String
+    ) {
         secondArrivalInfoView.updateUI(
             time: secondArrivalTime, remainingStops: secondArrivalRemaining
         )
@@ -128,6 +151,41 @@ public final class BusTableViewCell: UITableViewCell {
         }
         
         disposeBag = DisposeBag()
+    }
+    
+    private func buttonTap() {
+        starBtn.rx.tap
+            .withUnretained(self)
+            .subscribe(onNext: { [weak self] _ in
+                guard let self else { return }
+                guard var config = starBtn.configuration
+                else { return }
+                
+                favoriteToggle = !favoriteToggle
+                
+                config.image = favoriteToggle 
+                ? UIImage(systemName: "star.fill")
+                : UIImage(systemName: "star")
+                
+                config.baseForegroundColor
+                = self.favoriteToggle
+                ? DesignSystemAsset.carrotOrange.color
+                : DesignSystemAsset.mainColor.color
+                
+                starBtn.configuration = config
+                
+                self.starBtnTapEvent.onNext((favoriteToggle))
+                
+                print(" 즐겨찾기 버튼 작동 ")
+            })
+            .disposed(by: disposeBag)
+        
+        alarmBtn.rx.tap
+            .subscribe(onNext: { [weak self] _ in
+                self?.alarmBtnTapEvent.onNext(())
+                print(" 알람 버튼 작동 ")
+            })
+            .disposed(by: disposeBag)
     }
 }
 

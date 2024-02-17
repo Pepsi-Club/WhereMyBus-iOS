@@ -102,8 +102,8 @@ public final class BusStopViewController: UIViewController {
             .withUnretained(self)
             .subscribe(
                 onNext: { viewController, isEditMode in
-                    guard var config
-                            = viewController.headerView.favoriteBtn.configuration
+                    guard var config 
+                        = viewController.headerView.favoriteBtn.configuration
                     else { return }
                     
                     config.baseForegroundColor = isEditMode
@@ -174,17 +174,16 @@ public final class BusStopViewController: UIViewController {
                 )
                 else { return UITableViewCell() }
                 
-                cell.starBtn.rx.tap
+                cell.starBtnTapEvent
                     .map { _ in
                         return indexPath
                     }
                     .bind(to: self.likeBusBtnTapEvent)
                     .disposed(by: cell.disposeBag)
                 
-                cell.alarmBtn.rx.tap
+                cell.alarmBtnTapEvent
                     .map { _ in
-//                        response.isAlarmOn.toggle()
-                        indexPath
+                        return indexPath
                     }
                     .bind(to: self.alarmBtnTapEvent)
                     .disposed(by: cell.disposeBag)
@@ -223,14 +222,24 @@ public final class BusStopViewController: UIViewController {
             secondArrivalRemaining = splittedMsg2[1]
             secondArrivalRemaining.removeLast() // "]" 제거
         }
-        cell.updateUI(
+        
+        cell.updateBtn(
+            favorite: response.isFavorites,
+            alarm: response.isAlarmOn
+        )
+        cell.updateBusRoute(
             routeName: response.routeName,
-            nextRouteName: "강남구청역 방면",
+            nextRouteName: "강남구청역 방면"
+        )
+        cell.updateFirstArrival(
             firstArrivalTime: firstArrivalTime,
-            firstArrivalRemaining: firstArrivalRemaining,
+            firstArrivalRemaining: firstArrivalRemaining
+        )
+        cell.updateSecondArrival(
             secondArrivalTime: secondArrivalTime,
             secondArrivalRemaining: secondArrivalRemaining
         )
+        
         return cell
     }
 }
