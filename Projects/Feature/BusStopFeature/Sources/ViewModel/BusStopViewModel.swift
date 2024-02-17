@@ -62,7 +62,7 @@ extension BusStopViewModel {
         let viewWillAppearEvent: Observable<Void>
         let likeBusBtnTapEvent: Observable<IndexPath>
         let alarmBtnTapEvent: Observable<IndexPath>
-        let likeBusStopBtnTapEvent: Observable<Int>
+        let likeBusStopBtnTapEvent: Observable<Bool>
         let mapBtnTapEvent: Observable<Int>
     }
     

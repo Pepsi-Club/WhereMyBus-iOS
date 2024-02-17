@@ -9,17 +9,17 @@ import RxCocoa
 public final class BusStopViewController: UIViewController {
     private let viewModel: BusStopViewModel
     
-    let disposeBag = DisposeBag()
-    let mapBtnTapEvent = PublishSubject<Int>()
-    let likeBusStopBtnTapEvent = PublishSubject<Int>()
-    let likeBusBtnTapEvent = PublishSubject<IndexPath>()
-    let alarmBtnTapEvent = PublishSubject<IndexPath>()
+    private let disposeBag = DisposeBag()
+    private let mapBtnTapEvent = PublishSubject<Int>()
+    private let likeBusStopBtnTapEvent = BehaviorSubject<Bool>(value: false)
+    private let likeBusBtnTapEvent = PublishSubject<IndexPath>()
+    private let alarmBtnTapEvent = PublishSubject<IndexPath>()
     
     private var dataSource: BusStopDataSource!
     private var snapshot: BusStopSnapshot!
     
     private let headerView: BusStopInfoHeaderView = BusStopInfoHeaderView()
-    private var scrollView: UIScrollView = UIScrollView()
+    private let scrollView: UIScrollView = UIScrollView()
     private let contentView = UIView()
     private let busStopTableView: UITableView = {
         let table = UITableView(frame: .zero, style: .insetGrouped)
@@ -85,6 +85,44 @@ public final class BusStopViewController: UIViewController {
             })
             .disposed(by: disposeBag)
         
+        headerView.favoriteBtn.rx.tap
+            .asObservable()
+            .withUnretained(self)
+            .subscribe(onNext: { viewController, _ in
+                guard let isEditMode = try? viewController
+                    .likeBusStopBtnTapEvent.value()
+                else { return }
+                viewController.likeBusStopBtnTapEvent
+                    .onNext(!isEditMode)
+                print("tap")
+            })
+            .disposed(by: disposeBag)
+        
+        likeBusStopBtnTapEvent
+            .withUnretained(self)
+            .subscribe(
+                onNext: { viewController, isEditMode in
+                    guard var config
+                            = viewController.headerView.favoriteBtn.configuration
+                    else { return }
+                    
+                    config.baseForegroundColor = isEditMode
+                    ? .white
+                    : DesignSystemAsset.favoritesOrange.color
+                    
+                    config.baseBackgroundColor = isEditMode
+                    ? DesignSystemAsset.favoritesOrange.color
+                    : .white
+                    
+                    config.image = isEditMode
+                    ? UIImage(systemName: "star.fill")
+                    : UIImage(systemName: "star")
+                    
+                    viewController.headerView.favoriteBtn.configuration = config
+                }
+            )
+            .disposed(by: disposeBag)
+        
         let output = viewModel.transform(input: input)
         bindTableView(output: output)
     }
@@ -128,30 +166,28 @@ public final class BusStopViewController: UIViewController {
         dataSource = .init(
             tableView: busStopTableView,
             cellProvider: { [weak self] tableView, indexPath, response in
-                guard let self else { return UITableViewCell() }
-                
+                guard let self = self,
                 let cell = self.configureCell(
                     tableView: tableView,
                     indexPath: indexPath,
                     response: response
                 )
+                else { return UITableViewCell() }
                 
-                cell?.starBtn.rx.tap
-                    .map { _ in 
-//                        response.isFavorites.toggle()
-                        print("버튼 눌림")
+                cell.starBtn.rx.tap
+                    .map { _ in
                         return indexPath
                     }
                     .bind(to: self.likeBusBtnTapEvent)
-                    .disposed(by: disposeBag)
+                    .disposed(by: cell.disposeBag)
                 
-                cell?.alarmBtn.rx.tap
+                cell.alarmBtn.rx.tap
                     .map { _ in
 //                        response.isAlarmOn.toggle()
                         indexPath
                     }
                     .bind(to: self.alarmBtnTapEvent)
-                    .disposed(by: disposeBag)
+                    .disposed(by: cell.disposeBag)
                 
                 return cell
                 
@@ -293,7 +329,6 @@ extension BusStopViewController: UITableViewDelegate {
         
         let sectionIdentifier = dataSource.snapshot()
             .sectionIdentifiers[section]
-        //리로드가 되지 않고, apply를 통해서 바로바로 넘겨줌, 데이터 소스가 있고 snapShot을 통해서 데이터 소스를 넘겨줌 
         
         headerView.bind(with: sectionIdentifier.toString)
         

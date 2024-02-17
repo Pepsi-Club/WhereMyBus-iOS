@@ -12,8 +12,8 @@ import DesignSystem
 
 import RxSwift
 
-final class BusTableViewCell: UITableViewCell {
-    private var disposeBag = DisposeBag()
+public final class BusTableViewCell: UITableViewCell {
+    public var disposeBag = DisposeBag()
 
     private let firstArrivalInfoView = ArrivalInfoView()
     private let secondArrivalInfoView = ArrivalInfoView()
@@ -117,8 +117,17 @@ final class BusTableViewCell: UITableViewCell {
             time: secondArrivalTime, remainingStops: secondArrivalRemaining
         )
     }
-    override func prepareForReuse() {
+    public override func prepareForReuse() {
         super.prepareForReuse()
+        
+        [busNumber, nextStopName].forEach {
+            $0.text = nil
+        }
+        [firstArrivalInfoView, secondArrivalInfoView].forEach {
+            $0.updateUI(time: "", remainingStops: "")
+        }
+        
+        disposeBag = DisposeBag()
     }
 }
 

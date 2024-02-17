@@ -10,7 +10,7 @@ import UIKit
 
 import DesignSystem
 
-final class BusStopInfoHeaderView: UIView {
+public final class BusStopInfoHeaderView: UIView {
     
     private let totalStack: UIStackView = {
         let stack = UIStackView()
@@ -70,7 +70,7 @@ final class BusStopInfoHeaderView: UIView {
         return label
     }()
     
-    let favoriteBtn: UIButton = {
+    public let favoriteBtn: UIButton = {
         var config = UIButton.Configuration.filled()
         config.image = UIImage(systemName: "star")
         var title = AttributedString.init(stringLiteral: "즐겨찾기")
@@ -78,7 +78,7 @@ final class BusStopInfoHeaderView: UIView {
             .regular.font(size: 10)
         config.attributedTitle = title
         config.baseBackgroundColor = .white
-        config.baseForegroundColor = .orange
+        config.baseForegroundColor = DesignSystemAsset.favoritesOrange.color
         config.imagePadding = 3
         let imgConfig = UIImage.SymbolConfiguration(
             font: .systemFont(ofSize: 11)
@@ -89,7 +89,7 @@ final class BusStopInfoHeaderView: UIView {
         return btn
     }()
     
-    let mapBtn: UIButton = {
+    public let mapBtn: UIButton = {
         var config = UIButton.Configuration.filled()
         
         config.image = UIImage(systemName: "map")
@@ -99,7 +99,7 @@ final class BusStopInfoHeaderView: UIView {
             .regular.font(size: 10)
         config.attributedTitle = title
         config.baseBackgroundColor = .white
-        config.baseForegroundColor = .orange
+        config.baseForegroundColor = DesignSystemAsset.favoritesOrange.color
         config.imagePadding = 7
         let imgConfig = UIImage.SymbolConfiguration(
             font: .systemFont(ofSize: 11)
