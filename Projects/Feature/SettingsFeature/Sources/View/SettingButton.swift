@@ -1,8 +1,8 @@
 //
-//  SettingView.swift
-//  DesignSystem
+//  SettingButton.swift
+//  SettingsFeature
 //
-//  Created by Jisoo HAM on 2/12/24.
+//  Created by Jisoo HAM on 2/15/24.
 //  Copyright © 2024 Pepsi-Club. All rights reserved.
 //
 
@@ -10,27 +10,25 @@ import UIKit
 
 import DesignSystem
 
-public final class SettingView: UIView {
+public final class SettingButton: UIButton {
     
     private let iconName: String
     private let title: String
     private let rightTitle: String?
     private let isHiddenArrowRight: Bool
-    
-    // public으로 event를 가지고 있어도 좋겠다 ! -> View에서 불러서 맵핑시키면
-    // 여러 버튼으로 늘어났을때 이벤트 적용하면 더 좋겠다 !!
-    
+
     private lazy var leftIconLabel: UIImageView = {
         let title = iconName
         let view = UIImageView(image: UIImage(systemName: title))
         view.tintColor = DesignSystemAsset.routeTimeColor.color
+        view.contentMode = .scaleAspectFill
         return view
     }()
     
-    private lazy var titleLabel: UILabel = {
+    private lazy var titleLabels: UILabel = {
         let label = UILabel()
         label.numberOfLines = 1
-        label.font 
+        label.font
         = DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(size: 15)
         label.textColor = DesignSystemAsset.settingColor.color
         label.text = title
@@ -40,7 +38,7 @@ public final class SettingView: UIView {
     private lazy var rightLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 1
-        label.font 
+        label.font
         = DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(size: 13)
         label.textColor = DesignSystemAsset.settingColor.color
         label.text = rightTitle
@@ -52,7 +50,7 @@ public final class SettingView: UIView {
         view.tintColor = DesignSystemAsset.routeTimeColor.color
         return view
     }()
-    
+
     public init(
         iconName: String,
         title: String,
@@ -74,11 +72,11 @@ public final class SettingView: UIView {
     }
     
     private func configureUI() {
-        [titleLabel, rightLabel, arrowRightLabel, leftIconLabel]
+        [titleLabels, rightLabel, arrowRightLabel, leftIconLabel]
             .forEach {
                 $0.translatesAutoresizingMaskIntoConstraints = false
             }
-        [leftIconLabel, titleLabel]
+        [leftIconLabel, titleLabels]
             .forEach { addSubview($0) }
         
         if isHiddenArrowRight {
@@ -108,11 +106,13 @@ public final class SettingView: UIView {
             leftIconLabel.leadingAnchor.constraint(
                 equalTo: leadingAnchor
             ),
-            titleLabel.topAnchor.constraint(
+            leftIconLabel.widthAnchor.constraint(equalToConstant: 20),
+            leftIconLabel.heightAnchor.constraint(equalToConstant: 20),
+            titleLabels.topAnchor.constraint(
                 equalTo: topAnchor,
                 constant: 2
             ),
-            titleLabel.leadingAnchor.constraint(
+            titleLabels.leadingAnchor.constraint(
                 equalTo: leftIconLabel.trailingAnchor,
                 constant: 15
             ),
