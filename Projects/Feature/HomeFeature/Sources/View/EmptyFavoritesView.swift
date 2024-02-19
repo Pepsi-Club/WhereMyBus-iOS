@@ -25,7 +25,7 @@ final class EmptyFavoritesView: UIView {
         )
         label.text = "다음 버스 도착 시간까지 알고 싶다면\n즐겨찾기를 추가해보세요."
         label.numberOfLines = 2
-        label.textColor = .black
+        label.textColor = DesignSystemAsset.bottonBtnColor.color
         label.textAlignment = .center
         return label
     }()
