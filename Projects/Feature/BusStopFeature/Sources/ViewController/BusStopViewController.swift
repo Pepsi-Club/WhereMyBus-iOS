@@ -240,7 +240,36 @@ public final class BusStopViewController: UIViewController {
             secondArrivalRemaining: secondArrivalRemaining
         )
         
+        cell.busNumber.textColor = busTypeColor(response: response)
+        
         return cell
+    }
+    
+    private func busTypeColor(
+        response: BusArrivalInfoResponse
+    ) -> UIColor {
+        switch response.busType {
+        case .common:
+            return DesignSystemAsset.gray4.color // 완
+        case .airport:
+            return DesignSystemAsset.airportGold.color
+        case .village:
+            return DesignSystemAsset.limeGreen.color // 완
+        case .trunkLine:
+            return DesignSystemAsset.regularAlarmBlue.color // 완
+        case .branchLine:
+            return DesignSystemAsset.limeGreen.color // 완
+        case .circulation:
+            return DesignSystemAsset.circulateYellow.color // 완
+        case .wideArea:
+            return DesignSystemAsset.redBusColor.color // 완
+        case .incheon:
+            return DesignSystemAsset.settingColor.color
+        case .gyeonggi:
+            return DesignSystemAsset.settingColor.color
+        case .abolition:
+            return DesignSystemAsset.gray4.color
+        }
     }
 }
 

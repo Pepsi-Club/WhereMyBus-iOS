@@ -80,7 +80,7 @@ public final class BusTableViewCell: UITableViewCell {
         return stack
     }()
     
-    private let busNumber: UILabel = {
+    public let busNumber: UILabel = {
         let label = UILabel()
         label.font = DesignSystemFontFamily.NanumSquareNeoOTF
             .bold.font(size: 18)
