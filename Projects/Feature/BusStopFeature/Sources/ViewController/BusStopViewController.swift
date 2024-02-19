@@ -240,15 +240,17 @@ public final class BusStopViewController: UIViewController {
             secondArrivalRemaining: secondArrivalRemaining
         )
         
-        cell.busNumber.textColor = busTypeColor(response: response)
+        cell.busNumber.textColor = busTypeColor(
+            busTypeResponse: response.busType
+        )
         
         return cell
     }
     
     private func busTypeColor(
-        response: BusArrivalInfoResponse
+        busTypeResponse: BusType
     ) -> UIColor {
-        switch response.busType {
+        switch busTypeResponse {
         case .common:
             return DesignSystemAsset.gray4.color // 완
         case .airport:
