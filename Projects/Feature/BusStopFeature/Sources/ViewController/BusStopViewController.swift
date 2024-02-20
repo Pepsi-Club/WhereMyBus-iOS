@@ -240,9 +240,7 @@ public final class BusStopViewController: UIViewController {
             secondArrivalRemaining: secondArrivalRemaining
         )
         
-        cell.busNumber.textColor = busTypeColor(
-            busTypeResponse: response.busType
-        )
+        cell.busNumber.textColor = response.busType.toColor
         
         return cell
     }
