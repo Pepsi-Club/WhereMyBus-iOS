@@ -36,9 +36,10 @@ final class EmptyRegularAlarmView: UIView {
         let message2 = NSAttributedString(
             string: "정기 알람 등록하러 가기",
             attributes: [
-                .font: DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(
+                .font: DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(
                     size: 20
-                )
+                ),
+                .foregroundColor: DesignSystemAsset.bottonBtnColor.color
             ]
         )
         let attributedString = NSMutableAttributedString()
