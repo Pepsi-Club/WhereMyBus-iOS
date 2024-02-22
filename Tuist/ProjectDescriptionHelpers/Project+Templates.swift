@@ -38,7 +38,13 @@ extension Project {
                 entitlements: entitlements,
                 dependencies: dependencies
             )
+            let uiTestsTarget = uiTestTarget(
+                name: name,
+                dependencies: [.target(targetModule)]
+            )
+            targets.append(uiTestsTarget)
             schemes.append(.moduleScheme(name: name))
+            schemes.append(.uiTestsScheme(name: name))
         case .dynamicFramework, .staticFramework:
             targetModule = frameworkTarget(
                 name: name,
@@ -158,6 +164,24 @@ extension Project {
             platform: .iOS,
             product: .unitTests,
             bundleId: .bundleID + ".\(name)Test",
+            deploymentTarget: .deploymentTarget,
+            infoPlist: .frameworkInfoPlist,
+            sources: ["Tests/**"],
+            scripts: isFeature ? [.featureSwiftLint] : [.swiftLint],
+            dependencies: dependencies,
+            settings: .test
+        )
+    }
+    private static func uiTestTarget(
+        name: String,
+        isFeature: Bool = false,
+        dependencies: [TargetDependency]
+    ) -> Target {
+        Target(
+            name: "\(name)UITests",
+            platform: .iOS,
+            product: .uiTests,
+            bundleId: .bundleID + ".\(name)UITest",
             deploymentTarget: .deploymentTarget,
             infoPlist: .frameworkInfoPlist,
             sources: ["Tests/**"],
