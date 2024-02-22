@@ -129,7 +129,7 @@ public final class BusStopInfoHeaderView: UIView {
     }
     
     public func bindUI(
-        routeId: String,
+        routeId: String?,
         busStopName: String,
         nextStopName: String
     ) {

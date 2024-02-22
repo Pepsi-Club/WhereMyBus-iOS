@@ -25,9 +25,10 @@ extension BusStopListDTO {
         data.map {
             .init(
                 name: $0.stopNm, 
-                busStopId: $0.stopNo,
+                busStopId: $0.nodeID,
                 longitude: $0.xcode,
-                latitude: $0.ycode
+                latitude: $0.ycode,
+                busStopNum: $0.stopNo
             )
         }
     }

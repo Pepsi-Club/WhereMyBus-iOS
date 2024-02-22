@@ -38,9 +38,10 @@ final class MockBusStopArrivalInfoRepository: BusStopArrivalInfoRepository {
         .create { observer in
             observer.onNext(
                 BusStopArrivalInfoResponse(
-                    busStopId: "23290",
+                    busStopId: "12000655",
                     busStopName: "강남구보건소",
                     direction: "강남구청역 방면",
+                    busStopNum: "23290",
                     buses: [
                         BusArrivalInfoResponse(
                             routeId: "",

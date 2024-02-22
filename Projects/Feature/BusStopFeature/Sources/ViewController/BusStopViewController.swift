@@ -132,8 +132,9 @@ public final class BusStopViewController: UIViewController {
             .subscribe(
                 onNext: { viewController, response in
                     response.forEach { res in
+                        // UILabel -> optional 값 들어올 수 있음. text!
                         viewController.headerView.bindUI(
-                            routeId: res.busStopId,
+                            routeId: res.busStopNum,
                             busStopName: res.busStopName,
                             nextStopName: res.direction
                         )
