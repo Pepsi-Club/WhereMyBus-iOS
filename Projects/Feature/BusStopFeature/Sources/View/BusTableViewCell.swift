@@ -113,6 +113,8 @@ public final class BusTableViewCell: UITableViewCell {
     ) {
         favoriteToggle = favorite
         alarmToggle = alarm
+        
+        changeFavBtnColor(isFavoriteOn: favoriteToggle)
     }
     
     public func updateBusRoute(
@@ -158,21 +160,10 @@ public final class BusTableViewCell: UITableViewCell {
             .withUnretained(self)
             .subscribe(onNext: { [weak self] _ in
                 guard let self else { return }
-                guard var config = starBtn.configuration
-                else { return }
                 
                 favoriteToggle = !favoriteToggle
                 
-                config.image = favoriteToggle 
-                ? UIImage(systemName: "star.fill")
-                : UIImage(systemName: "star")
-                
-                config.baseForegroundColor
-                = self.favoriteToggle
-                ? DesignSystemAsset.carrotOrange.color
-                : DesignSystemAsset.mainColor.color
-                
-                starBtn.configuration = config
+                changeFavBtnColor(isFavoriteOn: favoriteToggle)
                 
                 self.starBtnTapEvent.onNext((favoriteToggle))
                 
@@ -186,6 +177,23 @@ public final class BusTableViewCell: UITableViewCell {
                 print(" 알람 버튼 작동 ")
             })
             .disposed(by: disposeBag)
+    }
+    
+    private func changeFavBtnColor(isFavoriteOn: Bool) {
+        
+        guard var config = starBtn.configuration
+        else { return }
+        
+        config.image = isFavoriteOn
+        ? UIImage(systemName: "star.fill")
+        : UIImage(systemName: "star")
+        
+        config.baseForegroundColor
+        = isFavoriteOn
+        ? DesignSystemAsset.carrotOrange.color
+        : DesignSystemAsset.mainColor.color
+        
+        starBtn.configuration = config
     }
 }
 

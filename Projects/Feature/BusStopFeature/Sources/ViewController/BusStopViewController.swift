@@ -21,7 +21,7 @@ public final class BusStopViewController: UIViewController {
     private let headerView: BusStopInfoHeaderView = BusStopInfoHeaderView()
     private let scrollView: UIScrollView = UIScrollView()
     private let contentView = UIView()
-    private let busStopTableView: UITableView = {
+    private lazy var busStopTableView: UITableView = {
         let table = UITableView(frame: .zero, style: .insetGrouped)
         table.register(
             BusTableViewCell.self,
@@ -31,6 +31,7 @@ public final class BusStopViewController: UIViewController {
             BusStopTVHeaderView.self,
             forHeaderFooterViewReuseIdentifier: BusStopTVHeaderView.identifier
         )
+        table.delegate = self
         table.isScrollEnabled = false
         return table
     }()
@@ -55,9 +56,6 @@ public final class BusStopViewController: UIViewController {
         bind()
         configureUI()
         
-        busStopTableView.rx
-            .setDelegate(self)
-            .disposed(by: disposeBag)
     }
     
     public override func viewDidLayoutSubviews() {
@@ -243,33 +241,6 @@ public final class BusStopViewController: UIViewController {
         cell.busNumber.textColor = response.busType.toColor
         
         return cell
-    }
-    
-    private func busTypeColor(
-        busTypeResponse: BusType
-    ) -> UIColor {
-        switch busTypeResponse {
-        case .common:
-            return DesignSystemAsset.gray4.color // 완
-        case .airport:
-            return DesignSystemAsset.airportGold.color
-        case .village:
-            return DesignSystemAsset.limeGreen.color // 완
-        case .trunkLine:
-            return DesignSystemAsset.regularAlarmBlue.color // 완
-        case .branchLine:
-            return DesignSystemAsset.limeGreen.color // 완
-        case .circulation:
-            return DesignSystemAsset.circulateYellow.color // 완
-        case .wideArea:
-            return DesignSystemAsset.redBusColor.color // 완
-        case .incheon:
-            return DesignSystemAsset.settingColor.color
-        case .gyeonggi:
-            return DesignSystemAsset.settingColor.color
-        case .abolition:
-            return DesignSystemAsset.gray4.color
-        }
     }
 }
 
