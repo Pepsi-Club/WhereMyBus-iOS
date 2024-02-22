@@ -13,7 +13,7 @@ languages([
 scheme("AppUITests")
 
 # Where should the resulting screenshots be stored?
-# output_directory("./screenshots")
+output_directory("Document")
 
 # remove the '#' to clear all previously generated screenshots before creating new ones
 # clear_previous_screenshots(true)
