@@ -5,7 +5,6 @@ import DesignSystem
 
 import RxSwift
 import RxCocoa
-import RxDataSources
 
 public final class SearchViewController: UIViewController {
     private let viewModel: SearchViewModel
