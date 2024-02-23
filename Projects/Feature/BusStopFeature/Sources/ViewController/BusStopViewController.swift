@@ -11,7 +11,6 @@ public final class BusStopViewController: UIViewController {
     
     private let disposeBag = DisposeBag()
     private let mapBtnTapEvent = PublishSubject<Int>()
-    private let likeBusStopBtnTapEvent = BehaviorSubject<Bool>(value: false)
     private let likeBusBtnTapEvent = PublishSubject<IndexPath>()
     private let alarmBtnTapEvent = PublishSubject<IndexPath>()
     
@@ -70,7 +69,6 @@ public final class BusStopViewController: UIViewController {
                 .map { _ in },
             likeBusBtnTapEvent: likeBusBtnTapEvent.asObservable(),
             alarmBtnTapEvent: alarmBtnTapEvent.asObservable(),
-            likeBusStopBtnTapEvent: likeBusStopBtnTapEvent.asObservable(),
             mapBtnTapEvent: mapBtnTapEvent.asObservable()
         )
         
@@ -81,44 +79,6 @@ public final class BusStopViewController: UIViewController {
                 
                 naviController.navigationBar.isHidden = true
             })
-            .disposed(by: disposeBag)
-        
-        headerView.favoriteBtn.rx.tap
-            .asObservable()
-            .withUnretained(self)
-            .subscribe(onNext: { viewController, _ in
-                guard let isEditMode = try? viewController
-                    .likeBusStopBtnTapEvent.value()
-                else { return }
-                viewController.likeBusStopBtnTapEvent
-                    .onNext(!isEditMode)
-                print("tap")
-            })
-            .disposed(by: disposeBag)
-        
-        likeBusStopBtnTapEvent
-            .withUnretained(self)
-            .subscribe(
-                onNext: { viewController, isEditMode in
-                    guard var config 
-                        = viewController.headerView.favoriteBtn.configuration
-                    else { return }
-                    
-                    config.baseForegroundColor = isEditMode
-                    ? .white
-                    : DesignSystemAsset.favoritesOrange.color
-                    
-                    config.baseBackgroundColor = isEditMode
-                    ? DesignSystemAsset.favoritesOrange.color
-                    : .white
-                    
-                    config.image = isEditMode
-                    ? UIImage(systemName: "star.fill")
-                    : UIImage(systemName: "star")
-                    
-                    viewController.headerView.favoriteBtn.configuration = config
-                }
-            )
             .disposed(by: disposeBag)
         
         let output = viewModel.transform(input: input)

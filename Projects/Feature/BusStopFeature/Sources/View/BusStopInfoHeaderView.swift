@@ -70,25 +70,6 @@ public final class BusStopInfoHeaderView: UIView {
         return label
     }()
     
-    public let favoriteBtn: UIButton = {
-        var config = UIButton.Configuration.filled()
-        config.image = UIImage(systemName: "star")
-        var title = AttributedString.init(stringLiteral: "즐겨찾기")
-        title.font = DesignSystemFontFamily.NanumSquareNeoOTF
-            .regular.font(size: 10)
-        config.attributedTitle = title
-        config.baseBackgroundColor = .white
-        config.baseForegroundColor = DesignSystemAsset.favoritesOrange.color
-        config.imagePadding = 3
-        let imgConfig = UIImage.SymbolConfiguration(
-            font: .systemFont(ofSize: 11)
-        )
-        config.preferredSymbolConfigurationForImage = imgConfig
-        config.cornerStyle = .capsule
-        let btn = UIButton(configuration: config)
-        return btn
-    }()
-    
     public let mapBtn: UIButton = {
         var config = UIButton.Configuration.filled()
         
@@ -159,7 +140,7 @@ extension BusStopInfoHeaderView {
                 totalStack.addArrangedSubview(components)
             }
         
-        [favoriteBtn, mapBtn]
+        [mapBtn]
             .forEach { components in
                 btnStack.addArrangedSubview(components)
             }
