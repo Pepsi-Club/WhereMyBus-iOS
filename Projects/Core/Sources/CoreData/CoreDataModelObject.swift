@@ -1,5 +1,5 @@
 //
-//  EntityRepresentable.swift
+//  CoreDataModelObject.swift
 //  Domain
 //
 //  Created by gnksbm on 2/23/24.
@@ -9,6 +9,6 @@
 import Foundation
 import CoreData
 
-public protocol EntityRepresentable: NSManagedObject {
-    var toEntity: Storable { get }
+public protocol CoreDataModelObject: NSManagedObject {
+    var toDomain: CoreDataStorable { get }
 }

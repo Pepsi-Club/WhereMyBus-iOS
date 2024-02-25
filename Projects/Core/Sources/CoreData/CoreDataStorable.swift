@@ -1,5 +1,5 @@
 //
-//  Storable.swift
+//  CoreDataStorable.swift
 //  Domain
 //
 //  Created by gnksbm on 2/23/24.
@@ -8,6 +8,6 @@
 
 import Foundation
 
-public protocol Storable {
-    static var coreDataType: EntityRepresentable.Type { get }
+public protocol CoreDataStorable {
+    static var coreDataType: CoreDataModelObject.Type { get }
 }
