@@ -1,24 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22522" systemVersion="23C71" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
-    <entity name="BusArrivalInfoResponse" representedClassName="BusArrivalInfoResponse" syncable="YES" codeGenerationType="class">
-        <attribute name="firstArrivalTime" optional="YES" attributeType="String"/>
-        <attribute name="isAlarmOn" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
-        <attribute name="isFavorites" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
-        <attribute name="routeId" optional="YES" attributeType="String"/>
-        <attribute name="routeName" optional="YES" attributeType="String"/>
-        <attribute name="secondArrivalTime" optional="YES" attributeType="String"/>
-        <relationship name="busType" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="BusType"/>
+    <entity name="FavoritesBusStopResponseMO" representedClassName="FavoritesBusStopResponseMO" syncable="YES" codeGenerationType="class">
+        <attribute name="busIds" optional="YES" attributeType="Transformable" customClassName="[String]"/>
+        <attribute name="busStopId" optional="YES" attributeType="String"/>
     </entity>
-    <entity name="BusStopArrivalInfoResponse" representedClassName="BusStopArrivalInfoResponse" syncable="YES" codeGenerationType="class">
-        <relationship name="buses" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="BusArrivalInfoResponse"/>
-    </entity>
-    <entity name="BusType" representedClassName="BusType" syncable="YES" codeGenerationType="class">
-        <attribute name="rawValue" optional="YES" attributeType="String"/>
-    </entity>
-    <entity name="FavoritesResponseEntity" representedClassName="FavoritesResponseEntity" syncable="YES">
-        <relationship name="busStops" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="BusStopArrivalInfoResponse"/>
-    </entity>
-    <entity name="RegularAlarmResponseEntity" representedClassName="RegularAlarmResponseEntity" syncable="YES">
+    <entity name="RegularAlarmResponseMO" representedClassName="RegularAlarmResponseMO" syncable="YES">
         <attribute name="busId" optional="YES" attributeType="String"/>
         <attribute name="busName" optional="YES" attributeType="String"/>
         <attribute name="busStopId" optional="YES" attributeType="String"/>

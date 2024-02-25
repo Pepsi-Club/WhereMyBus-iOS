@@ -8,7 +8,12 @@
 
 import Foundation
 
-public struct RegularAlarmResponse: Hashable {
+import Core
+
+public struct RegularAlarmResponse: Hashable, CoreDataStorable {
+    public static var coreDataType: Core.CoreDataModelObject.Type
+    = RegularAlarmResponseMO.self
+    
     public let busStopId: String
     public let busStopName: String
     public let busId: String
@@ -29,6 +34,6 @@ public struct RegularAlarmResponse: Hashable {
         self.busId = busId
         self.busName = busName
         self.time = time
-        self.weekDay = weekDay
+        self.weekDay = weekDay as [Int]
     }
 }
