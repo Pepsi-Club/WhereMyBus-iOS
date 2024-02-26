@@ -13,7 +13,6 @@ import DesignSystem
 
 import RxSwift
 import RxCocoa
-import RxDataSources
 
 public final class AfterSearchViewController: UIViewController {
     private let viewModel: SearchViewModel
