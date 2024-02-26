@@ -16,6 +16,7 @@ final class BusStopTVHeaderView: UITableViewHeaderFooterView {
         let label = UILabel()
         label.font = DesignSystemFontFamily
             .NanumSquareNeoOTF.regular.font(size: 16.0)
+        label.textColor = DesignSystemAsset.settingColor.color
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -23,6 +24,7 @@ final class BusStopTVHeaderView: UITableViewHeaderFooterView {
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)
         
+        backgroundColor = .systemGray6
         configureUI()
     }
     required init?(coder: NSCoder) {

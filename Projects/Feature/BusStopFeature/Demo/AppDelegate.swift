@@ -25,7 +25,10 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     func register() {
         DIContainer.register(
             type: BusStopUseCase.self,
-            DefaultBusStopUseCase(busStopArrivalInfoRepository: MockBusStopArrivalInfoRepository())
+            DefaultBusStopUseCase(
+                busStopArrivalInfoRepository: MockBusStopArrivalInfoRepository(),
+                favoritesRepository: MockFavoritesRepository()
+            )
         )
     }
 }
@@ -44,8 +47,8 @@ final class MockBusStopArrivalInfoRepository: BusStopArrivalInfoRepository {
                     busStopNum: "23290",
                     buses: [
                         BusArrivalInfoResponse(
-                            routeId: "",
-                            isFavorites: true,
+                            routeId: "124000038",
+                            isFavorites: false,
                             routeName: "342",
                             busType: "3",
                             firstArrivalTime: "7분[3정거장전]",
@@ -112,5 +115,72 @@ final class MockBusStopArrivalInfoRepository: BusStopArrivalInfoRepository {
             )
             return Disposables.create()
         }
+    }
+}
+
+final class MockFavoritesRepository: FavoritesRepository {
+    var favorites = BehaviorSubject<FavoritesResponse>(
+        value: .init(
+            busStops: []
+        )
+    )
+    
+    init() {
+        Timer.scheduledTimer(withTimeInterval: 1, repeats: false) { _ in
+            self.favorites.onNext(
+                .init(
+                    busStops: [
+                        BusStopArrivalInfoResponse(
+                            busStopId: "122000666",
+                            busStopName: "강남구보건소",
+                            direction: "강남구청역 방면",
+                            busStopNum: "23290",
+                            buses: [
+                                BusArrivalInfoResponse(
+                                    routeId: "124000038",
+                                    isFavorites: true,
+                                    routeName: "342",
+                                    busType: "3",
+                                    firstArrivalTime: "7분[3정거장전]",
+                                    secondArrivalTime: "18분[9정거장전]",
+                                    isAlarmOn: false)
+                            ]
+                        ),
+                        BusStopArrivalInfoResponse(
+                            busStopId: "122000692",
+                            busStopName: "래미안강남힐즈",
+                            direction: "못골마을 방면",
+                            busStopNum: "23446",
+                            buses: [
+                                BusArrivalInfoResponse(
+                                    routeId: "100100209",
+                                    isFavorites: false,
+                                    routeName: "강남03",
+                                    busType: "0",
+                                    firstArrivalTime: "12분27초후[5번째 전]",
+                                    secondArrivalTime: "26분53초후[12번째 전]",
+                                    isAlarmOn: false)
+                            ]
+                        ),
+                    ]
+                )
+            )
+        }
+    }
+    
+    func addRoute(
+        busStopId: String,
+        busStopName: String,
+        direction: String,
+        bus: BusArrivalInfoResponse
+    ) {
+        
+    }
+    
+    func removeRoute(
+        busStopId: String,
+        bus: BusArrivalInfoResponse
+    ) {
+        
     }
 }

@@ -26,7 +26,8 @@ public final class BusStopViewModel: ViewModel {
     
     public func transform(input: Input) -> Output {
         let output = Output(
-            busStopArrivalInfoResponse: .init()
+            busStopArrivalInfoResponse: .init(),
+            isFavorite: .init()
         )
         
         input.viewWillAppearEvent
@@ -36,6 +37,8 @@ public final class BusStopViewModel: ViewModel {
                     viewModel.useCase.fetchBusArrivals(
                         request: viewModel.fetchData
                     )
+                    // viewWillAppear가 되면서 favorties도 fetch 해줘야함
+                    //
                 }
             ).disposed(by: disposeBag)
         
@@ -68,5 +71,7 @@ extension BusStopViewModel {
     public struct Output {
         var busStopArrivalInfoResponse
         : PublishSubject<[BusStopArrivalInfoResponse]>
+        let isFavorite
+        : PublishSubject<Bool>
     }
 }

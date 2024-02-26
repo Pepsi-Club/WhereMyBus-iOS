@@ -32,6 +32,7 @@ public final class BusStopViewController: UIViewController {
         )
         table.delegate = self
         table.isScrollEnabled = false
+        table.backgroundColor = .systemGray6
         return table
     }()
     
@@ -49,7 +50,7 @@ public final class BusStopViewController: UIViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = .white
         
         configureDataSource()
         bind()
