@@ -32,8 +32,14 @@ public final class LocationPrivacyViewModel: ViewModel {
         
         input.viewWillAppearEvent
             .subscribe(onNext: {
-                let locationURL = "https://github.com/Pepsi-Club/BusComing"
-                output.locationPrivacyString.onNext(locationURL)
+                // MARK: - config + info plist에 있는 값을 가져오는 방식에서 문제인건지 계속 else로 빠짐
+                if let locationURL = Bundle.main.object(forInfoDictionaryKey: "LOCATION_PRIVACY_URL") as? String {
+                    output.locationPrivacyString.onNext(locationURL)
+                } else {
+                    print(" 위치정보처리방침 url 못가져옴 ")
+                    let errorURL = "https://lumpy-berry-693.notion.site/061dabcb67a149fbb921f8a600509ac7?pvs=4"
+                    output.locationPrivacyString.onNext(errorURL)
+                }
             })
             .disposed(by: disposeBag)
         
