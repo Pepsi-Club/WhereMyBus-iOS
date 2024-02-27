@@ -11,6 +11,7 @@ public final class SettingsViewController: UIViewController {
     private let disposeBag = DisposeBag()
     private let defaultAlarmSetBtn = PublishSubject<Void>()
     private let termsPrivacyBtnTap = PublishSubject<Void>()
+    private let locationPrivacyBtnTap = PublishSubject<Void>()
     
     private let titleLabel: UILabel = {
         let label = UILabel()
@@ -81,9 +82,17 @@ public final class SettingsViewController: UIViewController {
             .bind(to: termsPrivacyBtnTap)
             .disposed(by: disposeBag)
         
-        _ = viewModel.transform(input: .init(
-            defaultAlarmTapEvent: defaultAlarmSetBtn.asObservable(),
-            termsTapEvent: termsPrivacyBtnTap.asObservable())
+        buttonsView.locationPrivacyBtn.rx.tap
+            .bind(to: locationPrivacyBtnTap)
+            .disposed(by: disposeBag)
+        
+        _ = viewModel.transform(
+            input:
+                .init(
+                    defaultAlarmTapEvent: defaultAlarmSetBtn.asObservable(),
+                    termsTapEvent: termsPrivacyBtnTap.asObservable(),
+                    locationTapEvent: locationPrivacyBtnTap.asObservable()
+                )
         )
     }
 }

@@ -29,9 +29,16 @@ public final class SettingsViewModel: ViewModel {
             .withUnretained(self)
             .subscribe(onNext: { viewModel, _ in
                 viewModel.coordinator.presentTermsPrivacy()
-                print("이용약관 tap")
+                print("개인정보 tap")
             })
             .disposed(by: disposeBag)
+        
+        input.locationTapEvent
+            .withUnretained(self)
+            .subscribe(onNext: { ViewModel, _ in
+                ViewModel.coordinator.presentLocationPrivacy()
+                print("위치정보 탭")
+            })
         
         return output
     }
@@ -41,6 +48,7 @@ extension SettingsViewModel {
     public struct Input {
         let defaultAlarmTapEvent: Observable<Void>
         let termsTapEvent: Observable<Void>
+        let locationTapEvent: Observable<Void>
     }
     
     public struct Output {
