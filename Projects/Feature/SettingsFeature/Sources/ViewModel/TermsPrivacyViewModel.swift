@@ -32,13 +32,10 @@ public final class TermsPrivacyViewModel: ViewModel {
         
         input.viewWillAppearEvent
             .subscribe(onNext: {
-                // MARK: - config + info plist에 있는 값을 가져오는 방식에서 문제인건지 계속 else로 빠짐
-                if let termsURL = Bundle.main.object(forInfoDictionaryKey: "TERMS_OF_PRIVACY_URL") as? String {
-                    output.termsOfPrivacyString.onNext(termsURL)
-                } else {
-                    let errorURL = "https://lumpy-berry-693.notion.site/061dabcb67a149fbb921f8a600509ac7?pvs=4"
-                    output.termsOfPrivacyString.onNext(errorURL)
-                }
+                guard var termsPrivacyURL = Bundle.main.object(forInfoDictionaryKey: "TERMS_OF_PRIVACY_URL") as? String else { return }
+                
+                termsPrivacyURL = "https://" + termsPrivacyURL
+                output.termsOfPrivacyString.onNext(termsPrivacyURL)
             })
             .disposed(by: disposeBag)
         
