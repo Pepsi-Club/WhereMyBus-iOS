@@ -160,7 +160,6 @@ public final class AfterSearchViewController: UIViewController {
             constant: 10
             ),
         
-
         headerStack.topAnchor.constraint(
                 equalTo: textFieldStack.bottomAnchor, constant: 15),
         headerStack.leadingAnchor.constraint(
