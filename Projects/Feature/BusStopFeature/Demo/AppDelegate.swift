@@ -41,7 +41,7 @@ final class MockBusStopArrivalInfoRepository: BusStopArrivalInfoRepository {
         .create { observer in
             observer.onNext(
                 BusStopArrivalInfoResponse(
-                    busStopId: "12000655",
+                    busStopId: "122000666",
                     busStopName: "강남구보건소",
                     direction: "강남구청역 방면",
                     busStopNum: "23290",
@@ -55,7 +55,7 @@ final class MockBusStopArrivalInfoRepository: BusStopArrivalInfoRepository {
                             secondArrivalTime: "18분[9정거장전]",
                             isAlarmOn: false),
                         BusArrivalInfoResponse(
-                            routeId: "",
+                            routeId: "124000039",
                             isFavorites: false,
                             routeName: "3412",
                             busType: "4",
@@ -104,7 +104,7 @@ final class MockBusStopArrivalInfoRepository: BusStopArrivalInfoRepository {
                             isAlarmOn: false),
                         BusArrivalInfoResponse(
                             routeId: "",
-                            isFavorites: true,
+                            isFavorites: false,
                             routeName: "4001-1",
                             busType: "1",
                             firstArrivalTime: "18분[2정거장전]",
@@ -138,12 +138,20 @@ final class MockFavoritesRepository: FavoritesRepository {
                             buses: [
                                 BusArrivalInfoResponse(
                                     routeId: "124000038",
-                                    isFavorites: true,
+                                    isFavorites: false,
                                     routeName: "342",
                                     busType: "3",
                                     firstArrivalTime: "7분[3정거장전]",
                                     secondArrivalTime: "18분[9정거장전]",
-                                    isAlarmOn: false)
+                                    isAlarmOn: false),
+                                BusArrivalInfoResponse(
+                                    routeId: "124000039",
+                                    isFavorites: false,
+                                    routeName: "3412",
+                                    busType: "4",
+                                    firstArrivalTime: "7분[3정거장전]",
+                                    secondArrivalTime: "18분[9정거장전]",
+                                    isAlarmOn: false),
                             ]
                         ),
                         BusStopArrivalInfoResponse(

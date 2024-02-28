@@ -115,6 +115,10 @@ public struct BusArrivalInfoResponse: Codable, Hashable {
         self.secondArrivalTime = secondArrivalTime
         self.isAlarmOn = isAlarmOn
     }
+    
+    public mutating func toggledFavorites() {
+        self.isFavorites.toggle()
+    }
 }
 
 public enum BusType: String, Codable {
