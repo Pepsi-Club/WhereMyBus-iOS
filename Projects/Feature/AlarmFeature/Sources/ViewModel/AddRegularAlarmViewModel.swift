@@ -8,6 +8,7 @@
 
 import Foundation
 
+import Core
 import Domain
 import FeatureDependency
 
@@ -17,6 +18,7 @@ import RxRelay
 final class AddRegularAlarmViewModel: ViewModel {
     private let alarmToEdit: RegularAlarmResponse?
     private let coordinator: AddRegularAlarmCoordinator
+    @Injected(RegularAlarmUseCase.self) var useCase: RegularAlarmUseCase
     
     private let disposeBag = DisposeBag()
     
@@ -36,7 +38,7 @@ final class AddRegularAlarmViewModel: ViewModel {
         let output = Output(
             title: .init(value: "추가하기"),
             selectedBusInfo: .init(value: "정류장 및 버스 찾기"),
-            selectedDate: .init(),
+            selectedDate: .init(value: .now),
             selectedWeekDay: .init(value: [])
         )
         if let alarmToEdit {
@@ -44,9 +46,18 @@ final class AddRegularAlarmViewModel: ViewModel {
             output.selectedBusInfo.accept(
                 "\(alarmToEdit.busStopName), \(alarmToEdit.busName)"
             )
-            output.selectedDate.onNext(alarmToEdit.time)
+            output.selectedDate.accept(alarmToEdit.time)
             output.selectedWeekDay.accept(alarmToEdit.weekDay)
         }
+        
+        input.viewWillAppear
+            .withUnretained(self)
+            .subscribe(
+                onNext: { viewModel, _ in
+                    viewModel.useCase.checkNotificationAuth()
+                }
+            )
+            .disposed(by: disposeBag)
         
         input.searchBtnTapEvent
             .withUnretained(self)
@@ -82,6 +93,22 @@ final class AddRegularAlarmViewModel: ViewModel {
             .withUnretained(self)
             .subscribe(
                 onNext: { viewModel, _ in
+                    let selectedBusInfo = output.selectedBusInfo.value
+                        .split(separator: " ")
+                        .map { String($0) }
+                    guard let busStopName = selectedBusInfo.first,
+                          let busName = selectedBusInfo.last
+                    else { return }
+                    viewModel.useCase.addNewAlarm(
+                        response: .init(
+                            busStopId: "busStopId",
+                            busStopName: busStopName,
+                            busId: "busId",
+                            busName: busName,
+                            time: output.selectedDate.value,
+                            weekDay: output.selectedWeekDay.value
+                        )
+                    )
                     viewModel.coordinator.complete()
                 }
             )
@@ -93,6 +120,7 @@ final class AddRegularAlarmViewModel: ViewModel {
 
 extension AddRegularAlarmViewModel {
     struct Input { 
+        let viewWillAppear: Observable<Void>
         let searchBtnTapEvent: Observable<Void>
         let dateSelectEvent: Observable<Date>
         let weekDayBtnTapEvent: Observable<Int>
@@ -102,7 +130,7 @@ extension AddRegularAlarmViewModel {
     struct Output { 
         let title: BehaviorRelay<String>
         let selectedBusInfo: BehaviorRelay<String>
-        let selectedDate: PublishSubject<Date>
+        let selectedDate: BehaviorRelay<Date>
         let selectedWeekDay: BehaviorRelay<[Int]>
     }
 }

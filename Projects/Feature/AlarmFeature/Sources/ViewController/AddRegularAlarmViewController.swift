@@ -11,6 +11,7 @@ import UIKit
 import DesignSystem
 
 import RxSwift
+import RxCocoa
 
 final class AddRegularAlarmViewController: UIViewController {
     private let viewModel: AddRegularAlarmViewModel
@@ -220,6 +221,11 @@ final class AddRegularAlarmViewController: UIViewController {
     private func bind() {
         let output = viewModel.transform(
             input: .init(
+                viewWillAppear: rx
+                    .methodInvoked(
+                        #selector(UIViewController.viewWillAppear)
+                    )
+                    .map { _ in },
                 searchBtnTapEvent: searchBtn.rx.tap.asObservable(),
                 dateSelectEvent: timePicker.rx.date.asObservable(),
                 weekDayBtnTapEvent: Observable.merge(
@@ -266,6 +272,9 @@ final class AddRegularAlarmViewController: UIViewController {
                             }
                             btn.backgroundColor = color
                         }
+                    let completeEnabled = !selectedRawValue.isEmpty 
+                    
+                    viewController.completeBtn.isEnabled = completeEnabled
                 }
             )
             .disposed(by: disposeBag)
