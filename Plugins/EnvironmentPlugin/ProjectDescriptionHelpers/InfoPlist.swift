@@ -60,7 +60,8 @@ public extension [String: Plist.Value] {
                     "NSExceptionAllowsInsecureHTTPLoads": true,
                 ]
             ]
-        ]
+        ],
+        "BGTaskSchedulerPermittedIdentifiers" : [.string(.bundleID)]
     ]
     
     static let baseInfoPlist: Self = [
