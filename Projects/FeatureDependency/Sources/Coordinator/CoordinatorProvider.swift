@@ -8,13 +8,16 @@
 
 import UIKit
 
+import Domain
+
 public protocol CoordinatorProvider {
     func makeSearchCoordinator(
         navigationController: UINavigationController
     ) -> SearchCoordinator
     
     func makeBusStopCoordinator(
-        navigationController: UINavigationController
+        navigationController: UINavigationController,
+        arrivalInfoData: ArrivalInfoRequest
     ) -> BusStopCoordinator
     
 //    func makeBusStopMapCoordinator(

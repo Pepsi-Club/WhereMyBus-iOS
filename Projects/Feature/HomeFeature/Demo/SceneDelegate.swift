@@ -43,8 +43,23 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 }
 
 final class MockCoordinatorProvider: CoordinatorProvider {
-    func makeBusStopCoordinator(navigationController: UINavigationController) -> BusStopCoordinator {
-        MockCoordinator(testMessage: "BusStopVC", navigationController: navigationController)
+    func makeBusStopCoordinator(
+        navigationController: UINavigationController,
+        arrivalInfoData: ArrivalInfoRequest
+    ) -> BusStopCoordinator {
+        MockCoordinator(
+            testMessage: "BusStopVC",
+            navigationController: navigationController
+        )
+    }
+    
+    func makeBusStopCoordinator(
+        navigationController: UINavigationController
+    ) -> BusStopCoordinator {
+        MockCoordinator(
+            testMessage: "BusStopVC",
+            navigationController: navigationController
+        )
     }
     
     func makeAddRegularAlarmCoordinator(
