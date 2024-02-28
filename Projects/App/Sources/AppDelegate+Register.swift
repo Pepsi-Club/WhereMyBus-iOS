@@ -22,10 +22,27 @@ extension AppDelegate {
                 favoritesRepository: favoritesRepository
             )
         )
+        
+        DIContainer.register(
+            type: RegularAlarmUseCase.self,
+            DefaultRegularAlarmUseCase(
+                regularAlarmRepository: regularAlarmRepository,
+                localNotificationService: localNotificationService
+            )
+        )
     }
 }
 
 extension AppDelegate {
+    var regularAlarmRepository: RegularAlarmRepository {
+        DefaultRegularAlarmRepository()
+    }
+    var localNotificationService: LocalNotificationService {
+        DefaultLocalNotificationService(
+            busStopArrivalInfoRepository: busStopArrivalInfoRepository
+        )
+    }
+    
     var favoritesRepository: FavoritesRepository {
         DefaultFavoritesRepository()
     }
