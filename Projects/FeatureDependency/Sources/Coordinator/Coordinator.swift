@@ -19,7 +19,7 @@ public protocol Coordinator: AnyObject {
     func finish()
 }
 
-extension Coordinator {
+public extension Coordinator {
     func finish() {
         parent?.childDidFinish(self)
     }
