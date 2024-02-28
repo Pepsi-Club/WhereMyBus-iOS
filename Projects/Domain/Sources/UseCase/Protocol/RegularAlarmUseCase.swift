@@ -9,5 +9,6 @@
 import Foundation
 
 public protocol RegularAlarmUseCase {
-    
+    func checkNotificationAuth()
+    func addNewAlarm(response: RegularAlarmResponse)
 }
