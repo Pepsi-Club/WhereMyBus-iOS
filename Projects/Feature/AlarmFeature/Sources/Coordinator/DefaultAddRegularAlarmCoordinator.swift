@@ -34,10 +34,6 @@ public final class DefaultAddRegularAlarmCoordinator {
             animated: true
         )
     }
-    
-    public func finish() {
-        
-    }
 }
 
 extension DefaultAddRegularAlarmCoordinator: AddRegularAlarmCoordinator {
@@ -60,6 +56,7 @@ extension DefaultAddRegularAlarmCoordinator: AddRegularAlarmCoordinator {
     }
     
     public func complete() {
-        
+        navigationController.popViewController(animated: true)
+        finish()
     }
 }
