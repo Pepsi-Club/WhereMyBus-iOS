@@ -141,8 +141,8 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
         view.backgroundColor = .white
 
         [searchTextFieldView, backBtn, textFieldStack, recentSearchlabel,
-         recentSearchTableView, coloredRectangleView, searchNearStopView, editBtn,
-         headerStack, magniStack, magniImage]
+         recentSearchTableView, coloredRectangleView, searchNearStopView,
+         editBtn,headerStack, magniStack, magniImage]
             .forEach {
             view.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
@@ -193,7 +193,6 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
             constant: 10
             ),
         
-
         headerStack.topAnchor.constraint(
                 equalTo: textFieldStack.bottomAnchor, constant: 15),
         headerStack.leadingAnchor.constraint(
@@ -251,7 +250,8 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
     private func configureDataSource() {
         dataSource = .init(
             tableView: recentSearchTableView,
-            cellProvider: { [weak self] tableView, indexPath, response in guard let self else { return UITableViewCell() }
+            cellProvider: { [weak self] tableView, indexPath, response
+                in guard let self else { return UITableViewCell() }
                 
                 let cell = self.configureCell(
                     tableView: tableView,
@@ -261,10 +261,15 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
                 return cell })
     }
     
+    
+    // MARK: 다시해야하는구간
     private func configureCell(
         tableView: UITableView,
         indexPath: IndexPath,
-        response: BusArrivalInfoResponse) -> RecentSearchCell? { guard let cell = tableView.dequeueReusableCell(withIdentifier: RecentSearchCell.identifier, for: indexPath
+        response: BusArrivalInfoResponse) -> RecentSearchCell? {
+            guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: RecentSearchCell.identifier,
+            for: indexPath
         ) as? RecentSearchCell
             else { return nil }
             let msg1 = response.routeName
@@ -279,3 +284,5 @@ extension SearchViewController {
     UITableViewDiffableDataSource
     <BusStopArrivalInfoResponse, BusArrivalInfoResponse>
 }
+
+

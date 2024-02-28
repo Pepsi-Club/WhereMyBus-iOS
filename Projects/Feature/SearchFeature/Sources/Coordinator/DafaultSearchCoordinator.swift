@@ -21,9 +21,7 @@ public final class DefaultSearchCoordinator: SearchCoordinator {
     
     public func start() {
         let searchViewController = SearchViewController(
-            viewModel: SearchViewModel(
-                //coordinator: self
-            )
+            viewModel: SearchViewModel(coordinator: self)
         )
         navigationController.pushViewController(
             searchViewController,
@@ -38,7 +36,9 @@ public final class DefaultSearchCoordinator: SearchCoordinator {
 
 extension DefaultSearchCoordinator {
     public func startBusStopFlow() {
-        	let busStopCoordinator = coordinatorProvider.makeBusStopCoordinator(navigationController: navigationController)
+        	let busStopCoordinator =
+        coordinatorProvider.makeBusStopCoordinator(navigationController:
+                                                    navigationController)
         
         childs.append(busStopCoordinator)
         busStopCoordinator.start()
