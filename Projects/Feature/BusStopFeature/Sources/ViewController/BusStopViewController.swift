@@ -119,7 +119,7 @@ public final class BusStopViewController: UIViewController {
                 snapshot.appendItems([busInfo], toSection: busTypeSection)
             }
         }
-        dataSource.apply(snapshot)
+        dataSource.apply(snapshot, animatingDifferences: false)
     }
     
     private func configureDataSource() {
@@ -243,7 +243,7 @@ extension BusStopViewController {
                 equalTo: scrollView.topAnchor
             ),
             contentView.bottomAnchor.constraint(
-                equalTo: scrollView.bottomAnchor
+                equalTo: scrollView.contentLayoutGuide.bottomAnchor
             ),
             contentView.leadingAnchor.constraint(
                 equalTo: scrollView.leadingAnchor
