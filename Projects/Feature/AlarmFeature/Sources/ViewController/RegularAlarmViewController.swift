@@ -82,12 +82,14 @@ public final class RegularAlarmViewController: UIViewController {
             ),
             
             addBtn.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
-            addBtn.widthAnchor.constraint(equalToConstant: 200),
-            addBtn.heightAnchor.constraint(equalToConstant: 60),
+            addBtn.widthAnchor.constraint(
+                equalTo: safeArea.widthAnchor,
+                multiplier: 0.5
+            ),
             addBtn.bottomAnchor.constraint(
                 equalTo: safeArea.bottomAnchor,
-                constant: -20
-            ),
+                constant: -40
+            )
         ])
     }
     

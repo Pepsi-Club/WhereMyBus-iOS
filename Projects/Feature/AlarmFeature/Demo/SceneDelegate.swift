@@ -60,7 +60,7 @@ final class MockCoordinator
     }
     
     func complete() {
-        
+        navigationController.popViewController(animated: true)
     }
     
     var parent: FeatureDependency.Coordinator?
