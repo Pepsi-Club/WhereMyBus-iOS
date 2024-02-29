@@ -48,11 +48,14 @@ public final class DefaultCoreDataService: CoreDataService {
         let mirror = Mirror(reflecting: data)
         mirror.children.forEach { key, value in
             guard let key,
-            let propertyName = String(describing: key)
+                  let propertyName = String(describing: key)
                 .split(separator: ".")
                 .last
             else { return }
-            object.setValue(value, forKey: String(propertyName))
+            object.setValue(
+                value,
+                forKey: String(propertyName)
+            )
         }
         do {
             try container.viewContext.save()
@@ -71,7 +74,7 @@ public final class DefaultCoreDataService: CoreDataService {
         let mirror = Mirror(reflecting: data)
         mirror.children.forEach { key, value in
             guard let key,
-            let propertyName = String(describing: key)
+                  let propertyName = String(describing: key)
                 .split(separator: ".")
                 .last
             else { return }
@@ -99,7 +102,7 @@ public final class DefaultCoreDataService: CoreDataService {
         let mirror = Mirror(reflecting: data)
         mirror.children.forEach { key, value in
             guard let key,
-            let propertyName = String(describing: key)
+                  let propertyName = String(describing: key)
                 .split(separator: ".")
                 .last
             else { return }
