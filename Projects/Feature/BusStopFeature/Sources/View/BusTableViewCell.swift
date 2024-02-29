@@ -12,13 +12,19 @@ import DesignSystem
 
 import RxSwift
 
-final class BusTableViewCell: UITableViewCell {
-    private var disposeBag = DisposeBag()
-
+public final class BusTableViewCell: UITableViewCell {
+    public var disposeBag = DisposeBag()
+    
     private let firstArrivalInfoView = ArrivalInfoView()
     private let secondArrivalInfoView = ArrivalInfoView()
+    //    public let starBtnTapEvent = PublishSubject<Void>()
+    public let starBtnTapEvent = BehaviorSubject<Bool>(value: false)
+    public let alarmBtnTapEvent = PublishSubject<Void>()
     
-    let starBtn: UIButton = {
+    private var favoriteToggle = false
+    private var alarmToggle = false
+    
+    private lazy var starBtn: UIButton = {
         var config = UIButton.Configuration.filled()
         config.image = UIImage(systemName: "star")
         config.contentInsets = NSDirectionalEdgeInsets(
@@ -37,7 +43,7 @@ final class BusTableViewCell: UITableViewCell {
         return btn
     }()
     
-    let alarmBtn: UIButton = {
+    private lazy var alarmBtn: UIButton = {
         var config = UIButton.Configuration.filled()
         config.image = UIImage(systemName: "alarm")
         config.contentInsets = NSDirectionalEdgeInsets(
@@ -74,7 +80,7 @@ final class BusTableViewCell: UITableViewCell {
         return stack
     }()
     
-    private let busNumber: UILabel = {
+    public let busNumber: UILabel = {
         let label = UILabel()
         label.font = DesignSystemFontFamily.NanumSquareNeoOTF
             .bold.font(size: 18)
@@ -92,33 +98,103 @@ final class BusTableViewCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        backgroundColor = .white
         
         configureUI()
+        buttonTap()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    public func updateUI(
+    public func updateBtn(
+        favorite: Bool,
+        alarm: Bool
+    ) {
+        favoriteToggle = favorite
+        alarmToggle = alarm
+        
+        changeFavBtnColor(isFavoriteOn: favoriteToggle)
+    }
+    
+    public func updateBusRoute(
         routeName: String,
-        nextRouteName: String,
-        firstArrivalTime: String,
-        firstArrivalRemaining: String,
-        secondArrivalTime: String,
-        secondArrivalRemaining: String
+        nextRouteName: String
     ) {
         busNumber.text = routeName
         nextStopName.text = nextRouteName
+    }
+    
+    public func updateFirstArrival(
+        firstArrivalTime: String,
+        firstArrivalRemaining: String
+    ) {
         firstArrivalInfoView.updateUI(
             time: firstArrivalTime, remainingStops: firstArrivalRemaining
         )
+    }
+    
+    public func updateSecondArrival(
+        secondArrivalTime: String,
+        secondArrivalRemaining: String
+    ) {
         secondArrivalInfoView.updateUI(
             time: secondArrivalTime, remainingStops: secondArrivalRemaining
         )
     }
-    override func prepareForReuse() {
+    public override func prepareForReuse() {
         super.prepareForReuse()
+        
+        [busNumber, nextStopName].forEach {
+            $0.text = nil
+        }
+        [firstArrivalInfoView, secondArrivalInfoView].forEach {
+            $0.updateUI(time: "", remainingStops: "")
+        }
+        
+        disposeBag = DisposeBag()
+    }
+    
+    private func buttonTap() {
+        starBtn.rx.tap
+            .withUnretained(self)
+            .subscribe(onNext: { [weak self] _ in
+                guard let self else { return }
+                
+                favoriteToggle = !favoriteToggle
+                
+                changeFavBtnColor(isFavoriteOn: favoriteToggle)
+                
+                self.starBtnTapEvent.onNext((favoriteToggle))
+                
+                print(" 즐겨찾기 버튼 작동 ")
+            })
+            .disposed(by: disposeBag)
+        
+        alarmBtn.rx.tap
+            .subscribe(onNext: { [weak self] _ in
+                self?.alarmBtnTapEvent.onNext(())
+                print(" 알람 버튼 작동 ")
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    private func changeFavBtnColor(isFavoriteOn: Bool) {
+        
+        guard var config = starBtn.configuration
+        else { return }
+        
+        config.image = isFavoriteOn
+        ? UIImage(systemName: "star.fill")
+        : UIImage(systemName: "star")
+        
+        config.baseForegroundColor
+        = isFavoriteOn
+        ? DesignSystemAsset.carrotOrange.color
+        : DesignSystemAsset.mainColor.color
+        
+        starBtn.configuration = config
     }
 }
 

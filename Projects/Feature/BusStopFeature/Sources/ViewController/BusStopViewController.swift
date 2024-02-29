@@ -9,19 +9,18 @@ import RxCocoa
 public final class BusStopViewController: UIViewController {
     private let viewModel: BusStopViewModel
     
-    let disposeBag = DisposeBag()
-    let mapBtnTapEvent = PublishSubject<Int>()
-    let likeBusStopBtnTapEvent = PublishSubject<Int>()
-    let likeBusBtnTapEvent = PublishSubject<IndexPath>()
-    let alarmBtnTapEvent = PublishSubject<IndexPath>()
+    private let disposeBag = DisposeBag()
+    private let mapBtnTapEvent = PublishSubject<Int>()
+    private let likeBusBtnTapEvent = PublishSubject<IndexPath>()
+    private let alarmBtnTapEvent = PublishSubject<IndexPath>()
     
     private var dataSource: BusStopDataSource!
     private var snapshot: BusStopSnapshot!
     
     private let headerView: BusStopInfoHeaderView = BusStopInfoHeaderView()
-    private var scrollView: UIScrollView = UIScrollView()
+    private let scrollView: UIScrollView = UIScrollView()
     private let contentView = UIView()
-    private let busStopTableView: UITableView = {
+    private lazy var busStopTableView: UITableView = {
         let table = UITableView(frame: .zero, style: .insetGrouped)
         table.register(
             BusTableViewCell.self,
@@ -31,7 +30,9 @@ public final class BusStopViewController: UIViewController {
             BusStopTVHeaderView.self,
             forHeaderFooterViewReuseIdentifier: BusStopTVHeaderView.identifier
         )
+        table.delegate = self
         table.isScrollEnabled = false
+        table.backgroundColor = .systemGray6
         return table
     }()
     
@@ -49,15 +50,12 @@ public final class BusStopViewController: UIViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = .white
         
         configureDataSource()
         bind()
         configureUI()
         
-        busStopTableView.rx
-            .setDelegate(self)
-            .disposed(by: disposeBag)
     }
     
     public override func viewDidLayoutSubviews() {
@@ -72,7 +70,6 @@ public final class BusStopViewController: UIViewController {
                 .map { _ in },
             likeBusBtnTapEvent: likeBusBtnTapEvent.asObservable(),
             alarmBtnTapEvent: alarmBtnTapEvent.asObservable(),
-            likeBusStopBtnTapEvent: likeBusStopBtnTapEvent.asObservable(),
             mapBtnTapEvent: mapBtnTapEvent.asObservable()
         )
         
@@ -96,8 +93,9 @@ public final class BusStopViewController: UIViewController {
             .subscribe(
                 onNext: { viewController, response in
                     response.forEach { res in
+                        // UILabel -> optional 값 들어올 수 있음. text!
                         viewController.headerView.bindUI(
-                            routeId: res.busStopId,
+                            routeId: res.busStopNum,
                             busStopName: res.busStopName,
                             nextStopName: res.direction
                         )
@@ -121,37 +119,34 @@ public final class BusStopViewController: UIViewController {
                 snapshot.appendItems([busInfo], toSection: busTypeSection)
             }
         }
-        dataSource.apply(snapshot)
+        dataSource.apply(snapshot, animatingDifferences: false)
     }
     
     private func configureDataSource() {
         dataSource = .init(
             tableView: busStopTableView,
             cellProvider: { [weak self] tableView, indexPath, response in
-                guard let self else { return UITableViewCell() }
-                
+                guard let self = self,
                 let cell = self.configureCell(
                     tableView: tableView,
                     indexPath: indexPath,
                     response: response
                 )
+                else { return UITableViewCell() }
                 
-                cell?.starBtn.rx.tap
-                    .map { _ in 
-//                        response.isFavorites.toggle()
-                        print("버튼 눌림")
+                cell.starBtnTapEvent
+                    .map { _ in
                         return indexPath
                     }
                     .bind(to: self.likeBusBtnTapEvent)
-                    .disposed(by: disposeBag)
+                    .disposed(by: cell.disposeBag)
                 
-                cell?.alarmBtn.rx.tap
+                cell.alarmBtnTapEvent
                     .map { _ in
-//                        response.isAlarmOn.toggle()
-                        indexPath
+                        return indexPath
                     }
                     .bind(to: self.alarmBtnTapEvent)
-                    .disposed(by: disposeBag)
+                    .disposed(by: cell.disposeBag)
                 
                 return cell
                 
@@ -187,14 +182,26 @@ public final class BusStopViewController: UIViewController {
             secondArrivalRemaining = splittedMsg2[1]
             secondArrivalRemaining.removeLast() // "]" 제거
         }
-        cell.updateUI(
+        
+        cell.updateBtn(
+            favorite: response.isFavorites,
+            alarm: response.isAlarmOn
+        )
+        cell.updateBusRoute(
             routeName: response.routeName,
-            nextRouteName: "강남구청역 방면",
+            nextRouteName: "강남구청역 방면"
+        )
+        cell.updateFirstArrival(
             firstArrivalTime: firstArrivalTime,
-            firstArrivalRemaining: firstArrivalRemaining,
+            firstArrivalRemaining: firstArrivalRemaining
+        )
+        cell.updateSecondArrival(
             secondArrivalTime: secondArrivalTime,
             secondArrivalRemaining: secondArrivalRemaining
         )
+        
+        cell.busNumber.textColor = response.busType.toColor
+        
         return cell
     }
 }
@@ -236,7 +243,7 @@ extension BusStopViewController {
                 equalTo: scrollView.topAnchor
             ),
             contentView.bottomAnchor.constraint(
-                equalTo: scrollView.bottomAnchor
+                equalTo: scrollView.contentLayoutGuide.bottomAnchor
             ),
             contentView.leadingAnchor.constraint(
                 equalTo: scrollView.leadingAnchor
@@ -293,7 +300,6 @@ extension BusStopViewController: UITableViewDelegate {
         
         let sectionIdentifier = dataSource.snapshot()
             .sectionIdentifiers[section]
-        //리로드가 되지 않고, apply를 통해서 바로바로 넘겨줌, 데이터 소스가 있고 snapShot을 통해서 데이터 소스를 넘겨줌 
         
         headerView.bind(with: sectionIdentifier.toString)
         

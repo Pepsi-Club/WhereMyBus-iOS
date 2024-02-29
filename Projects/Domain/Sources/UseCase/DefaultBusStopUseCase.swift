@@ -13,25 +13,92 @@ import RxCocoa
 
 public final class DefaultBusStopUseCase: BusStopUseCase {
     private let busStopArrivalInfoRepository: BusStopArrivalInfoRepository
+    private let favoritesRepository: FavoritesRepository
     
     public let busStopSection = PublishSubject<[BusStopArrivalInfoResponse]>()
+    public var favorites = BehaviorSubject<FavoritesResponse>(
+        value: .init(busStops: [])
+    )
     private let disposeBag = DisposeBag()
     
     public init(
-        busStopArrivalInfoRepository: BusStopArrivalInfoRepository
+        busStopArrivalInfoRepository: BusStopArrivalInfoRepository,
+        favoritesRepository: FavoritesRepository
     ) {
         self.busStopArrivalInfoRepository = busStopArrivalInfoRepository
+        self.favoritesRepository = favoritesRepository
+        
+        fetchFavorites()
+        
     }
     
     public func fetchBusArrivals(request: ArrivalInfoRequest) {
-        busStopArrivalInfoRepository.fetchArrivalList(
+        let busStops = busStopArrivalInfoRepository.fetchArrivalList(
             busStopId: request.busStopId,
             busStopName: request.busStopName
         )
         .map { [$0] }
-        .bind(to: busStopSection)
-        .disposed(by: disposeBag)
+        Observable.combineLatest(busStops, favorites)
+            .withUnretained(self)
+            .map { useCase, arg1 in
+                var (busStops, favoritesBusStops) = arg1
+                busStops = useCase.filterFavorites(
+                    responses: busStops,
+                    favorites: favoritesBusStops.busStops
+                )
+                return busStops
+            }
+            .bind(to: busStopSection)
+            .disposed(by: disposeBag)
+    }
+    // MARK: - 즐겨찾기 데이터 가져오기
+    private func fetchFavorites() {
+        favoritesRepository.favorites
+            .withUnretained(self)
+            .subscribe(
+                onNext: { useCase, favorites in
+                    useCase.favorites.onNext(favorites)
+                }
+            )
+            .disposed(by: disposeBag)
+    }
+    // MARK: - 필터링 후 [BusStopArrivalInfoRepsonse] 반환
+    private func filterFavorites(
+        responses: [BusStopArrivalInfoResponse],
+        favorites: [BusStopArrivalInfoResponse]
+    ) -> [BusStopArrivalInfoResponse] {
+        var busStops = responses
+        
+        for response in responses {
+            guard let favorite = favorites.first(
+                where: {
+                    $0.busStopId == response.busStopId
+                }
+            )
+            else { continue }
+            
+            for favoriteBus in favorite.buses {
+                if let indexInResponse = response.buses.firstIndex(
+                    where: {
+                        $0.routeId == favoriteBus.routeId
+                    }
+                ),
+                   let indexInBusStops = busStops.firstIndex(
+                    where: {
+                        $0.busStopId == response.busStopId
+                    }
+                   ) {
+                    busStops[indexInBusStops].buses[indexInResponse].isFavorites
+                    = !response.buses[indexInResponse].isFavorites
+                }
+            }
+        }
+        
+        print("\(busStops)")
+        
+        return busStops
     }
     
-    // TODO: 즐겨찾기 추가 logic
+    // MARK: - 즐찾 추가 및 해제
+    
 }

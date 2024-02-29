@@ -26,7 +26,8 @@ public final class BusStopViewModel: ViewModel {
     
     public func transform(input: Input) -> Output {
         let output = Output(
-            busStopArrivalInfoResponse: .init()
+            busStopArrivalInfoResponse: .init(),
+            favorites: .init(value: .init([] ) )
         )
         
         input.viewWillAppearEvent
@@ -53,6 +54,11 @@ public final class BusStopViewModel: ViewModel {
             )
             .disposed(by: disposeBag)
         
+        useCase.favorites
+            .map { $0.busStops }
+            .bind(to: output.favorites)
+            .disposed(by: disposeBag)
+        
         return output
     }
 }
@@ -62,12 +68,13 @@ extension BusStopViewModel {
         let viewWillAppearEvent: Observable<Void>
         let likeBusBtnTapEvent: Observable<IndexPath>
         let alarmBtnTapEvent: Observable<IndexPath>
-        let likeBusStopBtnTapEvent: Observable<Int>
         let mapBtnTapEvent: Observable<Int>
     }
     
     public struct Output {
         var busStopArrivalInfoResponse
         : PublishSubject<[BusStopArrivalInfoResponse]>
+        var favorites
+        : BehaviorSubject<[BusStopArrivalInfoResponse]>
     }
 }

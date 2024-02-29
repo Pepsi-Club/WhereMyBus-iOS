@@ -33,6 +33,12 @@ public final class DefaultBusStopArrivalInfoRepository:
         )
         .map { data in
             let xml = XML.parse(data)
+            let busStopNum: String? = xml
+                .ServiceResult
+                .msgBody
+                .itemList
+                .arsId.text
+            
             let busResponses: [BusArrivalInfoResponse?] = xml
                 .ServiceResult
                 .msgBody
@@ -61,6 +67,7 @@ public final class DefaultBusStopArrivalInfoRepository:
                 busStopId: busStopId,
                 busStopName: busStopName,
                 direction: "XX 방면",
+                busStopNum: busStopNum,
                 buses: busResponses.compactMap { $0 }
             )
         }

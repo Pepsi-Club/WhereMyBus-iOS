@@ -63,17 +63,20 @@ public struct BusStopArrivalInfoResponse: Codable, Hashable {
     public let busStopId: String
     public let busStopName: String
     public let direction: String
+    public let busStopNum: String?
     public var buses: [BusArrivalInfoResponse]
     
     public init(
         busStopId: String,
         busStopName: String,
         direction: String,
+        busStopNum: String?,
         buses: [BusArrivalInfoResponse]
     ) {
         self.busStopId = busStopId
         self.busStopName = busStopName
         self.direction = direction
+        self.busStopNum = busStopNum
         self.buses = buses
     }
 }
@@ -111,6 +114,10 @@ public struct BusArrivalInfoResponse: Codable, Hashable {
         self.firstArrivalTime = firstArrivalTime
         self.secondArrivalTime = secondArrivalTime
         self.isAlarmOn = isAlarmOn
+    }
+    
+    public mutating func toggledFavorites() {
+        self.isFavorites.toggle()
     }
 }
 
