@@ -47,16 +47,16 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
         
         var configuration = UIImage.SymbolConfiguration(pointSize: 8,
                                                         weight: .light)
-        configuration = configuration.applying(UIImage.SymbolConfiguration(
-            font: UIFont.systemFont(ofSize: 20, weight: .light),
-            scale: .default))
-        
+        configuration = configuration.applying(
+            UIImage.SymbolConfiguration(
+                font: UIFont.systemFont(ofSize: 20, weight: .light),
+                scale: .default
+            )
+        )
         let migImage = UIImage(
-            systemName: symbolName,
-            withConfiguration: configuration)?.withTintColor(.black)
-        
-        let migImageView = UIImageView(image: migImage)
-        migImageView.tintColor = DesignSystemAsset.gray4.color
+             systemName: symbolName,
+             withConfiguration: configuration
+        )?.withTintColor(.black)
         
         return migImageView
     }()

@@ -40,11 +40,16 @@ public final class SearchTextFieldView: UITextField {
     private func setPlaceholder(_ placeholder: String?) {
     self.placeholder = " 버스 정류장을 검색하세요"
     }
-    
 }
+
 extension UITextField {
     func addLeftPadding() {
-        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: self.frame.height))
+        let paddingView = UIView(frame: CGRect(
+            x: 0,
+            y: 0,
+            width: 10,
+            height: self.frame.height)
+        )
         self.leftView = paddingView
         self.leftViewMode = ViewMode.always
     }
