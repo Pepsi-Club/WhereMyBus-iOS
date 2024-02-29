@@ -9,6 +9,7 @@
 import Foundation
 
 import Core
+import CoreDataService
 import Data
 import Domain
 import Networks
@@ -44,7 +45,7 @@ extension AppDelegate {
     }
     
     var favoritesRepository: FavoritesRepository {
-        DefaultFavoritesRepository()
+        DefaultFavoritesRepository(coreDataService: coreDataService)
     }
     
     var busStopArrivalInfoRepository: BusStopArrivalInfoRepository {
@@ -53,6 +54,10 @@ extension AppDelegate {
 }
 
 extension AppDelegate {
+    var coreDataService: CoreDataService {
+        DefaultCoreDataService()
+    }
+    
     var networkService: NetworkService {
         DefaultNetworkService()
     }

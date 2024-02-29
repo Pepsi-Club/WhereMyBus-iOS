@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22522" systemVersion="23C71" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
+    <entity name="FavoritesBusStopResponseMO" representedClassName="FavoritesBusStopResponseMO" syncable="YES" codeGenerationType="class">
+        <attribute name="busIds" optional="YES" attributeType="Transformable" customClassName="[String]"/>
+        <attribute name="busStopId" optional="YES" attributeType="String"/>
+    </entity>
+    <entity name="RegularAlarmResponseMO" representedClassName="RegularAlarmResponseMO" syncable="YES">
+        <attribute name="busId" optional="YES" attributeType="String"/>
+        <attribute name="busName" optional="YES" attributeType="String"/>
+        <attribute name="busStopId" optional="YES" attributeType="String"/>
+        <attribute name="busStopName" optional="YES" attributeType="String"/>
+        <attribute name="time" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="weekDay" optional="YES" attributeType="Transformable" customClassName="[Int16]"/>
+    </entity>
+</model>

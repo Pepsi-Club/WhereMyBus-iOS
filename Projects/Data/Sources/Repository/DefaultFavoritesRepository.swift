@@ -8,17 +8,23 @@
 
 import Foundation
 
+import CoreDataService
 import Domain
 
 import RxSwift
 
 public final class DefaultFavoritesRepository: FavoritesRepository {
+    private let coreDataService: CoreDataService
+    
     public var favorites = BehaviorSubject<FavoritesResponse>(
         value: .init(busStops: [])
     )
     private let disposeBag = DisposeBag()
     
-    public init() {
+    public init(
+        coreDataService: CoreDataService
+    ) {
+        self.coreDataService = coreDataService
         fetchFavorites()
         bindUpdate()
     }
@@ -58,6 +64,17 @@ public final class DefaultFavoritesRepository: FavoritesRepository {
     }
     
     private func fetchFavorites() {
+        /*
+        // 수정될 로직
+        do {
+            let favorites = try coreDataService.fetch(
+                type: FavoritesBusStopResponse.self
+            )
+            print(favorites)
+        } catch {
+            favorites.onError(error)
+        }
+         */
         guard let data = UserDefaults.standard.data(forKey: "Favorites")
         else {
             favorites.onNext(.init(busStops: []))

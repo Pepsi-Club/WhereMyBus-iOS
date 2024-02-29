@@ -15,6 +15,7 @@ public extension TargetDependency {
     static let data: Self = .module(name: "Data")
     static let domain: Self = .module(name: "Domain")
     static let networks: Self = .module(name: "Networks")
+    static let coreDataService: Self = .module(name: "CoreDataService")
     static let designSystem: Self = .module(name: "DesignSystem")
     static let thirdPartyLibs: Self = .module(name: "ThirdPartyLibs")
     
