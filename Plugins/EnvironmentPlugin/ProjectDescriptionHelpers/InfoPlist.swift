@@ -64,6 +64,8 @@ public extension [String: Plist.Value] {
         "SERVER_KEY": "$(SERVER_KEY)",
         "KAKAO_APP_KEY": "$(KAKAO_APP_KEY)",
         "KAKAO_PHASE": "alpha",
+        "TERMS_OF_PRIVACY_URL": "$(TERMS_OF_PRIVACY_URL)",
+        "LOCATION_PRIVACY_URL": "$(LOCATION_PRIVACY_URL)"
     ]
     
     static let additionalInfoPlist: Self = [
