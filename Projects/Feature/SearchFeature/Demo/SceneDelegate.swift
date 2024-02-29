@@ -24,8 +24,10 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //        window?.rootViewController = searchViewController
 //
         let searchCoordinator = DefaultSearchCoordinator(
-            navigationController: navigationController
-        )
+            parent: nil,
+            navigationController: navigationController,
+            coordinatorProvider: CoordinatorProvider.self as! CoordinatorProvider)
+        
         searchCoordinator.start()
     }
 

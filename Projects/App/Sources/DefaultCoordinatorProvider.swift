@@ -11,12 +11,30 @@ import UIKit
 import FeatureDependency
 import SearchFeature
 import AlarmFeature
+import BusStopFeature
+import Domain
 
 final class DefaultCoordinatorProvider: CoordinatorProvider {
+    
+    func makeBusStopCoordinator(
+        navigationController: UINavigationController,
+        arrivalInfoData: ArrivalInfoRequest
+    ) -> BusStopCoordinator {
+        DefaultBusStopCoordinator(
+            parent: nil,
+            navigationController: navigationController,
+            arrivalInfoData: arrivalInfoData
+        )
+    }
+    
     func makeSearchCoordinator(
         navigationController: UINavigationController
     ) -> SearchCoordinator {
-        DefaultSearchCoordinator(navigationController: navigationController)
+        DefaultSearchCoordinator(
+            parent: nil,
+            navigationController: navigationController,
+            coordinatorProvider: self
+        )
     }
     
     func makeAddRegularAlarmCoordinator(

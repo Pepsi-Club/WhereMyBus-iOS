@@ -24,7 +24,6 @@ public final class AfterSearchViewController: UIViewController {
         let starImage = UIImage(systemName: "chevron.backward")
         btn.setImage(starImage, for: .normal)
         btn.tintColor = .black
-//        btn.backgroundColor = .red
         return btn
     }()
     
@@ -57,7 +56,6 @@ public final class AfterSearchViewController: UIViewController {
         return migImageView
     }()
 
-    
     private let coloredRectangleView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor(red: 230/255,
@@ -123,9 +121,7 @@ public final class AfterSearchViewController: UIViewController {
                 textFieldStack.addArrangedSubview(components)
             }
         
-        
         NSLayoutConstraint.activate([
-        
         backBtn.widthAnchor.constraint(equalToConstant: 20),
         
         magniImage.topAnchor.constraint(
@@ -159,7 +155,6 @@ public final class AfterSearchViewController: UIViewController {
             constant: 10
             ),
         
-
         headerStack.topAnchor.constraint(
                 equalTo: textFieldStack.bottomAnchor, constant: 15),
         headerStack.leadingAnchor.constraint(
@@ -168,4 +163,16 @@ public final class AfterSearchViewController: UIViewController {
                 equalTo: view.trailingAnchor, constant: -15),
            ])
        }
+}
+
+extension SearchViewController: UITextFieldDelegate {
+
+    public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+
+    public func textFieldDidEndEditing(_ textField: UITextField) {
+        textField.resignFirstResponder()
+    }
 }
