@@ -9,9 +9,6 @@ public final class SettingsViewController: UIViewController {
     private let viewModel: SettingsViewModel
     
     private let disposeBag = DisposeBag()
-    private let defaultAlarmSetBtn = PublishSubject<Void>()
-    private let termsPrivacyBtnTap = PublishSubject<Void>()
-    private let locationPrivacyBtnTap = PublishSubject<Void>()
     
     private let titleLabel: UILabel = {
         let label = UILabel()
@@ -74,24 +71,16 @@ public final class SettingsViewController: UIViewController {
     }
     
     private func bind() {
-        buttonsView.basicAlarmSetting.rx.tap
-            .bind(to: defaultAlarmSetBtn)
-            .disposed(by: disposeBag)
-        
-        buttonsView.termsPrivacyBtn.rx.tap
-            .bind(to: termsPrivacyBtnTap)
-            .disposed(by: disposeBag)
-        
-        buttonsView.locationPrivacyBtn.rx.tap
-            .bind(to: locationPrivacyBtnTap)
-            .disposed(by: disposeBag)
         
         _ = viewModel.transform(
             input:
                 .init(
-                    defaultAlarmTapEvent: defaultAlarmSetBtn.asObservable(),
-                    termsTapEvent: termsPrivacyBtnTap.asObservable(),
-                    locationTapEvent: locationPrivacyBtnTap.asObservable()
+                    defaultAlarmTapEvent
+                    : buttonsView.basicAlarmSetting.rx.tap.asObservable(),
+                    termsTapEvent
+                    : buttonsView.termsPrivacyBtn.rx.tap.asObservable(),
+                    locationTapEvent
+                    : buttonsView.locationPrivacyBtn.rx.tap.asObservable()
                 )
         )
     }
