@@ -1,8 +1,8 @@
 //
-//  TermsPrivacyViewController.swift
+//  PrivacyWebViewController.swift
 //  SettingsFeature
 //
-//  Created by Jisoo HAM on 2/15/24.
+//  Created by Jisoo HAM on 2/29/24.
 //  Copyright © 2024 Pepsi-Club. All rights reserved.
 //
 
@@ -12,10 +12,9 @@ import WebKit
 
 import RxSwift
 
-public final class TermsPrivacyViewController
+class PrivacyWebViewController
 : UIViewController, WKNavigationDelegate {
-    private let viewModel: TermsPrivacyViewModel
-    
+    private let viewModel: PrivacyWebViewModel
     private let disposeBag = DisposeBag()
     
     private let webView: WKWebView = {
@@ -31,7 +30,7 @@ public final class TermsPrivacyViewController
         return indicator
     }()
     
-    init(viewModel: TermsPrivacyViewModel) {
+    init(viewModel: PrivacyWebViewModel) {
         self.viewModel = viewModel
     
         super.init(nibName: nil, bundle: nil)
@@ -53,7 +52,7 @@ public final class TermsPrivacyViewController
     }
     
     private func bind() {
-        let input = TermsPrivacyViewModel.Input(
+        let input = PrivacyWebViewModel.Input(
             viewWillAppearEvent: rx
                 .methodInvoked(#selector(UIViewController.viewWillAppear))
                 .map { _ in }
@@ -61,11 +60,13 @@ public final class TermsPrivacyViewController
         
         let output = viewModel.transform(input: input)
         
-        output.termsOfPrivacyString
+        output.privacyString
             .bind { [weak self] str in
-                self?.updateUI(urlString: str)
+                guard let self = self else { return }
+                self.updateUI(urlString: str)
             }
             .disposed(by: disposeBag)
+        
     }
     
     private func configureUI() {
@@ -96,7 +97,7 @@ public final class TermsPrivacyViewController
     }
     
     private func updateUI(urlString: String) {
-        guard let url = URL(string: urlString) ?? URL(string: "") 
+        guard let url = URL(string: urlString) ?? URL(string: "")
         else { return }
         
         let request = URLRequest(url: url)
@@ -105,7 +106,7 @@ public final class TermsPrivacyViewController
     
 }
 
-extension TermsPrivacyViewController {
+extension PrivacyWebViewController {
     public func webView(
         _ webView: WKWebView,
         didCommit navigation: WKNavigation!

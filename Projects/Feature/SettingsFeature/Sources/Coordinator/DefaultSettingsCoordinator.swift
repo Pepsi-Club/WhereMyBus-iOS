@@ -36,20 +36,14 @@ extension DefaultSettingsCoordinator: SettingsCoordinator {
 //        )
 //        navigationController.pushViewController(setAlarmVC, animated: true)
     }
-    public func presentTermsPrivacy() {
-        let termsVC = TermsPrivacyViewController(
-            viewModel: TermsPrivacyViewModel(
-                coordinator: self
+    
+    public func presentPrivacy(url: String) {
+        let privacyVC = PrivacyWebViewController(
+            viewModel: PrivacyWebViewModel(
+                coordinator: self,
+                urlString: url
             )
         )
-        navigationController.pushViewController(termsVC, animated: true)
-    }
-    public func presentLocationPrivacy() {
-        let locationVC = LocationPrivacyViewController(
-            viewModel: LocationPrivacyViewModel(
-                coordinator: self
-            )
-        )
-        navigationController.pushViewController(locationVC, animated: true)
+        navigationController.pushViewController(privacyVC, animated: true)
     }
 }
