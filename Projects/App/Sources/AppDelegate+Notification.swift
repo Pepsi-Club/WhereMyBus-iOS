@@ -28,7 +28,8 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         _ application: UIApplication,
         didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
     ) {
-        print(deviceToken.map { String(format: "%02.2hhx", $0) }.joined())
+        let token = deviceToken.map { String(format: "%02.2hhx", $0) }.joined()
+        print(token)
     }
     
     func userNotificationCenter(

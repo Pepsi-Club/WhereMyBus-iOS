@@ -42,6 +42,21 @@ public extension InfoPlist {
                 newValue
             }
     )
+    
+    static let notificationInfoPlist: Self = .extendingDefault(
+        with: .framework
+            .merging(.secrets) { oldValue, newValue in
+                newValue
+            }
+            .merging([
+                "NSExtension": [
+                    "NSExtensionPointIdentifier": "com.apple.usernotifications.service",
+                    "NSExtensionPrincipalClass": "$(PRODUCT_MODULE_NAME).NotificationService"
+                ]
+            ]) { oldValue, newValue in
+                newValue
+            }
+    )
 }
 
 public extension [String: Plist.Value] {
@@ -60,6 +75,11 @@ public extension [String: Plist.Value] {
                     "NSExceptionAllowsInsecureHTTPLoads": true,
                 ]
             ]
+        ],
+        "UIBackgroundModes": [
+            "fetch",
+            "processing",
+            "remote-notification"
         ],
         "BGTaskSchedulerPermittedIdentifiers" : [.string(.bundleID)]
     ]

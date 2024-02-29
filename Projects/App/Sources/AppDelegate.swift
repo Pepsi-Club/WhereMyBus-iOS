@@ -17,6 +17,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         setupAppearance()
         registerDependencies()
         configureNotification()
+        application.registerForRemoteNotifications()
         return true
     }
 

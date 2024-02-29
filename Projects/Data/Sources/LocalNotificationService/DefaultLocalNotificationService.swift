@@ -60,7 +60,10 @@ public final class DefaultLocalNotificationService
     public func authorize() {
         notificationCenter.getNotificationSettings { [weak self] setting in
             self?.authState.onNext(setting.authorizationStatus)
-            print("settingStatus", setting.authorizationStatus.rawValue)
+            print(
+                "settingStatus",
+                String(describing: setting.authorizationStatus)
+            )
         }
         authState
             .withUnretained(self)
@@ -106,6 +109,11 @@ public final class DefaultLocalNotificationService
             let content = UNMutableNotificationContent()
             content.title = "XX번 버스 도착정보"
             content.body = "메세지를 String으로 미리 입력해야 해서 로컬로 정보를 보낼 수 없음"
+            content.userInfo = [
+                AnyHashable("aps"): [
+                    "content-available": 1
+                ]
+            ]
             let request = UNNotificationRequest(
                 identifier: UUID().uuidString,
                 content: content,
