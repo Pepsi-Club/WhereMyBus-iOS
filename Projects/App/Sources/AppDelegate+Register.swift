@@ -13,6 +13,7 @@ import CoreDataService
 import Data
 import Domain
 import Networks
+import NotificationService
 
 extension AppDelegate {
     func registerDependencies() {

@@ -26,7 +26,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let searchCoordinator = DefaultSearchCoordinator(
             parent: nil,
             navigationController: navigationController,
-            coordinatorProvider: CoordinatorProvider.self as! CoordinatorProvider)
+            coordinatorProvider: MockCoordinatorProvider())
         
         searchCoordinator.start()
     }
@@ -44,35 +44,5 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     func sceneDidEnterBackground(_ scene: UIScene) {
-    }
-    
-    final class MockCoordinator: Coordinator {
-        var parent: Coordinator?
-        var childs: [Coordinator] = []
-        
-        let testMessage: String
-        var navigationController: UINavigationController
-        
-        init(
-            testMessage: String,
-            navigationController: UINavigationController
-        ) {
-            self.testMessage = testMessage
-            self.navigationController = navigationController
-        }
-        
-        func start() {
-            let testViewController = UIViewController()
-            testViewController.view.backgroundColor = .white
-            testViewController.title = testMessage
-            navigationController.pushViewController(
-                testViewController,
-                animated: true
-            )
-        }
-        
-        func finish() {
-            
-        }
     }
 }
