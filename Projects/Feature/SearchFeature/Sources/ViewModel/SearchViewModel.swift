@@ -34,6 +34,6 @@ extension SearchViewModel {
     }
     
     public struct Output {
-        //?? 이 데이터를 넘겨줘야하나 
+        // ?? 이 데이터를 넘겨줘야하나 
     }
 }

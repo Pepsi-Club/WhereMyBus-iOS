@@ -43,7 +43,7 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
     
     private let magniImage: UIImageView = {
         let symbolName = "magnifyingglass"
-        
+        let migImageView = UIImageView()
         var configuration = UIImage.SymbolConfiguration(pointSize: 8,
                                                         weight: .light)
         configuration = configuration.applying(

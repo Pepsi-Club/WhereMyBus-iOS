@@ -37,8 +37,13 @@ public final class DefaultSearchCoordinator: SearchCoordinator {
 extension DefaultSearchCoordinator {
     public func startBusStopFlow() {
         	let busStopCoordinator =
-        coordinatorProvider.makeBusStopCoordinator(navigationController:
-                                                    navigationController)
+        coordinatorProvider.makeBusStopCoordinator(
+            navigationController: navigationController,
+            arrivalInfoData: .init(
+                busStopId: "",
+                busStopName: "",
+                routeName: [])
+        )
         
         childs.append(busStopCoordinator)
         busStopCoordinator.start()
