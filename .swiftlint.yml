@@ -4,6 +4,7 @@ excluded: # 린트 과정에서 무시할 파일 경로. `included`보다 우선
     - Projects/App/Tests/**
     - Projects/Feature/**/AppDelegate.swift
     - Projects/Feature/**/SceneDelegate.swift
+    - Projects/FeatureDependency/Sources/Mock/**
     - Tuist
     - Derived
     - Plugins

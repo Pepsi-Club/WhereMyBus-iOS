@@ -3,6 +3,7 @@ import UIKit
 import Core
 import Domain
 import DesignSystem
+import FeatureDependency
 
 import RxSwift
 
@@ -31,35 +32,5 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                 localNotificationService: MockLocalNotificationService()
             )
         )
-    }
-}
-
-final class MockRegularAlarmRepository: RegularAlarmRepository {
-    func addNewAlarm() throws {
-        
-    }
-}
-
-final class MockLocalNotificationService: LocalNotificationService {
-    var authState = BehaviorSubject<UNAuthorizationStatus>(value: .denied)
-    
-    func authorize() {
-        
-    }
-    
-    func fetchRegularAlarm() {
-        
-    }
-    
-    func registNewRegularAlarm(response: Domain.RegularAlarmResponse) throws {
-        print(response)
-    }
-    
-    func editRegularAlarm() throws {
-        
-    }
-    
-    func deleteRegularAlarm() throws {
-        
     }
 }
