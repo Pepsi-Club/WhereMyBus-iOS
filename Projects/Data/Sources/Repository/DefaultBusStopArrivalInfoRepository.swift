@@ -9,7 +9,7 @@
 import Foundation
 
 import Domain
-import Networks
+import NetworkService
 
 import RxSwift
 import SwiftyXMLParser

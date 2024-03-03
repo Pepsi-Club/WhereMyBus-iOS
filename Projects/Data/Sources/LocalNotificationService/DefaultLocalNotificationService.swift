@@ -11,7 +11,7 @@ import UserNotifications
 
 import Core
 import Domain
-import Networks
+import NetworkService
 
 import RxSwift
 

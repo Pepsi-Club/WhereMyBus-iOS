@@ -7,6 +7,15 @@ let project = Project.makeProject(
     moduleType: .app,
     entitlementsPath: .relativeToManifest("App.entitlements"),
     hasResource: true,
+    appExtensionTarget: [
+        Project.appExtensionTarget(
+            name: "NotificationExtension",
+            plist: .notificationInfoPlist,
+            dependencies: [
+                .data
+            ]
+        )
+    ],
     dependencies: [
         .mainFeature,
         .data,

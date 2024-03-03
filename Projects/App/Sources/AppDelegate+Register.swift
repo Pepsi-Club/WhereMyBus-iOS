@@ -12,7 +12,7 @@ import Core
 import CoreDataService
 import Data
 import Domain
-import Networks
+import NetworkService
 
 extension AppDelegate {
     func registerDependencies() {

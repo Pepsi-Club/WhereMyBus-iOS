@@ -6,7 +6,7 @@ let project = Project.makeProject(
     name: "Data",
     moduleType: .staticFramework,
     dependencies: [
-        .networks,
+        .networkService,
         .coreDataService
     ]
 )
