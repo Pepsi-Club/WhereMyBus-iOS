@@ -17,7 +17,7 @@ public struct SearchResponse: Hashable {
         busStopName: String,
         busStopId: String,
         direction: String
-    ){
+    ) {
         self.busStopId = busStopId
         self.busStopName = busStopName
         self.direction = direction

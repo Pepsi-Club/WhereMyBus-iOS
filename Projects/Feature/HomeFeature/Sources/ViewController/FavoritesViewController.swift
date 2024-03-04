@@ -43,9 +43,7 @@ public final class FavoritesViewController: UIViewController {
         config.preferredSymbolConfigurationForImage = imgConfig
         // Title
         var titleContainer = AttributeContainer()
-        titleContainer.font = .systemFont(
-            ofSize: 12
-        )
+        titleContainer.font = .systemFont(ofSize: 12)
         let timeStr = Date().toString(dateFormat: "HH:mm")
         config.attributedTitle = AttributedString(
             "\(timeStr) 업데이트",
@@ -60,9 +58,7 @@ public final class FavoritesViewController: UIViewController {
         config.baseForegroundColor = .black
         config.imagePadding = 5
         var titleContainer = AttributeContainer()
-        titleContainer.font = .systemFont(
-            ofSize: 13
-        )
+        titleContainer.font = .systemFont(ofSize: 13)
         config.attributedTitle = AttributedString(
             "편집",
             attributes: titleContainer
@@ -271,44 +267,19 @@ public final class FavoritesViewController: UIViewController {
         indexPath: IndexPath,
         response: BusArrivalInfoResponse
     ) -> FavoritesTVCell? {
-        guard let cell = tableView.dequeueReusableCell(
+        let cell = tableView.dequeueReusableCell(
             withIdentifier: FavoritesTVCell.identifier,
             for: indexPath
         ) as? FavoritesTVCell
-        else { return nil }
-        let splittedMsg1 = response.firstArrivalTime
-            .components(separatedBy: "[")
-        let splittedMsg2 = response.secondArrivalTime
-            .components(separatedBy: "[")
-        let firstArrivalTime = splittedMsg1[0]
-            .components(separatedBy: "분")[0]
-        let secondArrivalTime = splittedMsg2[0]
-            .components(separatedBy: "분")[0]
-        var firstArrivalRemaining = ""
-        var secondArrivalRemaining = ""
-        if splittedMsg1.count > 1 {
-            firstArrivalRemaining = splittedMsg1[1]
-            firstArrivalRemaining.removeLast() // "]" 제거
-        }
-        if splittedMsg2.count > 1 {
-            secondArrivalRemaining = splittedMsg2[1]
-            secondArrivalRemaining.removeLast() // "]" 제거
-        }
         let isLastCell = tableView.numberOfRows(
             inSection: indexPath.section
         ) - 1 == indexPath.row
         if isLastCell {
-            cell.addCornerRadius(
+            cell?.addCornerRadius(
                 corners: [.bottomLeft, .bottomRight]
             )
         }
-        cell.updateUI(
-            routeName: response.routeName,
-            firstArrivalTime: firstArrivalTime,
-            firstArrivalRemaining: firstArrivalRemaining,
-            secondArrivalTime: secondArrivalTime,
-            secondArrivalRemaining: secondArrivalRemaining
-        )
+        cell?.updateUI(response: response)
         return cell
     }
     
@@ -329,7 +300,8 @@ public final class FavoritesViewController: UIViewController {
         snapshot.appendSections(busStopResponse)
         busStopResponse.forEach { response in
             snapshot.appendItems(
-                response.buses, toSection: response
+                response.buses, 
+                toSection: response
             )
         }
         dataSource.apply(snapshot)

@@ -11,7 +11,7 @@ import Foundation
 import RxSwift
 
 public protocol FavoritesUseCase {
-    var favorites: BehaviorSubject<FavoritesResponse> { get }
+    var favorites: BehaviorSubject<[FavoritesBusStopResponse]> { get }
     var busStopArrivalInfoResponse
     : BehaviorSubject<[BusStopArrivalInfoResponse]> { get }
     

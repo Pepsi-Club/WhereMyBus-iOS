@@ -18,82 +18,75 @@ public final class MockBusStopArrivalInfoRepository
     public init() { }
     
     public func fetchArrivalList(
-        busStopId: String,
-        busStopName: String
+        busStopId: String
     ) -> Observable<BusStopArrivalInfoResponse> {
         .create { observer in
             observer.onNext(
                 BusStopArrivalInfoResponse(
-                    busStopId: "122000666",
+                    busStopId: "23290", 
                     busStopName: "강남구보건소",
-                    direction: "강남구청역 방면",
-                    busStopNum: "23290",
+                    direction: "강남구청역",
                     buses: [
                         BusArrivalInfoResponse(
-                            routeId: "124000038",
+                            busId: "124000038", 
+                            busName: "342",
+                            busType: BusType.trunkLine.rawValue, 
+                            nextStation: "강남구청역",
+                            firstArrivalTime: "3분29초후",
+                            firstArrivalRemaining: "2번째 전",
+                            secondArrivalTime: "17분9초후",
+                            secondArrivalRemaining: "6번째 전", 
                             isFavorites: false,
-                            routeName: "342",
-                            busType: "3",
-                            firstArrivalTime: "7분[3정거장전]",
-                            secondArrivalTime: "18분[9정거장전]",
-                            isAlarmOn: false),
+                            isAlarmOn: false
+                        ),
                         BusArrivalInfoResponse(
-                            routeId: "124000039",
+                            busId: "100100075", 
+                            busName: "472",
+                            busType: BusType.trunkLine.rawValue, 
+                            nextStation: "강남구청역",
+                            firstArrivalTime: "3분1초후",
+                            firstArrivalRemaining: "1번째 전",
+                            secondArrivalTime: "6분52초후",
+                            secondArrivalRemaining: "3번째 전", 
                             isFavorites: false,
-                            routeName: "3412",
-                            busType: "4",
-                            firstArrivalTime: "7분[3정거장전]",
-                            secondArrivalTime: "18분[9정거장전]",
-                            isAlarmOn: false),
+                            isAlarmOn: false
+                        ),
                         BusArrivalInfoResponse(
-                            routeId: "",
+                            busId: "100100226", 
+                            busName: "3414",
+                            busType: BusType.branchLine.rawValue, 
+                            nextStation: "삼성동서광아파트",
+                            firstArrivalTime: "2분46초후",
+                            firstArrivalRemaining: "1번째 전",
+                            secondArrivalTime: "9분38초후",
+                            secondArrivalRemaining: "5번째 전", 
                             isFavorites: false,
-                            routeName: "471",
-                            busType: "3",
-                            firstArrivalTime: "7분[3정거장전]",
-                            secondArrivalTime: "18분[9정거장전]",
-                            isAlarmOn: false),
+                            isAlarmOn: false
+                        ),
                         BusArrivalInfoResponse(
-                            routeId: "",
+                            busId: "100100612", 
+                            busName: "3426",
+                            busType: BusType.branchLine.rawValue, 
+                            nextStation: "삼성동서광아파트",
+                            firstArrivalTime: "7분33초후",
+                            firstArrivalRemaining: "4번째 전",
+                            secondArrivalTime: "15분29초후",
+                            secondArrivalRemaining: "7번째 전", 
                             isFavorites: false,
-                            routeName: "3412",
-                            busType: "4",
-                            firstArrivalTime: "7분[2정거장전]",
-                            secondArrivalTime: "18분[9정거장전]",
-                            isAlarmOn: false),
+                            isAlarmOn: false
+                        ),
                         BusArrivalInfoResponse(
-                            routeId: "",
+                            busId: "100100500", 
+                            busName: "4312",
+                            busType: BusType.branchLine.rawValue, 
+                            nextStation: "강남구청역",
+                            firstArrivalTime: "5분3초후",
+                            firstArrivalRemaining: "3번째 전",
+                            secondArrivalTime: "13분36초후",
+                            secondArrivalRemaining: "8번째 전", 
                             isFavorites: false,
-                            routeName: "471",
-                            busType: "3",
-                            firstArrivalTime: "5분[2정거장전]",
-                            secondArrivalTime: "18분[9정거장전]",
-                            isAlarmOn: false),
-                        BusArrivalInfoResponse(
-                            routeId: "",
-                            isFavorites: false,
-                            routeName: "471",
-                            busType: "3",
-                            firstArrivalTime: "3분[1정거장전]",
-                            secondArrivalTime: "18분[9정거장전]",
-                            isAlarmOn: false),
-                        BusArrivalInfoResponse(
-                            routeId: "",
-                            isFavorites: false,
-                            routeName: "541",
-                            busType: "3",
-                            firstArrivalTime: "7분[3정거장전]",
-                            secondArrivalTime: "18분[9정거장전]",
-                            isAlarmOn: false),
-                        BusArrivalInfoResponse(
-                            routeId: "",
-                            isFavorites: false,
-                            routeName: "4001-1",
-                            busType: "1",
-                            firstArrivalTime: "18분[2정거장전]",
-                            secondArrivalTime: "35분[3정거장전]",
-                            isAlarmOn: false),
-                    ]
+                            isAlarmOn: false
+                        )]
                 )
             )
             return Disposables.create()

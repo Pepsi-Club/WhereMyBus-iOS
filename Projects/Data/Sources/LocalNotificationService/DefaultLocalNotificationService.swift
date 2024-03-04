@@ -35,18 +35,17 @@ public final class DefaultLocalNotificationService
         : @escaping (UNNotificationContent) -> Void
     ) {
         busStopArrivalInfoRepository.fetchArrivalList(
-            busStopId: request.content.title,
-            busStopName: request.content.body
+            busStopId: request.content.title
         )
         .subscribe(
             onNext: { response in
                 guard let requestedBus = response.buses
                     .filter({ bus in
-                        bus.routeId == request.content.body
+                        bus.busId == request.content.body
                     })
                     .first
                 else { return }
-                let title = "\(requestedBus.routeName) 버스 도착 정보"
+                let title = "\(requestedBus.busName) 버스 도착 정보"
                 let body = "\(requestedBus.firstArrivalTime) 도착 예정"
                 let content = UNMutableNotificationContent()
                 content.title = title

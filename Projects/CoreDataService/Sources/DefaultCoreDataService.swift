@@ -27,8 +27,9 @@ public final class DefaultCoreDataService: CoreDataService {
     }
     
     public func fetch<T: CoreDataStorable>(type: T.Type) throws -> [T] {
-        checkEntityName(type: type)
-        let request = type.coreDataType.fetchRequest()
+        let request = NSFetchRequest<NSManagedObject>(
+            entityName: "\(type)MO"
+        )
         do {
             return try self.container.viewContext.fetch(request)
                 .compactMap { $0 as? CoreDataModelObject }
@@ -39,11 +40,9 @@ public final class DefaultCoreDataService: CoreDataService {
     }
     
     public func save(data: some CoreDataStorable) {
-        checkEntityName(type: type(of: data))
-        guard let entity else { return }
-        let object = NSManagedObject(
-            entity: entity, 
-            insertInto: container.viewContext
+        let object = NSEntityDescription.insertNewObject(
+            forEntityName: "\(type(of: data))MO",
+            into: container.viewContext
         )
         let mirror = Mirror(reflecting: data)
         mirror.children.forEach { key, value in
@@ -52,15 +51,12 @@ public final class DefaultCoreDataService: CoreDataService {
                 .split(separator: ".")
                 .last
             else { return }
-            object.setValue(
-                value,
-                forKey: String(propertyName)
-            )
+            object.setValue(value, forKey: String(propertyName))
         }
         do {
             try container.viewContext.save()
         } catch {
-            print(error.localizedDescription)
+            container.viewContext.rollback()
         }
     }
     
