@@ -30,14 +30,14 @@ public final class DefaultFavoritesRepository: FavoritesRepository {
     }
     
     public func addRoute(
-        busStopId: String,
+        arsId: String,
         busStopName: String,
         direction: String,
         bus: BusArrivalInfoResponse
     ) {
         do {
             let newFavorites = try favorites.value().addRoute(
-                busStopId: busStopId,
+                busStopId: arsId,
                 busStopName: busStopName,
                 direction: direction,
                 bus: bus
@@ -49,12 +49,12 @@ public final class DefaultFavoritesRepository: FavoritesRepository {
     }
     
     public func removeRoute(
-        busStopId: String,
+        arsId: String,
         bus: BusArrivalInfoResponse
     ) {
         do {
             let newFavorites = try favorites.value().removeRoute(
-                busStopId: busStopId,
+                busStopId: arsId,
                 bus: bus
             )
             favorites.onNext(newFavorites)

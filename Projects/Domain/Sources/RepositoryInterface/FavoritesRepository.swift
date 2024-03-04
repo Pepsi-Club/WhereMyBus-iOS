@@ -14,14 +14,14 @@ public protocol FavoritesRepository {
     var favorites: BehaviorSubject<FavoritesResponse> { get }
     
     func addRoute(
-        busStopId: String,
+        arsId: String,
         busStopName: String,
         direction: String,
         bus: BusArrivalInfoResponse
     )
     
     func removeRoute(
-        busStopId: String,
+        arsId: String,
         bus: BusArrivalInfoResponse
     )
 }
