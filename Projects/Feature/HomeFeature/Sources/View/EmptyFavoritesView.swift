@@ -85,11 +85,6 @@ final class EmptyFavoritesView: UIView {
         stackView.axis = .horizontal
         stackView.alignment = .center
         stackView.distribution = .equalCentering
-        stackView.addDivider(
-            color: DesignSystemAsset.gray6.color,
-            hasPadding: true,
-            dividerRatio: 0.8
-        )
         stackView.backgroundColor = DesignSystemAsset.gray2.color
         stackView.layer.cornerRadius = 10
         return stackView
@@ -102,6 +97,15 @@ final class EmptyFavoritesView: UIView {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func layoutSubviews() {
+        exampleStackView.addDivider(
+            color: DesignSystemAsset.gray6.color,
+            hasPadding: true,
+            dividerRatio: 0.8
+        )
+        super.layoutSubviews()
     }
     
     private func configureUI() {
