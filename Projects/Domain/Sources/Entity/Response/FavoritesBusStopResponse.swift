@@ -11,9 +11,6 @@ import Foundation
 import Core
 
 public struct FavoritesBusStopResponse: CoreDataStorable {
-    public static var coreDataType: Core.CoreDataModelObject.Type
-    = FavoritesBusStopResponseMO.self
-    
     public let busStopId: String
     public var busIds: [String]
     
