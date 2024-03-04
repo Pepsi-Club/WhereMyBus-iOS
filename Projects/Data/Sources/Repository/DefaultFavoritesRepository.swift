@@ -16,8 +16,8 @@ import RxSwift
 public final class DefaultFavoritesRepository: FavoritesRepository {
     private let coreDataService: CoreDataService
     
-    public var favorites = BehaviorSubject<FavoritesResponse>(
-        value: .init(busStops: [])
+    public var favorites = BehaviorSubject<[FavoritesBusStopResponse]>(
+        value: []
     )
     private let disposeBag = DisposeBag()
     
@@ -26,23 +26,36 @@ public final class DefaultFavoritesRepository: FavoritesRepository {
     ) {
         self.coreDataService = coreDataService
         fetchFavorites()
-        bindUpdate()
     }
     
     public func addRoute(
         arsId: String,
-        busStopName: String,
-        direction: String,
         bus: BusArrivalInfoResponse
     ) {
         do {
-            let newFavorites = try favorites.value().addRoute(
-                busStopId: arsId,
-                busStopName: busStopName,
-                direction: direction,
-                bus: bus
+            var oldFavorites = try favorites.value()
+            if oldFavorites.contains(where: { $0.busStopId == arsId }) {
+                guard let favoriteToChange = oldFavorites
+                    .first(where: { $0.busStopId == arsId })
+                else { return }
+                let newBusIds = favoriteToChange.busIds + [bus.busId]
+                var newFavorites = oldFavorites.filter { $0.busStopId == arsId }
+                newFavorites.append(
+                    .init(
+                        busStopId: arsId,
+                        busIds: newBusIds
+                    )
+                )
+                favorites.onNext(newFavorites)
+                return
+            }
+            oldFavorites.append(
+                .init(
+                    busStopId: arsId,
+                    busIds: [bus.busId]
+                )
             )
-            favorites.onNext(newFavorites)
+            favorites.onNext(oldFavorites)
         } catch {
             print(error, "즐겨찾기 업데이트 실패")
         }
@@ -53,10 +66,7 @@ public final class DefaultFavoritesRepository: FavoritesRepository {
         bus: BusArrivalInfoResponse
     ) {
         do {
-            let newFavorites = try favorites.value().removeRoute(
-                busStopId: arsId,
-                bus: bus
-            )
+            let newFavorites = try favorites.value()
             favorites.onNext(newFavorites)
         } catch {
             print(error, "즐겨찾기 업데이트 실패")
@@ -64,41 +74,13 @@ public final class DefaultFavoritesRepository: FavoritesRepository {
     }
     
     private func fetchFavorites() {
-        /*
-        // 수정될 로직
         do {
-            let favorites = try coreDataService.fetch(
+            let fetchedFavorites = try coreDataService.fetch(
                 type: FavoritesBusStopResponse.self
             )
-            print(favorites)
+            favorites.onNext(fetchedFavorites)
         } catch {
             favorites.onError(error)
         }
-         */
-        guard let data = UserDefaults.standard.data(forKey: "Favorites")
-        else {
-            favorites.onNext(.init(busStops: []))
-            return
-        }
-        do {
-            let savedFavorites = try JSONDecoder().decode(
-                FavoritesResponse.self,
-                from: data
-            )
-            favorites.onNext(savedFavorites)
-        } catch {
-            favorites.onError(error)
-        }
-    }
-    
-    private func bindUpdate() {
-        favorites
-            .subscribe(
-                onNext: { response in
-                    guard let data = response.encode() else { return }
-                    UserDefaults.standard.setValue(data, forKey: "Favorites")
-                }
-            )
-            .disposed(by: disposeBag)
     }
 }

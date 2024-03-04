@@ -25,8 +25,7 @@ public final class DefaultBusStopArrivalInfoRepository:
     }
     
     public func fetchArrivalList(
-        busStopId: String,
-        busStopName: String
+        busStopId: String
     ) -> Observable<BusStopArrivalInfoResponse> {
         networkService.request(
             endPoint: BusStopArrivalInfoEndPoint(arsId: busStopId)

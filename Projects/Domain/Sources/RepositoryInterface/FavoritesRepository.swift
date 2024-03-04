@@ -11,12 +11,10 @@ import Foundation
 import RxSwift
 
 public protocol FavoritesRepository {
-    var favorites: BehaviorSubject<FavoritesResponse> { get }
+    var favorites: BehaviorSubject<[FavoritesBusStopResponse]> { get }
     
     func addRoute(
         arsId: String,
-        busStopName: String,
-        direction: String,
         bus: BusArrivalInfoResponse
     )
     

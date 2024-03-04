@@ -16,8 +16,8 @@ public final class DefaultBusStopUseCase: BusStopUseCase {
     private let favoritesRepository: FavoritesRepository
     
     public let busStopSection = PublishSubject<[BusStopArrivalInfoResponse]>()
-    public var favorites = BehaviorSubject<FavoritesResponse>(
-        value: .init(busStops: [])
+    public var favorites = BehaviorSubject<[FavoritesBusStopResponse]>(
+        value: .init([])
     )
     private let disposeBag = DisposeBag()
     
@@ -34,8 +34,7 @@ public final class DefaultBusStopUseCase: BusStopUseCase {
     
     public func fetchBusArrivals(request: ArrivalInfoRequest) {
         let busStops = busStopArrivalInfoRepository.fetchArrivalList(
-            busStopId: request.busStopId,
-            busStopName: request.busStopName
+            busStopId: request.busStopId
         )
         .map { [$0] }
         Observable.combineLatest(busStops, favorites)
@@ -44,7 +43,7 @@ public final class DefaultBusStopUseCase: BusStopUseCase {
                 var (busStops, favoritesBusStops) = arg1
                 busStops = useCase.filterFavorites(
                     responses: busStops,
-                    favorites: favoritesBusStops.busStops
+                    favorites: favoritesBusStops
                 )
                 return busStops
             }
@@ -65,7 +64,7 @@ public final class DefaultBusStopUseCase: BusStopUseCase {
     // MARK: - 필터링 후 [BusStopArrivalInfoRepsonse] 반환
     private func filterFavorites(
         responses: [BusStopArrivalInfoResponse],
-        favorites: [BusStopArrivalInfoResponse]
+        favorites: [FavoritesBusStopResponse]
     ) -> [BusStopArrivalInfoResponse] {
         var busStops = responses
         
@@ -77,10 +76,10 @@ public final class DefaultBusStopUseCase: BusStopUseCase {
             )
             else { continue }
             
-            for favoriteBus in favorite.buses {
+            for favoriteBusId in favorite.busIds {
                 if let indexInResponse = response.buses.firstIndex(
                     where: {
-                        $0.busId == favoriteBus.busId
+                        $0.busId == favoriteBusId
                     }
                 ),
                    let indexInBusStops = busStops.firstIndex(

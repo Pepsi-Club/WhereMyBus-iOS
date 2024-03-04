@@ -1,5 +1,5 @@
 //
-//  FavoritesResponse.swift
+//  BusStopArrivalInfoResponse.swift
 //  Domain
 //
 //  Created by gnksbm on 1/30/24.
@@ -7,57 +7,6 @@
 //
 
 import Foundation
-
-public struct FavoritesResponse: Codable {
-    public let busStops: [BusStopArrivalInfoResponse]
-    
-    public init(busStops: [BusStopArrivalInfoResponse]) {
-        self.busStops = busStops
-    }
-}
-
-extension FavoritesResponse {
-    public func addRoute(
-        busStopId: String,
-        busStopName: String,
-        direction: String,
-        bus: BusArrivalInfoResponse
-    ) -> Self {
-        if busStops.hasBusStop(busStopId: busStopId) {
-            var newbusStops = busStops
-            guard let stationIndex = newbusStops.firstIndex(
-                where: { station in
-                    station.busStopId == busStopId
-                }
-            )
-            else { return .init(busStops: newbusStops) }
-            newbusStops[stationIndex].buses = newbusStops[stationIndex].buses
-                .filter { $0 != bus }
-            return .init(busStops: newbusStops)
-        } else {
-            return self
-        }
-    }
-    
-    public func removeRoute(
-        busStopId: String,
-        bus: BusArrivalInfoResponse
-    ) -> Self {
-        if busStops.hasBusStop(busStopId: busStopId) {
-            var newStations = busStops
-            guard let stationIndex = newStations.firstIndex(
-                where: { station in
-                    station.busStopId == busStopId
-                }
-            )
-            else { return .init(busStops: newStations) }
-            newStations[stationIndex].buses.append(bus)
-            return .init(busStops: newStations)
-        } else {
-            return self
-        }
-    }
-}
 
 public struct BusStopArrivalInfoResponse: Codable, Hashable {
     public let busStopId: String

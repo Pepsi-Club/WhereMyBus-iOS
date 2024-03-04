@@ -18,8 +18,7 @@ public final class MockBusStopArrivalInfoRepository
     public init() { }
     
     public func fetchArrivalList(
-        busStopId: String,
-        busStopName: String
+        busStopId: String
     ) -> Observable<BusStopArrivalInfoResponse> {
         .create { observer in
             observer.onNext(

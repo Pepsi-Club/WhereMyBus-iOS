@@ -15,8 +15,8 @@ public final class DefaultFavoritesUseCase: FavoritesUseCase {
     private let busStopArrivalInfoRepository: BusStopArrivalInfoRepository
     private let favoritesRepository: FavoritesRepository
     
-    public var favorites = BehaviorSubject<FavoritesResponse>(
-        value: .init(busStops: [])
+    public var favorites = BehaviorSubject<[FavoritesBusStopResponse]>(
+        value: []
     )
     public let busStopArrivalInfoResponse 
     = BehaviorSubject<[BusStopArrivalInfoResponse]>(value: [])
@@ -35,20 +35,18 @@ public final class DefaultFavoritesUseCase: FavoritesUseCase {
         do {
             let favoritesBusStops = try favoritesRepository.favorites
                 .value()
-                .busStops
             Observable.combineLatest(
                 favoritesBusStops
                     .map { response in
                         busStopArrivalInfoRepository.fetchArrivalList(
-                            busStopId: response.busStopId,
-                            busStopName: response.busStopName
+                            busStopId: response.busStopId
                         )
                     }
             )
             .withUnretained(self)
             .map { useCase, responses in
                 useCase.filterFavorites(
-                    responses: responses,
+                    fetchedResponses: responses,
                     favoritesBusStops: favoritesBusStops
                 )
             }
@@ -71,14 +69,14 @@ public final class DefaultFavoritesUseCase: FavoritesUseCase {
     }
     
     private func filterFavorites(
-        responses: [BusStopArrivalInfoResponse],
-        favoritesBusStops: [BusStopArrivalInfoResponse]
+        fetchedResponses: [BusStopArrivalInfoResponse],
+        favoritesBusStops: [FavoritesBusStopResponse]
     ) -> [BusStopArrivalInfoResponse] {
-        responses.filter { busStop in
-            busStop.buses.contains { bus in
-                favoritesBusStops.contains { busStop in
-                    busStop.buses.contains { busRequest in
-                        busRequest.busId == bus.busId
+        fetchedResponses.filter { fetchedBusStop in
+            fetchedBusStop.buses.contains { fetchedBus in
+                favoritesBusStops.contains { favoritebusStop in
+                    favoritebusStop.busIds.contains { favoriteBusId in
+                        favoriteBusId == fetchedBus.busId
                     }
                 }
             }

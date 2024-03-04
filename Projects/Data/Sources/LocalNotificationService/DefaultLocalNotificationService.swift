@@ -35,8 +35,7 @@ public final class DefaultLocalNotificationService
         : @escaping (UNNotificationContent) -> Void
     ) {
         busStopArrivalInfoRepository.fetchArrivalList(
-            busStopId: request.content.title,
-            busStopName: request.content.body
+            busStopId: request.content.title
         )
         .subscribe(
             onNext: { response in

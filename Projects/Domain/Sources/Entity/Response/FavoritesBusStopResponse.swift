@@ -14,8 +14,8 @@ public struct FavoritesBusStopResponse: CoreDataStorable {
     public static var coreDataType: Core.CoreDataModelObject.Type
     = FavoritesBusStopResponseMO.self
     
-    let busStopId: String
-    let busIds: [String]
+    public let busStopId: String
+    public var busIds: [String]
     
     public init(
         busStopId: String,
