@@ -159,48 +159,29 @@ public final class BusStopViewController: UIViewController {
         indexPath: IndexPath,
         response: BusArrivalInfoResponse
     ) -> BusTableViewCell? {
-        guard let cell = tableView.dequeueReusableCell(
+        let cell = tableView.dequeueReusableCell(
             withIdentifier: BusTableViewCell.identifier,
             for: indexPath
         ) as? BusTableViewCell
-        else { return nil }
-        let splittedMsg1 = response.firstArrivalTime
-            .components(separatedBy: "[")
-        let splittedMsg2 = response.secondArrivalTime
-            .components(separatedBy: "[")
-        let firstArrivalTime = splittedMsg1[0]
-            .components(separatedBy: "분")[0]
-        let secondArrivalTime = splittedMsg2[0]
-            .components(separatedBy: "분")[0]
-        var firstArrivalRemaining = ""
-        var secondArrivalRemaining = ""
-        if splittedMsg1.count > 1 {
-            firstArrivalRemaining = splittedMsg1[1]
-            firstArrivalRemaining.removeLast() // "]" 제거
-        }
-        if splittedMsg2.count > 1 {
-            secondArrivalRemaining = splittedMsg2[1]
-            secondArrivalRemaining.removeLast() // "]" 제거
-        }
         
-        cell.updateBtn(
+        cell?.updateBtn(
             favorite: response.isFavorites,
             alarm: response.isAlarmOn
         )
-        cell.updateBusRoute(
+        cell?.updateBusRoute(
             routeName: response.busName,
-            nextRouteName: "강남구청역 방면"
+            nextRouteName: response.nextStation
         )
-        cell.updateFirstArrival(
-            firstArrivalTime: firstArrivalTime,
-            firstArrivalRemaining: firstArrivalRemaining
+        cell?.updateFirstArrival(
+            firstArrivalTime: response.firstArrivalTime,
+            firstArrivalRemaining: response.firstArrivalRemaining
         )
-        cell.updateSecondArrival(
-            secondArrivalTime: secondArrivalTime,
-            secondArrivalRemaining: secondArrivalRemaining
+        cell?.updateSecondArrival(
+            secondArrivalTime: response.secondArrivalTime,
+            secondArrivalRemaining: response.secondArrivalRemaining
         )
         
-        cell.busNumber.textColor = response.busType.toColor
+        cell?.busNumber.textColor = response.busType.toColor
         
         return cell
     }
