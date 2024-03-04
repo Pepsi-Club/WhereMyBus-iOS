@@ -80,7 +80,9 @@ internal final class FavoritesHeaderView: UITableViewHeaderFooterView {
         direction: String?
     ) {
         busStopNameLabel.text = name
-        directionLabel.text = direction
+        if let direction {
+            directionLabel.text = direction + " 방면"
+        }
     }
     
     override func prepareForReuse() {

@@ -50,7 +50,7 @@ public final class ArrivalInfoView: UIStackView {
         let routeTimeColor = DesignSystemAsset.routeTimeColor.color
         let carrotOrange = DesignSystemAsset.carrotOrange.color
         if time.contains(where: { Int(String($0)) != nil }) {
-            timeLabel.text = time + "분"
+            timeLabel.text = time
             timeLabel.textColor = routeTimeColor
         } else {
             timeLabel.text = time
