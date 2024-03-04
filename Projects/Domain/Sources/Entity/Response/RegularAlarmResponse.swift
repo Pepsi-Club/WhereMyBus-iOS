@@ -11,9 +11,6 @@ import Foundation
 import Core
 
 public struct RegularAlarmResponse: Hashable, CoreDataStorable {
-    public static var coreDataType: Core.CoreDataModelObject.Type
-    = RegularAlarmResponseMO.self
-    
     public let busStopId: String
     public let busStopName: String
     public let busId: String

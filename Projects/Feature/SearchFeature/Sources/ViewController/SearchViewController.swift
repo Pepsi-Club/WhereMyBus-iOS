@@ -13,7 +13,7 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
     private let disposeBag = DisposeBag()
     private let searchEnterEvent = PublishSubject<String>()
     private let searchTapEvent = PublishSubject<IndexPath>()
-    //주변 정류장 클릭했을 때 나오는 이벤트
+    // 주변 정류장 클릭했을 때 나오는 이벤트
     
     private let recentSerachCell = RecentSearchCell()
     private let searchNearStopView = SearchNearStopView()
@@ -141,7 +141,7 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
 
         [searchTextFieldView, backBtn, textFieldStack, recentSearchlabel,
          recentSearchTableView, coloredRectangleView, searchNearStopView,
-         editBtn,headerStack, magniStack, magniImage]
+         editBtn, headerStack, magniStack, magniImage]
             .forEach {
             view.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
@@ -260,7 +260,6 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
                 return cell })
     }
     
-    
     // MARK: 다시해야하는구간
     private func configureCell(
         tableView: UITableView,
@@ -271,8 +270,8 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
             for: indexPath
         ) as? RecentSearchCell
             else { return nil }
-            let msg1 = response.routeName
-            let msg2 = response.routeId
+            let msg1 = response.busName
+            let msg2 = response.busId
             
             return cell
     }
@@ -283,5 +282,3 @@ extension SearchViewController {
     UITableViewDiffableDataSource
     <BusStopArrivalInfoResponse, BusArrivalInfoResponse>
 }
-
-

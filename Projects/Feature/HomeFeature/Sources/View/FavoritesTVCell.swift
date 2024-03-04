@@ -10,6 +10,7 @@ import UIKit
 
 import Core
 import DesignSystem
+import Domain
 
 class FavoritesTVCell: UITableViewCell {
     private let routeLabel: UILabel = {
@@ -57,19 +58,15 @@ class FavoritesTVCell: UITableViewCell {
         }
     }
     
-    func updateUI(
-        routeName: String,
-        firstArrivalTime: String,
-        firstArrivalRemaining: String,
-        secondArrivalTime: String,
-        secondArrivalRemaining: String
-    ) {
-        routeLabel.text = routeName
+    func updateUI(response: BusArrivalInfoResponse) {
+        routeLabel.text = response.busName
         firstArrivalInfoView.updateUI(
-            time: firstArrivalTime, remainingStops: firstArrivalRemaining
+            time: response.firstArrivalTime,
+            remainingStops: response.firstArrivalRemaining
         )
         secondArrivalInfoView.updateUI(
-            time: secondArrivalTime, remainingStops: secondArrivalRemaining
+            time: response.secondArrivalTime,
+            remainingStops: response.secondArrivalRemaining
         )
     }
     
@@ -96,17 +93,17 @@ class FavoritesTVCell: UITableViewCell {
             ),
             routeLabel.widthAnchor.constraint(
                 equalTo: contentView.widthAnchor,
-                multiplier: 0.3
+                multiplier: 0.2
+            ),
+            
+            firstArrivalInfoView.leadingAnchor.constraint(
+                equalTo: routeLabel.trailingAnchor,
+                constant: .screenWidth * 0.1
             ),
             
             secondArrivalInfoView.leadingAnchor.constraint(
                 equalTo: routeLabel.trailingAnchor,
-                constant: 20
-            ),
-            
-            firstArrivalInfoView.leadingAnchor.constraint(
-                equalTo: secondArrivalInfoView.trailingAnchor,
-                constant: 30
+                constant: .screenWidth * 0.35
             ),
             
             alarmBtn.trailingAnchor.constraint(

@@ -25,51 +25,17 @@ public final class DefaultBusStopArrivalInfoRepository:
     }
     
     public func fetchArrivalList(
-        busStopId: String,
-        busStopName: String
+        busStopId: String
     ) -> Observable<BusStopArrivalInfoResponse> {
         networkService.request(
-            endPoint: BusStopArrivalInfoEndPoint(busStopId: busStopId)
+            endPoint: BusStopArrivalInfoEndPoint(arsId: busStopId)
         )
-        .map { data in
-            let xml = XML.parse(data)
-            let busStopNum: String? = xml
-                .ServiceResult
-                .msgBody
-                .itemList
-                .arsId.text
-            
-            let busResponses: [BusArrivalInfoResponse?] = xml
-                .ServiceResult
-                .msgBody
-                .itemList
-                .map {
-                    guard let routeId = $0.busRouteId.text,
-                          let routeName = $0.busRouteAbrv.text,
-                          let busType = $0.routeType.text,
-                          let firstArrivalTime = $0.arrmsg1.text,
-                          let secondArrivalTime = $0.arrmsg2.text
-                    else {
-                        print("Fail to XML Parse")
-                        return nil
-                    }
-                    return BusArrivalInfoResponse(
-                        routeId: routeId,
-                        isFavorites: false,
-                        routeName: routeName,
-                        busType: busType,
-                        firstArrivalTime: firstArrivalTime,
-                        secondArrivalTime: secondArrivalTime,
-                        isAlarmOn: false
-                    )
-                }
-            return BusStopArrivalInfoResponse(
-                busStopId: busStopId,
-                busStopName: busStopName,
-                direction: "XX 방면",
-                busStopNum: busStopNum,
-                buses: busResponses.compactMap { $0 }
-            )
+        .decode(
+            type: BusStopArrivalInfoDTO.self,
+            decoder: JSONDecoder()
+        )
+        .map {
+            $0.toDomain
         }
     }
 }

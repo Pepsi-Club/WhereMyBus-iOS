@@ -27,14 +27,16 @@ public extension UIStackView {
                     NSLayoutConstraint.activate([
                         separator.heightAnchor.constraint(equalToConstant: 1),
                         separator.widthAnchor.constraint(
-                            equalTo: self.widthAnchor, multiplier: dividerRatio
+                            equalTo: self.widthAnchor, 
+                            multiplier: dividerRatio
                         )
                     ])
                 case .horizontal:
                     NSLayoutConstraint.activate([
                         separator.widthAnchor.constraint(equalToConstant: 1),
                         separator.heightAnchor.constraint(
-                            equalTo: self.heightAnchor, multiplier: dividerRatio
+                            equalTo: self.heightAnchor, 
+                            multiplier: dividerRatio
                         )
                     ])
                 @unknown default:

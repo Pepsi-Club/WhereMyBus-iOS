@@ -11,7 +11,7 @@ import Foundation
 import Core
 
 public struct BusStopArrivalInfoEndPoint: EndPoint {
-    let busStopId: String
+    private let arsId: String
     
     public var scheme: Scheme {
         .http
@@ -26,13 +26,14 @@ public struct BusStopArrivalInfoEndPoint: EndPoint {
     }
     
     public var path: String {
-        "/api/rest/arrive/getLowArrInfoByStId"
+        "/api/rest/stationinfo/getStationByUid"
     }
     
     public var query: [String: String] {
         [
+            "resultType": "json",
             "ServiceKey": .serverKey,
-            "stId": busStopId
+            "arsId": arsId
         ]
     }
     
@@ -48,7 +49,7 @@ public struct BusStopArrivalInfoEndPoint: EndPoint {
         .get
     }
     
-    public init(busStopId: String) {
-        self.busStopId = busStopId
+    public init(arsId: String) {
+        self.arsId = arsId
     }
 }

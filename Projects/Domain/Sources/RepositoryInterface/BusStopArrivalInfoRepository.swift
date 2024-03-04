@@ -12,7 +12,6 @@ import RxSwift
 
 public protocol BusStopArrivalInfoRepository {
     func fetchArrivalList(
-        busStopId: String,
-        busStopName: String
+        busStopId: String
     ) -> Observable<BusStopArrivalInfoResponse>
 }
