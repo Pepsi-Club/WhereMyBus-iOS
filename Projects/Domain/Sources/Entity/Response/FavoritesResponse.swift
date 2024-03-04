@@ -63,20 +63,17 @@ public struct BusStopArrivalInfoResponse: Codable, Hashable {
     public let busStopId: String
     public let busStopName: String
     public let direction: String
-    public let busStopNum: String?
     public var buses: [BusArrivalInfoResponse]
     
     public init(
         busStopId: String,
         busStopName: String,
         direction: String,
-        busStopNum: String?,
         buses: [BusArrivalInfoResponse]
     ) {
         self.busStopId = busStopId
         self.busStopName = busStopName
         self.direction = direction
-        self.busStopNum = busStopNum
         self.buses = buses
     }
 }
@@ -90,29 +87,38 @@ extension Array<BusStopArrivalInfoResponse> {
 }
 
 public struct BusArrivalInfoResponse: Codable, Hashable {
-    public let routeId: String
-    public var isFavorites: Bool
-    public let routeName: String
+    public let busId: String
+    public let busName: String
     public let busType: BusType
+    public let nextStation: String
     public let firstArrivalTime: String
+    public let firstArrivalRemaining: String
     public let secondArrivalTime: String
+    public let secondArrivalRemaining: String
+    public var isFavorites: Bool
     public var isAlarmOn: Bool
     
     public init(
-        routeId: String, 
-        isFavorites: Bool,
-        routeName: String,
+        busId: String,
+        busName: String,
         busType: String,
+        nextStation: String,
         firstArrivalTime: String,
+        firstArrivalRemaining: String,
         secondArrivalTime: String,
+        secondArrivalRemaining: String,
+        isFavorites: Bool,
         isAlarmOn: Bool
     ) {
-        self.routeId = routeId
-        self.isFavorites = isFavorites
-        self.routeName = routeName
-        self.busType = BusType(rawValue: busType) ?? .abolition
+        self.busId = busId
+        self.busName = busName
+        self.busType = BusType(rawValue: busType) ?? .common
+        self.nextStation = nextStation
         self.firstArrivalTime = firstArrivalTime
+        self.firstArrivalRemaining = firstArrivalRemaining
         self.secondArrivalTime = secondArrivalTime
+        self.secondArrivalRemaining = secondArrivalRemaining
+        self.isFavorites = isFavorites
         self.isAlarmOn = isAlarmOn
     }
     

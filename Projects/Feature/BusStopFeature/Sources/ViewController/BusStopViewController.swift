@@ -95,7 +95,7 @@ public final class BusStopViewController: UIViewController {
                     response.forEach { res in
                         // UILabel -> optional 값 들어올 수 있음. text!
                         viewController.headerView.bindUI(
-                            routeId: res.busStopNum,
+                            routeId: res.busStopId,
                             busStopName: res.busStopName,
                             nextStopName: res.direction
                         )
@@ -188,7 +188,7 @@ public final class BusStopViewController: UIViewController {
             alarm: response.isAlarmOn
         )
         cell.updateBusRoute(
-            routeName: response.routeName,
+            routeName: response.busName,
             nextRouteName: "강남구청역 방면"
         )
         cell.updateFirstArrival(

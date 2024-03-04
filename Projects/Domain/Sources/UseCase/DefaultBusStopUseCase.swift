@@ -80,7 +80,7 @@ public final class DefaultBusStopUseCase: BusStopUseCase {
             for favoriteBus in favorite.buses {
                 if let indexInResponse = response.buses.firstIndex(
                     where: {
-                        $0.routeId == favoriteBus.routeId
+                        $0.busId == favoriteBus.busId
                     }
                 ),
                    let indexInBusStops = busStops.firstIndex(

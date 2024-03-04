@@ -78,7 +78,7 @@ public final class DefaultFavoritesUseCase: FavoritesUseCase {
             busStop.buses.contains { bus in
                 favoritesBusStops.contains { busStop in
                     busStop.buses.contains { busRequest in
-                        busRequest.routeId == bus.routeId
+                        busRequest.busId == bus.busId
                     }
                 }
             }
