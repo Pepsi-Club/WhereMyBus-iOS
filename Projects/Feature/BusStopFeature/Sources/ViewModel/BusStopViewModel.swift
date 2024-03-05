@@ -27,7 +27,8 @@ public final class BusStopViewModel: ViewModel {
     public func transform(input: Input) -> Output {
         let output = Output(
             busStopArrivalInfoResponse: .init(),
-            favorites: .init(value: .init([]) )
+            favorites: .init(value: .init([]) ),
+            isRefreshing: .init()
         )
         
         input.viewWillAppearEvent
@@ -38,14 +39,36 @@ public final class BusStopViewModel: ViewModel {
                         request: viewModel.fetchData
                     )
                 }
-            ).disposed(by: disposeBag)
+            )
+            .disposed(by: disposeBag)
         
         input.mapBtnTapEvent
             .withUnretained(self)
-            .subscribe { viewModel, _ in
-                // TODO: 수정필요
+            .subscribe(onNext: { viewModel, str in
+                print("\(str) : arsId이자 busStopId")
                 viewModel.coordinator.busStopMapLocation()
-            }
+            })
+            .disposed(by: disposeBag)
+        
+        input.refreshLoading
+            .withUnretained(self)
+            .subscribe(onNext: { viewModel, bool in
+                if bool {
+                    viewModel.useCase.fetchBusArrivals(
+                        request: viewModel.fetchData
+                    )
+                    output.isRefreshing.onNext(false)
+                }
+            })
+            .disposed(by: disposeBag)
+        
+        input.likeBusBtnTapEvent
+            .withUnretained(self)
+            .subscribe(onNext: { viewModel, indexPath in
+                // viewModel.useCase에서 추가
+                viewModel.useCase.addFavorite(index: indexPath)
+                
+            })
             .disposed(by: disposeBag)
         
         useCase.busStopSection
@@ -67,13 +90,16 @@ extension BusStopViewModel {
         let viewWillAppearEvent: Observable<Void>
         let likeBusBtnTapEvent: Observable<IndexPath>
         let alarmBtnTapEvent: Observable<IndexPath>
-        let mapBtnTapEvent: Observable<Int>
+        let mapBtnTapEvent: Observable<String>
+        let refreshLoading: Observable<Bool>
     }
     
     public struct Output {
         var busStopArrivalInfoResponse
-        : PublishSubject<[BusStopArrivalInfoResponse]>
+        : PublishSubject<BusStopArrivalInfoResponse>
         var favorites
         : BehaviorSubject<[FavoritesBusStopResponse]>
+        var isRefreshing
+        : PublishSubject<Bool>
     }
 }

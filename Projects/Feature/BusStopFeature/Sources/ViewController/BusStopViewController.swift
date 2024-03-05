@@ -4,21 +4,23 @@ import Domain
 import DesignSystem
 
 import RxSwift
-import RxCocoa
 
 public final class BusStopViewController: UIViewController {
     private let viewModel: BusStopViewModel
     
     private let disposeBag = DisposeBag()
-    private let mapBtnTapEvent = PublishSubject<Int>()
+    private let mapBtnTapEvent = PublishSubject<String>()
     private let likeBusBtnTapEvent = PublishSubject<IndexPath>()
     private let alarmBtnTapEvent = PublishSubject<IndexPath>()
+    private let refresh = PublishSubject<Bool>()
     
     private var dataSource: BusStopDataSource!
     private var snapshot: BusStopSnapshot!
+    private var busStopId: String = ""
     
     private let headerView: BusStopInfoHeaderView = BusStopInfoHeaderView()
     private let scrollView: UIScrollView = UIScrollView()
+    private let refreshControl = UIRefreshControl()
     private let contentView = UIView()
     private lazy var busStopTableView: UITableView = {
         let table = UITableView(frame: .zero, style: .insetGrouped)
@@ -52,10 +54,11 @@ public final class BusStopViewController: UIViewController {
         
         view.backgroundColor = .white
         
-        configureDataSource()
-        bind()
         configureUI()
-        
+        bind()
+        configureDataSource()
+        mapBtnEvent()
+        configureRefreshControl()
     }
     
     public override func viewDidLayoutSubviews() {
@@ -70,7 +73,8 @@ public final class BusStopViewController: UIViewController {
                 .map { _ in },
             likeBusBtnTapEvent: likeBusBtnTapEvent.asObservable(),
             alarmBtnTapEvent: alarmBtnTapEvent.asObservable(),
-            mapBtnTapEvent: mapBtnTapEvent.asObservable()
+            mapBtnTapEvent: mapBtnTapEvent.asObservable(),
+            refreshLoading: refresh.asObservable()
         )
         
         rx.methodInvoked(#selector(UIViewController.viewWillAppear))
@@ -92,33 +96,47 @@ public final class BusStopViewController: UIViewController {
             .withUnretained(self)
             .subscribe(
                 onNext: { viewController, response in
-                    response.forEach { res in
-                        // UILabel -> optional 값 들어올 수 있음. text!
-                        viewController.headerView.bindUI(
-                            routeId: res.busStopId,
-                            busStopName: res.busStopName,
-                            nextStopName: res.direction
-                        )
-                    }
+                    viewController.headerView.bindUI(
+                        routeId: response.busStopId,
+                        busStopName: response.busStopName,
+                        nextStopName: response.direction
+                    )
                     
+                    self.busStopId = response.busStopId
+//                    viewController.headerView.mapBtn.rx.tap
+//                        .withUnretained(self)
+//                        .map { _ in
+//                            print(" ? ? ? ")
+//                            return response.busStopId
+//                        }
+//                        .bind(to: self.mapBtnTapEvent)
+//                        .disposed(by: self.disposeBag)
+                        
                     viewController.updateSnapshot(busStopResponse: response)
                 }
             )
             .disposed(by: disposeBag)
+        
+        output.isRefreshing
+            .observe(on: MainScheduler.instance)
+            .subscribe { [weak self] bool in
+                print("output - \(bool)")
+                guard let self = self else { return }
+                self.refreshControl.endRefreshing()
+            }
+            .disposed(by: disposeBag)
     }
     
-    private func updateSnapshot(busStopResponse: [BusStopArrivalInfoResponse]) {
+    private func updateSnapshot(busStopResponse: BusStopArrivalInfoResponse) {
         snapshot = .init()
-        
-        for response in busStopResponse {
-            for busInfo in response.buses {
-                let busTypeSection = busInfo.busType
-                if !snapshot.sectionIdentifiers.contains(busTypeSection) {
-                    snapshot.appendSections([busTypeSection])
-                }
-                snapshot.appendItems([busInfo], toSection: busTypeSection)
+        for busInfo in busStopResponse.buses {
+            let busTypeSection = busInfo.busType
+            if !snapshot.sectionIdentifiers.contains(busTypeSection) {
+                snapshot.appendSections([busTypeSection])
             }
+            snapshot.appendItems([busInfo], toSection: busTypeSection)
         }
+        
         dataSource.apply(snapshot, animatingDifferences: false)
     }
     
@@ -127,11 +145,11 @@ public final class BusStopViewController: UIViewController {
             tableView: busStopTableView,
             cellProvider: { [weak self] tableView, indexPath, response in
                 guard let self = self,
-                let cell = self.configureCell(
-                    tableView: tableView,
-                    indexPath: indexPath,
-                    response: response
-                )
+                      let cell = self.configureCell(
+                        tableView: tableView,
+                        indexPath: indexPath,
+                        response: response
+                      )
                 else { return UITableViewCell() }
                 
                 cell.starBtnTapEvent
@@ -184,6 +202,35 @@ public final class BusStopViewController: UIViewController {
         cell?.busNumber.textColor = response.busType.toColor
         
         return cell
+    }
+    
+    private func configureRefreshControl() {
+        refreshControl.endRefreshing()
+        scrollView.refreshControl = refreshControl
+        
+        refreshControl.rx.controlEvent(.valueChanged)
+            .withUnretained(self)
+            .subscribe(onNext: { viewC, _ in
+                viewC.refresh.onNext(true)
+            })
+            .disposed(by: disposeBag)
+        
+        refreshControl.tintColor = DesignSystemAsset.mainColor.color
+        refreshControl.attributedTitle = NSAttributedString(
+            string: "당겨서 새로고침",
+            attributes: [.foregroundColor: DesignSystemAsset.mainColor.color]
+        )
+    }
+    
+    private func mapBtnEvent() {
+        headerView.mapBtn.rx.tap
+            .withUnretained(self)
+            .map { _ in
+                print("\(self.busStopId)")
+                return self.busStopId
+            }
+            .bind(to: mapBtnTapEvent)
+            .disposed(by: disposeBag)
     }
 }
 
