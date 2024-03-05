@@ -23,7 +23,7 @@ public final class DefaultBusStopListRepository: BusStopListRepository {
     
     private func fetchLocalBusStopList() {
         guard let url = Bundle.main.url(
-            forResource: "stationList", 
+            forResource: "total_stationList",
             withExtension: "json"
         )
         else { return }
