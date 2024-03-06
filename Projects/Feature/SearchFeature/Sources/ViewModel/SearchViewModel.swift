@@ -24,12 +24,7 @@ public final class SearchViewModel: ViewModel {
     }
     
     private func handleEnterPressed() {
-        let afterSearchView = AfterSearchView()
-        if let viewController = afterSearchView as? UIViewController {
-            //네비게이션 view로 push 하고싶엇음 
-        } else {
-            print("error: navigation")
-        }
+
     }
     
     public func transform(input: Input) -> Output {
@@ -56,7 +51,6 @@ public final class SearchViewModel: ViewModel {
             .disposed(by: disposeBag)
         
 
-        
         // MARK: 질문 이 메서드에 문제가 있는 것 같은데 이유를 모르겠습니다
         //        input.busStopTapEvent
         //            .withUnretained(self)
