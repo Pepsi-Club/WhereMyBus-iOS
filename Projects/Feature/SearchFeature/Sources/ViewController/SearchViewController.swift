@@ -242,7 +242,12 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
     }
     
     private func bind() {
-    
+        // 엔터 이벤트를 뷰모델에 전달
+        searchTextFieldView.rx.controlEvent(.editingDidEndOnExit)
+            .bind(to: viewModel.enterPressedSubject)
+            .disposed(by: disposeBag)
+        
+        print("전달완")
     }
     
     private func configureDataSource() {
@@ -266,7 +271,6 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
             Int,
             BusStopInfoResponse>()
         initialSnapshot.appendSections([0])
-        //initialSnapshot.appendItems(Array(self.viewModel.recentSearches.prefix(5)), toSection: 0)
         dataSource.apply(initialSnapshot, animatingDifferences: false)
     }
     
@@ -285,15 +289,6 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
             
             return cell
         }
-    
-    private func bindViewModel() {
-        // 엔터 이벤트를 뷰모델에 전달
-        searchTextFieldView.rx.controlEvent(.editingDidEndOnExit)
-            .bind(to: viewModel.enterPressedSubject)
-            .disposed(by: disposeBag)
-        
-        print("전달완")
-    }
 }
 
 extension SearchViewController {
