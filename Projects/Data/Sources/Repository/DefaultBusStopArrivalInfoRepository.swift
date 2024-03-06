@@ -29,7 +29,7 @@ public final class DefaultBusStopArrivalInfoRepository:
         busStopName: String
     ) -> Observable<BusStopArrivalInfoResponse> {
         networkService.request(
-            endPoint: BusStopArrivalInfoEndPoint(busStopId: busStopId)
+            endPoint: BusStopArrivalInfoEndPoint(arsId: busStopId)
         )
         .map { data in
             let xml = XML.parse(data)

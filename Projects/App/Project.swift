@@ -12,12 +12,19 @@ let project = Project.makeProject(
             name: "NotificationExtension",
             plist: .notificationInfoPlist,
             dependencies: [
-                .data
+                .data,
             ]
+        )
+    ],
+    packages: [
+        .remote(
+            url: "https://github.com/firebase/firebase-ios-sdk",
+            requirement: .branch("main")
         )
     ],
     dependencies: [
         .mainFeature,
         .data,
+        .package(product: "FirebaseMessaging"),
     ]
 )
