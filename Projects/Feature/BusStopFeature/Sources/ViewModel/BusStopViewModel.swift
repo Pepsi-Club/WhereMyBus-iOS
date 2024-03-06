@@ -27,7 +27,7 @@ public final class BusStopViewModel: ViewModel {
     public func transform(input: Input) -> Output {
         let output = Output(
             busStopArrivalInfoResponse: .init(),
-            favorites: .init(value: .init([]) ),
+            favorites: .init(value: .init([])),
             isRefreshing: .init()
         )
         
