@@ -12,5 +12,4 @@ import RxSwift
 
 public protocol SearchRepository {
     var searchResponse: BehaviorSubject<[BusStopInfoResponse]> { get }
-    
 }

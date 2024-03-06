@@ -1,9 +1,17 @@
+//
+//  DefaultAfterSearchCoordinator.swift
+//  SearchFeature
+//
+//  Created by 유하은 on 2024/03/07.
+//  Copyright © 2024 Pepsi-Club. All rights reserved.
+//
+
 import UIKit
 
 import Domain
 import FeatureDependency
 
-public final class DefaultSearchCoordinator: SearchCoordinator {
+public final class DefaultAfterSearchCoordinator: SearchCoordinator {
     public var parent: Coordinator?
     public var childs: [Coordinator] = []
     public var navigationController: UINavigationController
@@ -20,13 +28,9 @@ public final class DefaultSearchCoordinator: SearchCoordinator {
     }
     
     public func start() {
-        let searchViewController = SearchViewController(
-            viewModel: SearchViewModel(coordinator: self)
-        )
-        navigationController.pushViewController(
-            searchViewController,
-            animated: false
-        )
+//        let afterSearchViewController = AfterSearchCoordinator(
+//            viewModel: AfterSearchCoordinator(coordinator: self)
+//        )
     }
     
     public func finish() {
@@ -45,30 +49,5 @@ public final class DefaultSearchCoordinator: SearchCoordinator {
         
         childs.append(busStopCoordinator)
         busStopCoordinator.start()
-    }
-}
-
-extension DefaultSearchCoordinator: AfterSearchCoordinator {
-    public func starts() {
-        let afterSearchViewController = AfterSearchViewController(
-            viewModel: .init(coordinator: self)
-        )
-        navigationController.pushViewController(
-            afterSearchViewController,
-            animated: true
-        )
-    }
-    
-    public func startSearchFlow() {
-        let searchCoordinator = coordinatorProvider.makeSearchCoordinator(
-            navigationController: navigationController
-        )
-        childs.append(searchCoordinator)
-        searchCoordinator.start()
-    }
-    
-    public func complete() {
-        navigationController.popViewController(animated: true)
-        finish()
     }
 }

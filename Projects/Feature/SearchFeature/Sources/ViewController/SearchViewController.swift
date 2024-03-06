@@ -1,6 +1,6 @@
 import UIKit
-import Domain
 
+import Domain
 import Core
 import DesignSystem
 
@@ -129,6 +129,7 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
+        viewModel.useCase.loadBusStopInfoList()
         configureDataSource()
         configureUI()
         bind()
