@@ -11,11 +11,6 @@ import Foundation
 import RxSwift
 
 public protocol SearchRepository {
-    var searchResponse: BehaviorSubject<[SearchRepository]> { get }
+    var searchResponse: BehaviorSubject<[BusStopInfoResponse]> { get }
     
-    func recentSerachInfo(
-        busStopName: String,
-        busStopID: String,
-        direction: String
-    )
 }

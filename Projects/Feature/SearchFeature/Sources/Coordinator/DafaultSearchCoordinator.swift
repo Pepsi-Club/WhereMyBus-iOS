@@ -1,5 +1,6 @@
 import UIKit
 
+import Domain
 import FeatureDependency
 
 public final class DefaultSearchCoordinator: SearchCoordinator {
@@ -31,11 +32,9 @@ public final class DefaultSearchCoordinator: SearchCoordinator {
     public func finish() {
         
     }
-}
-
-extension DefaultSearchCoordinator {
+    
     public func startBusStopFlow() {
-        	let busStopCoordinator =
+        let busStopCoordinator =
         coordinatorProvider.makeBusStopCoordinator(
             navigationController: navigationController,
             arrivalInfoData: .init(
@@ -47,5 +46,5 @@ extension DefaultSearchCoordinator {
         childs.append(busStopCoordinator)
         busStopCoordinator.start()
     }
+    
 }
-			

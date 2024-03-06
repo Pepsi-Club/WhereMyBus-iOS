@@ -11,7 +11,14 @@ import UIKit
 import Core
 import DesignSystem
 
+import RxSwift
+
 final class RecentSearchCell: UITableViewCell {
+    // MARK: 얘는 왜 var도 가능할까? 언제든지 변할 수 있는 값이어서?
+    public var disposeBag = DisposeBag()
+    
+    public let searchBtnTapEvent = PublishSubject<String>()
+    
     private let busStopNameLabel: UILabel = {
         let label = UILabel()
         label.font =
@@ -80,11 +87,7 @@ final class RecentSearchCell: UITableViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    func updateUI(
-    ) {
-    }
-    
+
     private func configureUI() {
         [busStopNameLabel, numberLabel, line, dircetionLabel, numDirectStack,
          totalStack].forEach {
