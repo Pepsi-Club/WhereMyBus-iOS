@@ -9,14 +9,13 @@ public final class BusStopViewController: UIViewController {
     private let viewModel: BusStopViewModel
     
     private let disposeBag = DisposeBag()
-    private let mapBtnTapEvent = PublishSubject<String>()
-    private let likeBusBtnTapEvent = PublishSubject<IndexPath>()
-    private let alarmBtnTapEvent = PublishSubject<IndexPath>()
+    private let mapBtnTapEvent = PublishSubject<BusStopArrivalInfoResponse>()
+    private let likeBusBtnTapEvent = PublishSubject<BusArrivalInfoResponse>()
+    private let alarmBtnTapEvent = PublishSubject<BusArrivalInfoResponse>()
     private let refresh = PublishSubject<Bool>()
     
     private var dataSource: BusStopDataSource!
     private var snapshot: BusStopSnapshot!
-    private var busStopId: String = ""
     
     private let headerView: BusStopInfoHeaderView = BusStopInfoHeaderView()
     private let scrollView: UIScrollView = UIScrollView()
@@ -57,7 +56,6 @@ public final class BusStopViewController: UIViewController {
         configureUI()
         bind()
         configureDataSource()
-        mapBtnEvent()
         configureRefreshControl()
     }
     
@@ -70,7 +68,8 @@ public final class BusStopViewController: UIViewController {
         let input = BusStopViewModel.Input(
             viewWillAppearEvent: rx
                 .methodInvoked(#selector(UIViewController.viewWillAppear))
-                .map { _ in },
+                .map { _ in }
+                .debounce(.seconds(1), scheduler: MainScheduler.asyncInstance),
             likeBusBtnTapEvent: likeBusBtnTapEvent.asObservable(),
             alarmBtnTapEvent: alarmBtnTapEvent.asObservable(),
             mapBtnTapEvent: mapBtnTapEvent.asObservable(),
@@ -88,6 +87,8 @@ public final class BusStopViewController: UIViewController {
         
         let output = viewModel.transform(input: input)
         bindTableView(output: output)
+        bindMapBtn(output: output)
+        bindRefreshing(output: output)
     }
     
     private func bindTableView(output: BusStopViewModel.Output) {
@@ -101,22 +102,33 @@ public final class BusStopViewController: UIViewController {
                         busStopName: response.busStopName,
                         nextStopName: response.direction
                     )
-                    
-                    self.busStopId = response.busStopId
-//                    viewController.headerView.mapBtn.rx.tap
-//                        .withUnretained(self)
-//                        .map { _ in
-//                            print(" ? ? ? ")
-//                            return response.busStopId
-//                        }
-//                        .bind(to: self.mapBtnTapEvent)
-//                        .disposed(by: self.disposeBag)
-                        
                     viewController.updateSnapshot(busStopResponse: response)
                 }
             )
             .disposed(by: disposeBag)
-        
+    }
+    
+    private func bindMapBtn(output: BusStopViewModel.Output) {
+        output.busStopArrivalInfoResponse
+            .withUnretained(self)
+            .subscribe(
+                onNext: { viewController, response in
+                    viewController.headerView.mapBtn.rx.tap
+                        .take(1)
+                        .withUnretained(self)
+                        .map { _ in
+                            // 두번 열리는 이유를 모르겠음 -> 그래서 take(1)을 통해 한번만 구독 될 수 있게.
+                            // 여기서 강묵님 쪽으로 데이터 넘겨주면 될 듯
+                            print("🤢 \(response) ")
+                            return response
+                        }
+                        .bind(to: self.mapBtnTapEvent)
+                        .disposed(by: self.disposeBag)
+                }
+            )
+            .disposed(by: disposeBag)
+    }
+    private func bindRefreshing(output: BusStopViewModel.Output) {
         output.isRefreshing
             .observe(on: MainScheduler.instance)
             .subscribe { [weak self] bool in
@@ -151,20 +163,6 @@ public final class BusStopViewController: UIViewController {
                         response: response
                       )
                 else { return UITableViewCell() }
-                
-                cell.starBtnTapEvent
-                    .map { _ in
-                        return indexPath
-                    }
-                    .bind(to: self.likeBusBtnTapEvent)
-                    .disposed(by: cell.disposeBag)
-                
-                cell.alarmBtnTapEvent
-                    .map { _ in
-                        return indexPath
-                    }
-                    .bind(to: self.alarmBtnTapEvent)
-                    .disposed(by: cell.disposeBag)
                 
                 return cell
                 
@@ -201,6 +199,20 @@ public final class BusStopViewController: UIViewController {
         
         cell?.busNumber.textColor = response.busType.toColor
         
+        cell?.starBtnTapEvent
+            .map { _ in
+                return response
+            }
+            .bind(to: self.likeBusBtnTapEvent)
+            .disposed(by: cell!.disposeBag)
+        
+        cell?.alarmBtnTapEvent
+            .map { _ in
+                return response
+            }
+            .bind(to: self.alarmBtnTapEvent)
+            .disposed(by: cell!.disposeBag)
+        
         return cell
     }
     
@@ -220,17 +232,6 @@ public final class BusStopViewController: UIViewController {
             string: "당겨서 새로고침",
             attributes: [.foregroundColor: DesignSystemAsset.mainColor.color]
         )
-    }
-    
-    private func mapBtnEvent() {
-        headerView.mapBtn.rx.tap
-            .withUnretained(self)
-            .map { _ in
-                print("\(self.busStopId)")
-                return self.busStopId
-            }
-            .bind(to: mapBtnTapEvent)
-            .disposed(by: disposeBag)
     }
 }
 

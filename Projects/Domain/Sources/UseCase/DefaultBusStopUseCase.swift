@@ -93,8 +93,11 @@ public final class DefaultBusStopUseCase: BusStopUseCase {
     }
     
     // MARK: - 즐찾 추가 및 해제
-    public func addFavorite(index: IndexPath) { // input 받아야함
-        
+    public func addFavorite(
+        busStop: String,
+        bus: BusArrivalInfoResponse
+    ) { 
+        print("\(busStop) | \(bus)")
     }
     
     public func deleteFavorite() {

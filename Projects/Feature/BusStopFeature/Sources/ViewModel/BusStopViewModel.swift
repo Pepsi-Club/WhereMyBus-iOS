@@ -44,8 +44,8 @@ public final class BusStopViewModel: ViewModel {
         
         input.mapBtnTapEvent
             .withUnretained(self)
-            .subscribe(onNext: { viewModel, str in
-                print("\(str) : arsId이자 busStopId")
+            .subscribe(onNext: { viewModel, busStopArrival in
+                // 여기서 강묵님쪽으로 데이터 넘겨주면 될듯
                 viewModel.coordinator.busStopMapLocation()
             })
             .disposed(by: disposeBag)
@@ -64,10 +64,11 @@ public final class BusStopViewModel: ViewModel {
         
         input.likeBusBtnTapEvent
             .withUnretained(self)
-            .subscribe(onNext: { viewModel, indexPath in
-                // viewModel.useCase에서 추가
-                viewModel.useCase.addFavorite(index: indexPath)
-                
+            .subscribe(onNext: { viewModel, bus in
+                // MARK: useCase.addFavorite 함수
+                // 를 arsId와 busArrivalInfoResponse를 받아서 repository에 넣는 방법으로 생각했는데
+                // busStop을 어떻게 받아야할지 ..
+//                viewModel.useCase.addFavorite(busStop: "", bus: bus)
             })
             .disposed(by: disposeBag)
         
@@ -88,9 +89,9 @@ public final class BusStopViewModel: ViewModel {
 extension BusStopViewModel {
     public struct Input {
         let viewWillAppearEvent: Observable<Void>
-        let likeBusBtnTapEvent: Observable<IndexPath>
-        let alarmBtnTapEvent: Observable<IndexPath>
-        let mapBtnTapEvent: Observable<String>
+        let likeBusBtnTapEvent: Observable<BusArrivalInfoResponse>
+        let alarmBtnTapEvent: Observable<BusArrivalInfoResponse>
+        let mapBtnTapEvent: Observable<BusStopArrivalInfoResponse>
         let refreshLoading: Observable<Bool>
     }
     

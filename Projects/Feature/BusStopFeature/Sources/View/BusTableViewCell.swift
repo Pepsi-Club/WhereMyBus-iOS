@@ -115,6 +115,7 @@ public final class BusTableViewCell: UITableViewCell {
         alarmToggle = alarm
         
         changeFavBtnColor(isFavoriteOn: favoriteToggle)
+        changeAlarmBtnColor(isAlarmOn: alarmToggle)
     }
     
     public func updateBusRoute(
