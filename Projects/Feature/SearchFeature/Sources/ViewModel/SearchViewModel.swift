@@ -36,7 +36,6 @@ public final class SearchViewModel: ViewModel {
             .withUnretained(self)
             .subscribe(
                 onNext: { viewModel, _ in
-                    viewModel.useCase.getRecentSearches()
                 })
             .disposed(by: disposeBag)
         
@@ -44,13 +43,12 @@ public final class SearchViewModel: ViewModel {
         input.enterPressedSubject
             .withUnretained(self)
             .subscribe(
-                onNext: { viewModel, _ in
+                onNext: { _, _ in
                     self.handleEnterPressed()
                 }
             )
             .disposed(by: disposeBag)
         
-
         // MARK: 질문 이 메서드에 문제가 있는 것 같은데 이유를 모르겠습니다
         //        input.busStopTapEvent
         //            .withUnretained(self)

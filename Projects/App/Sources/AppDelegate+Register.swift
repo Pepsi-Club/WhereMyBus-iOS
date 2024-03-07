@@ -31,6 +31,11 @@ extension AppDelegate {
                 localNotificationService: localNotificationService
             )
         )
+        
+        DIContainer.register(
+            type: SearchUseCase.self,
+            DefaultSearchUseCase(stationListRepository: stationListRepository)
+        )
     }
 }
 
@@ -50,6 +55,10 @@ extension AppDelegate {
     
     var busStopArrivalInfoRepository: BusStopArrivalInfoRepository {
         DefaultBusStopArrivalInfoRepository(networkService: networkService)
+    }
+    
+    var stationListRepository: StationListRepository {
+        DefaultStationListRepository()
     }
 }
 

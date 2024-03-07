@@ -106,17 +106,26 @@ extension BusStopArrivalInfoDTO {
         
         var headerCodeMessage: String {
             switch headerCD {
-            case "0": "정상적으로 처리되었습니다"
-            case "1": "시스템 오류가 발생하였습니다"
-            case "2": "잘못된 쿼리 요청입니다. 쿼리 변수가 정확한지 확인하세요."
-            case "3": "정류소를 찾을 수 없습니다"
-            case "4": "노선을 찾을 수 없습니다."
-            case "5": "잘못된 위치로 요청을 하였습니다. 위/경도 좌표가 정확한지 확인하세요"
-            case "6": "실시간 정보를 읽을 수 없습니다. 잠시 후 다시 시도하세요"
-            case "7": "경로 검색 결과가 존재하지 않습니다."
-            case "8": "운행 종료되었습니다."
+            case "0":
+                return "정상적으로 처리되었습니다"
+            case "1":
+                return "시스템 오류가 발생하였습니다"
+            case "2":
+                return "잘못된 쿼리 요청입니다. 쿼리 변수가 정확한지 확인하세요."
+            case "3":
+                return "정류소를 찾을 수 없습니다"
+            case "4":
+                return "노선을 찾을 수 없습니다."
+            case "5":
+                return "잘못된 위치로 요청을 하였습니다. 위/경도 좌표가 정확한지 확인하세요"
+            case "6":
+                return "실시간 정보를 읽을 수 없습니다. 잠시 후 다시 시도하세요"
+            case "7":
+                return "경로 검색 결과가 존재하지 않습니다."
+            case "8":
+                return "운행 종료되었습니다."
             default:
-                "잘못된 헤더코드 입니다."
+                return "잘못된 헤더코드 입니다."
             }
         }
     }
@@ -166,8 +175,8 @@ extension BusStopArrivalInfoDTO {
         let rerideNum1: String? // 첫번째도착예정버스의 재차인원
         let isFullFlag1: String? // 첫번째도착예정버스의 만차여부
         let congestion1: String? //
-//        let plainNo1: String // null
-//        let staOrd1: String // 값 없음, 첫번째도착예정버스의 현재구간 순번
+        //        let plainNo1: String // null
+        //        let staOrd1: String // 값 없음, 첫번째도착예정버스의 현재구간 순번
         // MARK: 두번째 도착 예정 버스
         let arrmsg2: String?    // 두번째도착예정버스의 도착정보메시지
         let vehId2: String? // 두번째도착예정버스ID
@@ -176,7 +185,7 @@ extension BusStopArrivalInfoDTO {
         let traTime2: String?    // 두번째도착예정버스의 여행시간
         let traSpd2: String?    // 두번째도착예정버스의 여행속도
         let isArrive2: String?    //  두번째도착예정버스의 최종 정류소 도착출발여부(0
-//        let repTm2: String    // ⭐️null⭐️, 두번째도착예정버스의 최종 보고 시간
+        //        let repTm2: String    // ⭐️null⭐️, 두번째도착예정버스의 최종 보고 시간
         let isLast2: String?    // 두번째도착예정버스의 막차여부
         let busType2: String?    // 두번째도착예정버스의 차량유형 (0:일반버스, 1:저상)
         let arrmsgSec2: String?    // 두번째도착예정버스의 도착정보메시지
@@ -184,6 +193,6 @@ extension BusStopArrivalInfoDTO {
         let rerideNum2: String?    // 두번째도착예정버스의 재차인원
         let isFullFlag2: String?    //  두번째도착예정버스의 만차여부
         let congestion2: String?    //
-//        let plainNo2: String // null
+        //        let plainNo2: String // null
     }
 }

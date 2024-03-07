@@ -11,9 +11,8 @@ import Foundation
 import RxSwift
 
 public protocol SearchUseCase {
-    var busStopInfoResponse : BusStopInfoResponse  { get }
-    
-    func loadBusStopInfoList()
-    func searchBusStop(with searchText: String) -> [BusStopInfoResponse]
-    func getRecentSearches() -> [String]
+     func searchBusStop(
+        with searchText: String,
+        busStopInfoList: [BusStopInfoResponse]
+    ) -> [BusStopInfoResponse]
 }
