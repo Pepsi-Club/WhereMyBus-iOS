@@ -12,7 +12,16 @@ import Core
 
 public protocol CoreDataService {
     func fetch<T: CoreDataStorable>(type: T.Type) throws -> [T]
-    func save(data: some CoreDataStorable)
-    func update(data: some CoreDataStorable)
-    func delete(data: some CoreDataStorable)
+    
+    func save(data: some CoreDataStorable) throws
+    
+    func update<T: CoreDataStorable, U>(
+        data: T,
+        uniqueKeyPath: KeyPath<T, U>
+    ) throws
+    
+    func delete<T: CoreDataStorable, U>(
+        data: T,
+        uniqueKeyPath: KeyPath<T, U>
+    ) throws
 }
