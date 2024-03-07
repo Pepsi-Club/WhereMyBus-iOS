@@ -41,7 +41,7 @@ public struct BusStopArrivalInfoEndPoint: EndPoint {
         [:]
     }
     
-    public var body: [String: String] {
+    public var body: [String: Any] {
         [:]
     }
     
