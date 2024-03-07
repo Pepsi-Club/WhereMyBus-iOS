@@ -6,10 +6,9 @@
 //  Copyright © 2024 Pepsi-Club. All rights reserved.
 //
 
+import CoreLocation
 import Foundation
 
-import RxSwift
-
-public protocol NearMapUseCase {
+public protocol NearBusStopUseCase {
 	
 }
