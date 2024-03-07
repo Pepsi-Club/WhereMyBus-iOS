@@ -15,9 +15,9 @@ public final class DefaultBusStopUseCase: BusStopUseCase {
     private let busStopArrivalInfoRepository: BusStopArrivalInfoRepository
     private let favoritesRepository: FavoritesRepository
     
-    public let busStopSection = PublishSubject<[BusStopArrivalInfoResponse]>()
-    public var favorites = BehaviorSubject<FavoritesResponse>(
-        value: .init(busStops: [])
+    public let busStopSection = PublishSubject<BusStopArrivalInfoResponse>()
+    public var favorites = BehaviorSubject<[FavoritesBusStopResponse]>(
+        value: .init([])
     )
     private let disposeBag = DisposeBag()
     
@@ -34,17 +34,16 @@ public final class DefaultBusStopUseCase: BusStopUseCase {
     
     public func fetchBusArrivals(request: ArrivalInfoRequest) {
         let busStops = busStopArrivalInfoRepository.fetchArrivalList(
-            busStopId: request.busStopId,
-            busStopName: request.busStopName
+            busStopId: request.busStopId
         )
-        .map { [$0] }
+        .map { $0 }
         Observable.combineLatest(busStops, favorites)
             .withUnretained(self)
             .map { useCase, arg1 in
                 var (busStops, favoritesBusStops) = arg1
                 busStops = useCase.filterFavorites(
                     responses: busStops,
-                    favorites: favoritesBusStops.busStops
+                    favorites: favoritesBusStops
                 )
                 return busStops
             }
@@ -64,33 +63,27 @@ public final class DefaultBusStopUseCase: BusStopUseCase {
     }
     // MARK: - 필터링 후 [BusStopArrivalInfoRepsonse] 반환
     private func filterFavorites(
-        responses: [BusStopArrivalInfoResponse],
-        favorites: [BusStopArrivalInfoResponse]
-    ) -> [BusStopArrivalInfoResponse] {
+        responses: BusStopArrivalInfoResponse,
+        favorites: [FavoritesBusStopResponse]
+    ) -> BusStopArrivalInfoResponse {
         var busStops = responses
         
-        for response in responses {
-            guard let favorite = favorites.first(
+        guard let favorite = favorites.first(
+            where: {
+                $0.busStopId == responses.busStopId
+            }
+        ) else {
+            return busStops // favorites에 해당하는 것이 없으면 그대로 반환
+        }
+        
+        for favoriteBusId in favorite.busIds {
+            if let indexInResponse = responses.buses.firstIndex(
                 where: {
-                    $0.busStopId == response.busStopId
+                    $0.busId == favoriteBusId
                 }
-            )
-            else { continue }
-            
-            for favoriteBus in favorite.buses {
-                if let indexInResponse = response.buses.firstIndex(
-                    where: {
-                        $0.routeId == favoriteBus.routeId
-                    }
-                ),
-                   let indexInBusStops = busStops.firstIndex(
-                    where: {
-                        $0.busStopId == response.busStopId
-                    }
-                   ) {
-                    busStops[indexInBusStops].buses[indexInResponse].isFavorites
-                    = !response.buses[indexInResponse].isFavorites
-                }
+            ) {
+                busStops.buses[indexInResponse].isFavorites
+                = !busStops.buses[indexInResponse].isFavorites
             }
         }
         
@@ -100,5 +93,15 @@ public final class DefaultBusStopUseCase: BusStopUseCase {
     }
     
     // MARK: - 즐찾 추가 및 해제
+    public func addFavorite(
+        busStop: String,
+        bus: BusArrivalInfoResponse
+    ) { 
+        print("\(busStop) | \(bus)")
+    }
+    
+    public func deleteFavorite() {
+        
+    }
     
 }

@@ -86,7 +86,8 @@ final class RecentSearchCell: UITableViewCell {
     }
     
     private func configureUI() {
-        [busStopNameLabel, numberLabel, line, dircetionLabel, numDirectStack, totalStack].forEach {
+        [busStopNameLabel, numberLabel, line, dircetionLabel, numDirectStack,
+         totalStack].forEach {
             addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
@@ -101,23 +102,20 @@ final class RecentSearchCell: UITableViewCell {
                 totalStack.addArrangedSubview(components)
             }
         
-    
-            NSLayoutConstraint.activate([
-                busStopNameLabel.leadingAnchor
+        NSLayoutConstraint.activate([
+            busStopNameLabel.leadingAnchor
                 .constraint(equalTo: leadingAnchor,
-                           constant: 30),
-                busStopNameLabel.topAnchor
-                    .constraint(equalTo: bottomAnchor,
-                           constant: 50),
-
-                numDirectStack.leadingAnchor
-                    .constraint(equalTo: busStopNameLabel.leadingAnchor),
-                numDirectStack.topAnchor
+                            constant: 30),
+            busStopNameLabel.topAnchor
+                .constraint(equalTo: bottomAnchor,
+                            constant: 50),
+            
+            numDirectStack.leadingAnchor
+                .constraint(equalTo: busStopNameLabel.leadingAnchor),
+            numDirectStack.topAnchor
                 .constraint(equalTo: busStopNameLabel.bottomAnchor,
-                           constant: 5)
-
-            ])
-
-        
+                            constant: 5)
+            
+        ])
     }
 }

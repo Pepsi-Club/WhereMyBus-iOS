@@ -23,8 +23,8 @@ extension Project {
         hasResource: Bool = false,
         appExtensionTarget: [Target] = [],
         packages: [Package] = [],
-        appExtentionPath: [Path] = [],
-        dependencies: [TargetDependency]
+        dependencies: [TargetDependency],
+        coreDataModel: [CoreDataModel] = []
     ) -> Self {
         var schemes = [Scheme]()
         var targets = [Target]()
@@ -56,7 +56,8 @@ extension Project {
                 entitlements: entitlements,
                 hasResource: hasResource,
                 productType: moduleType.product,
-                dependencies: dependencies
+                dependencies: dependencies,
+                coreDataModel: coreDataModel
             )
         case .feature:
             targetModule = frameworkTarget(
@@ -65,7 +66,8 @@ extension Project {
                 hasResource: hasResource,
                 productType: moduleType.product,
                 isPresentation: true,
-                dependencies: dependencies
+                dependencies: dependencies,
+                coreDataModel: coreDataModel
             )
             let demoTarget = demoAppTarget(
                 name: name,
@@ -140,7 +142,8 @@ extension Project {
         hasResource: Bool,
         productType: Product,
         isPresentation: Bool = false,
-        dependencies: [TargetDependency]
+        dependencies: [TargetDependency],
+        coreDataModel: [CoreDataModel]
     ) -> Target {
         let scripts: [TargetScript] = isPresentation ?
         [.featureSwiftLint] : [.swiftLint]
@@ -155,7 +158,8 @@ extension Project {
             resources: hasResource ? ["Resources/**"] : nil,
             entitlements: entitlements,
             scripts: scripts,
-            dependencies: dependencies
+            dependencies: dependencies,
+            coreDataModels: coreDataModel
         )
     }
     

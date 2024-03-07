@@ -27,7 +27,8 @@ public final class BusStopViewModel: ViewModel {
     public func transform(input: Input) -> Output {
         let output = Output(
             busStopArrivalInfoResponse: .init(),
-            favorites: .init(value: .init([] ) )
+            favorites: .init(value: .init([])),
+            isRefreshing: .init()
         )
         
         input.viewWillAppearEvent
@@ -38,14 +39,37 @@ public final class BusStopViewModel: ViewModel {
                         request: viewModel.fetchData
                     )
                 }
-            ).disposed(by: disposeBag)
+            )
+            .disposed(by: disposeBag)
         
         input.mapBtnTapEvent
             .withUnretained(self)
-            .subscribe { viewModel, _ in
-                // TODO: 수정필요
+            .subscribe(onNext: { viewModel, busStopArrival in
+                // 여기서 강묵님쪽으로 데이터 넘겨주면 될듯
                 viewModel.coordinator.busStopMapLocation()
-            }
+            })
+            .disposed(by: disposeBag)
+        
+        input.refreshLoading
+            .withUnretained(self)
+            .subscribe(onNext: { viewModel, bool in
+                if bool {
+                    viewModel.useCase.fetchBusArrivals(
+                        request: viewModel.fetchData
+                    )
+                    output.isRefreshing.onNext(false)
+                }
+            })
+            .disposed(by: disposeBag)
+        
+        input.likeBusBtnTapEvent
+            .withUnretained(self)
+            .subscribe(onNext: { viewModel, bus in
+                // MARK: useCase.addFavorite 함수
+                // 를 arsId와 busArrivalInfoResponse를 받아서 repository에 넣는 방법으로 생각했는데
+                // busStop을 어떻게 받아야할지 ..
+//                viewModel.useCase.addFavorite(busStop: "", bus: bus)
+            })
             .disposed(by: disposeBag)
         
         useCase.busStopSection
@@ -55,7 +79,6 @@ public final class BusStopViewModel: ViewModel {
             .disposed(by: disposeBag)
         
         useCase.favorites
-            .map { $0.busStops }
             .bind(to: output.favorites)
             .disposed(by: disposeBag)
         
@@ -66,15 +89,18 @@ public final class BusStopViewModel: ViewModel {
 extension BusStopViewModel {
     public struct Input {
         let viewWillAppearEvent: Observable<Void>
-        let likeBusBtnTapEvent: Observable<IndexPath>
-        let alarmBtnTapEvent: Observable<IndexPath>
-        let mapBtnTapEvent: Observable<Int>
+        let likeBusBtnTapEvent: Observable<BusArrivalInfoResponse>
+        let alarmBtnTapEvent: Observable<BusArrivalInfoResponse>
+        let mapBtnTapEvent: Observable<BusStopArrivalInfoResponse>
+        let refreshLoading: Observable<Bool>
     }
     
     public struct Output {
         var busStopArrivalInfoResponse
-        : PublishSubject<[BusStopArrivalInfoResponse]>
+        : PublishSubject<BusStopArrivalInfoResponse>
         var favorites
-        : BehaviorSubject<[BusStopArrivalInfoResponse]>
+        : BehaviorSubject<[FavoritesBusStopResponse]>
+        var isRefreshing
+        : PublishSubject<Bool>
     }
 }

@@ -9,23 +9,23 @@
 import Foundation
 
 public struct BusStopInfoResponse {
-    public let name: String
-    public let busStopId: String
+    public let busStopName: String
+    public let busStopId: String // 기존 ID가 아닌 5자리 ID(busStopNum)
+    public let direction: String? // 데이터 보충 전까진 옵셔널로 사용
     public let longitude: String
     public let latitude: String
-    public let busStopNum: String
     
     public init(
-        name: String, 
+        busStopName: String,
         busStopId: String,
+        direction: String?,
         longitude: String,
-        latitude: String,
-        busStopNum: String
+        latitude: String
     ) {
-        self.name = name
+        self.busStopName = busStopName
         self.busStopId = busStopId
+        self.direction = direction
         self.longitude = longitude
         self.latitude = latitude
-        self.busStopNum = busStopNum
     }
 }

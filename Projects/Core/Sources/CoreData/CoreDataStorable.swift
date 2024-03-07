@@ -9,5 +9,4 @@
 import Foundation
 
 public protocol CoreDataStorable {
-    static var coreDataType: CoreDataModelObject.Type { get }
 }

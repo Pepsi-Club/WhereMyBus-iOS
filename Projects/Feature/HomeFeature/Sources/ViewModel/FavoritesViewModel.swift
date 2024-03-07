@@ -33,7 +33,7 @@ public final class FavoritesViewModel: ViewModel {
                     guard let favorites = try? viewModel.useCase.favorites
                         .value()
                     else { return }
-                    if favorites.busStops.isEmpty {
+                    if favorites.isEmpty {
                         output.favoritesState.onNext(.emptyFavorites)
                     } else {
                         output.favoritesState.onNext(.fetching)
@@ -82,7 +82,7 @@ public final class FavoritesViewModel: ViewModel {
             .withUnretained(self)
             .subscribe(
                 onNext: { viewModel, favorites in
-                    if favorites.busStops.isEmpty {
+                    if favorites.isEmpty {
                         output.favoritesState.onNext(.emptyFavorites)
                     } else {
                         output.favoritesState.onNext(.fetching)

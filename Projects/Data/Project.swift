@@ -8,5 +8,8 @@ let project = Project.makeProject(
     dependencies: [
         .networkService,
         .coreDataService
+    ],
+    coreDataModel: [
+        .init("../App/Resources/Model.xcdatamodeld")
     ]
 )

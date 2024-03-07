@@ -17,9 +17,8 @@ public final class BusTableViewCell: UITableViewCell {
     
     private let firstArrivalInfoView = ArrivalInfoView()
     private let secondArrivalInfoView = ArrivalInfoView()
-    //    public let starBtnTapEvent = PublishSubject<Void>()
     public let starBtnTapEvent = BehaviorSubject<Bool>(value: false)
-    public let alarmBtnTapEvent = PublishSubject<Void>()
+    public let alarmBtnTapEvent = BehaviorSubject<Bool>(value: false)
     
     private var favoriteToggle = false
     private var alarmToggle = false
@@ -116,6 +115,7 @@ public final class BusTableViewCell: UITableViewCell {
         alarmToggle = alarm
         
         changeFavBtnColor(isFavoriteOn: favoriteToggle)
+        changeAlarmBtnColor(isAlarmOn: alarmToggle)
     }
     
     public func updateBusRoute(
@@ -173,9 +173,16 @@ public final class BusTableViewCell: UITableViewCell {
             .disposed(by: disposeBag)
         
         alarmBtn.rx.tap
+            .withUnretained(self)
             .subscribe(onNext: { [weak self] _ in
-                self?.alarmBtnTapEvent.onNext(())
-                print(" 알람 버튼 작동 ")
+                guard let self else { return }
+                
+                alarmToggle = !alarmToggle
+                
+                changeAlarmBtnColor(isAlarmOn: alarmToggle)
+                
+                self.alarmBtnTapEvent.onNext((alarmToggle))
+                
             })
             .disposed(by: disposeBag)
     }
@@ -195,6 +202,21 @@ public final class BusTableViewCell: UITableViewCell {
         : DesignSystemAsset.mainColor.color
         
         starBtn.configuration = config
+    }
+    
+    private func changeAlarmBtnColor(isAlarmOn: Bool) {
+        guard var config = alarmBtn.configuration
+        else { return }
+        
+        config.image = isAlarmOn
+        ? UIImage(systemName: "alarm.waves.left.and.right.fill")
+        : UIImage(systemName: "alarm")
+        
+        config.baseForegroundColor = isAlarmOn
+        ? DesignSystemAsset.carrotOrange.color
+        : DesignSystemAsset.mainColor.color
+        
+        alarmBtn.configuration = config
     }
 }
 

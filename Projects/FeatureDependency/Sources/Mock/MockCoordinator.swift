@@ -65,4 +65,8 @@ extension MockCoordinator: AddRegularAlarmCoordinator {
         
     }
 }
+
+extension MockCoordinator: NearMapCoordinator {
+    
+}
 #endif

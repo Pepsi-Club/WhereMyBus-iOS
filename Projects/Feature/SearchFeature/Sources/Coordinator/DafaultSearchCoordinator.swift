@@ -12,8 +12,7 @@ public final class DefaultSearchCoordinator: SearchCoordinator {
         parent: Coordinator?,
         navigationController: UINavigationController,
         coordinatorProvider: CoordinatorProvider
-    )
-    {
+    ) {
         self.navigationController = navigationController
         self.parent = parent
         self.coordinatorProvider = coordinatorProvider
