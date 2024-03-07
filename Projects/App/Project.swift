@@ -19,7 +19,7 @@ let project = Project.makeProject(
     packages: [
         .remote(
             url: "https://github.com/firebase/firebase-ios-sdk",
-            requirement: .branch("main")
+            requirement: .upToNextMajor(from: "10.22.0")
         )
     ],
     dependencies: [
