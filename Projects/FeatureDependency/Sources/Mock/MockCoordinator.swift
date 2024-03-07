@@ -37,6 +37,23 @@ public final class MockCoordinator: Coordinator {
     }
 }
 
+extension MockCoordinator: HomeCoordinator {
+    public func updateFavoritesState(isEmpty: Bool) {
+        
+    }
+    
+    public func startBusStopFlow(stationId: String) {
+        let coordinator = MockCoordinator(
+            testMessage: "BusStop",
+            navigationController: navigationController
+        )
+        coordinator.start()
+        childs.append(coordinator)
+    }
+    
+    
+}
+
 extension MockCoordinator: SearchCoordinator {
     public func startBusStopFlow() {
     

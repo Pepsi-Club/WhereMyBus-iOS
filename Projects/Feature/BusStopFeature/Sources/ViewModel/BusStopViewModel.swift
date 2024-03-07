@@ -75,6 +75,7 @@ public final class BusStopViewModel: ViewModel {
         input.navigationBackBtnTapEvent
             .withUnretained(self)
             .subscribe { viewModel, _ in
+                print("눌리나요")
                 viewModel.coordinator.popVC()
             }
             .disposed(by: disposeBag)

@@ -8,35 +8,32 @@ public final class DefaultBusStopCoordinator: BusStopCoordinator {
     public var childs: [Coordinator] = []
     public var navigationController: UINavigationController
     public var coordinatorProvider: CoordinatorProvider
-    private var arrivalInfoData: ArrivalInfoRequest
+    private var busStopId: String
     
     public init(
         parent: Coordinator?,
         navigationController: UINavigationController,
-        arrivalInfoData: ArrivalInfoRequest,
+        busStopId: String,
         coordinatorProvider: CoordinatorProvider
     ) {
         self.parent = parent
         self.navigationController = navigationController
-        self.arrivalInfoData = arrivalInfoData
+        self.busStopId = busStopId
         self.coordinatorProvider = coordinatorProvider
     }
     
     public func start() {
+        let fetchData = ArrivalInfoRequest(busStopId: busStopId)
         let busstopViewController = BusStopViewController(
             viewModel: BusStopViewModel(
                 coordinator: self,
-                fetchData: arrivalInfoData
+                fetchData: fetchData
             )
         )
         navigationController.setViewControllers(
             [busstopViewController],
             animated: false
         )
-    }
-    
-    public func finish() {
-        
     }
 }
 

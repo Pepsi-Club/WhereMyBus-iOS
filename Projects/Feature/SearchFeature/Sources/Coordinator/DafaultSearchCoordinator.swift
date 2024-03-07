@@ -37,9 +37,7 @@ public final class DefaultSearchCoordinator: SearchCoordinator {
         let busStopCoordinator =
         coordinatorProvider.makeBusStopCoordinator(
             navigationController: navigationController,
-            arrivalInfoData: .init(
-                busStopId: ""
-            )
+            busStopId: ""
         )
         
         childs.append(busStopCoordinator)

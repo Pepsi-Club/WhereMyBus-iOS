@@ -166,9 +166,13 @@ extension BusStopInfoHeaderView {
     private func configureLayouts() {
         
         NSLayoutConstraint.activate([
-            navigationBtn.topAnchor.constraint(equalTo: topAnchor),
+            navigationBtn.topAnchor.constraint(
+                equalTo: topAnchor,
+                constant: 60
+            ),
             navigationBtn.leadingAnchor.constraint(
-                equalTo: leadingAnchor
+                equalTo: leadingAnchor,
+                constant: 15
             ),
             totalStack.leadingAnchor.constraint(
                 equalTo: leadingAnchor
@@ -177,7 +181,8 @@ extension BusStopInfoHeaderView {
                 equalTo: trailingAnchor
             ),
             totalStack.topAnchor.constraint(
-                equalTo: navigationBtn.bottomAnchor
+                equalTo: navigationBtn.bottomAnchor,
+                constant: -50
             ),
             btnStack.topAnchor.constraint(
                 equalTo: totalStack.bottomAnchor,

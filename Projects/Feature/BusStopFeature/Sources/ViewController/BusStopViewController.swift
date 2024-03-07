@@ -51,8 +51,6 @@ public final class BusStopViewController: UIViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .white
-        
         configureUI()
         bind()
         configureDataSource()
@@ -77,15 +75,6 @@ public final class BusStopViewController: UIViewController {
             navigationBackBtnTapEvent
             : headerView.navigationBtn.rx.tap.asObservable()
         )
-        
-        rx.methodInvoked(#selector(UIViewController.viewWillAppear))
-            .subscribe(onNext: { [weak self] _ in
-                guard let naviController = self?.navigationController
-                else { return }
-                
-                naviController.navigationBar.isHidden = true
-            })
-            .disposed(by: disposeBag)
         
         let output = viewModel.transform(input: input)
         bindTableView(output: output)
@@ -239,6 +228,9 @@ public final class BusStopViewController: UIViewController {
 
 extension BusStopViewController {
     public func configureUI() {
+        view.backgroundColor = .white
+        navigationController?.isNavigationBarHidden = true
+        
         view.addSubview(scrollView)
         
         [scrollView, contentView, headerView, busStopTableView]
@@ -258,10 +250,10 @@ extension BusStopViewController {
         
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(
-                equalTo: view.safeAreaLayoutGuide.topAnchor
+                equalTo: view.topAnchor
             ),
             scrollView.bottomAnchor.constraint(
-                equalTo: view.safeAreaLayoutGuide.bottomAnchor
+                equalTo: view.bottomAnchor
             ),
             scrollView.leadingAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.leadingAnchor
@@ -271,7 +263,8 @@ extension BusStopViewController {
             ),
             
             contentView.topAnchor.constraint(
-                equalTo: scrollView.topAnchor
+                equalTo: scrollView.topAnchor,
+                constant: -60
             ),
             contentView.bottomAnchor.constraint(
                 equalTo: scrollView.contentLayoutGuide.bottomAnchor
