@@ -12,6 +12,7 @@ import FeatureDependency
 import SearchFeature
 import AlarmFeature
 import BusStopFeature
+import NearMapFeature
 import Domain
 
 final class DefaultCoordinatorProvider: CoordinatorProvider {
@@ -23,7 +24,8 @@ final class DefaultCoordinatorProvider: CoordinatorProvider {
         DefaultBusStopCoordinator(
             parent: nil,
             navigationController: navigationController,
-            arrivalInfoData: arrivalInfoData
+            arrivalInfoData: arrivalInfoData,
+            coordinatorProvider: self
         )
     }
     
@@ -43,6 +45,15 @@ final class DefaultCoordinatorProvider: CoordinatorProvider {
         DefaultAddRegularAlarmCoordinator(
             navigationController: navigationController,
             coordinatorProvider: self
+        )
+    }
+    
+    func makeBusStopMapCoordinator(
+        navigationController: UINavigationController
+    ) -> NearMapCoordinator {
+        DefaultNearMapCoordinator(
+            parent: nil,
+            navigationController: navigationController
         )
     }
 }
