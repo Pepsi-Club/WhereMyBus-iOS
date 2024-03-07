@@ -33,6 +33,10 @@ extension AppDelegate {
         )
         
         DIContainer.register(
+            type: SearchUseCase.self,
+            DefaultSearchUseCase(stationListRepository: stationListRepository)
+        )
+        DIContainer.register(
             type: BusStopUseCase.self,
             DefaultBusStopUseCase(
                 busStopArrivalInfoRepository: busStopArrivalInfoRepository,
@@ -58,6 +62,10 @@ extension AppDelegate {
     
     var busStopArrivalInfoRepository: BusStopArrivalInfoRepository {
         DefaultBusStopArrivalInfoRepository(networkService: networkService)
+    }
+    
+    var stationListRepository: StationListRepository {
+        DefaultStationListRepository()
     }
 }
 

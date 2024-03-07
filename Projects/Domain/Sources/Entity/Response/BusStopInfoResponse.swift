@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct BusStopInfoResponse {
+public struct BusStopInfoResponse: Hashable {
     public let busStopName: String
     public let busStopId: String // 기존 ID가 아닌 5자리 ID(busStopNum)
     public let direction: String? // 데이터 보충 전까진 옵셔널로 사용

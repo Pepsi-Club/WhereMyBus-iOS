@@ -38,7 +38,9 @@ public final class MockCoordinator: Coordinator {
 }
 
 extension MockCoordinator: SearchCoordinator {
+    public func startBusStopFlow() {
     
+    }
 }
 
 extension MockCoordinator: BusStopCoordinator {
