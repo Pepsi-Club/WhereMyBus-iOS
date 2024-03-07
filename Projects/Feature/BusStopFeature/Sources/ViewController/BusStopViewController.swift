@@ -4,21 +4,22 @@ import Domain
 import DesignSystem
 
 import RxSwift
-import RxCocoa
 
 public final class BusStopViewController: UIViewController {
     private let viewModel: BusStopViewModel
     
     private let disposeBag = DisposeBag()
-    private let mapBtnTapEvent = PublishSubject<Int>()
-    private let likeBusBtnTapEvent = PublishSubject<IndexPath>()
-    private let alarmBtnTapEvent = PublishSubject<IndexPath>()
+    private let mapBtnTapEvent = PublishSubject<BusStopArrivalInfoResponse>()
+    private let likeBusBtnTapEvent = PublishSubject<BusArrivalInfoResponse>()
+    private let alarmBtnTapEvent = PublishSubject<BusArrivalInfoResponse>()
+    private let refresh = PublishSubject<Bool>()
     
     private var dataSource: BusStopDataSource!
     private var snapshot: BusStopSnapshot!
     
     private let headerView: BusStopInfoHeaderView = BusStopInfoHeaderView()
     private let scrollView: UIScrollView = UIScrollView()
+    private let refreshControl = UIRefreshControl()
     private let contentView = UIView()
     private lazy var busStopTableView: UITableView = {
         let table = UITableView(frame: .zero, style: .insetGrouped)
@@ -52,10 +53,10 @@ public final class BusStopViewController: UIViewController {
         
         view.backgroundColor = .white
         
-        configureDataSource()
-        bind()
         configureUI()
-        
+        bind()
+        configureDataSource()
+        configureRefreshControl()
     }
     
     public override func viewDidLayoutSubviews() {
@@ -67,10 +68,12 @@ public final class BusStopViewController: UIViewController {
         let input = BusStopViewModel.Input(
             viewWillAppearEvent: rx
                 .methodInvoked(#selector(UIViewController.viewWillAppear))
-                .map { _ in },
+                .map { _ in }
+                .debounce(.seconds(1), scheduler: MainScheduler.asyncInstance),
             likeBusBtnTapEvent: likeBusBtnTapEvent.asObservable(),
             alarmBtnTapEvent: alarmBtnTapEvent.asObservable(),
-            mapBtnTapEvent: mapBtnTapEvent.asObservable()
+            mapBtnTapEvent: mapBtnTapEvent.asObservable(),
+            refreshLoading: refresh.asObservable()
         )
         
         rx.methodInvoked(#selector(UIViewController.viewWillAppear))
@@ -84,6 +87,8 @@ public final class BusStopViewController: UIViewController {
         
         let output = viewModel.transform(input: input)
         bindTableView(output: output)
+        bindMapBtn(output: output)
+        bindRefreshing(output: output)
     }
     
     private func bindTableView(output: BusStopViewModel.Output) {
@@ -92,33 +97,58 @@ public final class BusStopViewController: UIViewController {
             .withUnretained(self)
             .subscribe(
                 onNext: { viewController, response in
-                    response.forEach { res in
-                        // UILabel -> optional 값 들어올 수 있음. text!
-                        viewController.headerView.bindUI(
-                            routeId: res.busStopId,
-                            busStopName: res.busStopName,
-                            nextStopName: res.direction
-                        )
-                    }
-                    
+                    viewController.headerView.bindUI(
+                        routeId: response.busStopId,
+                        busStopName: response.busStopName,
+                        nextStopName: response.direction
+                    )
                     viewController.updateSnapshot(busStopResponse: response)
                 }
             )
             .disposed(by: disposeBag)
     }
     
-    private func updateSnapshot(busStopResponse: [BusStopArrivalInfoResponse]) {
-        snapshot = .init()
-        
-        for response in busStopResponse {
-            for busInfo in response.buses {
-                let busTypeSection = busInfo.busType
-                if !snapshot.sectionIdentifiers.contains(busTypeSection) {
-                    snapshot.appendSections([busTypeSection])
+    private func bindMapBtn(output: BusStopViewModel.Output) {
+        output.busStopArrivalInfoResponse
+            .withUnretained(self)
+            .subscribe(
+                onNext: { viewController, response in
+                    viewController.headerView.mapBtn.rx.tap
+                        .take(1)
+                        .withUnretained(self)
+                        .map { _ in
+                            // 두번 열리는 이유를 모르겠음 -> 그래서 take(1)을 통해 한번만 구독 될 수 있게.
+                            // 여기서 강묵님 쪽으로 데이터 넘겨주면 될 듯
+                            print("🤢 \(response) ")
+                            return response
+                        }
+                        .bind(to: self.mapBtnTapEvent)
+                        .disposed(by: self.disposeBag)
                 }
-                snapshot.appendItems([busInfo], toSection: busTypeSection)
+            )
+            .disposed(by: disposeBag)
+    }
+    private func bindRefreshing(output: BusStopViewModel.Output) {
+        output.isRefreshing
+            .observe(on: MainScheduler.instance)
+            .subscribe { [weak self] bool in
+                print("output - \(bool)")
+                guard let self = self else { return }
+                self.refreshControl.endRefreshing()
             }
+            .disposed(by: disposeBag)
+    }
+    
+    private func updateSnapshot(busStopResponse: BusStopArrivalInfoResponse) {
+        snapshot = .init()
+        for busInfo in busStopResponse.buses {
+            let busTypeSection = busInfo.busType
+            if !snapshot.sectionIdentifiers.contains(busTypeSection) {
+                snapshot.appendSections([busTypeSection])
+            }
+            snapshot.appendItems([busInfo], toSection: busTypeSection)
         }
+        
         dataSource.apply(snapshot, animatingDifferences: false)
     }
     
@@ -127,26 +157,12 @@ public final class BusStopViewController: UIViewController {
             tableView: busStopTableView,
             cellProvider: { [weak self] tableView, indexPath, response in
                 guard let self = self,
-                let cell = self.configureCell(
-                    tableView: tableView,
-                    indexPath: indexPath,
-                    response: response
-                )
+                      let cell = self.configureCell(
+                        tableView: tableView,
+                        indexPath: indexPath,
+                        response: response
+                      )
                 else { return UITableViewCell() }
-                
-                cell.starBtnTapEvent
-                    .map { _ in
-                        return indexPath
-                    }
-                    .bind(to: self.likeBusBtnTapEvent)
-                    .disposed(by: cell.disposeBag)
-                
-                cell.alarmBtnTapEvent
-                    .map { _ in
-                        return indexPath
-                    }
-                    .bind(to: self.alarmBtnTapEvent)
-                    .disposed(by: cell.disposeBag)
                 
                 return cell
                 
@@ -159,50 +175,63 @@ public final class BusStopViewController: UIViewController {
         indexPath: IndexPath,
         response: BusArrivalInfoResponse
     ) -> BusTableViewCell? {
-        guard let cell = tableView.dequeueReusableCell(
+        let cell = tableView.dequeueReusableCell(
             withIdentifier: BusTableViewCell.identifier,
             for: indexPath
         ) as? BusTableViewCell
-        else { return nil }
-        let splittedMsg1 = response.firstArrivalTime
-            .components(separatedBy: "[")
-        let splittedMsg2 = response.secondArrivalTime
-            .components(separatedBy: "[")
-        let firstArrivalTime = splittedMsg1[0]
-            .components(separatedBy: "분")[0]
-        let secondArrivalTime = splittedMsg2[0]
-            .components(separatedBy: "분")[0]
-        var firstArrivalRemaining = ""
-        var secondArrivalRemaining = ""
-        if splittedMsg1.count > 1 {
-            firstArrivalRemaining = splittedMsg1[1]
-            firstArrivalRemaining.removeLast() // "]" 제거
-        }
-        if splittedMsg2.count > 1 {
-            secondArrivalRemaining = splittedMsg2[1]
-            secondArrivalRemaining.removeLast() // "]" 제거
-        }
         
-        cell.updateBtn(
+        cell?.updateBtn(
             favorite: response.isFavorites,
             alarm: response.isAlarmOn
         )
-        cell.updateBusRoute(
+        cell?.updateBusRoute(
             routeName: response.busName,
-            nextRouteName: "강남구청역 방면"
+            nextRouteName: response.nextStation
         )
-        cell.updateFirstArrival(
-            firstArrivalTime: firstArrivalTime,
-            firstArrivalRemaining: firstArrivalRemaining
+        cell?.updateFirstArrival(
+            firstArrivalTime: response.firstArrivalTime,
+            firstArrivalRemaining: response.firstArrivalRemaining
         )
-        cell.updateSecondArrival(
-            secondArrivalTime: secondArrivalTime,
-            secondArrivalRemaining: secondArrivalRemaining
+        cell?.updateSecondArrival(
+            secondArrivalTime: response.secondArrivalTime,
+            secondArrivalRemaining: response.secondArrivalRemaining
         )
         
-        cell.busNumber.textColor = response.busType.toColor
+        cell?.busNumber.textColor = response.busType.toColor
+        
+        cell?.starBtnTapEvent
+            .map { _ in
+                return response
+            }
+            .bind(to: self.likeBusBtnTapEvent)
+            .disposed(by: cell!.disposeBag)
+        
+        cell?.alarmBtnTapEvent
+            .map { _ in
+                return response
+            }
+            .bind(to: self.alarmBtnTapEvent)
+            .disposed(by: cell!.disposeBag)
         
         return cell
+    }
+    
+    private func configureRefreshControl() {
+        refreshControl.endRefreshing()
+        scrollView.refreshControl = refreshControl
+        
+        refreshControl.rx.controlEvent(.valueChanged)
+            .withUnretained(self)
+            .subscribe(onNext: { viewC, _ in
+                viewC.refresh.onNext(true)
+            })
+            .disposed(by: disposeBag)
+        
+        refreshControl.tintColor = DesignSystemAsset.mainColor.color
+        refreshControl.attributedTitle = NSAttributedString(
+            string: "당겨서 새로고침",
+            attributes: [.foregroundColor: DesignSystemAsset.mainColor.color]
+        )
     }
 }
 

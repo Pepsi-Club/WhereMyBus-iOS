@@ -15,7 +15,7 @@ public final class DefaultBusStopUseCase: BusStopUseCase {
     private let busStopArrivalInfoRepository: BusStopArrivalInfoRepository
     private let favoritesRepository: FavoritesRepository
     
-    public let busStopSection = PublishSubject<[BusStopArrivalInfoResponse]>()
+    public let busStopSection = PublishSubject<BusStopArrivalInfoResponse>()
     public var favorites = BehaviorSubject<[FavoritesBusStopResponse]>(
         value: .init([])
     )
@@ -36,7 +36,7 @@ public final class DefaultBusStopUseCase: BusStopUseCase {
         let busStops = busStopArrivalInfoRepository.fetchArrivalList(
             busStopId: request.busStopId
         )
-        .map { [$0] }
+        .map { $0 }
         Observable.combineLatest(busStops, favorites)
             .withUnretained(self)
             .map { useCase, arg1 in
@@ -63,33 +63,27 @@ public final class DefaultBusStopUseCase: BusStopUseCase {
     }
     // MARK: - 필터링 후 [BusStopArrivalInfoRepsonse] 반환
     private func filterFavorites(
-        responses: [BusStopArrivalInfoResponse],
+        responses: BusStopArrivalInfoResponse,
         favorites: [FavoritesBusStopResponse]
-    ) -> [BusStopArrivalInfoResponse] {
+    ) -> BusStopArrivalInfoResponse {
         var busStops = responses
         
-        for response in responses {
-            guard let favorite = favorites.first(
+        guard let favorite = favorites.first(
+            where: {
+                $0.busStopId == responses.busStopId
+            }
+        ) else {
+            return busStops // favorites에 해당하는 것이 없으면 그대로 반환
+        }
+        
+        for favoriteBusId in favorite.busIds {
+            if let indexInResponse = responses.buses.firstIndex(
                 where: {
-                    $0.busStopId == response.busStopId
+                    $0.busId == favoriteBusId
                 }
-            )
-            else { continue }
-            
-            for favoriteBusId in favorite.busIds {
-                if let indexInResponse = response.buses.firstIndex(
-                    where: {
-                        $0.busId == favoriteBusId
-                    }
-                ),
-                   let indexInBusStops = busStops.firstIndex(
-                    where: {
-                        $0.busStopId == response.busStopId
-                    }
-                   ) {
-                    busStops[indexInBusStops].buses[indexInResponse].isFavorites
-                    = !response.buses[indexInResponse].isFavorites
-                }
+            ) {
+                busStops.buses[indexInResponse].isFavorites
+                = !busStops.buses[indexInResponse].isFavorites
             }
         }
         
@@ -99,5 +93,15 @@ public final class DefaultBusStopUseCase: BusStopUseCase {
     }
     
     // MARK: - 즐찾 추가 및 해제
+    public func addFavorite(
+        busStop: String,
+        bus: BusArrivalInfoResponse
+    ) { 
+        print("\(busStop) | \(bus)")
+    }
+    
+    public func deleteFavorite() {
+        
+    }
     
 }

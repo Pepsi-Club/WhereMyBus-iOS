@@ -23,4 +23,8 @@ public protocol CoordinatorProvider {
     func makeAddRegularAlarmCoordinator(
         navigationController: UINavigationController
     ) -> AddRegularAlarmCoordinator
+    
+    func makeBusStopMapCoordinator(
+        navigationController: UINavigationController
+    ) -> NearMapCoordinator
 }

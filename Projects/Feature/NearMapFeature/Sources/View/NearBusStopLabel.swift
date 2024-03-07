@@ -44,7 +44,7 @@ public final class NearBusStopLabel: UIView {
 	
 	lazy var distanceFromBusStopLabel: UILabel = {
 		let label = UILabel()
-		label.text = "현재위치에서 1m"
+		label.text = "현재위치에서 100m"
 		label.font = DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(
 			size: 13
 		)

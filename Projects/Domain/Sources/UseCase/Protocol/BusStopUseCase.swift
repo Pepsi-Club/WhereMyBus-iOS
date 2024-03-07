@@ -12,8 +12,10 @@ import RxSwift
 
 public protocol BusStopUseCase {
     var busStopSection
-    : PublishSubject<[BusStopArrivalInfoResponse]> { get }
+    : PublishSubject<BusStopArrivalInfoResponse> { get }
     var favorites: BehaviorSubject<[FavoritesBusStopResponse]> { get }
     
     func fetchBusArrivals(request: ArrivalInfoRequest)
+    func addFavorite(busStop: String, bus: BusArrivalInfoResponse)
+    func deleteFavorite()
 }

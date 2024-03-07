@@ -36,6 +36,13 @@ extension AppDelegate {
             type: SearchUseCase.self,
             DefaultSearchUseCase(stationListRepository: stationListRepository)
         )
+        DIContainer.register(
+            type: BusStopUseCase.self,
+            DefaultBusStopUseCase(
+                busStopArrivalInfoRepository: busStopArrivalInfoRepository,
+                favoritesRepository: favoritesRepository
+            )
+        )
     }
 }
 
