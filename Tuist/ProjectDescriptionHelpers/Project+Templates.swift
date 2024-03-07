@@ -21,6 +21,7 @@ extension Project {
         entitlementsPath: Path? = nil,
         isTestable: Bool = false,
         hasResource: Bool = false,
+        appExtensionTarget: [Target] = [],
         packages: [Package] = [],
         dependencies: [TargetDependency],
         coreDataModel: [CoreDataModel] = []
@@ -44,6 +45,9 @@ extension Project {
                 dependencies: [.target(targetModule)]
             )
             targets.append(uiTestsTarget)
+            appExtensionTarget.forEach {
+                targets.append($0)
+            }
             schemes.append(.moduleScheme(name: name))
             schemes.append(.uiTestsScheme(name: name))
         case .dynamicFramework, .staticFramework:
@@ -159,6 +163,26 @@ extension Project {
         )
     }
     
+    public static func appExtensionTarget(
+        name: String,
+        plist: InfoPlist?,
+        entitlements: Entitlements? = nil,
+        dependencies: [TargetDependency]
+    ) -> Target {
+        return Target(
+            name: name,
+            platform: .iOS,
+            product: .appExtension,
+            bundleId: .bundleID + ".\(name)",
+            deploymentTarget: .deploymentTarget,
+            infoPlist: plist,
+            sources: ["\(name)/**"],
+            entitlements: entitlements,
+            scripts: [.swiftLint],
+            dependencies: dependencies
+        )
+    }
+    
     private static func unitTestTarget(
         name: String,
         isFeature: Bool = false,
@@ -177,6 +201,7 @@ extension Project {
             settings: .test
         )
     }
+    
     private static func uiTestTarget(
         name: String,
         isFeature: Bool = false,

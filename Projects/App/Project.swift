@@ -7,8 +7,24 @@ let project = Project.makeProject(
     moduleType: .app,
     entitlementsPath: .relativeToManifest("App.entitlements"),
     hasResource: true,
+    appExtensionTarget: [
+        Project.appExtensionTarget(
+            name: "NotificationExtension",
+            plist: .notificationInfoPlist,
+            dependencies: [
+                .data,
+            ]
+        )
+    ],
+    packages: [
+        .remote(
+            url: "https://github.com/firebase/firebase-ios-sdk",
+            requirement: .upToNextMajor(from: "10.22.0")
+        )
+    ],
     dependencies: [
         .mainFeature,
         .data,
+        .package(product: "FirebaseMessaging"),
     ]
 )

@@ -7,19 +7,19 @@ public final class DefaultBusStopCoordinator: BusStopCoordinator {
     public var parent: Coordinator?
     public var childs: [Coordinator] = []
     public var navigationController: UINavigationController
-//    public var coordinatorProvider: CoordinatorProvider
+    public var coordinatorProvider: CoordinatorProvider
     private var arrivalInfoData: ArrivalInfoRequest
     
     public init(
         parent: Coordinator?,
         navigationController: UINavigationController,
-        arrivalInfoData: ArrivalInfoRequest
-//        coordinatorProvider: CoordinatorProvider
+        arrivalInfoData: ArrivalInfoRequest,
+        coordinatorProvider: CoordinatorProvider
     ) {
         self.parent = parent
         self.navigationController = navigationController
         self.arrivalInfoData = arrivalInfoData
-//        self.coordinatorProvider = coordinatorProvider
+        self.coordinatorProvider = coordinatorProvider
     }
     
     public func start() {
@@ -43,12 +43,12 @@ public final class DefaultBusStopCoordinator: BusStopCoordinator {
 extension DefaultBusStopCoordinator {
     // 정류장 위치뷰로 이동하기 위한
     public func busStopMapLocation() {
-//        let nearMapCoordinator = coordinatorProvider
-//            .makeBusStopMapCoordinator(
-//                navigationController: navigationController
-//            )
-//        
-//        childs.append(nearMapCoordinator)
-//        nearMapCoordinator.start()
+        let nearMapCoordinator = coordinatorProvider
+            .makeBusStopMapCoordinator(
+                navigationController: navigationController
+            )
+        
+        childs.append(nearMapCoordinator)
+        nearMapCoordinator.start()
     }
 }

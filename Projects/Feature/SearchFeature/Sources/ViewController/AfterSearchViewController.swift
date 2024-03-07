@@ -10,6 +10,7 @@ import UIKit
 
 import Core
 import DesignSystem
+import Domain
 
 import RxSwift
 import RxCocoa
@@ -105,7 +106,8 @@ public final class AfterSearchViewController: UIViewController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        
+        bindViewModel()
+
         view.backgroundColor = .systemBackground
         
         [searchTextFieldView, backBtn, textFieldStack, recentSearchlabel,
@@ -163,12 +165,21 @@ public final class AfterSearchViewController: UIViewController {
                 equalTo: view.trailingAnchor, constant: -15),
            ])
        }
+    private func bindViewModel() {
+        // 엔터 이벤트를 뷰모델에 전달
+        searchTextFieldView.rx.controlEvent(.editingDidEndOnExit)
+            .bind(to: viewModel.enterPressedSubject)
+            .disposed(by: disposeBag)
+        
+        print("전달완")
+    }
 }
 
-extension SearchViewController: UITextFieldDelegate {
+extension AfterSearchViewController: UITextFieldDelegate {
 
     public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
+        print("입력완")
         return true
     }
 

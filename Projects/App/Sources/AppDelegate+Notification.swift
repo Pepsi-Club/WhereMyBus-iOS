@@ -9,9 +9,29 @@
 import UIKit
 import UserNotifications
 
+import Firebase
+import FirebaseMessaging
+
 extension AppDelegate: UNUserNotificationCenterDelegate {
-    func configureNotification() {
+    func configureNotification(application: UIApplication) {
+        guard let filePath = Bundle.main.path(
+            forResource: "GoogleService-Info", 
+            ofType: "plist"
+        ),
+              let options = FirebaseOptions(contentsOfFile: filePath)
+        else { return }
+        
+        FirebaseApp.configure(options: options)
         UNUserNotificationCenter.current().delegate = self
+        application.registerForRemoteNotifications()
+        Messaging.messaging().delegate = self
+    }
+    
+    func application(
+        _ application: UIApplication,
+        didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
+    ) {
+        Messaging.messaging().apnsToken = deviceToken
     }
     
     func userNotificationCenter(
@@ -24,17 +44,23 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         completionHandler([.banner, .badge, .sound])
     }
     
-    func application(
-        _ application: UIApplication,
-        didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
-    ) {
-        let token = deviceToken.map { String(format: "%02.2hhx", $0) }.joined()
-    }
-    
     func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         didReceive response: UNNotificationResponse,
         withCompletionHandler completionHandler: @escaping () -> Void) {
         completionHandler()
+    }
+}
+
+extension AppDelegate: MessagingDelegate {
+    func messaging(
+        _ messaging: Messaging,
+        didReceiveRegistrationToken fcmToken: String?
+    ) {
+        guard let fcmToken else { return }
+        UserDefaults.standard.setValue(
+            fcmToken,
+            forKey: "fcmToken"
+        )
     }
 }

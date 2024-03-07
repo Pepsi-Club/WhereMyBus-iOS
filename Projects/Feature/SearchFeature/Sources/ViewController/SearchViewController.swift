@@ -1,6 +1,6 @@
 import UIKit
-import Domain
 
+import Domain
 import Core
 import DesignSystem
 
@@ -11,14 +11,15 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
     private let viewModel: SearchViewModel
     
     private let disposeBag = DisposeBag()
-    private let searchEnterEvent = PublishSubject<String>()
-    private let searchTapEvent = PublishSubject<IndexPath>()
+    private let infoAgreeSubject = PublishSubject<Bool>()
+    public let enterPressedSubject = PublishSubject<Void>()
+
     // 주변 정류장 클릭했을 때 나오는 이벤트
     
     private let recentSerachCell = RecentSearchCell()
-    private let searchNearStopView = SearchNearStopView()
+    private let searchNearStopView = DeagreeSearchNearStopView()
     private let searchTextFieldView = SearchTextFieldView()
-
+    
     private var dataSource: SearchDataSource!
     private var snapshot: SearchDataSource! //
     
@@ -41,23 +42,20 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
         return label
     }()
     
-    private let magniImage: UIImageView = {
-        let symbolName = "magnifyingglass"
-        let migImageView = UIImageView()
-        var configuration = UIImage.SymbolConfiguration(pointSize: 8,
-                                                        weight: .light)
-        configuration = configuration.applying(
-            UIImage.SymbolConfiguration(
+    private let magniButton: UIButton = {
+        var config = UIButton.Configuration.plain()
+        let image = UIImage(systemName: "magnifyingglass")
+        let configuration = UIImage.SymbolConfiguration(
                 font: UIFont.systemFont(ofSize: 20, weight: .light),
                 scale: .default
             )
-        )
-        let migImage = UIImage(
-             systemName: symbolName,
-             withConfiguration: configuration
-        )?.withTintColor(.black)
+        config.image = image
+        config.preferredSymbolConfigurationForImage = configuration
+        config.baseForegroundColor = .black
         
-        return migImageView
+        let button = UIButton(configuration: config)
+        
+        return button
     }()
     
     private let editBtn: UIButton = {
@@ -134,18 +132,18 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
         configureDataSource()
         configureUI()
         bind()
-       }
+    }
     
     private func configureUI() {
         view.backgroundColor = .white
-
+        
         [searchTextFieldView, backBtn, textFieldStack, recentSearchlabel,
          recentSearchTableView, coloredRectangleView, searchNearStopView,
-         editBtn, headerStack, magniStack, magniImage]
+         editBtn, headerStack, magniStack, magniButton]
             .forEach {
-            view.addSubview($0)
-            $0.translatesAutoresizingMaskIntoConstraints = false
-        }
+                view.addSubview($0)
+                $0.translatesAutoresizingMaskIntoConstraints = false
+            }
         
         [backBtn, searchTextFieldView]
             .forEach { components in
@@ -158,127 +156,155 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
             }
         
         NSLayoutConstraint.activate([
-        
-        backBtn.widthAnchor.constraint(equalToConstant: 20),
-        
-        magniImage.topAnchor.constraint(
+            
+            backBtn.widthAnchor.constraint(equalToConstant: 20),
+            
+            magniButton.topAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.topAnchor,
-                constant: -5
+                constant: -13
             ),
-        
-        magniImage.widthAnchor.constraint(
+            
+            magniButton.widthAnchor.constraint(
                 equalToConstant: 20
             ),
-        
-        magniImage.trailingAnchor.constraint(
+            
+            magniButton.trailingAnchor.constraint(
                 equalTo: view.trailingAnchor,
                 constant: -20
             ),
             
-        searchTextFieldView.heightAnchor.constraint(
+            searchTextFieldView.heightAnchor.constraint(
                 equalToConstant: 39),
-           
-        textFieldStack.topAnchor.constraint(
+            
+            textFieldStack.topAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.topAnchor,
                 constant: -14
             ),
-        textFieldStack.leadingAnchor.constraint(
+            textFieldStack.leadingAnchor.constraint(
                 equalTo: view.leadingAnchor,
                 constant: 10
             ),
-        
-        textFieldStack.trailingAnchor.constraint(
-            equalTo: magniImage.trailingAnchor,
-            constant: 10
-            ),
-        
-        headerStack.topAnchor.constraint(
-                equalTo: textFieldStack.bottomAnchor, constant: 15),
-        headerStack.leadingAnchor.constraint(
-                equalTo: view.leadingAnchor, constant: 15),
-        headerStack.trailingAnchor.constraint(
-                equalTo: view.trailingAnchor, constant: -15),
-     
-        recentSearchTableView.topAnchor.constraint(
-                equalTo: recentSearchlabel.bottomAnchor, constant: -30),
-        recentSearchTableView.leadingAnchor.constraint(
-                                    equalTo: view.leadingAnchor),
-        recentSearchTableView.trailingAnchor.constraint(
-                                    equalTo: view.trailingAnchor),
-
-        recentSearchTableView.widthAnchor.constraint(
-                                    equalTo: view.widthAnchor),
-        
-        coloredRectangleView.topAnchor.constraint(
-                                    equalTo: recentSearchTableView.bottomAnchor,
-                                    constant: 300),
-        coloredRectangleView.leadingAnchor.constraint(
-                                        equalTo: view.leadingAnchor,
-                                        constant: 0),
-        coloredRectangleView.trailingAnchor.constraint(
-                                        equalTo: view.trailingAnchor,
-                                        constant: 0),
-        coloredRectangleView.widthAnchor.constraint(
-                                        equalToConstant: .screenWidth),
             
-        searchNearStopView.topAnchor.constraint(
-                                    equalTo: coloredRectangleView.topAnchor,
-                                    constant: 10),
-        searchNearStopView.bottomAnchor.constraint(
-                                    equalTo: coloredRectangleView.bottomAnchor,
-                                    constant: -10),
-        searchNearStopView.leadingAnchor.constraint(
-                                    equalTo: view.leadingAnchor,
-                                    constant: 10),
-        searchNearStopView.heightAnchor.constraint(
-                                    equalToConstant: 87),
-        searchNearStopView.widthAnchor.constraint(
-                                    equalTo: view.widthAnchor,
-                                    multiplier: 0.95),
-        searchNearStopView.trailingAnchor.constraint(
-                                    equalTo: view.trailingAnchor,
-                                    constant: 10)
-   
-           ])
+            textFieldStack.trailingAnchor.constraint(
+                equalTo: magniButton.trailingAnchor,
+                constant: 10
+            ),
+            
+            headerStack.topAnchor.constraint(
+                equalTo: textFieldStack.bottomAnchor, constant: 15),
+            headerStack.leadingAnchor.constraint(
+                equalTo: view.leadingAnchor, constant: 15),
+            headerStack.trailingAnchor.constraint(
+                equalTo: view.trailingAnchor, constant: -15),
+            
+            recentSearchTableView.topAnchor.constraint(
+                equalTo: recentSearchlabel.bottomAnchor, constant: -30),
+            recentSearchTableView.leadingAnchor.constraint(
+                equalTo: view.leadingAnchor),
+            recentSearchTableView.trailingAnchor.constraint(
+                equalTo: view.trailingAnchor),
+            
+            recentSearchTableView.widthAnchor.constraint(
+                equalTo: view.widthAnchor),
+            
+            coloredRectangleView.topAnchor.constraint(
+                equalTo: recentSearchTableView.bottomAnchor,
+                constant: 300),
+            coloredRectangleView.leadingAnchor.constraint(
+                equalTo: view.leadingAnchor,
+                constant: 0),
+            coloredRectangleView.trailingAnchor.constraint(
+                equalTo: view.trailingAnchor,
+                constant: 0),
+            coloredRectangleView.widthAnchor.constraint(
+                equalToConstant: .screenWidth),
+            
+            searchNearStopView.topAnchor.constraint(
+                equalTo: coloredRectangleView.topAnchor,
+                constant: 10),
+            searchNearStopView.bottomAnchor.constraint(
+                equalTo: coloredRectangleView.bottomAnchor,
+                constant: -10),
+            searchNearStopView.leadingAnchor.constraint(
+                equalTo: view.leadingAnchor,
+                constant: 10),
+            searchNearStopView.heightAnchor.constraint(
+                equalToConstant: 87),
+            searchNearStopView.widthAnchor.constraint(
+                equalTo: view.widthAnchor,
+                multiplier: 0.95),
+            searchNearStopView.trailingAnchor.constraint(
+                equalTo: view.trailingAnchor,
+                constant: 10)
+            
+        ])
     }
     
     private func bind() {
-   
+        // 엔터 이벤트를 뷰모델에 전달
+        searchTextFieldView.rx.controlEvent(.editingDidEndOnExit)
+            .bind(to: viewModel.enterPressedSubject)
+            .disposed(by: disposeBag)
+        
+        print("전달완")
     }
     
     private func configureDataSource() {
         dataSource = .init(
             tableView: recentSearchTableView,
             cellProvider: { [weak self] tableView, indexPath, response
-                in guard let self else { return UITableViewCell() }
+                in
+                guard let self = self,
+                    let cell = self.configureCell(
+                        tableView: tableView,
+                        indexPath: indexPath,
+                        response: response
+                    )
+                else { return UITableViewCell() }
                 
-                let cell = self.configureCell(
-                    tableView: tableView,
-                    indexPath: indexPath,
-                    response: response)
-                
-                return cell })
+            return cell
+            })
+        
+        // 최대 5개의 셀만 보여주도록 설정 문제 있음
+        var initialSnapshot = NSDiffableDataSourceSnapshot<
+            Int,
+            BusStopInfoResponse>()
+        initialSnapshot.appendSections([0])
+        dataSource.apply(initialSnapshot, animatingDifferences: false)
     }
     
-    // MARK: 다시해야하는구간
     private func configureCell(
         tableView: UITableView,
         indexPath: IndexPath,
-        response: BusArrivalInfoResponse) -> RecentSearchCell? {
+        response: BusStopInfoResponse) -> RecentSearchCell? {
             guard let cell = tableView.dequeueReusableCell(
-            withIdentifier: RecentSearchCell.identifier,
-            for: indexPath
-        ) as? RecentSearchCell
+                withIdentifier: RecentSearchCell.identifier,
+                for: indexPath
+            ) as? RecentSearchCell
             else { return nil }
-            let msg1 = response.busName
-            let msg2 = response.busId
+            let busStopName = response.busStopName
+            let busStopId = response.busStopId
+            let direction = response.direction
             
             return cell
-    }
+        }
 }
 
 extension SearchViewController {
     typealias SearchDataSource =
     UITableViewDiffableDataSource
-    <BusStopArrivalInfoResponse, BusArrivalInfoResponse>
+    <Int, BusStopInfoResponse>
+}
+
+extension SearchViewController: UITextFieldDelegate {
+
+    public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        print("입력완")
+        return true
+    }
+
+    public func textFieldDidEndEditing(_ textField: UITextField) {
+        textField.resignFirstResponder()
+    }
 }

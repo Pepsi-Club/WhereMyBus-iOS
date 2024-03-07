@@ -12,7 +12,7 @@ import Core
 import CoreDataService
 import Data
 import Domain
-import Networks
+import NetworkService
 
 extension AppDelegate {
     func registerDependencies() {
@@ -29,6 +29,18 @@ extension AppDelegate {
             DefaultRegularAlarmUseCase(
                 regularAlarmRepository: regularAlarmRepository,
                 localNotificationService: localNotificationService
+            )
+        )
+        
+        DIContainer.register(
+            type: SearchUseCase.self,
+            DefaultSearchUseCase(stationListRepository: stationListRepository)
+        )
+        DIContainer.register(
+            type: BusStopUseCase.self,
+            DefaultBusStopUseCase(
+                busStopArrivalInfoRepository: busStopArrivalInfoRepository,
+                favoritesRepository: favoritesRepository
             )
         )
     }
@@ -50,6 +62,10 @@ extension AppDelegate {
     
     var busStopArrivalInfoRepository: BusStopArrivalInfoRepository {
         DefaultBusStopArrivalInfoRepository(networkService: networkService)
+    }
+    
+    var stationListRepository: StationListRepository {
+        DefaultStationListRepository()
     }
 }
 

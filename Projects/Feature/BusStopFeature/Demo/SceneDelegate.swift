@@ -25,8 +25,8 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 busStopId: "",
                 busStopName: "",
                 routeName: [""]
-            )
-//            coordinatorProvider: CoordinatorProvider.self
+            ),
+            coordinatorProvider: MockCoordinatorProvider()
         )
         busstopCoordinator.start()
     }

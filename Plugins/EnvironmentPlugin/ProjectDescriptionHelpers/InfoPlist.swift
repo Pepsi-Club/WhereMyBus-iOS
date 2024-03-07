@@ -43,19 +43,13 @@ public extension InfoPlist {
             }
     )
     
-    static let notificationInfoPlist: Self = .extendingDefault(
-        with: .framework
-            .merging(.secrets) { oldValue, newValue in
-                newValue
-            }
-            .merging([
-                "NSExtension": [
-                    "NSExtensionPointIdentifier": "com.apple.usernotifications.service",
-                    "NSExtensionPrincipalClass": "$(PRODUCT_MODULE_NAME).NotificationService"
-                ]
-            ]) { oldValue, newValue in
-                newValue
-            }
+    static let notificationInfoPlist: Self = .dictionary(
+        [
+            "NSExtension": [
+                "NSExtensionPointIdentifier": "com.apple.usernotifications.service",
+                "NSExtensionPrincipalClass": "$(PRODUCT_MODULE_NAME).NotificationService"
+            ]
+        ]
     )
 }
 
