@@ -12,14 +12,13 @@ import WebKit
 
 import RxSwift
 
-class PrivacyWebViewController
+public final class PrivacyWebViewController
 : UIViewController, WKNavigationDelegate {
     private let viewModel: PrivacyWebViewModel
     private let disposeBag = DisposeBag()
     
     private let webView: WKWebView = {
         let webView = WKWebView()
-        webView.frame = .zero
         webView.translatesAutoresizingMaskIntoConstraints = false
         webView.allowsBackForwardNavigationGestures = true
         return webView
@@ -30,7 +29,7 @@ class PrivacyWebViewController
         return indicator
     }()
     
-    init(viewModel: PrivacyWebViewModel) {
+    public init(viewModel: PrivacyWebViewModel) {
         self.viewModel = viewModel
     
         super.init(nibName: nil, bundle: nil)
