@@ -14,7 +14,7 @@ public final class NearMapViewModel: NSObject,
 	
 	// MARK: - DI Property
 	
-	@Injected(NearMapUseCase.self) var useCase: NearMapUseCase
+	@Injected(NearBusStopUseCase.self) var useCase: NearBusStopUseCase
 	private let coordinator: NearMapCoordinator
 	
 	// MARK: - Property
