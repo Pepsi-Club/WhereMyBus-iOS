@@ -73,7 +73,9 @@ public final class BusStopViewController: UIViewController {
             likeBusBtnTapEvent: likeBusBtnTapEvent.asObservable(),
             alarmBtnTapEvent: alarmBtnTapEvent.asObservable(),
             mapBtnTapEvent: mapBtnTapEvent.asObservable(),
-            refreshLoading: refresh.asObservable()
+            refreshLoading: refresh.asObservable(),
+            navigationBackBtnTapEvent
+            : headerView.navigationBtn.rx.tap.asObservable()
         )
         
         rx.methodInvoked(#selector(UIViewController.viewWillAppear))

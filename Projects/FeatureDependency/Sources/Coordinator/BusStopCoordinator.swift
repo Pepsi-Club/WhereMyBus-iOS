@@ -10,4 +10,5 @@ import Foundation
 
 public protocol BusStopCoordinator: Coordinator {
     func busStopMapLocation()
+    func popVC()
 }

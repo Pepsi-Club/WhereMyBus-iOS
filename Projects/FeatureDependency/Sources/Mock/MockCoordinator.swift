@@ -44,6 +44,11 @@ extension MockCoordinator: SearchCoordinator {
 }
 
 extension MockCoordinator: BusStopCoordinator {
+    public func popVC() {
+        navigationController.popViewController(animated: true)
+        finish()
+    }
+    
     public func busStopMapLocation() {
         let coordinator = MockCoordinator(
             testMessage: "Map",

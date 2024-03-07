@@ -51,4 +51,9 @@ extension DefaultBusStopCoordinator {
         childs.append(nearMapCoordinator)
         nearMapCoordinator.start()
     }
+    
+    public func popVC() {
+        navigationController.popViewController(animated: true)
+        finish()
+    }
 }

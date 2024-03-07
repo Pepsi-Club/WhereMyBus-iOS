@@ -72,6 +72,13 @@ public final class BusStopViewModel: ViewModel {
             })
             .disposed(by: disposeBag)
         
+        input.navigationBackBtnTapEvent
+            .withUnretained(self)
+            .subscribe { viewModel, _ in
+                viewModel.coordinator.popVC()
+            }
+            .disposed(by: disposeBag)
+        
         useCase.busStopSection
             .bind(
                 to: output.busStopArrivalInfoResponse
@@ -93,6 +100,7 @@ extension BusStopViewModel {
         let alarmBtnTapEvent: Observable<BusArrivalInfoResponse>
         let mapBtnTapEvent: Observable<BusStopArrivalInfoResponse>
         let refreshLoading: Observable<Bool>
+        let navigationBackBtnTapEvent: Observable<Void>
     }
     
     public struct Output {

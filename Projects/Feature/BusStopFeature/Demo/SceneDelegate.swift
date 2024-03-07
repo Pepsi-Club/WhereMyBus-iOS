@@ -22,9 +22,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             parent: nil,
             navigationController: navigationController,
             arrivalInfoData: ArrivalInfoRequest(
-                busStopId: "",
-                busStopName: "",
-                routeName: [""]
+                busStopId: ""
             ),
             coordinatorProvider: MockCoordinatorProvider()
         )
