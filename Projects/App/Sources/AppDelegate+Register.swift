@@ -31,6 +31,14 @@ extension AppDelegate {
                 localNotificationService: localNotificationService
             )
         )
+        
+        DIContainer.register(
+            type: BusStopUseCase.self,
+            DefaultBusStopUseCase(
+                busStopArrivalInfoRepository: busStopArrivalInfoRepository,
+                favoritesRepository: favoritesRepository
+            )
+        )
     }
 }
 
