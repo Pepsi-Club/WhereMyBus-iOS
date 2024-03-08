@@ -105,16 +105,13 @@ public final class BusStopViewController: UIViewController {
             .subscribe(
                 onNext: { viewController, response in
                     viewController.headerView.mapBtn.rx.tap
-                        .take(1)
                         .withUnretained(self)
                         .map { _ in
-                            // 두번 열리는 이유를 모르겠음 -> 그래서 take(1)을 통해 한번만 구독 될 수 있게.
-                            // 여기서 강묵님 쪽으로 데이터 넘겨주면 될 듯
                             print("🤢 \(response) ")
                             return response
                         }
-                        .bind(to: self.mapBtnTapEvent)
-                        .disposed(by: self.disposeBag)
+                        .bind(to: viewController.mapBtnTapEvent)
+                        .disposed(by: viewController.disposeBag)
                 }
             )
             .disposed(by: disposeBag)
@@ -191,10 +188,12 @@ public final class BusStopViewController: UIViewController {
         cell?.busNumber.textColor = response.busType.toColor
         
         cell?.starBtnTapEvent
-            .map { _ in
-                return response
+            .map { bool in
+                var busInfo = response
+                busInfo.isFavorites = bool
+                return busInfo
             }
-            .bind(to: self.likeBusBtnTapEvent)
+            .bind(to: likeBusBtnTapEvent) // 수정
             .disposed(by: cell!.disposeBag)
         
         cell?.alarmBtnTapEvent

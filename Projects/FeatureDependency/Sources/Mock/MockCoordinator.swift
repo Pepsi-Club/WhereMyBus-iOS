@@ -66,7 +66,7 @@ extension MockCoordinator: BusStopCoordinator {
         finish()
     }
     
-    public func busStopMapLocation() {
+    public func busStopMapLocation(busStopId: String) {
         let coordinator = MockCoordinator(
             testMessage: "Map",
             navigationController: navigationController

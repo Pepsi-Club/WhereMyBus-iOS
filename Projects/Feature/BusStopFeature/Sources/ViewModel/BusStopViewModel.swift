@@ -46,7 +46,9 @@ public final class BusStopViewModel: ViewModel {
             .withUnretained(self)
             .subscribe(onNext: { viewModel, busStopArrival in
                 // 여기서 강묵님쪽으로 데이터 넘겨주면 될듯
-                viewModel.coordinator.busStopMapLocation()
+                viewModel.coordinator.busStopMapLocation(
+                    busStopId: busStopArrival.busStopId
+                )
             })
             .disposed(by: disposeBag)
         
@@ -63,12 +65,13 @@ public final class BusStopViewModel: ViewModel {
             .disposed(by: disposeBag)
         
         input.likeBusBtnTapEvent
-            .withUnretained(self)
-            .subscribe(onNext: { viewModel, bus in
-                // MARK: useCase.addFavorite 함수
-                // 를 arsId와 busArrivalInfoResponse를 받아서 repository에 넣는 방법으로 생각했는데
-                // busStop을 어떻게 받아야할지 ..
-//                viewModel.useCase.addFavorite(busStop: "", bus: bus)
+            .withLatestFrom(output.busStopArrivalInfoResponse
+            ) { busInfo, busStopInfo in
+                return (busInfo, busStopInfo.busStopId)
+            }
+            .subscribe(onNext: { [weak self] busInfo, busStopId in
+                guard let self = self else { return }
+                self.useCase.addFavorite(busStop: busStopId, bus: busInfo)
             })
             .disposed(by: disposeBag)
         

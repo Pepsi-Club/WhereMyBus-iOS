@@ -97,7 +97,8 @@ public final class DefaultBusStopUseCase: BusStopUseCase {
         busStop: String,
         bus: BusArrivalInfoResponse
     ) { 
-        print("\(busStop) | \(bus)")
+        print("🅾️\(busStop) | \(bus)")
+        print("====== 네 ? =======")
     }
     
     public func deleteFavorite() {

@@ -43,7 +43,8 @@ public final class MockCoordinatorProvider: CoordinatorProvider {
     }
     
     public func makeBusStopMapCoordinator(
-        navigationController: UINavigationController
+        navigationController: UINavigationController,
+        busStopId: String
     ) -> NearMapCoordinator {
         MockCoordinator(
             testMessage: "NearMap",
