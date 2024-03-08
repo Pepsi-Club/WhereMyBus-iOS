@@ -24,7 +24,7 @@ public final class BusTableViewCell: UITableViewCell {
     private var alarmToggle = false
     
     private lazy var starBtn: UIButton = {
-        var config = UIButton.Configuration.filled()
+        var config = UIButton.Configuration.plain()
         config.image = UIImage(systemName: "star")
         config.contentInsets = NSDirectionalEdgeInsets(
             top: 10,
@@ -37,27 +37,19 @@ public final class BusTableViewCell: UITableViewCell {
         )
         config.preferredSymbolConfigurationForImage = imgConfig
         config.baseForegroundColor = DesignSystemAsset.mainColor.color
-        config.baseBackgroundColor = .clear
         let btn = UIButton(configuration: config)
         return btn
     }()
     
     private lazy var alarmBtn: UIButton = {
-        var config = UIButton.Configuration.filled()
-        config.image = UIImage(systemName: "alarm")
-        config.contentInsets = NSDirectionalEdgeInsets(
-            top: 10,
-            leading: 5,
-            bottom: 10,
-            trailing: 15
-        )
+        var config = UIButton.Configuration.plain()
         let imgConfig = UIImage.SymbolConfiguration(
-            font: .systemFont(ofSize: 13)
+            pointSize: 12
         )
         config.preferredSymbolConfigurationForImage = imgConfig
         config.baseForegroundColor = DesignSystemAsset.mainColor.color
-        config.baseBackgroundColor = .clear
         let btn = UIButton(configuration: config)
+        btn.widthAnchor.constraint(equalToConstant: 20).isActive = true
         return btn
     }()
     
@@ -84,6 +76,8 @@ public final class BusTableViewCell: UITableViewCell {
         label.font = DesignSystemFontFamily.NanumSquareNeoOTF
             .bold.font(size: 18)
         label.textColor = DesignSystemAsset.blueBus.color
+        label.widthAnchor.constraint(equalToConstant: 80).isActive = true
+//        label.backgroundColor = .red
         return label
     }()
     
@@ -92,6 +86,9 @@ public final class BusTableViewCell: UITableViewCell {
         label.font = DesignSystemFontFamily.NanumSquareNeoOTF
             .regular.font(size: 14)
         label.textColor = DesignSystemAsset.remainingColor.color
+        label.widthAnchor.constraint(equalToConstant: 80).isActive = true
+        label.adjustsFontSizeToFitWidth = true
+        label.minimumScaleFactor = 0.6
         return label
     }()
     
@@ -207,6 +204,13 @@ public final class BusTableViewCell: UITableViewCell {
     private func changeAlarmBtnColor(isAlarmOn: Bool) {
         guard var config = alarmBtn.configuration
         else { return }
+        
+        config.contentInsets = NSDirectionalEdgeInsets(
+            top: 10,
+            leading: 5,
+            bottom: 10,
+            trailing: 10
+        )
         
         config.image = isAlarmOn
         ? UIImage(systemName: "alarm.waves.left.and.right.fill")
