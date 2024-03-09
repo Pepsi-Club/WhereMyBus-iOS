@@ -21,7 +21,9 @@ public extension String {
     }
     
     static var serverKey: Self {
-        guard let any = Bundle.main.object(forInfoDictionaryKey: "SERVER_KEY"),
+        guard let any = Bundle.main.object(
+            forInfoDictionaryKey: "DATA_GO_KR_API_KEY"
+        ),
               let serverKey = any as? String
         else { fatalError("Can't Not Find Server Key") }
         return serverKey
