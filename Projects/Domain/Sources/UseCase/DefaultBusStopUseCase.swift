@@ -54,8 +54,10 @@ public final class DefaultBusStopUseCase: BusStopUseCase {
     private func fetchFavorites() {
         favoritesRepository.favorites
             .withUnretained(self)
+            .observe(on: MainScheduler.instance)
             .subscribe(
                 onNext: { useCase, favorites in
+                    print("✅ \(favorites)")
                     useCase.favorites.onNext(favorites)
                 }
             )
@@ -93,16 +95,18 @@ public final class DefaultBusStopUseCase: BusStopUseCase {
     }
     
     // MARK: - 즐찾 추가 및 해제
-    public func addFavorite(
+    public func handleFavorites(
         busStop: String,
         bus: BusArrivalInfoResponse
-    ) { 
-        print("🅾️\(busStop) | \(bus)")
-        print("====== 네 ? =======")
+    ) {
+        // MARK: - repo.매소드 호출시 CRUD는 안되더라도 내부 값이 변경되어야하는게 맞지 않나 ?
+        print("=============================")
+        print("\(busStop) | \(bus) ")
+        if bus.isFavorites {
+            self.favoritesRepository.addRoute(arsId: busStop, bus: bus)
+        } else {
+            self.favoritesRepository.removeRoute(arsId: busStop, bus: bus)
+        }
+        fetchFavorites()
     }
-    
-    public func deleteFavorite() {
-        
-    }
-    
 }

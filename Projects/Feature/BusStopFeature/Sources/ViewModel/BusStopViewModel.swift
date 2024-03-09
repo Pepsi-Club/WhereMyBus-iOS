@@ -71,7 +71,10 @@ public final class BusStopViewModel: ViewModel {
             }
             .subscribe(onNext: { [weak self] busInfo, busStopId in
                 guard let self = self else { return }
-                self.useCase.addFavorite(busStop: busStopId, bus: busInfo)
+                self.useCase.handleFavorites(
+                    busStop: busStopId,
+                    bus: busInfo
+                )
             })
             .disposed(by: disposeBag)
         
