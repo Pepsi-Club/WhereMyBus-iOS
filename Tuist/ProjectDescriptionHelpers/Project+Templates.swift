@@ -38,7 +38,9 @@ extension Project {
             targetModule = appTarget(
                 name: name,
                 entitlements: entitlements,
-                dependencies: dependencies
+                dependencies: dependencies + appExtensionTarget.map {
+                    TargetDependency.target(name: $0.name)
+                }
             )
             let uiTestsTarget = uiTestTarget(
                 name: name,
@@ -179,7 +181,22 @@ extension Project {
             sources: ["\(name)/**"],
             entitlements: entitlements,
             scripts: [.swiftLint],
-            dependencies: dependencies
+            dependencies: dependencies,
+            settings: .settings(
+                base: .init()
+                    .setCodeSignManual()
+                    .setProvisioning(),
+                configurations: [
+                    .debug(
+                        name: .debug,
+                        xcconfig: .relativeToRoot("XCConfig/\(name)_Debug.xcconfig")
+                    ),
+                    .release(
+                        name: .release,
+                        xcconfig: .relativeToRoot("XCConfig/\(name)_Release.xcconfig")
+                    ),
+                ]
+            )
         )
     }
     

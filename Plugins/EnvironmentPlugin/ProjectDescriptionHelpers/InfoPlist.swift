@@ -42,20 +42,11 @@ public extension InfoPlist {
                 newValue
             }
     )
-    
-    static let notificationInfoPlist: Self = .dictionary(
-        [
-            "NSExtension": [
-                "NSExtensionPointIdentifier": "com.apple.usernotifications.service",
-                "NSExtensionPrincipalClass": "$(PRODUCT_MODULE_NAME).NotificationService"
-            ]
-        ]
-    )
 }
 
 public extension [String: Plist.Value] {
     static let secrets: Self = [
-        "SERVER_KEY": "$(SERVER_KEY)",
+        "DATA_GO_KR_API_KEY": "$(DATA_GO_KR_API_KEY)",
         "KAKAO_APP_KEY": "$(KAKAO_APP_KEY)",
         "KAKAO_PHASE": "alpha",
         "TERMS_OF_PRIVACY_URL": "$(TERMS_OF_PRIVACY_URL)",
@@ -63,6 +54,7 @@ public extension [String: Plist.Value] {
     ]
     
     static let additionalInfoPlist: Self = [
+        "FirebaseAppDelegateProxyEnabled": "0",
         "ITSAppUsesNonExemptEncryption": "NO",
         "NSAppTransportSecurity": [
             "NSExceptionDomains": [
@@ -93,6 +85,23 @@ public extension [String: Plist.Value] {
                         "UISceneConfigurationName": "Default Configuration",
                         "UISceneDelegateClassName": "$(PRODUCT_MODULE_NAME).SceneDelegate"
                     ],
+                ]
+            ]
+        ],
+    ]
+    
+    static let notificationInfoPlist: Self = [
+        "DATA_GO_KR_API_KEY": "$(DATA_GO_KR_API_KEY)",
+        "CFBundleDisplayName": "$(PRODUCT_NAME)",
+        "NSExtension": [
+            "NSExtensionPointIdentifier": "com.apple.usernotifications.service",
+            "NSExtensionPrincipalClass": "$(PRODUCT_MODULE_NAME).NotificationService"
+        ],
+        "NSAppTransportSecurity": [
+            "NSExceptionDomains": [
+                "ws.bus.go.kr": [
+                    "NSIncludesSubdomains": true,
+                    "NSExceptionAllowsInsecureHTTPLoads": true,
                 ]
             ]
         ],

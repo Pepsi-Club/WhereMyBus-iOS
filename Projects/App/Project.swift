@@ -10,10 +10,10 @@ let project = Project.makeProject(
     appExtensionTarget: [
         Project.appExtensionTarget(
             name: "NotificationExtension",
-            plist: .notificationInfoPlist,
-            dependencies: [
-                .data,
-            ]
+            plist: .extendingDefault(
+                with: .notificationInfoPlist
+            ),
+            dependencies: []
         )
     ],
     packages: [
