@@ -49,7 +49,7 @@ public struct PushNotificationEndPoint: EndPoint {
         .post
     }
     
-    init(requestModel: PushNotificationRequestable) {
-        self.requestModel = requestModel
+    public init(data: PushNotificationRequestable) {
+        self.requestModel = data
     }
 }

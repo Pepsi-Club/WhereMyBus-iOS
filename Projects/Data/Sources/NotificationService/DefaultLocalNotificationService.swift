@@ -59,10 +59,6 @@ public final class DefaultLocalNotificationService
     public func authorize() {
         notificationCenter.getNotificationSettings { [weak self] setting in
             self?.authState.onNext(setting.authorizationStatus)
-            print(
-                "settingStatus",
-                String(describing: setting.authorizationStatus)
-            )
         }
         authState
             .withUnretained(self)
