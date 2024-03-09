@@ -13,7 +13,10 @@ let project = Project.makeProject(
             plist: .extendingDefault(
                 with: .notificationInfoPlist
             ),
-            dependencies: []
+            dependencies: [
+                .mainFeature,
+                .data,
+            ]
         )
     ],
     packages: [
@@ -23,8 +26,7 @@ let project = Project.makeProject(
         )
     ],
     dependencies: [
-        .mainFeature,
-        .data,
         .package(product: "FirebaseMessaging"),
+        .package(product: "KakaoMapsSDK_SPM"),
     ]
 )
