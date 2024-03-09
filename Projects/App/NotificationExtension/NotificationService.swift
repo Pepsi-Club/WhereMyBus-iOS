@@ -8,12 +8,20 @@
 
 import UserNotifications
 
-import Domain
 import Data
+import Domain
+import NetworkService
+
+import RxSwift
 
 class NotificationService: UNNotificationServiceExtension {
     var contentHandler: ((UNNotificationContent) -> Void)?
     var bestAttemptContent: UNMutableNotificationContent?
+    
+    private let repository = DefaultBusStopArrivalInfoRepository(
+        networkService: DefaultNetworkService()
+    )
+    private let disposeBag = DisposeBag()
     
     override func didReceive(
         _ request: UNNotificationRequest,
@@ -24,52 +32,58 @@ class NotificationService: UNNotificationServiceExtension {
         bestAttemptContent = (
             request.content.mutableCopy() as? UNMutableNotificationContent
         )
-        guard let bestAttemptContent else { return }
-        bestAttemptContent.title = "Mutable 도착"
-        let body = bestAttemptContent.userInfo
-            .map { key, value in
-                "\(String(describing: key)): \(String(describing: value))"
-            }
-            .joined()
-        bestAttemptContent.body = body
-        
-        guard let aps = bestAttemptContent.userInfo["aps"] as? [String: Any],
-              let urlStr = aps["urlStr"] as? String
-        else {
-            bestAttemptContent.title = "urlStr 없음"
-            contentHandler(bestAttemptContent)
-            return
-        }
-        bestAttemptContent.title = "urlStr 있음"
-        guard let url = URL(string: urlStr)
-        else {
-            bestAttemptContent.title = "잘못된 url"
-            contentHandler(bestAttemptContent)
-            return
-        }
-        bestAttemptContent.title = "url 변환까지 성공"
-        do {
-            let arrivalInfo = try Data(contentsOf: url).decode(
-                type: BusStopArrivalInfoResponse.self
+        guard let bestAttemptContent,
+              let aps = bestAttemptContent.userInfo["aps"] as? [String: Any],
+              let busStopId = aps["busStopId"] as? String,
+              let busId = aps["busId"] as? String
+        else { return }
+        repository.fetchArrivalList(busStopId: busStopId)
+            .subscribe(
+                onNext: { response in
+                    guard let bus = response.buses.first(
+                        where: { busResponse in
+                            busResponse.busId == busId
+                        }
+                    )
+                    else { return }
+                    let busStopName = response.busStopName
+                    let firstArrivalTime = bus.firstArrivalTime
+                    let firstArrivalRemaining = bus.firstArrivalRemaining
+                    let secondArrivalTime = bus.secondArrivalTime
+                    let routeMessage: String
+                    let remainingMessage: String
+                    let firstLine: String
+                    let secondLine: String
+                    switch bus.firstArrivalTime {
+                    case "곧 도착":
+                        routeMessage = "\(bus.busName)번 버스가 \(busStopName)에"
+                        remainingMessage = "\(routeMessage) 곧 도착해요."
+                        secondLine = "다음 버스는 \(secondArrivalTime) 후에 도착해요."
+                    case "운행종료":
+                        routeMessage = "\(bus.busName)번 버스는"
+                        remainingMessage = "운행종료 되었어요."
+                        secondLine = "다음 버스는 \(secondArrivalTime) 후에 도착해요."
+                    case "출발대기":
+                        routeMessage = "\(bus.busName)번 버스는"
+                        remainingMessage = "출발 대기 중 이에요."
+                        secondLine = "다음 버스는 \(secondArrivalTime) 후에 도착해요."
+                    default:
+                        routeMessage = "\(bus.busName)번 버스가 \(busStopName)에"
+                        remainingMessage = "\n\(firstArrivalTime) 후에 도착해요."
+                        secondLine = "\(firstArrivalRemaining) 정류장을 지났어요."
+                    }
+                    firstLine = "\(routeMessage) \(remainingMessage)"
+                    let body = [firstLine, secondLine].joined(separator: "\n")
+                    // TODO: 앱 이름 변경되면 수정해야함
+                    bestAttemptContent.title = "버스어디"
+                    bestAttemptContent.subtitle = ""
+                    bestAttemptContent.body = body
+                    contentHandler(bestAttemptContent)
+                }
             )
-            let title = "네트워킹 성공"
-            let body = "네트워킹 성공"
-            bestAttemptContent.title = title
-            bestAttemptContent.body = body     
-        } catch {
-            let title = "네트워킹 실패"
-            let body = "네트워킹 실패"
-            bestAttemptContent.title = title
-            bestAttemptContent.body = body
-        }
-        contentHandler(bestAttemptContent)
+            .disposed(by: disposeBag)
     }
     
     override func serviceExtensionTimeWillExpire() {
-        if let contentHandler = contentHandler,
-           let bestAttemptContent = bestAttemptContent {
-            bestAttemptContent.title = "제한시간 초과"
-            contentHandler(bestAttemptContent)
-        }
     }
 }
