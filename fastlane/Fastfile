@@ -15,7 +15,15 @@ platform :ios do
       sh("tuist clean")
       sh("tuist fetch")
       sh("tuist generate")
-      sh("fastlane match development --readonly")
+      match(
+ 	type: "development",
+	git_url: ENV["MATCH_URL"],
+        app_identifier:[
+	  "com.Pepsi-Club.BusComing", 
+	  "com.Pepsi-Club.BusComing.NotificationExtension" 
+	],
+        readonly: true
+      )
     end
   end
 end
