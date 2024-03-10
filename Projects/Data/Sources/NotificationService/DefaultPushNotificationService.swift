@@ -7,16 +7,26 @@
 //
 
 import Foundation
+
+import Core
 import Domain
 import NetworkService
 
+import RxSwift
+
 public final class DefaultPushNotificationService: PushNotificationService {
     private let networkService: NetworkService
+    private let disposeBag = DisposeBag()
     
     public init(networkService: NetworkService) {
         self.networkService = networkService
     }
     
-    public func makeNotification(payload: [String: Any]) {
+    public func makeNotification(data: PushNotificationRequestable) {
+        networkService.request(
+            endPoint: PushNotificationEndPoint(data: data)
+        )
+        .subscribe()
+        .disposed(by: disposeBag)
     }
 }

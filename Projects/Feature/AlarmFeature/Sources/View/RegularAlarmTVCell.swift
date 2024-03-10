@@ -79,7 +79,7 @@ final class RegularAlarmTVCell: UITableViewCell {
     }
     
     func updateUI(response: RegularAlarmResponse) {
-        let weekDayMessage = response.weekDay
+        let weekDayMessage = response.weekday
             .sorted()
             .compactMap {
                 AddRegularAlarmViewController.WeekDay(rawValue: $0)?.toString

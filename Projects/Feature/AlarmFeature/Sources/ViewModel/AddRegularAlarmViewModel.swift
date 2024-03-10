@@ -18,7 +18,7 @@ import RxRelay
 final class AddRegularAlarmViewModel: ViewModel {
     private let alarmToEdit: RegularAlarmResponse?
     private let coordinator: AddRegularAlarmCoordinator
-    @Injected(RegularAlarmUseCase.self) var useCase: RegularAlarmUseCase
+    @Injected(AddRegularAlarmUseCase.self) var useCase: AddRegularAlarmUseCase
     
     private let disposeBag = DisposeBag()
     
@@ -37,17 +37,20 @@ final class AddRegularAlarmViewModel: ViewModel {
     func transform(input: Input) -> Output {
         let output = Output(
             title: .init(value: "추가하기"),
-            selectedBusInfo: .init(value: "정류장 및 버스 찾기"),
-            selectedDate: .init(value: .now),
-            selectedWeekDay: .init(value: [])
+            regularAlarm: .init(
+                value: .init(
+                    busStopId: "",
+                    busStopName: "",
+                    busId: "",
+                    busName: "",
+                    time: .now,
+                    weekDay: []
+                )
+            )
         )
         if let alarmToEdit {
             output.title.accept("수정하기")
-            output.selectedBusInfo.accept(
-                "\(alarmToEdit.busStopName), \(alarmToEdit.busName)"
-            )
-            output.selectedDate.accept(alarmToEdit.time)
-            output.selectedWeekDay.accept(alarmToEdit.weekDay)
+            output.regularAlarm.accept(alarmToEdit)
         }
         
         input.viewWillAppear
@@ -69,23 +72,45 @@ final class AddRegularAlarmViewModel: ViewModel {
             .disposed(by: disposeBag)
         
         input.dateSelectEvent
-            .bind(to: output.selectedDate)
+            .subscribe(
+                onNext: { date in
+                    let dataToUpdated = output.regularAlarm.value
+                    let updatedAlarm = RegularAlarmResponse(
+                        requestId: dataToUpdated.requestId,
+                        busStopId: dataToUpdated.busStopId,
+                        busStopName: dataToUpdated.busStopName,
+                        busId: dataToUpdated.busId,
+                        busName: dataToUpdated.busName,
+                        time: date,
+                        weekDay: dataToUpdated.weekday
+                    )
+                    output.regularAlarm.accept(updatedAlarm)
+                }
+            )
             .disposed(by: disposeBag)
         
         input.weekDayBtnTapEvent
             .subscribe(
                 onNext: { rawValue in
-                    if output.selectedWeekDay.value.contains(rawValue) {
-                        output.selectedWeekDay.accept(
-                            output.selectedWeekDay.value.filter {
-                                $0 != rawValue
-                            }
-                        )
+                    let dataToUpdated = output.regularAlarm.value
+                    let newWeekday: [Int]
+                    if dataToUpdated.weekday.contains(rawValue) {
+                        newWeekday = dataToUpdated.weekday.filter {
+                            $0 != rawValue
+                        }
                     } else {
-                        output.selectedWeekDay.accept(
-                            output.selectedWeekDay.value + [rawValue]
-                        )
+                        newWeekday = dataToUpdated.weekday + [rawValue]
                     }
+                    let updatedAlarm = RegularAlarmResponse(
+                        requestId: dataToUpdated.requestId,
+                        busStopId: dataToUpdated.busStopId,
+                        busStopName: dataToUpdated.busStopName,
+                        busId: dataToUpdated.busId,
+                        busName: dataToUpdated.busName,
+                        time: dataToUpdated.time,
+                        weekDay: newWeekday
+                    )
+                    output.regularAlarm.accept(updatedAlarm)
                 }
             ).disposed(by: disposeBag)
         
@@ -93,23 +118,20 @@ final class AddRegularAlarmViewModel: ViewModel {
             .withUnretained(self)
             .subscribe(
                 onNext: { viewModel, _ in
-                    let selectedBusInfo = output.selectedBusInfo.value
-                        .split(separator: " ")
-                        .map { String($0) }
-                    guard let busStopName = selectedBusInfo.first,
-                          let busName = selectedBusInfo.last
-                    else { return }
-                    viewModel.useCase.addNewAlarm(
-                        response: .init(
-                            busStopId: "busStopId",
-                            busStopName: busStopName,
-                            busId: "busId",
-                            busName: busName,
-                            time: output.selectedDate.value,
-                            weekDay: output.selectedWeekDay.value
+                    switch output.title.value {
+                    case "추가하기":
+                        viewModel.useCase.addNewAlarm(
+                            response: output.regularAlarm.value
                         )
-                    )
-                    viewModel.coordinator.complete()
+                        viewModel.coordinator.complete()
+                    case "수정하기":
+                        viewModel.useCase.editAlarm(
+                            response: output.regularAlarm.value
+                        )
+                        viewModel.coordinator.complete()
+                    default:
+                        print("\(String(describing: self)): 잘못된 타이틀")
+                    }
                 }
             )
             .disposed(by: disposeBag)
@@ -129,8 +151,6 @@ extension AddRegularAlarmViewModel {
     
     struct Output { 
         let title: BehaviorRelay<String>
-        let selectedBusInfo: BehaviorRelay<String>
-        let selectedDate: BehaviorRelay<Date>
-        let selectedWeekDay: BehaviorRelay<[Int]>
+        let regularAlarm: BehaviorRelay<RegularAlarmResponse>
     }
 }

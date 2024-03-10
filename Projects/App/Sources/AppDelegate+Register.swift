@@ -27,6 +27,13 @@ extension AppDelegate {
         DIContainer.register(
             type: RegularAlarmUseCase.self,
             DefaultRegularAlarmUseCase(
+                localNotificationService: localNotificationService
+            )
+        )
+        
+        DIContainer.register(
+            type: AddRegularAlarmUseCase.self,
+            DefaultAddRegularAlarmUseCase(
                 regularAlarmRepository: regularAlarmRepository,
                 localNotificationService: localNotificationService
             )
@@ -36,6 +43,7 @@ extension AppDelegate {
             type: SearchUseCase.self,
             DefaultSearchUseCase(stationListRepository: stationListRepository)
         )
+        
         DIContainer.register(
             type: BusStopUseCase.self,
             DefaultBusStopUseCase(

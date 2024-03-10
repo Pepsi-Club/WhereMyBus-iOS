@@ -15,8 +15,8 @@ public protocol LocalNotificationService {
     var authState: BehaviorSubject<UNAuthorizationStatus> { get }
     
     func authorize()
-    func fetchRegularAlarm()
+    func fetchRegularAlarm() -> Observable<[RegularAlarmResponse]>
     func registNewRegularAlarm(response: RegularAlarmResponse) throws
-    func editRegularAlarm() throws
-    func deleteRegularAlarm() throws
+    func editRegularAlarm(response: RegularAlarmResponse) throws
+    func removeRegularAlarm(response: RegularAlarmResponse) throws
 }
