@@ -244,39 +244,54 @@ final class AddRegularAlarmViewController: UIViewController {
         output.title
             .bind(to: titleLabel.rx.text)
             .disposed(by: disposeBag)
-        
-        output.selectedBusInfo
+        output.regularAlarm
+            .map { response in
+                let title = response.busStopName.isEmpty
+                || response.busName.isEmpty ?
+                "정류장 및 버스 찾기" :
+                "\(response.busStopName), \(response.busName)"
+                return title
+            }
             .withUnretained(self)
             .subscribe(
-                onNext: { viewController, str in
-                    viewController.searchBtn.updateTitle(title: str)
+                onNext: { viewController, title in
+                    viewController.searchBtn.updateTitle(title: title)
                 }
             )
             .disposed(by: disposeBag)
         
-        output.selectedDate
-            .bind(to: timePicker.rx.date)
-            .disposed(by: disposeBag)
-        
-        output.selectedWeekDay
+        output.regularAlarm
+            .map { response in
+                response.weekday
+            }
             .withUnretained(self)
             .subscribe(
-                onNext: { viewController, selectedRawValue in
+                onNext: { viewController, weekday in
                     viewController.weekDayBtns
                         .forEach { btn in
                             var color: UIColor
-                            if selectedRawValue.contains(btn.tag) {
+                            if weekday.contains(btn.tag) {
                                 color = DesignSystemAsset.weekDayBlue.color
                             } else {
                                 color = DesignSystemAsset.weekDayGray.color
                             }
                             btn.backgroundColor = color
                         }
-                    let completeEnabled = !selectedRawValue.isEmpty 
+                    let completeEnabled = !weekday.isEmpty
+                    // TODO: SearchFeature에서 정보 받아오고 로직 수정
+//                    && !response.busStopName.isEmpty
+//                    && !response.busName.isEmpty
                     
                     viewController.completeBtn.isEnabled = completeEnabled
                 }
             )
+            .disposed(by: disposeBag)
+        
+        output.regularAlarm
+            .map { response in
+                response.time
+            }
+            .bind(to: timePicker.rx.date)
             .disposed(by: disposeBag)
     }
     
