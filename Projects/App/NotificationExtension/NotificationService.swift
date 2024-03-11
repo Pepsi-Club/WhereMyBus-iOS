@@ -57,7 +57,7 @@ class NotificationService: UNNotificationServiceExtension {
                     switch bus.firstArrivalTime {
                     case "곧 도착":
                         routeMessage = "\(bus.busName)번 버스가 \(busStopName)에"
-                        remainingMessage = "곧 도착해요."
+                        remainingMessage = "\(routeMessage) 곧 도착해요."
                         secondLine = "다음 버스는 \(secondArrivalTime) 후에 도착해요."
                     case "운행종료":
                         routeMessage = "\(bus.busName)번 버스는"
@@ -85,9 +85,5 @@ class NotificationService: UNNotificationServiceExtension {
     }
     
     override func serviceExtensionTimeWillExpire() {
-        if let bestAttemptContent {
-            bestAttemptContent.title = "Expire"
-            contentHandler?(bestAttemptContent)
-        }
     }
 }

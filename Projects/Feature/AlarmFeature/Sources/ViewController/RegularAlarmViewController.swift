@@ -110,10 +110,7 @@ public final class RegularAlarmViewController: UIViewController {
             .observe(on: MainScheduler.asyncInstance)
             .subscribe(
                 onNext: { viewController, responses in
-                    if responses.isEmpty {
-                        viewController.alarmTableView.backgroundView
-                        = viewController.emptyRegularAlarmView
-                    } else {
+                    if !responses.isEmpty {
                         viewController.alarmTableView.backgroundView = nil
                     }
                     viewController.updateSnapshot(responses: responses)

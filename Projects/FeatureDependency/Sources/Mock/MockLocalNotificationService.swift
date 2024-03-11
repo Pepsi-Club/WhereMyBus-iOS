@@ -15,7 +15,6 @@ import RxSwift
 
 #if DEBUG
 public final class MockLocalNotificationService: LocalNotificationService {
-    
     public var authState = BehaviorSubject<UNAuthorizationStatus>(
         value: .denied
     )
@@ -23,21 +22,22 @@ public final class MockLocalNotificationService: LocalNotificationService {
     public init() { }
     
     public func authorize() {
-    }
-    
-    public func fetchRegularAlarm() -> Observable<[RegularAlarmResponse]> {
-        .just([])
-    }
-    
-    public func registNewRegularAlarm(response: Domain.RegularAlarmResponse) throws {
         
     }
     
-    public func editRegularAlarm(response: Domain.RegularAlarmResponse) throws {
+    public func fetchRegularAlarm() {
         
     }
     
-    public func removeRegularAlarm(response: Domain.RegularAlarmResponse) throws {
+    public func registNewRegularAlarm(response: RegularAlarmResponse) throws {
+        print(response)
+    }
+    
+    public func editRegularAlarm() throws {
+        
+    }
+    
+    public func deleteRegularAlarm() throws {
         
     }
 }

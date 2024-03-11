@@ -2,41 +2,37 @@
 //  DefaultRegularAlarmUseCase.swift
 //  Domain
 //
-//  Created by gnksbm on 3/10/24.
+//  Created by gnksbm on 2/16/24.
 //  Copyright © 2024 Pepsi-Club. All rights reserved.
 //
 
 import Foundation
 
-import RxSwift
-
-public class DefaultRegularAlarmUseCase: RegularAlarmUseCase {
+public final class DefaultRegularAlarmUseCase: RegularAlarmUseCase {
+    private let regularAlarmRepository: RegularAlarmRepository
     private let localNotificationService: LocalNotificationService
     
-    public let fetchedAlarm = PublishSubject<[RegularAlarmResponse]>()
-    private let disposeBag = DisposeBag()
-    
-    public init(localNotificationService: LocalNotificationService) {
+    public init(
+        regularAlarmRepository: RegularAlarmRepository,
+        localNotificationService: LocalNotificationService
+    ) {
+        self.regularAlarmRepository = regularAlarmRepository
         self.localNotificationService = localNotificationService
     }
     
-    public func fetchAlarm() {
+    public func checkNotificationAuth() {
+        localNotificationService.authorize()
         localNotificationService.fetchRegularAlarm()
-            .withUnretained(self)
-            .subscribe(
-                onNext: { useCase, responses in
-                    useCase.fetchedAlarm.onNext(responses)
-                }
-            )
-            .disposed(by: disposeBag)
     }
     
-    public func removeAlarm(response: RegularAlarmResponse) throws {
+    public func addNewAlarm(response: RegularAlarmResponse) {
         do {
-            try localNotificationService.removeRegularAlarm(response: response)
-            fetchAlarm()
+            try localNotificationService.registNewRegularAlarm(
+                response: response
+            )
+            try regularAlarmRepository.addNewAlarm()
         } catch {
-            throw error
+            print(error)
         }
     }
 }

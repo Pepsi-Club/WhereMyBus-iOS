@@ -8,8 +8,6 @@
 
 import Foundation
 
-import Core
-
 public protocol PushNotificationService {
-    func makeNotification(data: PushNotificationRequestable)
+    func makeNotification(payload: [String: Any])
 }

@@ -1,6 +1,5 @@
 import Foundation
 
-import Core
 import Domain
 import FeatureDependency
 
@@ -8,7 +7,6 @@ import RxSwift
 
 public final class RegularAlarmViewModel: ViewModel {
     private let coordinator: RegularAlarmCoordinator
-    @Injected(RegularAlarmUseCase.self) var useCase: RegularAlarmUseCase
     
     private let disposeBag = DisposeBag()
     
@@ -26,10 +24,8 @@ public final class RegularAlarmViewModel: ViewModel {
         )
         
         input.viewWillAppearEvent
-            .withUnretained(self)
             .subscribe(
-                onNext: { viewModel, _ in
-                    viewModel.useCase.fetchAlarm()
+                onNext: { _ in
                 }
             )
             .disposed(by: disposeBag)
@@ -57,18 +53,9 @@ public final class RegularAlarmViewModel: ViewModel {
         input.removeItemSelected
             .withUnretained(self)
             .subscribe(
-                onNext: { viewModel, response in
-                    do {
-                        try viewModel.useCase.removeAlarm(response: response)
-                    } catch {
-                        print(error.localizedDescription)
-                    }
-                }
+//                onNext: { viewModel, response in
+//                }
             )
-            .disposed(by: disposeBag)
-        
-        useCase.fetchedAlarm
-            .bind(to: output.regularAlarmList)
             .disposed(by: disposeBag)
         
         return output

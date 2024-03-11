@@ -54,7 +54,7 @@ public extension [String: Plist.Value] {
     ]
     
     static let additionalInfoPlist: Self = [
-        "FirebaseAppDelegateProxyEnabled": false,
+        "FirebaseAppDelegateProxyEnabled": "0",
         "ITSAppUsesNonExemptEncryption": "NO",
         "NSAppTransportSecurity": [
             "NSExceptionDomains": [

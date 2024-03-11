@@ -3,7 +3,7 @@ import ProjectDescriptionHelpers
 
 let project = Project.makeProject(
     name: "NetworkService",
-    moduleType: .dynamicFramework,
+    moduleType: .staticFramework,
     dependencies: [
         .domain,
     ]

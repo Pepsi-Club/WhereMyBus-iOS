@@ -26,8 +26,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func register() {
         DIContainer.register(
-            type: AddRegularAlarmUseCase.self,
-            DefaultAddRegularAlarmUseCase(
+            type: RegularAlarmUseCase.self,
+            DefaultRegularAlarmUseCase(
                 regularAlarmRepository: MockRegularAlarmRepository(),
                 localNotificationService: MockLocalNotificationService()
             )
