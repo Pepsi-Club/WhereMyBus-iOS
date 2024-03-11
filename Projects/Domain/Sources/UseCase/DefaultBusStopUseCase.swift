@@ -54,15 +54,17 @@ public final class DefaultBusStopUseCase: BusStopUseCase {
     private func fetchFavorites() {
         favoritesRepository.favorites
             .withUnretained(self)
+            .observe(on: MainScheduler.asyncInstance)
             .subscribe(
                 onNext: { useCase, favorites in
+                    print("✅ \(favorites)")
                     useCase.favorites.onNext(favorites)
                 }
             )
             .disposed(by: disposeBag)
     }
-    // MARK: - 필터링 후 [BusStopArrivalInfoRepsonse] 반환
-    private func filterFavorites(
+    // MARK: - 필터링 후 BusStopArrivalInfoRepsonse 반환
+    public func filterFavorites(
         responses: BusStopArrivalInfoResponse,
         favorites: [FavoritesBusStopResponse]
     ) -> BusStopArrivalInfoResponse {
@@ -70,7 +72,7 @@ public final class DefaultBusStopUseCase: BusStopUseCase {
         
         guard let favorite = favorites.first(
             where: {
-                $0.busStopId == responses.busStopId
+                $0.busStopId == busStops.busStopId
             }
         ) else {
             return busStops // favorites에 해당하는 것이 없으면 그대로 반환
@@ -86,22 +88,18 @@ public final class DefaultBusStopUseCase: BusStopUseCase {
                 = !busStops.buses[indexInResponse].isFavorites
             }
         }
-        
-        print("\(busStops)")
-        
         return busStops
     }
     
     // MARK: - 즐찾 추가 및 해제
-    public func addFavorite(
+    public func handleFavorites(
         busStop: String,
         bus: BusArrivalInfoResponse
-    ) { 
-        print("\(busStop) | \(bus)")
+    ) {
+        if bus.isFavorites {
+            self.favoritesRepository.removeRoute(arsId: busStop, bus: bus)
+        } else {
+            self.favoritesRepository.addRoute(arsId: busStop, bus: bus)
+        }
     }
-    
-    public func deleteFavorite() {
-        
-    }
-    
 }

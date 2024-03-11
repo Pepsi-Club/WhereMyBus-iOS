@@ -63,6 +63,12 @@ extension DefaultHomeCoordinator: HomeCoordinator {
     
     public func startBusStopFlow(stationId: String) {
         // BusStopCoordinatorFlow
+        let busStopCoordinator = coordinatorProvider.makeBusStopCoordinator(
+            navigationController: navigationController,
+            busStopId: stationId
+        )
+        childs.append(busStopCoordinator)
+        busStopCoordinator.start()
     }
 }
 

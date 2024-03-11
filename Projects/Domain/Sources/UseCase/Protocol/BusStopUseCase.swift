@@ -16,6 +16,9 @@ public protocol BusStopUseCase {
     var favorites: BehaviorSubject<[FavoritesBusStopResponse]> { get }
     
     func fetchBusArrivals(request: ArrivalInfoRequest)
-    func addFavorite(busStop: String, bus: BusArrivalInfoResponse)
-    func deleteFavorite()
+    func filterFavorites(
+        responses: BusStopArrivalInfoResponse,
+        favorites: [FavoritesBusStopResponse]
+    ) -> BusStopArrivalInfoResponse
+    func handleFavorites(busStop: String, bus: BusArrivalInfoResponse)
 }
