@@ -35,6 +35,7 @@ public final class SearchViewModel: ViewModel {
             .withUnretained(self)
             .subscribe(
                 onNext: { viewModel, _ in
+                    viewModel.useCase.getStationList()
                 })
             .disposed(by: disposeBag)
         
@@ -56,6 +57,7 @@ extension SearchViewModel {
         let viewWillAppearEvenet: Observable<Void>
 //        let infoAgreeEvent: Observable<Bool>
         let enterPressedEvent: Observable<Void>
+        let backbtnEvent: Observable<Void>
     }
     
     public struct Output {

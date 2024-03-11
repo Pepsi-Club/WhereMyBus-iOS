@@ -12,4 +12,6 @@ import RxSwift
 
 public protocol StationListRepository {
     var searchResponse: BehaviorSubject<[BusStopInfoResponse]> { get }
+    func jsontoSearchData()
+    func saveRecentSearch(_ searchText: String)
 }

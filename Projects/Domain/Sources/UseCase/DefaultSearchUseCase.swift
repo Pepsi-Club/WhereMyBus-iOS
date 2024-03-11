@@ -29,4 +29,12 @@ public final class DefaultSearchUseCase: SearchUseCase {
         }
         return filteredStops
     }
+    
+    public func getStationList(){
+        stationListRepository.jsontoSearchData()
+    }
+    
+    public func getRecentSearch(){
+        UserDefaults.standard.stringArray(forKey: "recentSearches")
+    }
 }

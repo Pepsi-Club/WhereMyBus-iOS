@@ -11,7 +11,8 @@ import UIKit
 import Domain
 import FeatureDependency
 
-public final class DefaultAfterSearchCoordinator: SearchCoordinator {
+public final class DefaultAfterSearchCoordinator: AfterSearchCoordinator {
+    
     public var parent: Coordinator?
     public var childs: [Coordinator] = []
     public var navigationController: UINavigationController

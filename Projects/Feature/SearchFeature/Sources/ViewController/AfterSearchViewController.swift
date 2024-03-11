@@ -20,6 +20,11 @@ public final class AfterSearchViewController: UIViewController {
     
     private let searchTextFieldView = SearchTextFieldView()
     
+    private let recentSerachCell = RecentSearchCell()
+    
+    private var dataSource: AfterSearchDataSource!
+    private var snapshot: AfterSearchDataSource! //
+    
     private let backBtn: UIButton = {
         let btn = UIButton()
         let starImage = UIImage(systemName: "chevron.backward")
@@ -38,25 +43,6 @@ public final class AfterSearchViewController: UIViewController {
         return label
     }()
     
-    private let magniImage: UIImageView = {
-        let symbolName = "magnifyingglass"
-
-        var configuration = UIImage.SymbolConfiguration(pointSize: 8,
-                                                        weight: .light)
-        configuration = configuration.applying(UIImage.SymbolConfiguration(
-                            font: UIFont.systemFont(ofSize: 20, weight: .light),
-                            scale: .default))
-
-        let migImage = UIImage(
-            systemName: symbolName,
-            withConfiguration: configuration)?.withTintColor(.black)
-
-        let migImageView = UIImageView(image: migImage)
-        migImageView.tintColor = DesignSystemAsset.gray4.color
-
-        return migImageView
-    }()
-
     private let coloredRectangleView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor(red: 230/255,
@@ -93,9 +79,18 @@ public final class AfterSearchViewController: UIViewController {
         return stack
     }()
     
+    private lazy var searchResultTableView: UITableView = {
+        let table = UITableView(frame: .zero, style: .insetGrouped)
+        table.register(RecentSearchCell.self)
+        table.dataSource = dataSource
+        table.delegate = self
+        
+        return table
+    }()
+    
     private let disposeBag = DisposeBag()
     private let searchEnterEvent = PublishSubject<String>()
-    public init(viewModel: SearchViewModel) {
+    public init(viewModel: AfterSearchViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -112,7 +107,7 @@ public final class AfterSearchViewController: UIViewController {
         
         [searchTextFieldView, backBtn, textFieldStack, recentSearchlabel,
           coloredRectangleView,
-         headerStack, magniStack, magniImage]
+         headerStack, magniStack,searchResultTableView]
             .forEach {
             view.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
@@ -126,19 +121,6 @@ public final class AfterSearchViewController: UIViewController {
         NSLayoutConstraint.activate([
         backBtn.widthAnchor.constraint(equalToConstant: 20),
         
-        magniImage.topAnchor.constraint(
-                equalTo: view.safeAreaLayoutGuide.topAnchor,
-                constant: -5
-            ),
-        
-        magniImage.widthAnchor.constraint(
-                equalToConstant: 20
-            ),
-        
-        magniImage.trailingAnchor.constraint(
-                equalTo: view.trailingAnchor,
-                constant: -20
-            ),
             
         searchTextFieldView.heightAnchor.constraint(
                 equalToConstant: 39),
@@ -153,8 +135,8 @@ public final class AfterSearchViewController: UIViewController {
             ),
         
         textFieldStack.trailingAnchor.constraint(
-            equalTo: magniImage.trailingAnchor,
-            constant: 10
+            equalTo: view.safeAreaLayoutGuide.trailingAnchor,
+            constant: -10
             ),
         
         headerStack.topAnchor.constraint(
@@ -168,10 +150,55 @@ public final class AfterSearchViewController: UIViewController {
     
     // 검색한 내용들이 새로운 뷰에 그려져야함. 그릴때마다 AfterSearchView가 다시 그려져야 하고, 클릭을 하면 지수님 뷰에 가면서 최신 기록 로그에 남겨져야함.
     private func bindViewModel() {
-      
-        
-        print("전달완")
+        // 검색한 내용이 넘어와야함
+        // 넘어와서 useCase에 있는 getSearch를 한 번 돌아야함
+        // 맞으면 값이 떠야함
+        // 아니면 안뜨면 됨
+        // 백 버튼 누르면 전 화면으로 움직이면 됨.
     }
+    
+    private func configureDataSource() {
+        dataSource = .init(
+            tableView: searchResultTableView,
+            cellProvider: { [weak self] tableView, indexPath, response
+                
+                in
+                guard let self = self,
+                      let cell = self.configureCell(
+                        tableView: tableView,
+                        indexPath: indexPath,
+                        response: response
+                      )
+                else { return UITableViewCell() }
+                
+                return cell
+            })
+    }
+    
+    private func configureCell(
+        tableView: UITableView,
+        indexPath: IndexPath,
+        response: BusStopInfoResponse
+    )-> RecentSearchCell? {
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: RecentSearchCell.identifier,
+            for: indexPath
+        ) as? RecentSearchCell
+                
+        else { return nil }
+        
+        let busStopName = response.busStopName
+        let busStopId = response.busStopId
+        let direction = response.direction
+        
+        return cell
+    }
+}
+
+extension SearchViewController {
+    typealias AfterSearchDataSource =
+    UITableViewDiffableDataSource
+    <Int, BusStopInfoResponse>
 }
 
 extension AfterSearchViewController: UITextFieldDelegate {

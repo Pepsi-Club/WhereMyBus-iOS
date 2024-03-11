@@ -30,7 +30,7 @@ public final class DefaultStationListRepository: StationListRepository {
     
     // MARK: Json값 모델에 저장 <질문> 뷰 어피어할때마다 이게 이루어지면 비효율적일거같은데, 앱 첫단에서 하면 안될까
     
-    public func jsontoSearchData(busStopInfoList: [BusStopInfoResponse])->[BusStopInfoResponse] {
+    public func jsontoSearchData() {
         
         if let path = Bundle.main.path(
             forResource: "Dummy_stationList",
@@ -69,12 +69,11 @@ public final class DefaultStationListRepository: StationListRepository {
                 print("Error parsing JSON: \(error.localizedDescription)")
             }
         }
-        return busStopInfoList
     }
     
     // UserDefaults에 최대 5개 항목만 저장함. 근데 BusStopInfoResponse 형태로 받아야 함.
     // TODO: 수정사항 클릭한 cell의 정보를 받아와야함 String이 아니라
-    func saveRecentSearch(_ searchText: String) {
+    public func saveRecentSearch(_ searchText: String) {
         var currentSearches = UserDefaults.standard.stringArray(forKey: "recentSearches") ?? []
         
         // 최대 갯수에 도달하면 가장 오래된 항목을 제거

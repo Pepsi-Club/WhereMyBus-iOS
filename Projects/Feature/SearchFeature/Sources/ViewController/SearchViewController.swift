@@ -245,6 +245,7 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
                         .editingDidEndOnExit).asObservable()
             )
         )
+        
         output.afterSearchEnter
     }
     

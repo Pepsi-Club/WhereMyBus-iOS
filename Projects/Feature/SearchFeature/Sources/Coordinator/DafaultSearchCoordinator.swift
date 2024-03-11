@@ -56,8 +56,6 @@ public final class DefaultSearchCoordinator: SearchCoordinator {
 }
 
 extension DefaultSearchCoordinator {
-
-    
     public func startSearchFlow() {
         let searchCoordinator = coordinatorProvider.makeSearchCoordinator(
             navigationController: navigationController
