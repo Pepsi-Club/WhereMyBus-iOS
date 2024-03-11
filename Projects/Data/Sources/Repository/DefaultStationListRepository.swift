@@ -14,7 +14,7 @@ import Domain
 
 public final class DefaultStationListRepository: StationListRepository {
     public var searchResponse = BehaviorSubject<[BusStopInfoResponse]>( value: [])
-    private var busStopInfoList: [BusStopInfoResponse] = []
+    public var busStopInfoList: [BusStopInfoResponse] = []
 
     private let recentSearchesSubject = PublishSubject<String>()
     private let disposeBag = DisposeBag()
@@ -28,10 +28,9 @@ public final class DefaultStationListRepository: StationListRepository {
     public init() {
     }
     
-    // MARK: Json값 모델에 저장 <질문> 앱 구동할때마다 이게 만들어지면 비효율적일거같은데
-    // 이게 맞을까? 앱 맨 첫단에서 하는게 맞을 거 같다
-    public func jsontoSearchData(busStopInfoList: [BusStopInfoResponse]) {
-    var busStopInfoList: [BusStopInfoResponse] = []
+    // MARK: Json값 모델에 저장 <질문> 뷰 어피어할때마다 이게 이루어지면 비효율적일거같은데, 앱 첫단에서 하면 안될까
+    
+    public func jsontoSearchData(busStopInfoList: [BusStopInfoResponse])->[BusStopInfoResponse] {
         
         if let path = Bundle.main.path(
             forResource: "Dummy_stationList",
@@ -61,7 +60,7 @@ public final class DefaultStationListRepository: StationListRepository {
                                 latitude: latitude
                             )
                             
-                            busStopInfoList.append(busStopInfo)
+                            self.busStopInfoList.append(busStopInfo)
                         }
                     }
                 }
@@ -70,9 +69,11 @@ public final class DefaultStationListRepository: StationListRepository {
                 print("Error parsing JSON: \(error.localizedDescription)")
             }
         }
+        return busStopInfoList
     }
     
-    // UserDefaults에 최대 5개 항목만 저장함. 근데 BusStopInfoResponse 형태로 받아야 함. 
+    // UserDefaults에 최대 5개 항목만 저장함. 근데 BusStopInfoResponse 형태로 받아야 함.
+    // TODO: 수정사항 클릭한 cell의 정보를 받아와야함 String이 아니라
     func saveRecentSearch(_ searchText: String) {
         var currentSearches = UserDefaults.standard.stringArray(forKey: "recentSearches") ?? []
         

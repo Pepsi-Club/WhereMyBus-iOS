@@ -43,10 +43,8 @@ public final class DefaultSearchCoordinator: SearchCoordinator {
         childs.append(busStopCoordinator)
         busStopCoordinator.start()
     }
-}
-
-extension DefaultSearchCoordinator: AfterSearchCoordinator {
-    public func starts() {
+    
+    public func goAfterSearchView() {
         let afterSearchViewController = AfterSearchViewController(
             viewModel: .init(coordinator: self)
         )
@@ -55,6 +53,10 @@ extension DefaultSearchCoordinator: AfterSearchCoordinator {
             animated: true
         )
     }
+}
+
+extension DefaultSearchCoordinator {
+
     
     public func startSearchFlow() {
         let searchCoordinator = coordinatorProvider.makeSearchCoordinator(

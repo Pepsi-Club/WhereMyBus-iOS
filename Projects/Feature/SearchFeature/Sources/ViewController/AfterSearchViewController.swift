@@ -16,7 +16,7 @@ import RxSwift
 import RxCocoa
 
 public final class AfterSearchViewController: UIViewController {
-    private let viewModel: SearchViewModel
+    private let viewModel: AfterSearchViewModel
     
     private let searchTextFieldView = SearchTextFieldView()
     
@@ -160,16 +160,15 @@ public final class AfterSearchViewController: UIViewController {
         headerStack.topAnchor.constraint(
                 equalTo: textFieldStack.bottomAnchor, constant: 15),
         headerStack.leadingAnchor.constraint(
-                equalTo: view.leadingAnchor, constant: 15),
+                equalTo: view.leadingAnchor, constant: 20),
         headerStack.trailingAnchor.constraint(
                 equalTo: view.trailingAnchor, constant: -15),
            ])
        }
+    
+    // 검색한 내용들이 새로운 뷰에 그려져야함. 그릴때마다 AfterSearchView가 다시 그려져야 하고, 클릭을 하면 지수님 뷰에 가면서 최신 기록 로그에 남겨져야함.
     private func bindViewModel() {
-        // 엔터 이벤트를 뷰모델에 전달
-        searchTextFieldView.rx.controlEvent(.editingDidEndOnExit)
-            .bind(to: viewModel.enterPressedSubject)
-            .disposed(by: disposeBag)
+      
         
         print("전달완")
     }

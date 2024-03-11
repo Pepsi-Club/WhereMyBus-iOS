@@ -17,14 +17,18 @@ public final class DefaultAfterSearchCoordinator: SearchCoordinator {
     public var navigationController: UINavigationController
     public let coordinatorProvider: CoordinatorProvider
     
+    private let busStopId: String
+    
     public init(
         parent: Coordinator?,
         navigationController: UINavigationController,
-        coordinatorProvider: CoordinatorProvider
+        coordinatorProvider: CoordinatorProvider,
+        busStopId: String
     ) {
         self.navigationController = navigationController
         self.parent = parent
         self.coordinatorProvider = coordinatorProvider
+        self.busStopId = busStopId
     }
     
     public func start() {
@@ -41,7 +45,7 @@ public final class DefaultAfterSearchCoordinator: SearchCoordinator {
         let busStopCoordinator =
         coordinatorProvider.makeBusStopCoordinator(
             navigationController: navigationController,
-            busStopId: ""
+            busStopId: busStopId
         )
         
         childs.append(busStopCoordinator)
