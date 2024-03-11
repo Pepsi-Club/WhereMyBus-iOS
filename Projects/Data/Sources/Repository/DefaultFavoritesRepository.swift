@@ -39,7 +39,7 @@ public final class DefaultFavoritesRepository: FavoritesRepository {
                     .first(where: { $0.busStopId == arsId })
                 else { return }
                 let newBusIds = favoriteToChange.busIds + [bus.busId]
-                var newFavorites = oldFavorites.filter { $0.busStopId == arsId }
+                var newFavorites = oldFavorites.filter { $0.busStopId != arsId }
                 newFavorites.append(
                     .init(
                         busStopId: arsId,

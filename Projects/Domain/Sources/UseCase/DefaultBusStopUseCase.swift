@@ -54,7 +54,7 @@ public final class DefaultBusStopUseCase: BusStopUseCase {
     private func fetchFavorites() {
         favoritesRepository.favorites
             .withUnretained(self)
-            .observe(on: MainScheduler.instance)
+            .observe(on: MainScheduler.asyncInstance)
             .subscribe(
                 onNext: { useCase, favorites in
                     print("✅ \(favorites)")
@@ -63,8 +63,8 @@ public final class DefaultBusStopUseCase: BusStopUseCase {
             )
             .disposed(by: disposeBag)
     }
-    // MARK: - 필터링 후 [BusStopArrivalInfoRepsonse] 반환
-    private func filterFavorites(
+    // MARK: - 필터링 후 BusStopArrivalInfoRepsonse 반환
+    public func filterFavorites(
         responses: BusStopArrivalInfoResponse,
         favorites: [FavoritesBusStopResponse]
     ) -> BusStopArrivalInfoResponse {
@@ -72,7 +72,7 @@ public final class DefaultBusStopUseCase: BusStopUseCase {
         
         guard let favorite = favorites.first(
             where: {
-                $0.busStopId == responses.busStopId
+                $0.busStopId == busStops.busStopId
             }
         ) else {
             return busStops // favorites에 해당하는 것이 없으면 그대로 반환
@@ -88,9 +88,6 @@ public final class DefaultBusStopUseCase: BusStopUseCase {
                 = !busStops.buses[indexInResponse].isFavorites
             }
         }
-        
-        print("\(busStops)")
-        
         return busStops
     }
     
@@ -99,14 +96,10 @@ public final class DefaultBusStopUseCase: BusStopUseCase {
         busStop: String,
         bus: BusArrivalInfoResponse
     ) {
-        // MARK: - repo.매소드 호출시 CRUD는 안되더라도 내부 값이 변경되어야하는게 맞지 않나 ?
-        print("=============================")
-        print("\(busStop) | \(bus) ")
         if bus.isFavorites {
-            self.favoritesRepository.addRoute(arsId: busStop, bus: bus)
-        } else {
             self.favoritesRepository.removeRoute(arsId: busStop, bus: bus)
+        } else {
+            self.favoritesRepository.addRoute(arsId: busStop, bus: bus)
         }
-        fetchFavorites()
     }
 }

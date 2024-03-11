@@ -35,6 +35,7 @@ public final class BusStopViewModel: ViewModel {
             .withUnretained(self)
             .subscribe(
                 onNext: { viewModel, _ in
+                    output.isRefreshing.onNext(.fetching)
                     viewModel.useCase.fetchBusArrivals(
                         request: viewModel.fetchData
                     )
@@ -43,24 +44,26 @@ public final class BusStopViewModel: ViewModel {
             .disposed(by: disposeBag)
         
         input.mapBtnTapEvent
-            .withUnretained(self)
-            .subscribe(onNext: { viewModel, busStopArrival in
-                // 여기서 강묵님쪽으로 데이터 넘겨주면 될듯
+            .withLatestFrom(output.busStopArrivalInfoResponse
+            ) { _, busStopInfo in
+                return busStopInfo
+            }
+            .withUnretained(self) // weak self 대신이다 ! -> 아님 -> self를 인자로 받아
+            .subscribe { viewModel, busStopInfo in
                 viewModel.coordinator.busStopMapLocation(
-                    busStopId: busStopArrival.busStopId
+                    busStopId: busStopInfo.busStopId
                 )
-            })
+            }
             .disposed(by: disposeBag)
         
         input.refreshLoading
             .withUnretained(self)
-            .subscribe(onNext: { viewModel, bool in
-                if bool {
-                    viewModel.useCase.fetchBusArrivals(
-                        request: viewModel.fetchData
-                    )
-                    output.isRefreshing.onNext(false)
-                }
+            .subscribe(onNext: { viewModel, _ in
+                output.isRefreshing.onNext(.fetching)
+                
+                viewModel.useCase.fetchBusArrivals(
+                    request: viewModel.fetchData
+                )
             })
             .disposed(by: disposeBag)
         
@@ -81,15 +84,16 @@ public final class BusStopViewModel: ViewModel {
         input.navigationBackBtnTapEvent
             .withUnretained(self)
             .subscribe { viewModel, _ in
-                print("눌리나요")
                 viewModel.coordinator.popVC()
             }
             .disposed(by: disposeBag)
         
         useCase.busStopSection
-            .bind(
-                to: output.busStopArrivalInfoResponse
-            )
+            .withUnretained(self)
+            .subscribe(onNext: { _, busStopInfo in
+                output.busStopArrivalInfoResponse.onNext(busStopInfo)
+                output.isRefreshing.onNext(.fetchComplete)
+            })
             .disposed(by: disposeBag)
         
         useCase.favorites
@@ -101,12 +105,18 @@ public final class BusStopViewModel: ViewModel {
 }
 
 extension BusStopViewModel {
+    enum ViewRefreshState {
+        case fetching, fetchComplete
+    }
+}
+
+extension BusStopViewModel {
     public struct Input {
         let viewWillAppearEvent: Observable<Void>
         let likeBusBtnTapEvent: Observable<BusArrivalInfoResponse>
         let alarmBtnTapEvent: Observable<BusArrivalInfoResponse>
-        let mapBtnTapEvent: Observable<BusStopArrivalInfoResponse>
-        let refreshLoading: Observable<Bool>
+        let mapBtnTapEvent: Observable<Void>
+        let refreshLoading: Observable<Void>
         let navigationBackBtnTapEvent: Observable<Void>
     }
     
@@ -116,6 +126,6 @@ extension BusStopViewModel {
         var favorites
         : BehaviorSubject<[FavoritesBusStopResponse]>
         var isRefreshing
-        : PublishSubject<Bool>
+        : PublishSubject<ViewRefreshState>
     }
 }
