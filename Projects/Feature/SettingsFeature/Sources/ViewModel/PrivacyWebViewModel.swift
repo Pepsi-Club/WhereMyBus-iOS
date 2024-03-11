@@ -35,8 +35,7 @@ public final class PrivacyWebViewModel: ViewModel {
                 
                 let combinedUrlString = "https://" + self.urlString
                 print("😵‍💫: \(combinedUrlString)")
-                let test = "https://kkimin.tistory.com/117"
-                output.privacyString.onNext(test)
+                output.privacyString.onNext(combinedUrlString)
             })
             .disposed(by: disposeBag)
         
