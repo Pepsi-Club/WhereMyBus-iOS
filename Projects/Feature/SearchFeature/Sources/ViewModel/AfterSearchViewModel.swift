@@ -40,8 +40,17 @@ public final class AfterSearchViewModel: ViewModel {
         input.backBtnTapEvent
             .withUnretained(self)
             .subscribe(
-                onNext: { viewmodel, _ in
-                })
+                onNext: { viewModel, _ in
+                    viewModel.coordinator.
+                })eee
+        
+        input.cellTapEvent
+            .withUnretained(self)
+            .subscribe(
+                onNext: { viewModel, id in
+                    viewModel.useCase.searchBusStop(with: id)
+                }
+            )
         return output
     }
 }
@@ -50,7 +59,7 @@ extension AfterSearchViewModel {
     public struct Input {
         let viewWillAppearEvenet: Observable<Void>
         let backBtnTapEvent: Observable<Void>
-        let cellTapEvent: Observable<Void>
+        let cellTapEvent: Observable<String>
         let textEditingEvent: Observable<String>
     }
     
