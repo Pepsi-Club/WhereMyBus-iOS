@@ -7,14 +7,13 @@
 //
 
 import Foundation
+import CoreLocation
 
 import Domain
 
 import RxSwift
 
 public final class DefaultNearBusStopRepository: NearBusStopRepository {
-	
-	// MARK: - DI Property
 	
 	
 	// MARK: - Property
@@ -37,4 +36,5 @@ public final class DefaultNearBusStopRepository: NearBusStopRepository {
 	public func fetchBusStopResponse() {
 		
 	}
+	
 }

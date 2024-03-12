@@ -50,7 +50,7 @@ public final class NearMapViewModel: NSObject,
 
 extension NearMapViewModel {
 	public struct Input {
-		let clickBusStopIcon: Observable<Void>
+		let selectBusStop: Observable<Void>
 		let moveToBusStopDetailView: Observable<Void>
 	}
 	

@@ -51,6 +51,13 @@ extension AppDelegate {
                 favoritesRepository: favoritesRepository
             )
         )
+		
+		DIContainer.register(
+			type: NearBusStopUseCase.self,
+			DefaultNearBusStopUseCase(
+				nearMapUseCase: nearBusStopRepository
+			)
+		)
     }
 }
 
@@ -75,6 +82,10 @@ extension AppDelegate {
     var stationListRepository: StationListRepository {
         DefaultStationListRepository()
     }
+	
+	var nearBusStopRepository: NearBusStopRepository {
+		DefaultNearBusStopRepository()
+	}
 }
 
 extension AppDelegate {

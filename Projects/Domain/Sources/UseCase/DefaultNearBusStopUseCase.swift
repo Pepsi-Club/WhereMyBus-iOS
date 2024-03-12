@@ -14,14 +14,28 @@ import RxCocoa
 
 public final class DefaultNearBusStopUseCase: NearBusStopUseCase {
 	
-	// MARK: - DI Property
+	// MARK: - Property
 	
 	private let nearMapUseCase: NearBusStopRepository
-//	private let locationService: LocationService
+	
+	public var nearBusStop = PublishSubject<NearBusStopResponse>()
+	public var selectedBusStop =  PublishSubject<NearBusStopResponse>()
+	
+	private let disposeBag = DisposeBag()
 	
 	// MARK: - Life Cycle
 	
-	init(nearMapUseCase: NearBusStopRepository) {
+	public init(nearMapUseCase: NearBusStopRepository) {
 		self.nearMapUseCase = nearMapUseCase
+	}
+	
+	// MARK: - Funtion
+	
+	public func fetchNearBusStop() {
+		
+	}
+	
+	public func selectBusStop() {
+		
 	}
 }

@@ -53,7 +53,8 @@ final class DefaultCoordinatorProvider: CoordinatorProvider {
     ) -> NearMapCoordinator {
         DefaultNearMapCoordinator(
             parent: nil,
-            navigationController: navigationController
+			navigationController: navigationController, 
+			coordinatorProvider: self
         )
     }
 }

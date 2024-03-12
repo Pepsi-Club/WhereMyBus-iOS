@@ -154,7 +154,7 @@ public final class NearMapViewController: UIViewController {
 		
 		let output = viewModel.transform(input:
 				.init(
-					clickBusStopIcon: .just({}()),
+					selectBusStop: .just({}()),
 					moveToBusStopDetailView: labelTapGesture.rx.event.map { _ in }
 				)
 		)
