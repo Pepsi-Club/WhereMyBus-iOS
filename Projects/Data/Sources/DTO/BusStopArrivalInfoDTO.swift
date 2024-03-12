@@ -63,9 +63,9 @@ public extension BusStopArrivalInfoDTO {
         guard let itemList = msgBody.itemList else { return [] }
         return itemList
             .map { item in
-                let firstMsgArr = (item.arrmsg1 ?? "도착 정보 없음")
+                let firstMsgArr = (item.arrmsg1 ?? "운행종료")
                     .components(separatedBy: "[")
-                let secondMsgArr = (item.arrmsg2 ?? "도착 정보 없음")
+                let secondMsgArr = (item.arrmsg2 ?? "운행종료")
                     .components(separatedBy: "[")
                 var firstArrivalRemaining = ""
                 var secondArrivalRemaining = ""
@@ -77,14 +77,54 @@ public extension BusStopArrivalInfoDTO {
                     secondArrivalRemaining = secondMsgArr[1]
                     secondArrivalRemaining.removeLast()
                 }
+                let firstArrivalState: ArrivalState
+                let secondArrivalState: ArrivalState
+                switch firstMsgArr.first {
+                case .some(let msg):
+                    switch msg {
+                    case "곧 도착":
+                        firstArrivalState = .soon
+                    case "출발대기":
+                        firstArrivalState = .pending
+                    case "운행종료":
+                        firstArrivalState = .finished
+                    default:
+                        firstArrivalState = .arrivalTime(
+                            time: Int(item.traTime1 ?? "0") ?? 0
+                        )
+                    }
+                case .none:
+                    firstArrivalState = .arrivalTime(
+                        time: Int(item.traTime1 ?? "0") ?? 0
+                    )
+                }
+                switch secondMsgArr.first {
+                case .some(let msg):
+                    switch msg {
+                    case "곧 도착":
+                        secondArrivalState = .soon
+                    case "출발대기":
+                        secondArrivalState = .pending
+                    case "운행종료":
+                        secondArrivalState = .finished
+                    default:
+                        secondArrivalState = .arrivalTime(
+                            time: Int(item.traTime2 ?? "0") ?? 0
+                        )
+                    }
+                case .none:
+                    secondArrivalState = .arrivalTime(
+                        time: Int(item.traTime2 ?? "0") ?? 0
+                    )
+                }
                 return .init(
                     busId: item.busRouteId ?? "ID 정보 없음",
                     busName: item.rtNm ?? "이름 정보 없음",
                     busType: item.routeType ?? "타입 정보 없음",
                     nextStation: item.nxtStn ?? "정거장 정보 없음",
-                    firstArrivalTime: firstMsgArr.first ?? "도착 정보 없음",
+                    firstArrivalState: firstArrivalState,
                     firstArrivalRemaining: firstArrivalRemaining,
-                    secondArrivalTime: secondMsgArr.first ?? "도착 정보 없음",
+                    secondArrivalState: secondArrivalState,
                     secondArrivalRemaining: secondArrivalRemaining,
                     isFavorites: false,
                     isAlarmOn: false
