@@ -14,9 +14,18 @@ import RxSwift
 
 #if DEBUG
 public final class MockStationLIstRepository: StationListRepository {
+    public var busStopInfoList: [BusStopInfoResponse]
+    
+    public func jsontoSearchData() {
+    }
+    
+    public func saveRecentSearch(_ searchText: String) {
+    }
+    
     public var searchResponse = BehaviorSubject<[BusStopInfoResponse]>(value: [])
     
     public init(){
+        busStopInfoList = []
     }
     
     public func fetchJsonList() -> Observable<BusStopInfoResponse> {

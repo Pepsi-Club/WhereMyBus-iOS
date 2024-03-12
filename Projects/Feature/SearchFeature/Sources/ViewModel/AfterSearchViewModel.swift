@@ -1,4 +1,3 @@
-
 import Domain
 import Core
 import FeatureDependency
@@ -21,11 +20,9 @@ public final class AfterSearchViewModel: ViewModel {
         coordinator.finish()
     }
     
-
     public func transform(input: Input) -> Output {
         let output = Output()
         
-    
         return output
     }
 }
@@ -33,7 +30,8 @@ public final class AfterSearchViewModel: ViewModel {
 extension AfterSearchViewModel {
     public struct Input {
         let viewWillAppearEvenet: Observable<Void>
-
+        let backBtnTapEvent: Observable<Void>
+        let cellTapEvent: Observable<Void> //얘는 아웃풋으로 나와야하나?
     }
     
     public struct Output {

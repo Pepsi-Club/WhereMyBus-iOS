@@ -56,9 +56,20 @@ extension MockCoordinator: HomeCoordinator {
 
 extension MockCoordinator: SearchCoordinator {
     public func startBusStopFlow() {
-    
+        
     }
+    
+    public func goAfterSearchView(filteredList: [Domain.BusStopInfoResponse]) {
+        let coordinator = MockCoordinator(
+            testMessage: "BusStop",
+            navigationController: navigationController
+        )
+        coordinator.start()
+        childs.append(coordinator)
+    }
+    
 }
+
 
 extension MockCoordinator: BusStopCoordinator {
     public func popVC() {

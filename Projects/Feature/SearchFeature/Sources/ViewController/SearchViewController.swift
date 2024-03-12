@@ -13,8 +13,7 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
     private let disposeBag = DisposeBag()
     private let infoAgreeEvent = BehaviorSubject<Bool>(value: false)
     private let enterPressedEvent = PublishSubject<Void>()
-    
-    // 주변 정류장 클릭했을 때 나오는 이벤트
+    private var textFieldString = PublishSubject<String>()
     
     private let recentSerachCell = RecentSearchCell()
     private let searchNearStopView = DeagreeSearchNearStopView()
@@ -125,6 +124,7 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
         configureUI()
         bind()
         hideKeyboard()
+        bindText()
     }
     
     func hideKeyboard() {
@@ -228,9 +228,8 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
                 constant: 10
             )
         ])
-    }
+}
     
-    //엔터를 치고 관련된 정류장이 있는 AfterSearchViewController로 넘어가야함. 이때 있는지 없는지 확인은 usecase에서 해야함
     private func bind() {
         let output = viewModel.transform(
             input: .init(
@@ -241,12 +240,23 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
                     .map { _ in},
                 
                 enterPressedEvent:
-                    searchTextFieldView.rx.controlEvent(
-                        .editingDidEndOnExit).asObservable()
+                    textFieldString.asObservable(),
+                
+                backbtnEvent: backBtn.rx.tap.asObservable()
             )
         )
-        
-        output.afterSearchEnter
+    }
+    
+    private func bindText() {
+        searchTextFieldView.rx.controlEvent(.editingDidEndOnExit)
+                    .map({ [weak self] _ in
+                        return self?.searchTextFieldView.text ?? ""
+                    })
+                    .withUnretained(self)
+                    .subscribe(onNext: { viewC, str in
+                        viewC.textFieldString.onNext(str)
+                    })
+                    .disposed(by: disposeBag)
     }
     
     private func configureDataSource() {
@@ -270,7 +280,7 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
         tableView: UITableView,
         indexPath: IndexPath,
         response: BusStopInfoResponse
-    )-> RecentSearchCell? {
+    ) -> RecentSearchCell? {
         guard let cell = tableView.dequeueReusableCell(
             withIdentifier: RecentSearchCell.identifier,
             for: indexPath
@@ -278,9 +288,9 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
                 
         else { return nil }
         
-        let busStopName = response.busStopName
-        let busStopId = response.busStopId
-        let direction = response.direction
+        cell.busStopNameLabel.text = response.busStopName
+        cell.dircetionLabel.text = response.direction
+        cell.numberLabel.text = response.busStopId
         
         return cell
     }

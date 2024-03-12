@@ -26,6 +26,8 @@ public final class DefaultStationListRepository: StationListRepository {
     }
     
     public init() {
+        // MARK: 바꿔야 할 수도 있음
+        jsontoSearchData()
     }
     
     // MARK: Json값 모델에 저장 <질문> 뷰 어피어할때마다 이게 이루어지면 비효율적일거같은데, 앱 첫단에서 하면 안될까

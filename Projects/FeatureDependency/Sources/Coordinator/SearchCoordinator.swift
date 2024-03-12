@@ -7,8 +7,9 @@
 //
 
 import Foundation
+import Domain
 
 public protocol SearchCoordinator: Coordinator {
     func startBusStopFlow()
-    func goAfterSearchView()
+    func goAfterSearchView(filteredList : [BusStopInfoResponse])
 }

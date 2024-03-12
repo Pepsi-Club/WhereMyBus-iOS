@@ -19,10 +19,9 @@ public final class DefaultSearchUseCase: SearchUseCase {
     }
     
     public func searchBusStop(
-        with searchText: String,
-        busStopInfoList: [BusStopInfoResponse]
+        with searchText: String
     ) -> [BusStopInfoResponse] {
-        let filteredStops = busStopInfoList.filter { request in
+        let filteredStops = stationListRepository.busStopInfoList.filter { request in
             return request.busStopName.lowercased().contains(
                 searchText.lowercased()
             )

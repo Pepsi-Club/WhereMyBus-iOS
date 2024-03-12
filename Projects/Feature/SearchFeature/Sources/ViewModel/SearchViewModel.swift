@@ -42,8 +42,12 @@ public final class SearchViewModel: ViewModel {
         input.enterPressedEvent
             .withUnretained(self)
             .subscribe(
-                onNext: { viewModel, _ in
-                    viewModel.coordinator.goAfterSearchView()
+                onNext: { viewModel, textfield in
+                    let filterList =
+                        viewModel.useCase.searchBusStop(with: textfield)
+                        viewModel.coordinator.goAfterSearchView(
+                            filteredList: filterList
+                        ) //인자를 받기
                 }
             )
             .disposed(by: disposeBag)
@@ -56,7 +60,7 @@ extension SearchViewModel {
     public struct Input {
         let viewWillAppearEvenet: Observable<Void>
 //        let infoAgreeEvent: Observable<Bool>
-        let enterPressedEvent: Observable<Void>
+        let enterPressedEvent: Observable<String>
         let backbtnEvent: Observable<Void>
     }
     

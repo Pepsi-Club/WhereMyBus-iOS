@@ -12,6 +12,5 @@ import RxSwift
 
 public protocol SearchUseCase {
     func getStationList()
-    
-    
+    func searchBusStop(with searchText: String) -> [BusStopInfoResponse]
 }

@@ -15,7 +15,8 @@ import Domain
 import RxSwift
 import RxCocoa
 
-public final class AfterSearchViewController: UIViewController {
+public final class AfterSearchViewController
+: UIViewController, UITableViewDelegate {
     private let viewModel: AfterSearchViewModel
     
     private let searchTextFieldView = SearchTextFieldView()
@@ -23,7 +24,7 @@ public final class AfterSearchViewController: UIViewController {
     private let recentSerachCell = RecentSearchCell()
     
     private var dataSource: AfterSearchDataSource!
-    private var snapshot: AfterSearchDataSource! //
+    private var snapshot: AfterSearchDataSource!
     
     private let backBtn: UIButton = {
         let btn = UIButton()
@@ -79,7 +80,7 @@ public final class AfterSearchViewController: UIViewController {
         return stack
     }()
     
-    private lazy var searchResultTableView: UITableView = {
+    private lazy var afterSearchResultTableView: UITableView = {
         let table = UITableView(frame: .zero, style: .insetGrouped)
         table.register(RecentSearchCell.self)
         table.dataSource = dataSource
@@ -107,7 +108,7 @@ public final class AfterSearchViewController: UIViewController {
         
         [searchTextFieldView, backBtn, textFieldStack, recentSearchlabel,
           coloredRectangleView,
-         headerStack, magniStack,searchResultTableView]
+         headerStack, magniStack,afterSearchResultTableView]
             .forEach {
             view.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
@@ -159,7 +160,7 @@ public final class AfterSearchViewController: UIViewController {
     
     private func configureDataSource() {
         dataSource = .init(
-            tableView: searchResultTableView,
+            tableView: afterSearchResultTableView,
             cellProvider: { [weak self] tableView, indexPath, response
                 
                 in
@@ -179,7 +180,7 @@ public final class AfterSearchViewController: UIViewController {
         tableView: UITableView,
         indexPath: IndexPath,
         response: BusStopInfoResponse
-    )-> RecentSearchCell? {
+    ) -> RecentSearchCell? {
         guard let cell = tableView.dequeueReusableCell(
             withIdentifier: RecentSearchCell.identifier,
             for: indexPath
@@ -187,15 +188,15 @@ public final class AfterSearchViewController: UIViewController {
                 
         else { return nil }
         
-        let busStopName = response.busStopName
-        let busStopId = response.busStopId
-        let direction = response.direction
+        cell.busStopNameLabel.text = response.busStopName
+        cell.dircetionLabel.text = response.direction
+        cell.numberLabel.text = response.busStopId
         
         return cell
     }
 }
 
-extension SearchViewController {
+extension AfterSearchViewController {
     typealias AfterSearchDataSource =
     UITableViewDiffableDataSource
     <Int, BusStopInfoResponse>
@@ -205,11 +206,14 @@ extension AfterSearchViewController: UITextFieldDelegate {
 
     public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
-        print("입력완")
         return true
     }
 
     public func textFieldDidEndEditing(_ textField: UITextField) {
         textField.resignFirstResponder()
+    }
+    
+    public func textFieldDidChangeSelection(_ textField: UITextField) {
+        
     }
 }

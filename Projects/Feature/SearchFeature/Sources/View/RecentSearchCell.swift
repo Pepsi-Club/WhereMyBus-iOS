@@ -19,7 +19,7 @@ final class RecentSearchCell: UITableViewCell {
     
     public let searchBtnTapEvent = PublishSubject<String>()
     
-    private let busStopNameLabel: UILabel = {
+    public var busStopNameLabel: UILabel = {
         let label = UILabel()
         label.font =
         DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(size: 16)
@@ -29,7 +29,7 @@ final class RecentSearchCell: UITableViewCell {
         return label
     }()
     
-    private let numberLabel: UILabel = {
+    public var numberLabel: UILabel = {
         let label = UILabel()
         label.font =
         DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(size: 13)
@@ -50,7 +50,7 @@ final class RecentSearchCell: UITableViewCell {
         return label
     }()
     
-    private let dircetionLabel: UILabel = {
+    public var dircetionLabel: UILabel = {
         let label = UILabel()
         label.font =
         DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(size: 13)
