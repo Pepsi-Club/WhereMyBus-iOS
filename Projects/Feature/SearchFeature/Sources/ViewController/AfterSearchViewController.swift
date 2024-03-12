@@ -7,8 +7,6 @@ import Domain
 import RxSwift
 import RxCocoa
 
-//TODO: snapShot 사용하기
-
 public final class AfterSearchViewController
 : UIViewController, UITableViewDelegate {
     private let viewModel: AfterSearchViewModel
@@ -22,7 +20,11 @@ public final class AfterSearchViewController
     
     private let backBtn: UIButton = {
         let btn = UIButton()
-        let starImage = UIImage(systemName: "chevron.backward")
+        let starImage = UIImage(systemName: "chevron.backward")?
+            .withConfiguration(UIImage.SymbolConfiguration(
+                pointSize: 20,
+                weight: .bold)
+            )
         btn.setImage(starImage, for: .normal)
         btn.tintColor = .black
         return btn
@@ -122,7 +124,7 @@ public final class AfterSearchViewController
             
             textFieldStack.topAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.topAnchor,
-                constant: -14
+                constant: 0
             ),
             textFieldStack.leadingAnchor.constraint(
                 equalTo: view.leadingAnchor,

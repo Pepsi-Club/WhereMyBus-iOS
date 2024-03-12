@@ -14,7 +14,6 @@ import DesignSystem
 import RxSwift
 
 final class RecentSearchCell: UITableViewCell {
-    // MARK: 얘는 왜 var도 가능할까? 언제든지 변할 수 있는 값이어서?
     public var disposeBag = DisposeBag()
     
     public let searchBtnTapEvent = PublishSubject<String>()

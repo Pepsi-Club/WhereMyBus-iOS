@@ -170,7 +170,7 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
             
             textFieldStack.topAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.topAnchor,
-                constant: -14
+                constant: 0
             ),
             textFieldStack.leadingAnchor.constraint(
                 equalTo: view.leadingAnchor,
@@ -233,7 +233,7 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
 }
     
     private func bind() {
-        let output = viewModel.transform(
+        _ = viewModel.transform(
             input: .init(
                 viewWillAppearEvenet: rx
                     .methodInvoked(

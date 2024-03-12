@@ -55,6 +55,10 @@ extension MockCoordinator: HomeCoordinator {
 }
 
 extension MockCoordinator: SearchCoordinator {
+    public func goAfterSearchView(text: String) {
+        
+    }
+    
     public func startBusStopFlow() {
         
     }

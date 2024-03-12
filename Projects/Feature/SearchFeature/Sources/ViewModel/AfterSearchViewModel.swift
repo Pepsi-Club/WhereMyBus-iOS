@@ -31,6 +31,12 @@ public final class AfterSearchViewModel: ViewModel {
     public func transform(input: Input) -> Output {
         let output = Output()
         
+        input.viewWillAppearEvenet
+            .withUnretained(self)
+            .subscribe(onNext: { viewModel, _ in
+                viewModel.useCase.searchBusStop(with: self.texts)
+            })
+        
         input.backBtnTapEvent
             .withUnretained(self)
             .subscribe(
@@ -42,6 +48,7 @@ public final class AfterSearchViewModel: ViewModel {
 
 extension AfterSearchViewModel {
     public struct Input {
+        let viewWillAppearEvenet: Observable<Void>
         let backBtnTapEvent: Observable<Void>
         let cellTapEvent: Observable<Void>
         let textEditingEvent: Observable<String>

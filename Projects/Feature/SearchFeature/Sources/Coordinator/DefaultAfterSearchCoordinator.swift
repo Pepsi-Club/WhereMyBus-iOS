@@ -42,13 +42,12 @@ public final class DefaultAfterSearchCoordinator: AfterSearchCoordinator {
         
     }
     
-    public func startBusStopFlow() {
-        let busStopCoordinator =
-        coordinatorProvider.makeBusStopCoordinator(
+    public func startBusStopFlow(stationId: String) {
+        // BusStopCoordinatorFlow
+        let busStopCoordinator = coordinatorProvider.makeBusStopCoordinator(
             navigationController: navigationController,
-            busStopId: busStopId
+            busStopId: stationId
         )
-        
         childs.append(busStopCoordinator)
         busStopCoordinator.start()
     }
