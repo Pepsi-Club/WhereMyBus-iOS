@@ -75,8 +75,8 @@ public final class SettingsViewController: UIViewController {
         _ = viewModel.transform(
             input:
                 .init(
-                    defaultAlarmTapEvent
-                    : buttonsView.basicAlarmSetting.rx.tap.asObservable(),
+//                    defaultAlarmTapEvent
+//                    : buttonsView.basicAlarmSetting.rx.tap.asObservable(),
                     termsTapEvent
                     : buttonsView.termsPrivacyBtn.rx.tap.asObservable(),
                     locationTapEvent

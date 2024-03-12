@@ -17,14 +17,11 @@ public final class BusTableViewCell: UITableViewCell {
     
     private let firstArrivalInfoView = ArrivalInfoView()
     private let secondArrivalInfoView = ArrivalInfoView()
-    public let starBtnTapEvent = BehaviorSubject<Bool>(value: false)
-    public let alarmBtnTapEvent = BehaviorSubject<Bool>(value: false)
-    
-    private var favoriteToggle = false
-    private var alarmToggle = false
+    public let starBtnTapEvent = PublishSubject<Void>()
+    public let alarmBtnTapEvent = PublishSubject<Void>()
     
     private lazy var starBtn: UIButton = {
-        var config = UIButton.Configuration.filled()
+        var config = UIButton.Configuration.plain()
         config.image = UIImage(systemName: "star")
         config.contentInsets = NSDirectionalEdgeInsets(
             top: 10,
@@ -37,27 +34,20 @@ public final class BusTableViewCell: UITableViewCell {
         )
         config.preferredSymbolConfigurationForImage = imgConfig
         config.baseForegroundColor = DesignSystemAsset.mainColor.color
-        config.baseBackgroundColor = .clear
         let btn = UIButton(configuration: config)
         return btn
     }()
     
     private lazy var alarmBtn: UIButton = {
-        var config = UIButton.Configuration.filled()
-        config.image = UIImage(systemName: "alarm")
-        config.contentInsets = NSDirectionalEdgeInsets(
-            top: 10,
-            leading: 5,
-            bottom: 10,
-            trailing: 15
-        )
+        var config = UIButton.Configuration.plain()
         let imgConfig = UIImage.SymbolConfiguration(
-            font: .systemFont(ofSize: 13)
+            pointSize: 12
         )
         config.preferredSymbolConfigurationForImage = imgConfig
         config.baseForegroundColor = DesignSystemAsset.mainColor.color
-        config.baseBackgroundColor = .clear
         let btn = UIButton(configuration: config)
+        btn.widthAnchor.constraint(equalToConstant: 20).isActive = true
+        btn.isHidden = true
         return btn
     }()
     
@@ -84,6 +74,7 @@ public final class BusTableViewCell: UITableViewCell {
         label.font = DesignSystemFontFamily.NanumSquareNeoOTF
             .bold.font(size: 18)
         label.textColor = DesignSystemAsset.blueBus.color
+        label.widthAnchor.constraint(equalToConstant: 80).isActive = true
         return label
     }()
     
@@ -92,6 +83,9 @@ public final class BusTableViewCell: UITableViewCell {
         label.font = DesignSystemFontFamily.NanumSquareNeoOTF
             .regular.font(size: 14)
         label.textColor = DesignSystemAsset.remainingColor.color
+        label.widthAnchor.constraint(equalToConstant: 80).isActive = true
+        label.adjustsFontSizeToFitWidth = true
+        label.minimumScaleFactor = 0.6
         return label
     }()
     
@@ -111,11 +105,8 @@ public final class BusTableViewCell: UITableViewCell {
         favorite: Bool,
         alarm: Bool
     ) {
-        favoriteToggle = favorite
-        alarmToggle = alarm
-        
-        changeFavBtnColor(isFavoriteOn: favoriteToggle)
-        changeAlarmBtnColor(isAlarmOn: alarmToggle)
+        changeFavBtnColor(isFavoriteOn: favorite)
+        changeAlarmBtnColor(isAlarmOn: alarm)
     }
     
     public func updateBusRoute(
@@ -154,37 +145,27 @@ public final class BusTableViewCell: UITableViewCell {
         }
         
         disposeBag = DisposeBag()
+        buttonTap()
     }
     
     private func buttonTap() {
         starBtn.rx.tap
-            .withUnretained(self)
-            .subscribe(onNext: { [weak self] _ in
-                guard let self else { return }
-                
-                favoriteToggle = !favoriteToggle
-                
-                changeFavBtnColor(isFavoriteOn: favoriteToggle)
-                
-                self.starBtnTapEvent.onNext((favoriteToggle))
-                
-                print(" 즐겨찾기 버튼 작동 ")
+            .map({ _ in
+                print("🤮TAP")
+            })
+            .subscribe(onNext: { _ in
+                self.starBtnTapEvent.onNext(())
             })
             .disposed(by: disposeBag)
         
-        alarmBtn.rx.tap
-            .withUnretained(self)
-            .subscribe(onNext: { [weak self] _ in
-                guard let self else { return }
-                
-                alarmToggle = !alarmToggle
-                
-                changeAlarmBtnColor(isAlarmOn: alarmToggle)
-                
-                self.alarmBtnTapEvent.onNext((alarmToggle))
-                
-            })
-            .disposed(by: disposeBag)
+//        alarmBtn.rx.tap
+//            .map({ _ in
+//                print("🤮TAP")
+//            })
+//            .subscribe(onNext: { _ in
+//                self.alarmBtnTapEvent.onNext(())
+//            })
+//            .disposed(by: disposeBag)
     }
     
     private func changeFavBtnColor(isFavoriteOn: Bool) {
@@ -207,6 +188,13 @@ public final class BusTableViewCell: UITableViewCell {
     private func changeAlarmBtnColor(isAlarmOn: Bool) {
         guard var config = alarmBtn.configuration
         else { return }
+        
+        config.contentInsets = NSDirectionalEdgeInsets(
+            top: 10,
+            leading: 5,
+            bottom: 10,
+            trailing: 10
+        )
         
         config.image = isAlarmOn
         ? UIImage(systemName: "alarm.waves.left.and.right.fill")
@@ -246,6 +234,8 @@ extension BusTableViewCell {
         }
         
         NSLayoutConstraint.activate([
+            busNumStack.widthAnchor.constraint(equalToConstant: 110),
+            firstArrivalInfoView.widthAnchor.constraint(equalToConstant: 60),
             totalStack.topAnchor.constraint(
                 equalTo: topAnchor,
                 constant: 5

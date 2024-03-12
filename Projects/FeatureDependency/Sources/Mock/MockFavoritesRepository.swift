@@ -102,14 +102,53 @@ public final class MockFavoritesRepository: FavoritesRepository {
         arsId: String,
         bus: BusArrivalInfoResponse
     ) {
-        
+        do {
+            var oldFavorites = try favorites.value()
+            if oldFavorites.contains(where: { $0.busStopId == arsId }) {
+                guard let favoriteToChange = oldFavorites
+                    .first(where: { $0.busStopId == arsId })
+                else { return }
+                let newBusIds = favoriteToChange.busIds + [bus.busId]
+                var newFavorites = oldFavorites.filter { $0.busStopId != arsId }
+                newFavorites.append(
+                    .init(
+                        busStopId: arsId,
+                        busIds: newBusIds
+                    )
+                )
+                favorites.onNext(newFavorites)
+                return
+            }
+            oldFavorites.append(
+                .init(
+                    busStopId: arsId,
+                    busIds: [bus.busId]
+                )
+            )
+            favorites.onNext(oldFavorites)
+        } catch {
+            print(error, "즐겨찾기 업데이트 실패")
+        }
     }
-    
     public func removeRoute(
         arsId: String,
         bus: BusArrivalInfoResponse
     ) {
-        
+        do {
+            var oldFavorites = try favorites.value()
+            if let index = oldFavorites.firstIndex(where: { $0.busStopId == arsId }) {
+                var favoriteToChange = oldFavorites[index]
+                favoriteToChange.busIds.removeAll(where: { $0 == bus.busId })
+                if favoriteToChange.busIds.isEmpty {
+                    oldFavorites.remove(at: index)
+                } else {
+                    oldFavorites[index] = favoriteToChange
+                }
+                favorites.onNext(oldFavorites)
+            }
+        } catch {
+            print(error, "즐겨찾기 업데이트 실패")
+        }
     }
 }
 #endif

@@ -21,11 +21,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let busstopCoordinator = DefaultBusStopCoordinator(
             parent: nil,
             navigationController: navigationController,
-            arrivalInfoData: ArrivalInfoRequest(
-                busStopId: "",
-                busStopName: "",
-                routeName: [""]
-            ),
+            busStopId: "",
             coordinatorProvider: MockCoordinatorProvider()
         )
         busstopCoordinator.start()
