@@ -11,5 +11,5 @@ import Domain
 
 public protocol SearchCoordinator: Coordinator {
     func startBusStopFlow()
-    func goAfterSearchView(filteredList : [BusStopInfoResponse])
+    func goAfterSearchView(text: String)
 }

@@ -34,6 +34,7 @@ public final class SearchViewModel: ViewModel {
         input.viewWillAppearEvenet
             .withUnretained(self)
             .subscribe(
+                // MARK: 필요없을수도
                 onNext: { viewModel, _ in
                     viewModel.useCase.getStationList()
                 })
@@ -43,11 +44,9 @@ public final class SearchViewModel: ViewModel {
             .withUnretained(self)
             .subscribe(
                 onNext: { viewModel, textfield in
-                    let filterList =
-                        viewModel.useCase.searchBusStop(with: textfield)
                         viewModel.coordinator.goAfterSearchView(
-                            filteredList: filterList
-                        ) //인자를 받기
+                            text: textfield
+                    )
                 }
             )
             .disposed(by: disposeBag)

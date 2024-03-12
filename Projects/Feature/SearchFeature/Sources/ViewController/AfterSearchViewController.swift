@@ -1,11 +1,3 @@
-//
-//  AfterSearchViewController.swift
-//  SearchFeature
-//
-//  Created by 유하은 on 2024/02/13.
-//  Copyright © 2024 Pepsi-Club. All rights reserved.
-//
-
 import UIKit
 
 import Core
@@ -14,6 +6,8 @@ import Domain
 
 import RxSwift
 import RxCocoa
+
+//TODO: snapShot 사용하기
 
 public final class AfterSearchViewController
 : UIViewController, UITableViewDelegate {
@@ -54,22 +48,22 @@ public final class AfterSearchViewController
     }()
     
     private let textFieldStack: UIStackView = {
-            let stack = UIStackView()
-            stack.axis = .horizontal
-            stack.alignment = .center
+        let stack = UIStackView()
+        stack.axis = .horizontal
+        stack.alignment = .center
         
-            return stack
-        }()
+        return stack
+    }()
     
     private let headerStack: UIStackView = {
-            let stack = UIStackView()
-            stack.axis = .horizontal
-            stack.alignment = .center
-            stack.spacing = 100
-            stack.distribution = .fill
-            
+        let stack = UIStackView()
+        stack.axis = .horizontal
+        stack.alignment = .center
+        stack.spacing = 100
+        stack.distribution = .fill
+        
         return stack
-        }()
+    }()
     
     private let magniStack: UIStackView = {
         let stack = UIStackView()
@@ -102,17 +96,18 @@ public final class AfterSearchViewController
     
     public override func viewDidLoad() {
         super.viewDidLoad()
+        self.navigationController?.setNavigationBarHidden(true, animated: false)
         bindViewModel()
-
+        
         view.backgroundColor = .systemBackground
         
         [searchTextFieldView, backBtn, textFieldStack, recentSearchlabel,
-          coloredRectangleView,
-         headerStack, magniStack,afterSearchResultTableView]
+         coloredRectangleView,
+         headerStack, magniStack, afterSearchResultTableView]
             .forEach {
-            view.addSubview($0)
-            $0.translatesAutoresizingMaskIntoConstraints = false
-        }
+                view.addSubview($0)
+                $0.translatesAutoresizingMaskIntoConstraints = false
+            }
         
         [backBtn, searchTextFieldView]
             .forEach { components in
@@ -120,50 +115,44 @@ public final class AfterSearchViewController
             }
         
         NSLayoutConstraint.activate([
-        backBtn.widthAnchor.constraint(equalToConstant: 20),
-        
+            backBtn.widthAnchor.constraint(equalToConstant: 20),
             
-        searchTextFieldView.heightAnchor.constraint(
+            searchTextFieldView.heightAnchor.constraint(
                 equalToConstant: 39),
-           
-        textFieldStack.topAnchor.constraint(
+            
+            textFieldStack.topAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.topAnchor,
                 constant: -14
             ),
-        textFieldStack.leadingAnchor.constraint(
+            textFieldStack.leadingAnchor.constraint(
                 equalTo: view.leadingAnchor,
                 constant: 10
             ),
-        
-        textFieldStack.trailingAnchor.constraint(
-            equalTo: view.safeAreaLayoutGuide.trailingAnchor,
-            constant: -10
+            
+            textFieldStack.trailingAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.trailingAnchor,
+                constant: -10
             ),
-        
-        headerStack.topAnchor.constraint(
+            
+            headerStack.topAnchor.constraint(
                 equalTo: textFieldStack.bottomAnchor, constant: 15),
-        headerStack.leadingAnchor.constraint(
+            headerStack.leadingAnchor.constraint(
                 equalTo: view.leadingAnchor, constant: 20),
-        headerStack.trailingAnchor.constraint(
+            headerStack.trailingAnchor.constraint(
                 equalTo: view.trailingAnchor, constant: -15),
-           ])
-       }
+        ])
+    }
     
-    // 검색한 내용들이 새로운 뷰에 그려져야함. 그릴때마다 AfterSearchView가 다시 그려져야 하고, 클릭을 하면 지수님 뷰에 가면서 최신 기록 로그에 남겨져야함.
+    // 검색한 내용들이 새로운 뷰에 그려져야함. 그릴때마다 AfterSearchView가 다시 그려져야 하고,
+    // 클릭을 하면 지수님 뷰에 가면서 최신 기록 로그에 남겨져야함.
     private func bindViewModel() {
-        // 검색한 내용이 넘어와야함
-        // 넘어와서 useCase에 있는 getSearch를 한 번 돌아야함
-        // 맞으면 값이 떠야함
-        // 아니면 안뜨면 됨
-        // 백 버튼 누르면 전 화면으로 움직이면 됨.
+        
     }
     
     private func configureDataSource() {
         dataSource = .init(
             tableView: afterSearchResultTableView,
-            cellProvider: { [weak self] tableView, indexPath, response
-                
-                in
+            cellProvider: { [weak self] tableView, indexPath, response in
                 guard let self = self,
                       let cell = self.configureCell(
                         tableView: tableView,
@@ -203,12 +192,12 @@ extension AfterSearchViewController {
 }
 
 extension AfterSearchViewController: UITextFieldDelegate {
-
+    
     public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
     }
-
+    
     public func textFieldDidEndEditing(_ textField: UITextField) {
         textField.resignFirstResponder()
     }

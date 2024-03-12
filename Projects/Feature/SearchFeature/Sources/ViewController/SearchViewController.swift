@@ -120,6 +120,8 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
+        self.navigationController?.setNavigationBarHidden(true, animated: false)
+        
         configureDataSource()
         configureUI()
         bind()

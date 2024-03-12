@@ -3,7 +3,8 @@ import UIKit
 import Domain
 import FeatureDependency
 
-public final class DefaultSearchCoordinator: SearchCoordinator, AfterSearchCoordinator {
+public final class DefaultSearchCoordinator
+: SearchCoordinator, AfterSearchCoordinator {
     
     public var parent: Coordinator?
     public var childs: [Coordinator] = []
@@ -45,10 +46,9 @@ public final class DefaultSearchCoordinator: SearchCoordinator, AfterSearchCoord
         busStopCoordinator.start()
     }
     
-    public func goAfterSearchView(filteredList : [BusStopInfoResponse]) {
+    public func goAfterSearchView(text: String) {
         let afterSearchViewController = AfterSearchViewController(
-            viewModel: .init(coordinator: self)
-            // TODO: 확인해보기 
+            viewModel: .init(coordinator: self, texts: text)
         )
         navigationController.pushViewController(
             afterSearchViewController,
