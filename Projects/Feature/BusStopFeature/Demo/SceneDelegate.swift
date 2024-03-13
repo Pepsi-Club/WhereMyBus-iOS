@@ -22,7 +22,8 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             parent: nil,
             navigationController: navigationController,
             busStopId: "",
-            coordinatorProvider: MockCoordinatorProvider()
+            coordinatorProvider: MockCoordinatorProvider(),
+            flow: .fromAlarm
         )
         busstopCoordinator.start()
     }

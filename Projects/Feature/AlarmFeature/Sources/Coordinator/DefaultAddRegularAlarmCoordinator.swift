@@ -16,13 +16,16 @@ public final class DefaultAddRegularAlarmCoordinator {
     public var childs: [Coordinator] = []
     public var navigationController: UINavigationController
     public let coordinatorProvider: CoordinatorProvider
+    private let flow: FlowState
     
     public init(
         navigationController: UINavigationController,
-        coordinatorProvider: CoordinatorProvider
+        coordinatorProvider: CoordinatorProvider,
+        flow: FlowState
     ) {
         self.navigationController = navigationController
         self.coordinatorProvider = coordinatorProvider
+        self.flow = flow
     }
     
     public func start() {
@@ -49,7 +52,8 @@ extension DefaultAddRegularAlarmCoordinator: AddRegularAlarmCoordinator {
     
     public func startSearchFlow() {
         let searchCoordinator = coordinatorProvider.makeSearchCoordinator(
-            navigationController: navigationController
+            navigationController: navigationController,
+            flow: .fromAlarm
         )
         childs.append(searchCoordinator)
         searchCoordinator.start()

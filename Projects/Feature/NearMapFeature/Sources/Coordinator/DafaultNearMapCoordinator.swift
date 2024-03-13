@@ -6,24 +6,27 @@ import RxSwift
 import KakaoMapsSDK
 
 public final class DefaultNearMapCoordinator: NearMapCoordinator {
-	
+    
     public var parent: Coordinator?
     public var childs: [Coordinator] = []
     public var navigationController: UINavigationController
-	
-	private let disposeBag = DisposeBag()
+    private let flow: FlowState
+    
+    private let disposeBag = DisposeBag()
     
     public init(
-		parent: Coordinator?,
-		navigationController: UINavigationController
-	) {
-		self.parent = parent
+        parent: Coordinator?,
+        navigationController: UINavigationController,
+        flow: FlowState
+    ) {
+        self.parent = parent
         self.navigationController = navigationController
+        self.flow = flow
     }
     
     public func start() {
         let nearmapViewController = NearMapViewController(
-			viewModel: NearMapViewModel(coordinator: self)
+            viewModel: NearMapViewModel(coordinator: self)
         )
         navigationController.setViewControllers(
             [nearmapViewController],

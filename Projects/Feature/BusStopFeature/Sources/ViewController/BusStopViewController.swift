@@ -1,7 +1,8 @@
 import UIKit
 
-import Domain
+import FeatureDependency
 import DesignSystem
+import Domain
 
 import RxSwift
 
@@ -15,16 +16,13 @@ public final class BusStopViewController: UIViewController {
     
     private var dataSource: BusStopDataSource!
     private var snapshot: BusStopSnapshot!
+    private var flow: FlowState
     
     private let headerView: BusStopInfoHeaderView = BusStopInfoHeaderView()
     private let scrollView: UIScrollView = UIScrollView()
     private let contentView = UIView()
     private lazy var busStopTableView: UITableView = {
         let table = UITableView(frame: .zero, style: .insetGrouped)
-        table.register(
-            BusTableViewCell.self,
-            forCellReuseIdentifier: BusTableViewCell.identifier
-        )
         table.register(
             BusStopTVHeaderView.self,
             forHeaderFooterViewReuseIdentifier: BusStopTVHeaderView.identifier
@@ -35,8 +33,13 @@ public final class BusStopViewController: UIViewController {
         return table
     }()
     
-    public init(viewModel: BusStopViewModel) {
+    public init(
+        viewModel: BusStopViewModel,
+        flow: FlowState
+    ) {
         self.viewModel = viewModel
+        self.flow = flow
+        
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -50,7 +53,6 @@ public final class BusStopViewController: UIViewController {
         configureUI()
         bind()
         configureDataSource()
-        bindMapBtn()
     }
     
     private func bind() {
@@ -64,11 +66,12 @@ public final class BusStopViewController: UIViewController {
                 .map { _ in },
             likeBusBtnTapEvent: likeBusBtnTapEvent.asObservable(),
             alarmBtnTapEvent: alarmBtnTapEvent.asObservable(),
-            mapBtnTapEvent: mapBtnTapEvent.asObservable(),
+            mapBtnTapEvent: headerView.mapBtn.rx.tap.asObservable(),
             refreshLoading
             : refreshControl.rx.controlEvent(.valueChanged).asObservable(),
             navigationBackBtnTapEvent
-            : headerView.navigationBtn.rx.tap.asObservable()
+            : headerView.navigationBtn.rx.tap.asObservable(),
+            cellSelectTapEvent: busStopTableView.rx.itemSelected.asObservable()
         )
         
         let output = viewModel.transform(input: input)
@@ -88,8 +91,8 @@ public final class BusStopViewController: UIViewController {
     }
     
     private func bindTableView(output: BusStopViewModel.Output) {
-        
         output.busStopArrivalInfoResponse
+            .observe(on: MainScheduler.asyncInstance)
             .withUnretained(self)
             .subscribe(
                 onNext: { viewController, response in
@@ -98,20 +101,10 @@ public final class BusStopViewController: UIViewController {
                         busStopName: response.busStopName,
                         nextStopName: response.direction
                     )
+                    
                     viewController.updateSnapshot(busStopResponse: response)
                 }
             )
-            .disposed(by: disposeBag)
-    }
-    
-    private func bindMapBtn() {
-        // output.- 을 가공해서 다시 input으로 넣어줘버림 -> 순환 참조가 되어버림
-        // 지금
-        // 가공 -> 인풋 X -> viewModel에서 이벤트 헨들링만 하는 것 !
-        // 이게 더 MVVM 형태에 맞는게 아닐까 (VC는 정말 이벤트만 보내주는 형태 !)
-        headerView.mapBtn.rx.tap
-            .map { _ in }
-            .bind(to: mapBtnTapEvent)
             .disposed(by: disposeBag)
     }
     
@@ -132,17 +125,61 @@ public final class BusStopViewController: UIViewController {
         dataSource = .init(
             tableView: busStopTableView,
             cellProvider: { [weak self] tableView, indexPath, response in
-                guard let self = self,
-                      let cell = self.configureCell(
-                        tableView: tableView,
-                        indexPath: indexPath,
-                        response: response
-                      )
-                else { return UITableViewCell() }
-                
-                return cell
-                
-            })
+                switch self?.flow {
+                case .fromHome:
+                    tableView.register(
+                        BusTableViewCell.self,
+                        forCellReuseIdentifier: BusTableViewCell.identifier
+                    )
+                    guard let self = self,
+                          let cell = self.configureCell(
+                            tableView: tableView,
+                            indexPath: indexPath,
+                            response: response
+                          )
+                    else { return UITableViewCell() }
+                    
+                    return cell
+                case .fromAlarm:
+                    tableView.register(
+                        RegularAlarmForBusTableViewCell.self,
+                        forCellReuseIdentifier
+                        : RegularAlarmForBusTableViewCell.identifier
+                    )
+                    guard let self = self,
+                          let cell = self.configureAlarmCell(
+                            tableView: tableView,
+                            indexPath: indexPath,
+                            response: response
+                          )
+                    else { return UITableViewCell() }
+                    
+                    return cell
+                case .none:
+                    return UITableViewCell()
+                }
+            }
+        )
+    }
+    
+    private func configureAlarmCell(
+        tableView: UITableView,
+        indexPath: IndexPath,
+        response: BusArrivalInfoResponse
+    ) -> RegularAlarmForBusTableViewCell? {
+        let cell = tableView.dequeueReusableCell(
+            withIdentifier: RegularAlarmForBusTableViewCell.identifier,
+            for: indexPath
+        ) as? RegularAlarmForBusTableViewCell
+        
+        cell?.updateUI(
+            busNumber: response.busName,
+            nextStopName: response.nextStation
+        )
+        
+        cell?.busNumberLb.textColor = response.busType.toColor
+        
+        return cell
     }
     
     private func configureCell(
@@ -171,24 +208,25 @@ public final class BusStopViewController: UIViewController {
             secondArrivalTime: response.secondArrivalState.toString,
             secondArrivalRemaining: response.secondArrivalRemaining
         )
-        
         cell?.busNumber.textColor = response.busType.toColor
+        
+        cell?.selectionStyle = .none
         
         cell?.starBtnTapEvent
             .map({ _ in
                 return response
             })
-            .subscribe(onNext: { busInfo in
-                self.likeBusBtnTapEvent.onNext(busInfo)
+            .subscribe(onNext: { [weak self] busInfo in
+                self?.likeBusBtnTapEvent.onNext(busInfo)
             })
             .disposed(by: cell!.disposeBag)
         
-        cell?.alarmBtnTapEvent
-            .map { _ in
-                return response
-            }
-            .bind(to: self.alarmBtnTapEvent)
-            .disposed(by: cell!.disposeBag)
+//        cell?.alarmBtnTapEvent
+//            .map { _ in
+//                return response
+//            }
+//            .bind(to: self.alarmBtnTapEvent)
+//            .disposed(by: cell!.disposeBag)
         
         return cell
     }

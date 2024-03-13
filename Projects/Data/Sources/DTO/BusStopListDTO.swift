@@ -26,7 +26,6 @@ extension BusStopListDTO {
             .init(
                 busStopName: $0.stopNm,
                 busStopId: $0.stopNo,
-                // TODO: direction 값 추가
                 direction: $0.nxtStn,
                 longitude: $0.xcode,
                 latitude: $0.ycode

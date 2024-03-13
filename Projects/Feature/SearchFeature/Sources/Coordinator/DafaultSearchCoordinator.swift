@@ -8,15 +8,18 @@ public final class DefaultSearchCoordinator: SearchCoordinator {
     public var childs: [Coordinator] = []
     public var navigationController: UINavigationController
     public let coordinatorProvider: CoordinatorProvider
+    private let flow: FlowState
     
     public init(
         parent: Coordinator?,
         navigationController: UINavigationController,
-        coordinatorProvider: CoordinatorProvider
+        coordinatorProvider: CoordinatorProvider,
+        flow: FlowState
     ) {
         self.navigationController = navigationController
         self.parent = parent
         self.coordinatorProvider = coordinatorProvider
+        self.flow = flow
     }
     
     public func start() {
@@ -37,7 +40,8 @@ public final class DefaultSearchCoordinator: SearchCoordinator {
         let busStopCoordinator =
         coordinatorProvider.makeBusStopCoordinator(
             navigationController: navigationController,
-            busStopId: ""
+            busStopId: "",
+            flow: flow
         )
         
         childs.append(busStopCoordinator)
@@ -58,7 +62,8 @@ extension DefaultSearchCoordinator: AfterSearchCoordinator {
     
     public func startSearchFlow() {
         let searchCoordinator = coordinatorProvider.makeSearchCoordinator(
-            navigationController: navigationController
+            navigationController: navigationController,
+            flow: flow
         )
         childs.append(searchCoordinator)
         searchCoordinator.start()

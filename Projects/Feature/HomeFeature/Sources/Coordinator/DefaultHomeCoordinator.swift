@@ -58,7 +58,8 @@ extension DefaultHomeCoordinator: HomeCoordinator {
     
     public func startSearchFlow() {
         let searchCoordinator = coordinatorProvider.makeSearchCoordinator(
-            navigationController: navigationController
+            navigationController: navigationController,
+            flow: .fromHome
         )
         childs.append(searchCoordinator)
         searchCoordinator.start()
@@ -68,7 +69,8 @@ extension DefaultHomeCoordinator: HomeCoordinator {
         // BusStopCoordinatorFlow
         let busStopCoordinator = coordinatorProvider.makeBusStopCoordinator(
             navigationController: navigationController,
-            busStopId: stationId
+            busStopId: stationId,
+            flow: .fromHome
         )
         childs.append(busStopCoordinator)
         busStopCoordinator.start()

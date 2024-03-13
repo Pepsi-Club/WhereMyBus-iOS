@@ -44,7 +44,8 @@ public final class BusStopViewModel: ViewModel {
             .disposed(by: disposeBag)
         
         input.mapBtnTapEvent
-            .withLatestFrom(output.busStopArrivalInfoResponse
+            .withLatestFrom(
+                output.busStopArrivalInfoResponse
             ) { _, busStopInfo in
                 return busStopInfo
             }
@@ -68,7 +69,8 @@ public final class BusStopViewModel: ViewModel {
             .disposed(by: disposeBag)
         
         input.likeBusBtnTapEvent
-            .withLatestFrom(output.busStopArrivalInfoResponse
+            .withLatestFrom(
+                output.busStopArrivalInfoResponse
             ) { busInfo, busStopInfo in
                 return (busInfo, busStopInfo.busStopId)
             }
@@ -88,7 +90,19 @@ public final class BusStopViewModel: ViewModel {
             }
             .disposed(by: disposeBag)
         
+        input.cellSelectTapEvent
+            .withLatestFrom(
+                output.busStopArrivalInfoResponse
+            ) { indexPath, busStopInfo in
+                return (busStopInfo.buses[indexPath.row], busStopInfo)
+            }
+            .subscribe { busInfo, busStopInfo in
+                print("네")
+            }
+            .disposed(by: disposeBag)
+        
         useCase.busStopSection
+            .observe(on: MainScheduler.asyncInstance)
             .withUnretained(self)
             .subscribe(onNext: { _, busStopInfo in
                 output.busStopArrivalInfoResponse.onNext(busStopInfo)
@@ -118,6 +132,7 @@ extension BusStopViewModel {
         let mapBtnTapEvent: Observable<Void>
         let refreshLoading: Observable<Void>
         let navigationBackBtnTapEvent: Observable<Void>
+        let cellSelectTapEvent: Observable<IndexPath>
     }
     
     public struct Output {
