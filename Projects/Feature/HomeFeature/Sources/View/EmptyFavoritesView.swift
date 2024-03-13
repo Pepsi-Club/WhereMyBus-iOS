@@ -99,15 +99,6 @@ final class EmptyFavoritesView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func layoutSubviews() {
-        exampleStackView.addDivider(
-            color: DesignSystemAsset.gray6.color,
-            hasPadding: true,
-            dividerRatio: 0.8
-        )
-        super.layoutSubviews()
-    }
-    
     private func configureUI() {
         backgroundColor = .white
         [
@@ -158,5 +149,10 @@ final class EmptyFavoritesView: UIView {
                 equalTo: exampleStackView.leadingAnchor
             ),
         ])
+        exampleStackView.addDivider(
+            color: DesignSystemAsset.gray6.color,
+            hasPadding: true,
+            dividerRatio: 0.8
+        )
     }
 }
