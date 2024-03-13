@@ -14,13 +14,13 @@ public final class NearMapViewModel: NSObject,
 	
 	// MARK: - DI Property
 	
-	@Injected(NearBusStopUseCase.self) var useCase: NearBusStopUseCase
+	@Injected(NearMapUseCase.self) var useCase: NearMapUseCase
 	private let coordinator: NearMapCoordinator
 	
 	// MARK: - Property
 	
 	var mapController: KMController?
-	
+
 	private let disposeBag = DisposeBag()
 	
 	// MARK: - Life Cycle
@@ -74,6 +74,7 @@ extension NearMapViewModel: MapControllerDelegate {
 	}
 	
 	public func addViews() {
+		
 		let defaultPosition = MapPoint(
 			longitude: 127.108678,
 			latitude: 37.402001
@@ -100,14 +101,6 @@ extension NearMapViewModel: MapControllerDelegate {
 	public func authenticate() {
 		
 	}
-	
-	public func containerDidResized(_ size: CGSize) {
-		let mapView: KakaoMap? = mapController?.getView("mapview") as? KakaoMap
-			mapView?.viewRect = CGRect(
-				origin: CGPoint(x: 0.0, y: 0.0),
-				size: size
-			)
-		}
 	
 	func createPoi() {
 		
@@ -163,4 +156,5 @@ extension NearMapViewModel: MapControllerDelegate {
 	func poiTappedHandler(_ param: PoiInteractionEventParam) {
 		print("\(param.poiItem)")
 	}
+	
 }

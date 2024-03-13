@@ -12,11 +12,11 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-public final class DefaultNearBusStopUseCase: NearBusStopUseCase {
+public final class DefaultNearMapUseCase: NearMapUseCase {
 	
 	// MARK: - Property
 	
-	private let nearMapUseCase: NearBusStopRepository
+	private let stationListRepository: StationListRepository
 	
 	public var nearBusStop = PublishSubject<NearBusStopResponse>()
 	public var selectedBusStop =  PublishSubject<NearBusStopResponse>()
@@ -25,8 +25,10 @@ public final class DefaultNearBusStopUseCase: NearBusStopUseCase {
 	
 	// MARK: - Life Cycle
 	
-	public init(nearMapUseCase: NearBusStopRepository) {
-		self.nearMapUseCase = nearMapUseCase
+	public init(
+		stationListRepository: StationListRepository
+	) {
+		self.stationListRepository = stationListRepository
 	}
 	
 	// MARK: - Funtion

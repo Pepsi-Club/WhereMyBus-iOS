@@ -10,7 +10,7 @@ import Foundation
 
 import RxSwift
 
-public protocol NearBusStopUseCase {
+public protocol NearMapUseCase {
 	
 	// MARK: - Property
 	

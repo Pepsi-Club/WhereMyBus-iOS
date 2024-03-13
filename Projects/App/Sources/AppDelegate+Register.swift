@@ -53,9 +53,9 @@ extension AppDelegate {
         )
 		
 		DIContainer.register(
-			type: NearBusStopUseCase.self,
-			DefaultNearBusStopUseCase(
-				nearMapUseCase: nearBusStopRepository
+			type: NearMapUseCase.self,
+			DefaultNearMapUseCase(
+				nearMapRepository: nearMapRepository
 			)
 		)
     }
@@ -83,8 +83,8 @@ extension AppDelegate {
         DefaultStationListRepository()
     }
 	
-	var nearBusStopRepository: NearBusStopRepository {
-		DefaultNearBusStopRepository()
+	var nearMapRepository: NearMapRepository {
+		DefaultNearMapRepository()
 	}
 }
 

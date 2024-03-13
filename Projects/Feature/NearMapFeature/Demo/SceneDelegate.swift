@@ -1,5 +1,6 @@
 import UIKit
 
+import FeatureDependency
 import NearMapFeature
 
 final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -10,17 +11,19 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         willConnectTo session: UISceneSession,
         options connectionOptions: UIScene.ConnectionOptions
     ) {
+		
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
         let navigationController = UINavigationController()
         window?.rootViewController = navigationController
         window?.makeKeyAndVisible()
                 
-        let nearmapCoordinator = DefaultNearMapCoordinator(
-			parent: nil, 
-			navigationController: navigationController
+        let nearMapCoordinator = DefaultNearMapCoordinator(
+			parent: nil,
+			navigationController: navigationController,
+			coordinatorProvider: MockCoordinatorProvider()
         )
-        nearmapCoordinator.start()
+        nearMapCoordinator.start()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
