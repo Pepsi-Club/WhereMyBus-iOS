@@ -31,5 +31,12 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                 localNotificationService: MockLocalNotificationService()
             )
         )
+        
+        DIContainer.register(
+            type: RegularAlarmUseCase.self,
+            DefaultRegularAlarmUseCase(
+                localNotificationService: MockLocalNotificationService()
+            )
+        )
     }
 }
