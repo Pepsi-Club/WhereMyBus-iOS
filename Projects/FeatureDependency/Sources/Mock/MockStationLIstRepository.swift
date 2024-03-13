@@ -14,6 +14,18 @@ import RxSwift
 
 #if DEBUG
 public final class MockStationLIstRepository: StationListRepository {
+    public func saveRecentSearch(_ searchCell: [Domain.BusStopInfoResponse]) {
+        
+    }
+    
+    public func jsontoSearchData() -> Observable<[BusStopInfoResponse]> {
+        .just([])
+    }
+    
+    public func getRecentSearch() -> Observable<[BusStopInfoResponse]> {
+        .just([])
+    }
+    
     public var busStopInfoList: [BusStopInfoResponse]
     
     public func jsontoSearchData() {

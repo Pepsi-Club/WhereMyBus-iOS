@@ -8,16 +8,16 @@ import RxSwift
 
 public final class AfterSearchViewModel: ViewModel {
     
-    private let coordinator: AfterSearchCoordinator
+    private let coordinator: SearchCoordinator
     
     @Injected(SearchUseCase.self) var useCase: SearchUseCase
     
     private let disposeBag = DisposeBag()
-    
+
     private let texts: String
     
     public init(
-        coordinator: AfterSearchCoordinator,
+        coordinator: SearchCoordinator,
         texts: String
     ) {
         self.coordinator = coordinator
@@ -29,28 +29,33 @@ public final class AfterSearchViewModel: ViewModel {
     }
     
     public func transform(input: Input) -> Output {
-        let output = Output()
+        let output = Output(
+            jsontoSearchResponse: Observable.just([])
+        )
         
         input.viewWillAppearEvenet
             .withUnretained(self)
             .subscribe(onNext: { viewModel, _ in
-                viewModel.useCase.searchBusStop(with: self.texts)
+                
             })
+            .disposed(by: disposeBag)
         
         input.backBtnTapEvent
             .withUnretained(self)
             .subscribe(
                 onNext: { viewModel, _ in
-                    viewModel.coordinator.
-                })eee
-        
+                    viewModel.coordinator.popVC()
+                })
+            .disposed(by: disposeBag)
+
         input.cellTapEvent
             .withUnretained(self)
             .subscribe(
-                onNext: { viewModel, id in
-                    viewModel.useCase.searchBusStop(with: id)
-                }
-            )
+                onNext: { viewModel, stationId in
+                    viewModel.coordinator.startBusStopFlow(stationId: stationId)
+                })
+            .disposed(by: disposeBag)
+
         return output
     }
 }
@@ -60,10 +65,9 @@ extension AfterSearchViewModel {
         let viewWillAppearEvenet: Observable<Void>
         let backBtnTapEvent: Observable<Void>
         let cellTapEvent: Observable<String>
-        let textEditingEvent: Observable<String>
     }
     
     public struct Output {
-        // 텍스트 온넥스트 시키고 인풋이 바뀌면 filtering해오라고~
+        let jsontoSearchResponse: Observable<[BusStopInfoResponse]>
     }
 }

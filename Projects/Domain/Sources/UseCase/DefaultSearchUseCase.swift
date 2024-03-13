@@ -12,28 +12,34 @@ import RxSwift
 import RxCocoa
 
 public final class DefaultSearchUseCase: SearchUseCase {
+
     private let stationListRepository: StationListRepository
+
+    private let disposeBag = DisposeBag()
+   
+    public var recentSearchResult = BehaviorSubject<[BusStopInfoResponse]>(value: [])
+    public let jsontoSearchData =
+        PublishSubject<[BusStopInfoResponse]>()
+    
+    public var searchTexts =
+    BehaviorSubject<[BusStopInfoResponse]>(value: [])
     
     public init(stationListRepository: StationListRepository) {
         self.stationListRepository = stationListRepository
-    }
-    
-    public func searchBusStop(
-        with searchText: String
-    ) -> [BusStopInfoResponse] {
-        let filteredStops = stationListRepository.busStopInfoList.filter { request in
-            return request.busStopName.lowercased().contains(
-                searchText.lowercased()
-            )
-        }
-        return filteredStops
+        
+        getRecentSearchList()
     }
     
     public func getStationList() {
         stationListRepository.jsontoSearchData()
+            .bind(to: jsontoSearchData)
+            .disposed(by: disposeBag)
     }
     
-    public func getRecentSearch() {
-        UserDefaults.standard.stringArray(forKey: "recentSearches")
+    public func getRecentSearchList() {
+        stationListRepository.getRecentSearch()
+            // map은 형태를 바꿔줌
+            .bind(to: recentSearchResult)
+            .disposed(by: disposeBag)
     }
 }

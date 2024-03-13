@@ -14,7 +14,8 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
     private let infoAgreeEvent = BehaviorSubject<Bool>(value: false)
     private let enterPressedEvent = PublishSubject<Void>()
     private var textFieldString = PublishSubject<String>()
-    
+    private let backBtnTapEvent = PublishSubject<Void>()
+
     private let recentSerachCell = RecentSearchCell()
     private let searchNearStopView = DeagreeSearchNearStopView()
     private let searchTextFieldView = SearchTextFieldView()
@@ -22,6 +23,8 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
     private var dataSource: SearchDataSource!
     private var snapshot: SearchDataSource! //
     
+    private var filteredList: [String] = []
+        
     private let backBtn: UIButton = {
         let btn = UIButton()
         
@@ -122,14 +125,37 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
         super.viewDidLoad()
         self.navigationController?.setNavigationBarHidden(true, animated: false)
         
+        // MARK: snapShot 여기다 두면 안될 거 같음
+        var snapshot = dataSource.snapshot()
+        snapshot.appendSections([.main])
+        
+        viewModel.useCase.recentSearchResult
+               .subscribe(onNext: { [weak self] recentSearchResult in
+                   snapshot.appendItems(recentSearchResult)
+                   self?.dataSource.apply(snapshot, animatingDifferences: false)
+               })
+               .disposed(by: disposeBag)
+        dataSource.apply(snapshot, animatingDifferences: false)
+        
         configureDataSource()
         configureUI()
         bind()
         hideKeyboard()
         bindText()
+        // setupSearchController()
     }
     
-    func hideKeyboard() {
+    private func setupSearchController() {
+        let searchController = UISearchController(searchResultsController: nil)
+        searchController.searchBar.placeholder = ""
+        searchController.hidesNavigationBarDuringPresentation = false
+        
+        self.navigationItem.searchController = searchController
+        self.navigationItem.title = "Search"
+        self.navigationItem.hidesSearchBarWhenScrolling = false
+    }
+        
+    private func hideKeyboard() {
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(
             target: self,
             action: #selector(dismissKeyboard))
@@ -233,20 +259,12 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
 }
     
     private func bind() {
-        _ = viewModel.transform(
-            input: .init(
-                viewWillAppearEvenet: rx
-                    .methodInvoked(
-                        #selector(UIViewController.viewWillAppear)
-                    )
-                    .map { _ in},
-                
-                enterPressedEvent:
-                    textFieldString.asObservable(),
-                
-                backbtnEvent: backBtn.rx.tap.asObservable()
-            )
-        )
+        let input = SearchViewModel.Input(
+            viewWillAppearEvenet: rx
+                .methodInvoked(#selector(UIViewController.viewWillAppear))
+                .map { _ in },
+            enterPressedEvent: textFieldString.asObservable(),
+            backbtnEvent: backBtnTapEvent.asObservable())
     }
     
     private func bindText() {
@@ -301,7 +319,7 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
 extension SearchViewController {
     typealias SearchDataSource =
     UITableViewDiffableDataSource
-    <Int, BusStopInfoResponse>
+    <Section, BusStopInfoResponse>
 }
 
 extension SearchViewController: UITextFieldDelegate {
@@ -316,3 +334,5 @@ extension SearchViewController: UITextFieldDelegate {
         textField.resignFirstResponder()
     }
 }
+
+enum Section: CaseIterable { case main }

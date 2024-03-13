@@ -11,8 +11,13 @@ public final class AfterSearchViewController
 : UIViewController, UITableViewDelegate {
     private let viewModel: AfterSearchViewModel
     
-    private let searchTextFieldView = SearchTextFieldView()
+    private let disposeBag = DisposeBag()
     
+    private let backBtnTapEvent = PublishSubject<Void>()
+    private let cellTapEvent = PublishSubject<Void>()
+    
+    private let searchController = UISearchController(searchResultsController: nil)
+    private let searchTextFieldView = SearchTextFieldView()
     private let recentSerachCell = RecentSearchCell()
     
     private var dataSource: AfterSearchDataSource!
@@ -77,16 +82,15 @@ public final class AfterSearchViewController
     }()
     
     private lazy var afterSearchResultTableView: UITableView = {
-        let table = UITableView(frame: .zero, style: .insetGrouped)
-        table.register(RecentSearchCell.self)
-        table.dataSource = dataSource
-        table.delegate = self
-        
-        return table
-    }()
+            let table = UITableView(frame: .zero, style: .insetGrouped)
+            table.register(RecentSearchCell.self)
+            table.dataSource = dataSource
+            table.delegate = self
+            table.tableHeaderView = searchController.searchBar
+            return table
+        }()
+   
     
-    private let disposeBag = DisposeBag()
-    private let searchEnterEvent = PublishSubject<String>()
     public init(viewModel: AfterSearchViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -99,8 +103,11 @@ public final class AfterSearchViewController
     public override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationController?.setNavigationBarHidden(true, animated: false)
-        bindViewModel()
         
+        bind()
+        configureDataSource()
+        hideKeyboard()
+
         view.backgroundColor = .systemBackground
         
         [searchTextFieldView, backBtn, textFieldStack, recentSearchlabel,
@@ -145,10 +152,25 @@ public final class AfterSearchViewController
         ])
     }
     
-    // 검색한 내용들이 새로운 뷰에 그려져야함. 그릴때마다 AfterSearchView가 다시 그려져야 하고,
-    // 클릭을 하면 지수님 뷰에 가면서 최신 기록 로그에 남겨져야함.
-    private func bindViewModel() {
-        
+    private func bind() {
+        let input = AfterSearchViewModel.Input(
+            viewWillAppearEvenet: rx
+                .methodInvoked(#selector(UIViewController.viewWillAppear))
+                .map { _ in },
+            backBtnTapEvent: backBtnTapEvent.asObservable(),
+            cellTapEvent: Observable<String>,
+            )
+    }
+    
+    private func hideKeyboard() {
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(
+            target: self,
+            action: #selector(dismissKeyboard))
+        view.addGestureRecognizer(tap)
+    }
+    
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
     }
     
     private func configureDataSource() {
@@ -185,6 +207,16 @@ public final class AfterSearchViewController
         
         return cell
     }
+    
+    func setupSearchController() {
+        let searchController = UISearchController(searchResultsController: nil)
+        searchController.searchBar.placeholder = ""
+        searchController.hidesNavigationBarDuringPresentation = false
+        
+        self.navigationItem.searchController = searchController
+        self.navigationItem.title = "Search"
+        self.navigationItem.hidesSearchBarWhenScrolling = false
+    }
 }
 
 extension AfterSearchViewController {
@@ -205,6 +237,17 @@ extension AfterSearchViewController: UITextFieldDelegate {
     }
     
     public func textFieldDidChangeSelection(_ textField: UITextField) {
+    }
+}
+
+extension SearchViewController: UISearchResultsUpdating {
+    
+    public func updateSearchResults(for searchController: UISearchController) {
+        guard let text = searchController.searchBar.text?.lowercased()
+        else { return }
+    // self.filteredList = self.arr.filter { $0.localizedCaseInsensitiveContains(text) }
         
+    
+        // self.tableView.reloadData()
     }
 }

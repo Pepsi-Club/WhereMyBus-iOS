@@ -76,7 +76,7 @@ extension DefaultSearchCoordinator {
         busStopCoordinator.start()
     }
     
-    public func complete() {
+    public func popVC() {
         navigationController.popViewController(animated: true)
         finish()
     }

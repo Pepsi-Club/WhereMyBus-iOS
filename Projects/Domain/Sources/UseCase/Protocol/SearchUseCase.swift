@@ -12,5 +12,8 @@ import RxSwift
 
 public protocol SearchUseCase {
     func getStationList()
-    func searchBusStop(with searchText: String) -> [BusStopInfoResponse]
+    func getRecentSearchList()
+    
+    var recentSearchResult: BehaviorSubject<[BusStopInfoResponse]> {get}
+    var jsontoSearchData: PublishSubject<[BusStopInfoResponse]> {get}
 }
