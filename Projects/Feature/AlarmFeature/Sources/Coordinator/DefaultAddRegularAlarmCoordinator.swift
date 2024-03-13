@@ -27,7 +27,9 @@ public final class DefaultAddRegularAlarmCoordinator {
     
     public func start() {
         let addRegularAlarmViewController = AddRegularAlarmViewController(
-            viewModel: .init(coordinator: self)
+            viewModel: .init(
+                coordinator: self
+            )
         )
         navigationController.pushViewController(
             addRegularAlarmViewController,
@@ -39,7 +41,10 @@ public final class DefaultAddRegularAlarmCoordinator {
 extension DefaultAddRegularAlarmCoordinator: AddRegularAlarmCoordinator {
     public func start(with: RegularAlarmResponse) {
         let addRegularAlarmViewController = AddRegularAlarmViewController(
-            viewModel: .init(alarmToEdit: with, coordinator: self)
+            viewModel: .init(
+                alarmToEdit: with,
+                coordinator: self
+            )
         )
         navigationController.pushViewController(
             addRegularAlarmViewController,

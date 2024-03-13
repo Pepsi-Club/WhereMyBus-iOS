@@ -19,8 +19,6 @@ extension AppDelegate {
         let coreDataService: CoreDataService = DefaultCoreDataService()
         let networkService: NetworkService = DefaultNetworkService()
         
-        let regularAlarmRepository: RegularAlarmRepository
-        = DefaultRegularAlarmRepository()
         let favoritesRepository: FavoritesRepository
         = DefaultFavoritesRepository(coreDataService: coreDataService)
         let busStopArrivalInfoRepository: BusStopArrivalInfoRepository
@@ -48,7 +46,6 @@ extension AppDelegate {
         DIContainer.register(
             type: AddRegularAlarmUseCase.self,
             DefaultAddRegularAlarmUseCase(
-                regularAlarmRepository: regularAlarmRepository,
                 localNotificationService: localNotificationService
             )
         )
@@ -64,6 +61,11 @@ extension AppDelegate {
                 busStopArrivalInfoRepository: busStopArrivalInfoRepository,
                 favoritesRepository: favoritesRepository
             )
+        )
+        
+        DIContainer.register(
+            type: RegularAlarmEditingService.self,
+            DefaultRegularAlarmEditingService()
         )
     }
 }
