@@ -15,6 +15,9 @@ public final class ArrivalInfoView: UIStackView {
             size: 14
         )
         label.textColor = DesignSystemAsset.routeTimeColor.color
+        label.widthAnchor.constraint(equalToConstant: 60).isActive = true
+        label.adjustsFontSizeToFitWidth = true
+        label.minimumScaleFactor = 0.7
         return label
     }()
     
@@ -43,6 +46,11 @@ public final class ArrivalInfoView: UIStackView {
         spacing = 6
     }
     
+    public func prepareForReuse() {
+        timeLabel.text = nil
+        remainingLabel.text = nil
+    }
+    
     public func updateUI(
         time: String,
         remainingStops: String
@@ -52,16 +60,12 @@ public final class ArrivalInfoView: UIStackView {
         if time.contains(where: { Int(String($0)) != nil }) {
             timeLabel.text = time
             timeLabel.textColor = routeTimeColor
+            addArrangedSubview(remainingLabel)
+            remainingLabel.text = remainingStops
         } else {
             timeLabel.text = time
             timeLabel.textColor = carrotOrange
-        }
-        
-        if remainingStops.isEmpty {
             removeArrangedSubview(remainingLabel)
-        } else {
-            addArrangedSubview(remainingLabel)
-            remainingLabel.text = remainingStops
         }
     }
 }

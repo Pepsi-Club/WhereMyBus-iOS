@@ -26,7 +26,10 @@ public final class DefaultHomeCoordinator {
     
     public func start() {
         let homeViewController = FavoritesViewController(
-            viewModel: FavoritesViewModel(coordinator: self)
+            viewModel: FavoritesViewModel(
+                coordinator: self,
+                timer: .init()
+            )
         )
         navigationController.setViewControllers(
             [homeViewController],
@@ -63,6 +66,12 @@ extension DefaultHomeCoordinator: HomeCoordinator {
     
     public func startBusStopFlow(stationId: String) {
         // BusStopCoordinatorFlow
+        let busStopCoordinator = coordinatorProvider.makeBusStopCoordinator(
+            navigationController: navigationController,
+            busStopId: stationId
+        )
+        childs.append(busStopCoordinator)
+        busStopCoordinator.start()
     }
 }
 

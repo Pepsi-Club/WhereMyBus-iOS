@@ -9,17 +9,15 @@ public final class BusStopViewController: UIViewController {
     private let viewModel: BusStopViewModel
     
     private let disposeBag = DisposeBag()
-    private let mapBtnTapEvent = PublishSubject<BusStopArrivalInfoResponse>()
+    private let mapBtnTapEvent = PublishSubject<Void>()
     private let likeBusBtnTapEvent = PublishSubject<BusArrivalInfoResponse>()
     private let alarmBtnTapEvent = PublishSubject<BusArrivalInfoResponse>()
-    private let refresh = PublishSubject<Bool>()
     
     private var dataSource: BusStopDataSource!
     private var snapshot: BusStopSnapshot!
     
     private let headerView: BusStopInfoHeaderView = BusStopInfoHeaderView()
     private let scrollView: UIScrollView = UIScrollView()
-    private let refreshControl = UIRefreshControl()
     private let contentView = UIView()
     private lazy var busStopTableView: UITableView = {
         let table = UITableView(frame: .zero, style: .insetGrouped)
@@ -37,8 +35,6 @@ public final class BusStopViewController: UIViewController {
         return table
     }()
     
-    private var tableViewHeightConstraint = NSLayoutConstraint()
-    
     public init(viewModel: BusStopViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -51,44 +47,44 @@ public final class BusStopViewController: UIViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .white
-        
         configureUI()
         bind()
         configureDataSource()
-        configureRefreshControl()
-    }
-    
-    public override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        tableViewHeightConstraint.constant = busStopTableView.contentSize.height
+        bindMapBtn()
     }
     
     private func bind() {
+        let refreshControl = scrollView.enableRefreshControl(
+            refreshStr: "당겨서 새로고침"
+        )
+        
         let input = BusStopViewModel.Input(
             viewWillAppearEvent: rx
                 .methodInvoked(#selector(UIViewController.viewWillAppear))
-                .map { _ in }
-                .debounce(.seconds(1), scheduler: MainScheduler.asyncInstance),
+                .map { _ in },
             likeBusBtnTapEvent: likeBusBtnTapEvent.asObservable(),
             alarmBtnTapEvent: alarmBtnTapEvent.asObservable(),
             mapBtnTapEvent: mapBtnTapEvent.asObservable(),
-            refreshLoading: refresh.asObservable()
+            refreshLoading
+            : refreshControl.rx.controlEvent(.valueChanged).asObservable(),
+            navigationBackBtnTapEvent
+            : headerView.navigationBtn.rx.tap.asObservable()
         )
-        
-        rx.methodInvoked(#selector(UIViewController.viewWillAppear))
-            .subscribe(onNext: { [weak self] _ in
-                guard let naviController = self?.navigationController
-                else { return }
-                
-                naviController.navigationBar.isHidden = true
-            })
-            .disposed(by: disposeBag)
         
         let output = viewModel.transform(input: input)
         bindTableView(output: output)
-        bindMapBtn(output: output)
-        bindRefreshing(output: output)
+        
+        output.isRefreshing
+            .subscribe(onNext: { refresh in
+                print("\(refresh)")
+                switch refresh {
+                case .fetchComplete:
+                    refreshControl.endRefreshing()
+                case .fetching:
+                    break
+                }
+            })
+            .disposed(by: disposeBag)
     }
     
     private func bindTableView(output: BusStopViewModel.Output) {
@@ -108,34 +104,14 @@ public final class BusStopViewController: UIViewController {
             .disposed(by: disposeBag)
     }
     
-    private func bindMapBtn(output: BusStopViewModel.Output) {
-        output.busStopArrivalInfoResponse
-            .withUnretained(self)
-            .subscribe(
-                onNext: { viewController, response in
-                    viewController.headerView.mapBtn.rx.tap
-                        .take(1)
-                        .withUnretained(self)
-                        .map { _ in
-                            // 두번 열리는 이유를 모르겠음 -> 그래서 take(1)을 통해 한번만 구독 될 수 있게.
-                            // 여기서 강묵님 쪽으로 데이터 넘겨주면 될 듯
-                            print("🤢 \(response) ")
-                            return response
-                        }
-                        .bind(to: self.mapBtnTapEvent)
-                        .disposed(by: self.disposeBag)
-                }
-            )
-            .disposed(by: disposeBag)
-    }
-    private func bindRefreshing(output: BusStopViewModel.Output) {
-        output.isRefreshing
-            .observe(on: MainScheduler.instance)
-            .subscribe { [weak self] bool in
-                print("output - \(bool)")
-                guard let self = self else { return }
-                self.refreshControl.endRefreshing()
-            }
+    private func bindMapBtn() {
+        // output.- 을 가공해서 다시 input으로 넣어줘버림 -> 순환 참조가 되어버림
+        // 지금
+        // 가공 -> 인풋 X -> viewModel에서 이벤트 헨들링만 하는 것 !
+        // 이게 더 MVVM 형태에 맞는게 아닐까 (VC는 정말 이벤트만 보내주는 형태 !)
+        headerView.mapBtn.rx.tap
+            .map { _ in }
+            .bind(to: mapBtnTapEvent)
             .disposed(by: disposeBag)
     }
     
@@ -167,7 +143,6 @@ public final class BusStopViewController: UIViewController {
                 return cell
                 
             })
-        
     }
     
     private func configureCell(
@@ -189,21 +164,23 @@ public final class BusStopViewController: UIViewController {
             nextRouteName: response.nextStation
         )
         cell?.updateFirstArrival(
-            firstArrivalTime: response.firstArrivalTime,
+            firstArrivalTime: response.firstArrivalState.toString,
             firstArrivalRemaining: response.firstArrivalRemaining
         )
         cell?.updateSecondArrival(
-            secondArrivalTime: response.secondArrivalTime,
+            secondArrivalTime: response.secondArrivalState.toString,
             secondArrivalRemaining: response.secondArrivalRemaining
         )
         
         cell?.busNumber.textColor = response.busType.toColor
         
         cell?.starBtnTapEvent
-            .map { _ in
+            .map({ _ in
                 return response
-            }
-            .bind(to: self.likeBusBtnTapEvent)
+            })
+            .subscribe(onNext: { busInfo in
+                self.likeBusBtnTapEvent.onNext(busInfo)
+            })
             .disposed(by: cell!.disposeBag)
         
         cell?.alarmBtnTapEvent
@@ -215,28 +192,13 @@ public final class BusStopViewController: UIViewController {
         
         return cell
     }
-    
-    private func configureRefreshControl() {
-        refreshControl.endRefreshing()
-        scrollView.refreshControl = refreshControl
-        
-        refreshControl.rx.controlEvent(.valueChanged)
-            .withUnretained(self)
-            .subscribe(onNext: { viewC, _ in
-                viewC.refresh.onNext(true)
-            })
-            .disposed(by: disposeBag)
-        
-        refreshControl.tintColor = DesignSystemAsset.mainColor.color
-        refreshControl.attributedTitle = NSAttributedString(
-            string: "당겨서 새로고침",
-            attributes: [.foregroundColor: DesignSystemAsset.mainColor.color]
-        )
-    }
 }
 
 extension BusStopViewController {
     public func configureUI() {
+        view.backgroundColor = .white
+        navigationController?.isNavigationBarHidden = true
+        
         view.addSubview(scrollView)
         
         [scrollView, contentView, headerView, busStopTableView]
@@ -249,41 +211,10 @@ extension BusStopViewController {
                 contentView.addSubview(components)
             }
         
-        tableViewHeightConstraint = busStopTableView.heightAnchor
-            .constraint(equalToConstant: 0)
-        
         scrollView.addSubview(contentView)
+        scrollView.contentInsetAdjustmentBehavior = .never
         
         NSLayoutConstraint.activate([
-            scrollView.topAnchor.constraint(
-                equalTo: view.safeAreaLayoutGuide.topAnchor
-            ),
-            scrollView.bottomAnchor.constraint(
-                equalTo: view.safeAreaLayoutGuide.bottomAnchor
-            ),
-            scrollView.leadingAnchor.constraint(
-                equalTo: view.safeAreaLayoutGuide.leadingAnchor
-            ),
-            scrollView.trailingAnchor.constraint(
-                equalTo: view.safeAreaLayoutGuide.trailingAnchor
-            ),
-            
-            contentView.topAnchor.constraint(
-                equalTo: scrollView.topAnchor
-            ),
-            contentView.bottomAnchor.constraint(
-                equalTo: scrollView.contentLayoutGuide.bottomAnchor
-            ),
-            contentView.leadingAnchor.constraint(
-                equalTo: scrollView.leadingAnchor
-            ),
-            contentView.trailingAnchor.constraint(
-                equalTo: scrollView.trailingAnchor
-            ),
-            contentView.widthAnchor.constraint(
-                equalTo: scrollView.widthAnchor
-            ),
-            
             headerView.topAnchor.constraint(
                 equalTo: contentView.topAnchor
             ),
@@ -306,7 +237,35 @@ extension BusStopViewController {
             busStopTableView.bottomAnchor.constraint(
                 equalTo: contentView.bottomAnchor
             ),
-            tableViewHeightConstraint,
+            
+            contentView.topAnchor.constraint(
+                equalTo: scrollView.contentLayoutGuide.topAnchor
+            ),
+            contentView.centerXAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.centerXAnchor
+            ),
+            contentView.widthAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.widthAnchor
+            ),
+            contentView.bottomAnchor.constraint(
+                equalTo: scrollView.contentLayoutGuide.bottomAnchor
+            ),
+            contentView.heightAnchor.constraint(
+                greaterThanOrEqualTo: view.safeAreaLayoutGuide.heightAnchor
+            ),
+            
+            scrollView.frameLayoutGuide.topAnchor.constraint(
+                equalTo: view.topAnchor
+            ),
+            scrollView.bottomAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.bottomAnchor
+            ),
+            scrollView.leadingAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.leadingAnchor
+            ),
+            scrollView.trailingAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.trailingAnchor
+            ),
         ])
     }
 }

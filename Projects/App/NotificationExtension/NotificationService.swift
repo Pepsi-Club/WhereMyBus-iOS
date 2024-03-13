@@ -47,14 +47,14 @@ class NotificationService: UNNotificationServiceExtension {
                     )
                     else { return }
                     let busStopName = response.busStopName
-                    let firstArrivalTime = bus.firstArrivalTime
+                    let firstArrivalTime = bus.firstArrivalState.toString
                     let firstArrivalRemaining = bus.firstArrivalRemaining
-                    let secondArrivalTime = bus.secondArrivalTime
+                    let secondArrivalTime = bus.secondArrivalState.toString
                     let routeMessage: String
                     let remainingMessage: String
                     let firstLine: String
                     let secondLine: String
-                    switch bus.firstArrivalTime {
+                    switch bus.firstArrivalState.toString {
                     case "곧 도착":
                         routeMessage = "\(bus.busName)번 버스가 \(busStopName)에"
                         remainingMessage = "곧 도착해요."

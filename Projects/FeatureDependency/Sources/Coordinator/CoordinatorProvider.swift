@@ -17,7 +17,7 @@ public protocol CoordinatorProvider {
     
     func makeBusStopCoordinator(
         navigationController: UINavigationController,
-        arrivalInfoData: ArrivalInfoRequest
+        busStopId: String
     ) -> BusStopCoordinator
 
     func makeAddRegularAlarmCoordinator(
@@ -25,6 +25,7 @@ public protocol CoordinatorProvider {
     ) -> AddRegularAlarmCoordinator
     
     func makeBusStopMapCoordinator(
-        navigationController: UINavigationController
+        navigationController: UINavigationController,
+        busStopId: String
     ) -> NearMapCoordinator
 }

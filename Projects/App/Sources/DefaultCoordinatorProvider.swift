@@ -19,12 +19,12 @@ final class DefaultCoordinatorProvider: CoordinatorProvider {
     
     func makeBusStopCoordinator(
         navigationController: UINavigationController,
-        arrivalInfoData: ArrivalInfoRequest
+        busStopId: String
     ) -> BusStopCoordinator {
         DefaultBusStopCoordinator(
             parent: nil,
             navigationController: navigationController,
-            arrivalInfoData: arrivalInfoData,
+            busStopId: busStopId,
             coordinatorProvider: self
         )
     }
@@ -49,7 +49,8 @@ final class DefaultCoordinatorProvider: CoordinatorProvider {
     }
     
     func makeBusStopMapCoordinator(
-        navigationController: UINavigationController
+        navigationController: UINavigationController,
+        busStopId: String
     ) -> NearMapCoordinator {
         DefaultNearMapCoordinator(
             parent: nil,

@@ -10,16 +10,10 @@ import Foundation
 
 public struct ArrivalInfoRequest {
     public let busStopId: String
-    public let busStopName: String
-    public let routeName: [String]
     
     public init(
-        busStopId: String, 
-        busStopName: String, 
-        routeName: [String]
+        busStopId: String
     ) {
         self.busStopId = busStopId
-        self.busStopName = busStopName
-        self.routeName = routeName
     }
 }

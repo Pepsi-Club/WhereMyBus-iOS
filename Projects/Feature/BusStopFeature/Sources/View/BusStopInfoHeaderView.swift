@@ -22,6 +22,22 @@ public final class BusStopInfoHeaderView: UIView {
         return stack
     }()
     
+    public let navigationBtn: UIButton = {
+        var config = UIButton.Configuration.plain()
+        
+        config.image = UIImage(systemName: "chevron.left")
+        config.baseForegroundColor = .white
+        config.imagePadding = 7
+        var imgConfig = UIImage.SymbolConfiguration(
+            font: .systemFont(ofSize: 17)
+        )
+        imgConfig = UIImage.SymbolConfiguration(weight: .semibold)
+        config.preferredSymbolConfigurationForImage = imgConfig
+        let btn = UIButton(configuration: config)
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        return btn
+    }()
+    
     private let busIconStack: UIStackView = {
         let stack = UIStackView()
         stack.axis = .vertical
@@ -129,6 +145,7 @@ extension BusStopInfoHeaderView {
     private func configureSetup() {
         addSubview(totalStack)
         addSubview(btnStack)
+        addSubview(navigationBtn)
         
         [busStopIcon, busStopNumLb]
             .forEach { components in
@@ -149,6 +166,14 @@ extension BusStopInfoHeaderView {
     private func configureLayouts() {
         
         NSLayoutConstraint.activate([
+            navigationBtn.topAnchor.constraint(
+                equalTo: topAnchor,
+                constant: 60
+            ),
+            navigationBtn.leadingAnchor.constraint(
+                equalTo: leadingAnchor,
+                constant: 15
+            ),
             totalStack.leadingAnchor.constraint(
                 equalTo: leadingAnchor
             ),
@@ -156,8 +181,8 @@ extension BusStopInfoHeaderView {
                 equalTo: trailingAnchor
             ),
             totalStack.topAnchor.constraint(
-                equalTo: topAnchor,
-                constant: 30
+                equalTo: navigationBtn.bottomAnchor,
+                constant: -50
             ),
             btnStack.topAnchor.constraint(
                 equalTo: totalStack.bottomAnchor,

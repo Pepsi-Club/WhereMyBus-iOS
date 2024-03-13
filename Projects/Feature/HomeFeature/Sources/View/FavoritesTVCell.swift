@@ -35,6 +35,7 @@ class FavoritesTVCell: UITableViewCell {
         config.preferredSymbolConfigurationForImage = imgConfig
         config.baseForegroundColor = DesignSystemAsset.mainColor.color
         let button = UIButton(configuration: config)
+        button.isHidden = true
         return button
     }()
     
@@ -55,20 +56,27 @@ class FavoritesTVCell: UITableViewCell {
             $0.textColor = DesignSystemAsset.limeGreen.color
         }
         [firstArrivalInfoView, secondArrivalInfoView].forEach {
-            $0.updateUI(time: "", remainingStops: "")
+            $0.prepareForReuse()
         }
     }
     
-    func updateUI(response: BusArrivalInfoResponse) {
-        routeLabel.text = response.busName
-        routeLabel.textColor = response.busType.toColor
+    func updateUI(
+        busName: String,
+        busType: BusType,
+        firstArrivalTime: String,
+        firstArrivalRemaining: String,
+        secondArrivalTime: String,
+        secondArrivalRemaining: String
+    ) {
+        routeLabel.text = busName
+        routeLabel.textColor = busType.toColor
         firstArrivalInfoView.updateUI(
-            time: response.firstArrivalTime,
-            remainingStops: response.firstArrivalRemaining
+            time: firstArrivalTime,
+            remainingStops: firstArrivalRemaining
         )
         secondArrivalInfoView.updateUI(
-            time: response.secondArrivalTime,
-            remainingStops: response.secondArrivalRemaining
+            time: secondArrivalTime,
+            remainingStops: secondArrivalRemaining
         )
     }
     
