@@ -48,7 +48,6 @@ public final class DefaultRegularAlarmEditingService
                 weekDay: currentAlarm.weekday
             )
         )
-        print(#function)
     }
     
     public func update(time: Date) {
@@ -63,7 +62,6 @@ public final class DefaultRegularAlarmEditingService
                 weekDay: currentAlarm.weekday
             )
         )
-        print(#function)
     }
     
     public func update(weekday: [Int]) {
@@ -78,12 +76,10 @@ public final class DefaultRegularAlarmEditingService
                 weekDay: weekday
             )
         )
-        print(#function)
     }
     
     public func update(response: RegularAlarmResponse) {
         managedAlarm.accept(response)
-        print(#function)
     }
     
     public func resetManagedObject() {
@@ -97,6 +93,5 @@ public final class DefaultRegularAlarmEditingService
                 weekDay: []
             )
         )
-        print(#function)
     }
 }

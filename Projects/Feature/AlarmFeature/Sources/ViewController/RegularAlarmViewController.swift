@@ -13,10 +13,7 @@ public final class RegularAlarmViewController: UIViewController {
     private var removeItemSelected = PublishSubject<RegularAlarmResponse>()
     
     private let emptyRegularAlarmView = EmptyRegularAlarmView()
-    private let floatingBtnSpacingView: UIView = {
-        let view = UIView()
-        return view
-    }()
+    private let floatingBtnSpacingView = UIView()
     
     private let titleLabel: UILabel = {
         let label = UILabel()
