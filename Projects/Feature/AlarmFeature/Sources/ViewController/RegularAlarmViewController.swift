@@ -13,6 +13,7 @@ public final class RegularAlarmViewController: UIViewController {
     private var removeItemSelected = PublishSubject<RegularAlarmResponse>()
     
     private let emptyRegularAlarmView = EmptyRegularAlarmView()
+    private let floatingBtnSpacingView = UIView()
     
     private let titleLabel: UILabel = {
         let label = UILabel()
@@ -30,6 +31,7 @@ public final class RegularAlarmViewController: UIViewController {
         tableView.separatorStyle = .none
         tableView.backgroundView = emptyRegularAlarmView
         tableView.register(RegularAlarmTVCell.self)
+        tableView.tableFooterView = floatingBtnSpacingView
         return tableView
     }()
     
@@ -54,7 +56,7 @@ public final class RegularAlarmViewController: UIViewController {
     private func configureUI() {
         view.backgroundColor = .white
         
-        [titleLabel, alarmTableView, addBtn].forEach {
+        [titleLabel, alarmTableView, addBtn, floatingBtnSpacingView].forEach {
             view.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
@@ -89,6 +91,14 @@ public final class RegularAlarmViewController: UIViewController {
             addBtn.bottomAnchor.constraint(
                 equalTo: safeArea.bottomAnchor,
                 constant: -40
+            ),
+            
+            floatingBtnSpacingView.widthAnchor.constraint(
+                equalTo: safeArea.widthAnchor
+            ),
+            floatingBtnSpacingView.heightAnchor.constraint(
+                equalTo: addBtn.heightAnchor,
+                constant: 60
             )
         ])
     }

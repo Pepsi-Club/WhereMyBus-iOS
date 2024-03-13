@@ -16,10 +16,10 @@ public protocol FavoritesRepository {
     func addRoute(
         arsId: String,
         bus: BusArrivalInfoResponse
-    )
+    ) throws
     
     func removeRoute(
         arsId: String,
         bus: BusArrivalInfoResponse
-    )
+    ) throws
 }

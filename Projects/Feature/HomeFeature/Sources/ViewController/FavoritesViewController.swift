@@ -187,6 +187,7 @@ public final class FavoritesViewController: UIViewController {
             output.busStopArrivalInfoResponse
         )
         .withUnretained(self)
+        .observe(on: MainScheduler.asyncInstance)
         .subscribe(
             onNext: { viewController, arg1 in
                 let (timerTime, responses) = arg1
@@ -251,6 +252,7 @@ public final class FavoritesViewController: UIViewController {
         
         output.favoritesState
             .withUnretained(self)
+            .observe(on: MainScheduler.asyncInstance)
             .subscribe(
                 onNext: { viewController, state in
                     viewController.updateState(state: state)
