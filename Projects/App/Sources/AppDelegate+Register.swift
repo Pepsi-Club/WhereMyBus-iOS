@@ -62,5 +62,10 @@ extension AppDelegate {
                 favoritesRepository: favoritesRepository
             )
         )
+        
+        DIContainer.register(
+            type: RegularAlarmEditingService.self,
+            DefaultRegularAlarmEditingService()
+        )
     }
 }
