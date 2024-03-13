@@ -8,7 +8,8 @@ import RxSwift
 
 public final class BusStopViewModel: ViewModel {
     private let coordinator: BusStopCoordinator
-    @Injected(BusStopUseCase.self) var useCase: BusStopUseCase
+    @Injected(BusStopUseCase.self)
+    private var useCase: BusStopUseCase
     private let disposeBag = DisposeBag()
     private var fetchData: ArrivalInfoRequest
     
@@ -49,7 +50,7 @@ public final class BusStopViewModel: ViewModel {
             ) { _, busStopInfo in
                 return busStopInfo
             }
-            .withUnretained(self) // weak self 대신이다 ! -> 아님 -> self를 인자로 받아
+            .withUnretained(self)
             .subscribe { viewModel, busStopInfo in
                 viewModel.coordinator.busStopMapLocation(
                     busStopId: busStopInfo.busStopId
@@ -98,14 +99,16 @@ public final class BusStopViewModel: ViewModel {
             }
             .withUnretained(self)
             .subscribe(onNext: { viewModel, arg1 in
-                var (busInfo, busStopInfo) = arg1
-                print("일단")
+                let (busInfo, busStopInfo) = arg1
+                viewModel.useCase.update(
+                    busStopInfo: busStopInfo,
+                    busInfo: busInfo
+                )
                 viewModel.coordinator.moveToRegualrAlarm()
             })
             .disposed(by: disposeBag)
         
         useCase.busStopSection
-            .observe(on: MainScheduler.asyncInstance)
             .withUnretained(self)
             .subscribe(onNext: { _, busStopInfo in
                 output.busStopArrivalInfoResponse.onNext(busStopInfo)

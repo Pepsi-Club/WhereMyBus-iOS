@@ -14,6 +14,7 @@ import RxCocoa
 public final class DefaultBusStopUseCase: BusStopUseCase {
     private let busStopArrivalInfoRepository: BusStopArrivalInfoRepository
     private let favoritesRepository: FavoritesRepository
+    private var regularAlarmEditingService: RegularAlarmEditingService
     
     public let busStopSection = PublishSubject<BusStopArrivalInfoResponse>()
     public var favorites = BehaviorSubject<[FavoritesBusStopResponse]>(
@@ -23,10 +24,12 @@ public final class DefaultBusStopUseCase: BusStopUseCase {
     
     public init(
         busStopArrivalInfoRepository: BusStopArrivalInfoRepository,
-        favoritesRepository: FavoritesRepository
+        favoritesRepository: FavoritesRepository,
+        regularAlarmEditingService: RegularAlarmEditingService
     ) {
         self.busStopArrivalInfoRepository = busStopArrivalInfoRepository
         self.favoritesRepository = favoritesRepository
+        self.regularAlarmEditingService = regularAlarmEditingService
         
         fetchFavorites()
         
@@ -64,7 +67,7 @@ public final class DefaultBusStopUseCase: BusStopUseCase {
             .disposed(by: disposeBag)
     }
     // MARK: - 필터링 후 BusStopArrivalInfoRepsonse 반환
-    public func filterFavorites(
+    private func filterFavorites(
         responses: BusStopArrivalInfoResponse,
         favorites: [FavoritesBusStopResponse]
     ) -> BusStopArrivalInfoResponse {
@@ -101,5 +104,17 @@ public final class DefaultBusStopUseCase: BusStopUseCase {
         } else {
             try? self.favoritesRepository.addRoute(arsId: busStop, bus: bus)
         }
+    }
+    // MARK: - Service - useCase - viewModel 연결
+    public func update(
+        busStopInfo: BusStopArrivalInfoResponse,
+        busInfo: BusArrivalInfoResponse
+    ) {
+        regularAlarmEditingService.update(
+            busStopId: busStopInfo.busStopId,
+            busStopName: busStopInfo.busStopName,
+            busId: busInfo.busId,
+            busName: busInfo.busName
+        )
     }
 }

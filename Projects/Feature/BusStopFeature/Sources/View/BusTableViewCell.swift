@@ -150,9 +150,7 @@ public final class BusTableViewCell: UITableViewCell {
     
     private func buttonTap() {
         starBtn.rx.tap
-            .map({ _ in
-                print("🤮TAP")
-            })
+            .map({ _ in })
             .withUnretained(self)
             .subscribe(onNext: { cell, _ in
                 cell.starBtnTapEvent.onNext(())
@@ -161,7 +159,6 @@ public final class BusTableViewCell: UITableViewCell {
         
 //        alarmBtn.rx.tap
 //            .map({ _ in
-//                print("🤮TAP")
 //            })
 //            .withUnretained(self)
 //            .subscribe(onNext: { cell, _ in

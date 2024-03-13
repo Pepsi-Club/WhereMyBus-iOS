@@ -27,6 +27,8 @@ extension AppDelegate {
         = DefaultStationListRepository()
         let localNotificationService: LocalNotificationService
         = DefaultLocalNotificationService()
+        let regularAlarmEditingService: RegularAlarmEditingService
+        = DefaultRegularAlarmEditingService()
         
         DIContainer.register(
             type: FavoritesUseCase.self,
@@ -59,7 +61,8 @@ extension AppDelegate {
             type: BusStopUseCase.self,
             DefaultBusStopUseCase(
                 busStopArrivalInfoRepository: busStopArrivalInfoRepository,
-                favoritesRepository: favoritesRepository
+                favoritesRepository: favoritesRepository,
+                regularAlarmEditingService: regularAlarmEditingService
             )
         )
         
