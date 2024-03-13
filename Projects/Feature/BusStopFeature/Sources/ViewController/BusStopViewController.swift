@@ -13,6 +13,7 @@ public final class BusStopViewController: UIViewController {
     private let mapBtnTapEvent = PublishSubject<Void>()
     private let likeBusBtnTapEvent = PublishSubject<BusArrivalInfoResponse>()
     private let alarmBtnTapEvent = PublishSubject<BusArrivalInfoResponse>()
+    private let alarmCellTapEvent = PublishSubject<IndexPath>()
     
     private var dataSource: BusStopDataSource!
     private var snapshot: BusStopSnapshot!
@@ -53,6 +54,7 @@ public final class BusStopViewController: UIViewController {
         configureUI()
         bind()
         configureDataSource()
+        tableCellTap()
     }
     
     private func bind() {
@@ -71,7 +73,7 @@ public final class BusStopViewController: UIViewController {
             : refreshControl.rx.controlEvent(.valueChanged).asObservable(),
             navigationBackBtnTapEvent
             : headerView.navigationBtn.rx.tap.asObservable(),
-            cellSelectTapEvent: busStopTableView.rx.itemSelected.asObservable()
+            cellSelectTapEvent: alarmCellTapEvent.asObservable()
         )
         
         let output = viewModel.transform(input: input)
@@ -105,6 +107,18 @@ public final class BusStopViewController: UIViewController {
                     viewController.updateSnapshot(busStopResponse: response)
                 }
             )
+            .disposed(by: disposeBag)
+    }
+    
+    private func tableCellTap() {
+        guard flow == .fromAlarm else { return }
+        
+        busStopTableView.rx.itemSelected
+            .map { indexPath in
+                print("\(indexPath)")
+                return indexPath
+            }
+            .bind(to: alarmCellTapEvent)
             .disposed(by: disposeBag)
     }
     

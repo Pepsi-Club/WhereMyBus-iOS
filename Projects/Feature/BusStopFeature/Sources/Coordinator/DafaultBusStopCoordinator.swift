@@ -71,6 +71,16 @@ extension DefaultBusStopCoordinator {
         nearMapCoordinator.start()
     }
     
+    public func moveToRegualrAlarm() {
+        let alarmCoordinator = coordinatorProvider
+            .makeAddRegularAlarmCoordinator(
+                navigationController: navigationController,
+                flow: .fromAlarm
+            )
+        childs.append(alarmCoordinator)
+        alarmCoordinator.start()
+    }
+    
     public func popVC() {
         navigationController.popViewController(animated: true)
         finish()

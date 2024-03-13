@@ -96,9 +96,12 @@ public final class BusStopViewModel: ViewModel {
             ) { indexPath, busStopInfo in
                 return (busStopInfo.buses[indexPath.row], busStopInfo)
             }
-            .subscribe { busInfo, busStopInfo in
-                print("네")
-            }
+            .withUnretained(self)
+            .subscribe(onNext: { viewModel, arg1 in
+                var (busInfo, busStopInfo) = arg1
+                print("일단")
+                viewModel.coordinator.moveToRegualrAlarm()
+            })
             .disposed(by: disposeBag)
         
         useCase.busStopSection

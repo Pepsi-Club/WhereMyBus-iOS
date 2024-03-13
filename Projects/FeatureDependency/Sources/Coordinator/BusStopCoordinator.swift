@@ -11,4 +11,5 @@ import Foundation
 public protocol BusStopCoordinator: Coordinator {
     func busStopMapLocation(busStopId: String)
     func popVC()
+    func moveToRegualrAlarm()
 }
