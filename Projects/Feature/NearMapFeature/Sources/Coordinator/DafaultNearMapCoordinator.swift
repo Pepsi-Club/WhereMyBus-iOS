@@ -6,19 +6,21 @@ import RxSwift
 import KakaoMapsSDK
 
 public final class DefaultNearMapCoordinator: NearMapCoordinator {
-	
     public var parent: Coordinator?
     public var childs: [Coordinator] = []
     public var navigationController: UINavigationController
+    public var coordinatorProvider: CoordinatorProvider
 	
 	private let disposeBag = DisposeBag()
     
     public init(
 		parent: Coordinator?,
-		navigationController: UINavigationController
+        navigationController: UINavigationController,
+        coordinatorProvider: CoordinatorProvider
 	) {
 		self.parent = parent
         self.navigationController = navigationController
+        self.coordinatorProvider = coordinatorProvider
     }
     
     public func start() {
@@ -30,8 +32,15 @@ public final class DefaultNearMapCoordinator: NearMapCoordinator {
             animated: false
         )
     }
-    
-    public func finish() {
-        
+}
+
+extension DefaultNearMapCoordinator {
+    public func startBusStopFlow(busStopId: String) {
+        let busStopCoordinator = coordinatorProvider.makeBusStopCoordinator(
+            navigationController: navigationController,
+            busStopId: busStopId
+        )
+        childs.append(busStopCoordinator)
+        busStopCoordinator.start()
     }
 }
