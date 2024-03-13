@@ -9,6 +9,12 @@
 import CoreLocation
 import Foundation
 
+import RxSwift
+
 public protocol NearBusStopUseCase {
-	
+    var stationListRepository: StationListRepository { get }
+    var nearByBusStop: PublishSubject<BusStopInfoResponse> { get }
+    
+    func getNearByBusStop()
+    func busStopSelected(busStopId: String)
 }
