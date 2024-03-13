@@ -93,6 +93,14 @@ public final class FavoritesViewModel: ViewModel {
             .disposed(by: disposeBag)
         
         useCase.busStopArrivalInfoResponse
+            .subscribe(
+                onNext: { _ in
+                    output.favoritesState.onNext(.fetchComplete)
+                }
+            )
+            .disposed(by: disposeBag)
+        
+        useCase.busStopArrivalInfoResponse
             .bind(
                 to: output.busStopArrivalInfoResponse
             )
