@@ -37,15 +37,7 @@ public final class FavoritesViewModel: ViewModel {
             .withUnretained(self)
             .subscribe(
                 onNext: { viewModel, _ in
-                    guard let favorites = try? viewModel.useCase.favorites
-                        .value()
-                    else { return }
-                    if favorites.isEmpty {
-                        output.favoritesState.onNext(.emptyFavorites)
-                    } else {
-                        output.favoritesState.onNext(.fetching)
-                        viewModel.useCase.fetchFavoritesArrivals()
-                    }
+                    viewModel.useCase.fetchFavoritesArrivals()
                 }
             )
             .disposed(by: disposeBag)
@@ -86,20 +78,6 @@ public final class FavoritesViewModel: ViewModel {
             )
             .disposed(by: disposeBag)
         
-        useCase.favorites
-            .withUnretained(self)
-            .subscribe(
-                onNext: { viewModel, favorites in
-                    if favorites.isEmpty {
-                        output.favoritesState.onNext(.emptyFavorites)
-                    } else {
-                        output.favoritesState.onNext(.fetching)
-                        viewModel.useCase.fetchFavoritesArrivals()
-                    }
-                }
-            )
-            .disposed(by: disposeBag)
-        
         timer.distanceFromStart
             .bind(to: output.distanceFromTimerStart)
             .disposed(by: disposeBag)
@@ -108,7 +86,11 @@ public final class FavoritesViewModel: ViewModel {
             .subscribe(
                 onNext: { responses in
                     output.busStopArrivalInfoResponse.onNext(responses)
-                    output.favoritesState.onNext(.fetchComplete)
+                    if responses.isEmpty {
+                        output.favoritesState.onNext(.emptyFavorites)
+                    } else {
+                        output.favoritesState.onNext(.fetchComplete)
+                    }
                 }
             )
             .disposed(by: disposeBag)
