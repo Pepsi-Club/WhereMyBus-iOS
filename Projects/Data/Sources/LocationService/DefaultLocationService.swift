@@ -11,22 +11,21 @@ import CoreLocation
 
 import Domain
 
-import RxSwift
 import RxCocoa
+import RxSwift
 
-
-final public class DefaultLocationService: LocationService {
+final public class DefaultLocationService: NSObject,
+										   LocationService {
 	
 	// MARK: - Property
 	
-	public var locationManager = CLLocationManager()
+	private var locationManager = CLLocationManager()
 	
-	//
-	public lazy var authorizationStatus = BehaviorRelay<CLAuthorizationStatus>(
+	public lazy var authState = BehaviorSubject<CLAuthorizationStatus>(
 		value: locationManager.authorizationStatus
 	)
 	
-	public lazy var currentLocation = BehaviorRelay<CLLocation>(
+	public lazy var currentLocation = BehaviorSubject<CLLocation>(
 		value: CLLocation(
 			latitude: locationManager.location?.coordinate.latitude ?? 0.0,
 			longitude: locationManager.location?.coordinate.longitude ?? 0.0
@@ -35,21 +34,59 @@ final public class DefaultLocationService: LocationService {
 	
 	private let disposeBag = DisposeBag()
 	
-	// MARK: - Init
+	// MARK: - Life Cycle
 	
-	public init() { }
+	public override init() { 
+		
+		super.init()
+		locationManager.delegate = self
+		locationManager.desiredAccuracy = kCLLocationAccuracyBest
+	}
 	
 	// MARK: - Function
 	
-	public func fetchCurrentLocation() {
-		
+	/// 한번의 현재 위치 업데이트
+	public func requestLocationOnce() {
+		locationManager.requestLocation()
 	}
 	
-	public func stopCurrentLocation() {
-		
+	/// 지속적인 현재 위치 업데이트 시작
+	public func startUpdatingLocation() {
+		locationManager.startUpdatingLocation()
 	}
 	
-	public func requestAuthorization() {
-		self.locationManager.requestWhenInUseAuthorization()
+	/// 지속적인 현재 위치 업데이트 중지
+	public func stopUpdatingLocation() {
+		locationManager.stopUpdatingLocation()
 	}
+}
+
+extension DefaultLocationService: CLLocationManagerDelegate {
+	
+	/// 현재위치가 바뀔때마다 업데이트되는 메서드
+	/// locations의 첫번째 인덱스는 최근 위치
+	public func locationManager(
+		_ manager: CLLocationManager,
+		didUpdateLocations locations: [CLLocation]
+	) {
+		if let location = locations.first {
+			currentLocation.onNext(location)
+		}
+	}
+	
+	/// 위치권한이 바뀔때마다 없데이트되는 메서드
+	public func locationManagerDidChangeAuthorization(
+		_ manager: CLLocationManager
+	) {
+		authState.onNext(manager.authorizationStatus)
+	}
+	
+	/// 위치 정보 불러오는 도중 에러 처리 메서드
+	public func locationManager(
+		_ manager: CLLocationManager
+		, didFailWithError error: Error
+	) {
+		print("Location Error: \(error)")
+	}
+	
 }
