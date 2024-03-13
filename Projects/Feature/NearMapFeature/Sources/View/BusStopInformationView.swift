@@ -1,5 +1,5 @@
 //
-//  NearBusStopLabel.swift
+//  BusStopInformationView.swift
 //  NearMapFeatureDemo
 //
 //  Created by Muker on 2/7/24.
@@ -9,14 +9,15 @@
 import UIKit
 
 import DesignSystem
+import Domain
 
-public final class NearBusStopLabel: UIView {
+public final class BusStopInformationView: UIView {
 	
 	// MARK: - UI Property
 	
 	private let symbolSize = 50
 	
-	private lazy var busStopSymbol: UIImageView = {
+	private let busStopSymbol: UIImageView = {
 		let image = UIImageView(
 			image: UIImage(systemName: "mappin.and.ellipse")!
 		)
@@ -24,34 +25,31 @@ public final class NearBusStopLabel: UIView {
 		return image
 	}()
 	
-	 lazy var busStopNameLabel: UILabel = {
+    private let busStopNameLabel: UILabel = {
 		let label = UILabel()
-		label.text = "강남구 보건소"
 		label.font = DesignSystemFontFamily.NanumSquareNeoOTF.extraBold.font(
 			size: 15
 		)
 		return label
 	}()
 	
-	lazy var busStopDescription: UILabel = {
+    private let busStopDescription: UILabel = {
 		let label = UILabel()
-		label.text = "23290 | 강남구청역 방면"
 		label.font = DesignSystemFontFamily.NanumSquareNeoOTF.light.font(
 			size: 13
 		)
 		return label
 	}()
 	
-	lazy var distanceFromBusStopLabel: UILabel = {
+    private let distanceFromBusStopLabel: UILabel = {
 		let label = UILabel()
-		label.text = "현재위치에서 100m"
 		label.font = DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(
 			size: 13
 		)
 		return label
 	}()
 	
-	private lazy var separationView: UIView = {
+    private let separationView: UIView = {
 		let view = UIView()
 		view.backgroundColor = .systemGray4
 		return view
@@ -59,8 +57,10 @@ public final class NearBusStopLabel: UIView {
 	
 	private lazy var busStopNameStackView: UIStackView = {
 		let stackView = UIStackView(
-			arrangedSubviews: [busStopNameLabel,
-							   busStopDescription]
+			arrangedSubviews: [
+                busStopNameLabel,
+                busStopDescription
+            ]
 		)
 		stackView.axis = .vertical
 		stackView.distribution = .fillEqually
@@ -163,5 +163,18 @@ public final class NearBusStopLabel: UIView {
 		])
 		
 	}
-	
+    
+    func updateUI(response: BusStopInfoResponse) {
+        busStopNameLabel.text = response.busStopName
+        if !response.busStopId.isEmpty && !response.direction.isEmpty {
+        }
+        let description = !response.busStopId.isEmpty &&
+        !response.direction.isEmpty ?
+        "\(response.busStopId) | \(response.direction) 방면" : ""
+        busStopDescription.text = description
+        let distance = !response.latitude.isEmpty &&
+        // TODO: 위치정보값 받고 로직 수정
+        !response.longitude.isEmpty ? "999m" : ""
+        distanceFromBusStopLabel.text = distance
+    }
 }

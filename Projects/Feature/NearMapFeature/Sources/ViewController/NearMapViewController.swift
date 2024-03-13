@@ -9,28 +9,29 @@ import RxCocoa
 public final class NearMapViewController: UIViewController {
 	
 	// MARK: - Property
-	
 	private let viewModel: NearMapViewModel
-	
-	private var disposeBag = DisposeBag()
+    
+    private let kakaoMapTouchesEndedEvent = PublishSubject<Void>()
+	private let disposeBag = DisposeBag()
 	
 	// MARK: - UI Property
 	
-	private var kakaoMap: KMViewContainer = {
+	private lazy var kakaoMapView: KMViewContainer = {
 		var view = KMViewContainer()
 		view.clipsToBounds = true
 		view.layer.cornerRadius = 15
+        view.setDelegate(self)
 		return view
 	}()
 	
-	private let nearBusStopLabel: NearBusStopLabel = {
-		var label = NearBusStopLabel()
+	private let busStopInformationView: BusStopInformationView = {
+		var label = BusStopInformationView()
 		label.clipsToBounds = true
 		label.layer.cornerRadius = 15
 		return label
 	}()
 	
-	private lazy var separationView: UIView = {
+	private let separationView: UIView = {
 		let view = UIView()
 		view.backgroundColor = .black
 		return view
@@ -46,8 +47,10 @@ public final class NearMapViewController: UIViewController {
 		viewModel: NearMapViewModel
 	) {
 		self.viewModel = viewModel
-		
-		super.init(nibName: nil, bundle: nil)
+		super.init(
+            nibName: nil,
+            bundle: nil
+        )
 	}
 	
 	required init?(coder: NSCoder) {
@@ -57,7 +60,7 @@ public final class NearMapViewController: UIViewController {
 	public override func viewDidLoad() {
 		super.viewDidLoad()
 		
-		viewModel.mapController = KMController(viewContainer: kakaoMap)
+		viewModel.mapController = KMController(viewContainer: kakaoMapView)
 		viewModel.initKakaoMap()
 		configureUI()
 		bind()
@@ -78,8 +81,8 @@ public final class NearMapViewController: UIViewController {
 		
 		[
 			separationView,
-			kakaoMap,
-			nearBusStopLabel,
+			kakaoMapView,
+			busStopInformationView,
 		].forEach {
 			view.addSubview($0)
 			$0.translatesAutoresizingMaskIntoConstraints = false
@@ -105,36 +108,36 @@ public final class NearMapViewController: UIViewController {
 			),
 			
 			// NearBusStopLabel
-			nearBusStopLabel.bottomAnchor.constraint(
+			busStopInformationView.bottomAnchor.constraint(
 				equalTo: view.safeAreaLayoutGuide.bottomAnchor,
 				constant: -10
 			),
-			nearBusStopLabel.leftAnchor.constraint(
+			busStopInformationView.leftAnchor.constraint(
 				equalTo: view.safeAreaLayoutGuide.leftAnchor,
 				constant: 10
 			),
-			nearBusStopLabel.rightAnchor.constraint(
+			busStopInformationView.rightAnchor.constraint(
 				equalTo: view.safeAreaLayoutGuide.rightAnchor,
 				constant: -10
 			),
-			nearBusStopLabel.heightAnchor.constraint(
+			busStopInformationView.heightAnchor.constraint(
 				equalToConstant: 130
 			),
 			
 			// kakaoMap
-			kakaoMap.topAnchor.constraint(
+			kakaoMapView.topAnchor.constraint(
 				equalTo: separationView.safeAreaLayoutGuide.topAnchor,
 				constant: 8
 			),
-			kakaoMap.bottomAnchor.constraint(
-				equalTo: nearBusStopLabel.topAnchor,
+			kakaoMapView.bottomAnchor.constraint(
+				equalTo: busStopInformationView.topAnchor,
 				constant: -10
 			),
-			kakaoMap.leftAnchor.constraint(
+			kakaoMapView.leftAnchor.constraint(
 				equalTo: view.safeAreaLayoutGuide.leftAnchor,
 				constant: 5
 			),
-			kakaoMap.rightAnchor.constraint(
+			kakaoMapView.rightAnchor.constraint(
 				equalTo: view.safeAreaLayoutGuide.rightAnchor,
 				constant: -5
 			),
@@ -143,25 +146,34 @@ public final class NearMapViewController: UIViewController {
 	}
 	
 	private func bind() {
-		let labelTapGesture = UITapGestureRecognizer()
-		nearBusStopLabel.addGestureRecognizer(labelTapGesture)
+		let tapGesture = UITapGestureRecognizer()
+		busStopInformationView.addGestureRecognizer(tapGesture)
 		
-		labelTapGesture.rx.event
-			.bind(onNext: { _ in
-				print("버스정류장 detail View로 넘어가기")
-			})
-			.disposed(by: disposeBag)
-		
-		let output = viewModel.transform(input:
-				.init(
-					clickBusStopIcon: .just({}()),
-					moveToBusStopDetailView: labelTapGesture.rx.event.map { _ in }
-				)
+        let output = viewModel.transform(
+            input: .init(
+                viewWillAppearEvent: rx.methodInvoked(
+                    #selector(UIViewController.viewWillAppear)
+                ).map { _ in },
+                kakaoMapTouchesEndedEvent: kakaoMapTouchesEndedEvent,
+                informationViewTapEvent: tapGesture.rx.event.map { _ in }
+            )
 		)
-		
-		output.busStopName
-			.bind(to: nearBusStopLabel.busStopNameLabel.rx.text)
+        
+        output.selectedBusStop
+            .withUnretained(self)
+            .subscribe(
+                onNext: { viewModel, response in
+                    viewModel.busStopInformationView.updateUI(
+                        response: response
+                    )
+                }
+            )
 			.disposed(by: disposeBag)
 	}
-	
+}
+
+extension NearMapViewController: K3fMapContainerDelegate {
+    public func touchesEnded(_ touches: Set<AnyHashable>) {
+        kakaoMapTouchesEndedEvent.onNext(())
+    }
 }
