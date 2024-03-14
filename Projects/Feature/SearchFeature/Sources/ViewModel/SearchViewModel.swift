@@ -41,8 +41,8 @@ public final class SearchViewModel: ViewModel {
             .withUnretained(self)
             .subscribe(
                 onNext: { viewModel, textfield in
-                    viewModel.coordinator.goAfterSearchView(text: textfield)
                     print("엔터누름")
+                    viewModel.coordinator.goAfterSearchView(text: textfield)
                 }
             )
             .disposed(by: disposeBag)

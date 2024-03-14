@@ -16,7 +16,7 @@ public final class AfterSearchViewController
     private let disposeBag = DisposeBag()
     
     private let backBtnTapEvent = PublishSubject<Void>()
-    private let cellTapEvent = PublishSubject<String>()
+    private let cellTapEvent = PublishSubject<IndexPath>()
     
     private let searchController = UISearchController(
         searchResultsController: nil
@@ -103,6 +103,7 @@ public final class AfterSearchViewController
     public override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationController?.setNavigationBarHidden(true, animated: false)
+        searchTextFieldView.delegate = self
         
         bind()
         configureDataSource()
@@ -191,18 +192,7 @@ public final class AfterSearchViewController
             .disposed(by: disposeBag)
         
         afterSearchResultTableView.rx.itemSelected
-            .subscribe(onNext: { [weak self] indexPath in
-                guard let cell =
-                    self?.afterSearchResultTableView.cellForRow(at: indexPath)
-                        as? RecentSearchCell
-                else { return }
-                
-                guard let stationId = cell.numberLabel.text else { return }
-                
-                self?.viewModel.coordinator.startBusStopFlow(
-                    stationId: stationId
-                )
-            })
+            .bind(to: cellTapEvent)
             .disposed(by: disposeBag)
     }
     
@@ -271,15 +261,7 @@ extension AfterSearchViewController {
 extension AfterSearchViewController: UITextFieldDelegate {
     
     public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
         return true
-    }
-    
-    public func textFieldDidEndEditing(_ textField: UITextField) {
-        textField.resignFirstResponder()
-    }
-    
-    public func textFieldDidChangeSelection(_ textField: UITextField) {
     }
 }
 
@@ -287,15 +269,15 @@ extension AfterSearchViewController {
     public func updateSearchResults(for searchController: UISearchController) {
         guard let searchText = searchController.searchBar.text else { return }
         
+        //UseCase로 이동해야함
         viewModel.useCase.jsontoSearchData
             .map { responses in
                 return responses.filter { $0.busStopName.contains(searchText) }
             }
             .subscribe(onNext: { filteredResults in
-                var snapshot = NSDiffableDataSourceSnapshot<
-                    Int,
-                    BusStopInfoResponse
-                >()
+                var snapshot = NSDiffableDataSourceSnapshot
+                <Int, BusStopInfoResponse>()
+                
                 snapshot.appendSections([0])
                 snapshot.appendItems(filteredResults)
                 self.dataSource.apply(snapshot, animatingDifferences: true)

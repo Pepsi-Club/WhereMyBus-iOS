@@ -30,7 +30,8 @@ public final class AfterSearchViewModel: ViewModel {
     
     public func transform(input: Input) -> Output {
         let output = Output(
-            jsontoSearchResponse: Observable.just([])
+            jsontoSearchResponse: .init(),
+            filterdData: .init()
         )
         
         input.viewWillAppearEvenet
@@ -51,9 +52,8 @@ public final class AfterSearchViewModel: ViewModel {
         input.cellTapEvent
             .withUnretained(self)
             .subscribe(
-                onNext: { viewModel, stationId in
-                    viewModel.coordinator.startBusStopFlow(stationId: stationId)
-                    // cell을 [BusInfoResponse]로 보내야함
+                onNext: { viewModel, indexPath in
+//                    viewModel.coordinator.startBusStopFlow(stationId: indexPath.row.stationId)
                 })
             .disposed(by: disposeBag)
 
@@ -65,10 +65,34 @@ extension AfterSearchViewModel {
     public struct Input {
         let viewWillAppearEvenet: Observable<Void>
         let backBtnTapEvent: Observable<Void>
-        let cellTapEvent: Observable<String>
+        let cellTapEvent: Observable<IndexPath>
     }
     
+    // 필터링은 유즈케이스에 잇고, 그거를 뷰모델에서 호출 하면서 필터링 된 배열을 뷰에 반영한다 . 그럴러면
+    // 뷰 모델 아웃풋에 저장프로퍼티로 하고 써야한다.
+    
     public struct Output {
-        let jsontoSearchResponse: Observable<[BusStopInfoResponse]>
+        let jsontoSearchResponse: PublishSubject<[BusStopInfoResponse]>
+        let filterdData:
+            PublishSubject<[BusStopInfoResponse]>
     }
 }
+
+/*
+ input.cellSelectTapEvent
+             .withLatestFrom(
+                 output.busStopArrivalInfoResponse
+             ) { indexPath, busStopInfo in
+                 return (busStopInfo.buses[indexPath.row], busStopInfo)
+             }
+             .withUnretained(self)
+             .subscribe(onNext: { viewModel, arg1 in
+                 let (busInfo, busStopInfo) = arg1
+                 viewModel.useCase.update(
+                     busStopInfo: busStopInfo,
+                     busInfo: busInfo
+                 )
+                 viewModel.coordinator.moveToRegualrAlarm()
+             })
+             .disposed(by: disposeBag)
+ */

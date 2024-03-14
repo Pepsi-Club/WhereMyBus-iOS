@@ -43,4 +43,8 @@ public final class DefaultSearchUseCase: SearchUseCase {
             .bind(to: recentSearchResult)
             .disposed(by: disposeBag)
     }
+    
+    public func getFiltering() {
+        
+    }
 }

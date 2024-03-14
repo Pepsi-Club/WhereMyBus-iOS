@@ -11,9 +11,9 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
     private let viewModel: SearchViewModel
     
     private let disposeBag = DisposeBag()
+    
     private let infoAgreeEvent = BehaviorSubject<Bool>(value: false)
-    private let enterPressedEvent = PublishSubject<Void>()
-    private var textFieldString = PublishSubject<String>()
+    private let enterPressedEvent = PublishSubject<String>()
     private let backBtnTapEvent = PublishSubject<Void>()
     private let nearBusStopTapEvent = PublishSubject<Void>()
     
@@ -25,7 +25,7 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
     private var snapshot: SearchDataSource! //
     
     private var filteredList: [String] = []
-        
+    
     private let backBtn: UIButton = {
         let btn = UIButton()
         
@@ -125,23 +125,24 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
     public override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationController?.setNavigationBarHidden(true, animated: false)
+        // 정신차려라
+        searchTextFieldView.delegate = self
         
-        configureDataSource()
         configureUI()
         bind()
+        configureDataSource()
         hideKeyboard()
-        bindText()
-      
+        
         // MARK: snapShot 여기다 두면 안될 거 같음
         var snapshot = dataSource.snapshot()
         snapshot.appendSections([.main])
         
         viewModel.useCase.recentSearchResult
-               .subscribe(onNext: { [weak self] recentSearchResult in
-                   snapshot.appendItems(recentSearchResult)
-                   self?.dataSource.apply(snapshot, animatingDifferences: false)
-               })
-               .disposed(by: disposeBag)
+            .subscribe(onNext: { [weak self] recentSearchResult in
+                snapshot.appendItems(recentSearchResult)
+                self?.dataSource.apply(snapshot, animatingDifferences: false)
+            })
+            .disposed(by: disposeBag)
         dataSource.apply(snapshot, animatingDifferences: false)
         
         // setupSearchController()
@@ -156,7 +157,7 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
         self.navigationItem.title = "Search"
         self.navigationItem.hidesSearchBarWhenScrolling = false
     }
-        
+    
     private func hideKeyboard() {
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(
             target: self,
@@ -258,28 +259,27 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
                 constant: 10
             )
         ])
-}
+    }
     
     private func bind() {
-        _ = SearchViewModel.Input(
+        let input = SearchViewModel.Input(
             viewWillAppearEvenet: rx
                 .methodInvoked(#selector(UIViewController.viewWillAppear))
                 .map { _ in },
-            enterPressedEvent: textFieldString.asObservable(),
+            enterPressedEvent: enterPressedEvent.asObservable(),
             backbtnEvent: backBtnTapEvent.asObservable(),
             nearBusStopTapEvent: nearBusStopTapEvent.asObservable())
+        
+        _ = viewModel.transform(input: input)
     }
     
     private func bindText() {
-        searchTextFieldView.rx.controlEvent(.editingDidEndOnExit)
-                    .map({ [weak self] _ in
-                        return self?.searchTextFieldView.text ?? ""
-                    })
-                    .withUnretained(self)
-                    .subscribe(onNext: { viewModel, str in
-                        viewModel.textFieldString.onNext(str)
-                    })
-                    .disposed(by: disposeBag)
+        searchTextFieldView.rx.controlEvent([.editingDidEndOnExit])
+            .map({ _ in
+                return self.searchTextFieldView.text ?? "안들어옴"
+            })
+            .bind(to: enterPressedEvent)
+            .disposed(by: disposeBag)
     }
     
     private func configureDataSource() {
@@ -326,15 +326,12 @@ extension SearchViewController {
 }
 
 extension SearchViewController: UITextFieldDelegate {
-    
     public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
-        print("입력완")
+        print("입력완료")
+        bindText()
+        print("bindText실행됨")
+        
         return true
-    }
-    
-    public func textFieldDidEndEditing(_ textField: UITextField) {
-        textField.resignFirstResponder()
     }
 }
 
