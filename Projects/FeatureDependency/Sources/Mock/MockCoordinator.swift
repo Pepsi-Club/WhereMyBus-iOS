@@ -29,7 +29,20 @@ public final class MockCoordinator: Coordinator {
     public func start() {
         let testViewController = UIViewController()
         testViewController.view.backgroundColor = .white
-        testViewController.title = testMessage
+        let testLabel = UILabel()
+        testLabel.text = testMessage
+        testLabel.numberOfLines = 0
+        testLabel.font = .boldSystemFont(ofSize: 20)
+        testLabel.translatesAutoresizingMaskIntoConstraints = false
+        testViewController.view.addSubview(testLabel)
+        NSLayoutConstraint.activate([
+            testLabel.centerXAnchor.constraint(
+                equalTo: testViewController.view.centerXAnchor
+            ),
+            testLabel.centerYAnchor.constraint(
+                equalTo: testViewController.view.centerYAnchor
+            ),
+        ])
         navigationController.pushViewController(
             testViewController,
             animated: true
@@ -44,6 +57,25 @@ extension MockCoordinator: HomeCoordinator {
     
     public func startBusStopFlow(stationId: String) {
         let coordinator = MockCoordinator(
+            testMessage: "BusStopFlow - busStopId: \(stationId)",
+            navigationController: navigationController
+        )
+        coordinator.start()
+        childs.append(coordinator)
+    }
+}
+
+extension MockCoordinator: SearchCoordinator {
+    public func goAfterSearchView(text: String) {
+        
+    }
+    
+    public func startBusStopFlow() {
+        
+    }
+    
+    public func goAfterSearchView(filteredList: [Domain.BusStopInfoResponse]) {
+        let coordinator = MockCoordinator(
             testMessage: "BusStop",
             navigationController: navigationController
         )
@@ -51,14 +83,8 @@ extension MockCoordinator: HomeCoordinator {
         childs.append(coordinator)
     }
     
-    
 }
 
-extension MockCoordinator: SearchCoordinator {
-    public func startBusStopFlow() {
-    
-    }
-}
 
 extension MockCoordinator: BusStopCoordinator {
     public func moveToRegualrAlarm() {
@@ -72,7 +98,7 @@ extension MockCoordinator: BusStopCoordinator {
     
     public func busStopMapLocation(busStopId: String) {
         let coordinator = MockCoordinator(
-            testMessage: "Map",
+            testMessage: "Map - busStopId: \(busStopId)",
             navigationController: navigationController
         )
         coordinator.start()
@@ -95,6 +121,13 @@ extension MockCoordinator: AddRegularAlarmCoordinator {
 }
 
 extension MockCoordinator: NearMapCoordinator {
-    
+    public func startBusStopFlow(busStopId: String) {
+        let coordinator = MockCoordinator(
+            testMessage: "BusStopFlow - busStopId: \(busStopId)",
+            navigationController: navigationController
+        )
+        coordinator.start()
+        childs.append(coordinator)
+    }
 }
 #endif

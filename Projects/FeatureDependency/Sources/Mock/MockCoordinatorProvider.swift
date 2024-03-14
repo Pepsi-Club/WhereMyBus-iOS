@@ -12,6 +12,7 @@ import Domain
 
 #if DEBUG
 public final class MockCoordinatorProvider: CoordinatorProvider {
+	
     public init() { }
     
     public func makeSearchCoordinator(
@@ -30,7 +31,7 @@ public final class MockCoordinatorProvider: CoordinatorProvider {
         flow: FlowState
     ) -> BusStopCoordinator {
         MockCoordinator(
-            testMessage: "BusStop", 
+            testMessage: "BusStop - busStopId: \(busStopId)",
             navigationController: navigationController
         )
     }
@@ -45,13 +46,13 @@ public final class MockCoordinatorProvider: CoordinatorProvider {
         )
     }
     
-    public func makeBusStopMapCoordinator(
+    public func makeNearMapCoordinator(
         navigationController: UINavigationController,
         busStopId: String,
         flow: FlowState
     ) -> NearMapCoordinator {
         MockCoordinator(
-            testMessage: "NearMap",
+            testMessage: "NearMap - busStopId: \(busStopId)",
             navigationController: navigationController
         )
     }

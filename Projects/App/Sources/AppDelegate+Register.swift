@@ -67,8 +67,15 @@ extension AppDelegate {
         )
         
         DIContainer.register(
+            type: NearMapUseCase.self,
+            DefaultNearMapUseCase(
+                stationListRepository: stationListRepository
+            )
+        )
+        
+        DIContainer.register(
             type: RegularAlarmEditingService.self,
-            DefaultRegularAlarmEditingService()
+            regularAlarmEditingService
         )
     }
 }

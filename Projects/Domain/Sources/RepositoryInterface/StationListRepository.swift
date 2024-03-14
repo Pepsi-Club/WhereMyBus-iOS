@@ -11,5 +11,7 @@ import Foundation
 import RxSwift
 
 public protocol StationListRepository {
-    var searchResponse: BehaviorSubject<[BusStopInfoResponse]> { get }
+    func jsontoSearchData() -> Observable<[BusStopInfoResponse]>
+    func saveRecentSearch(_ searchCell: [BusStopInfoResponse])
+    func getRecentSearch() -> Observable<[BusStopInfoResponse]>
 }

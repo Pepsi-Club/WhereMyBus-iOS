@@ -1,8 +1,8 @@
 //
-//  UIScrollView+.swift
+//  UIScrollView.swift
 //  Core
 //
-//  Created by Jisoo HAM on 3/11/24.
+//  Created by 유하은 on 2024/03/13.
 //  Copyright © 2024 Pepsi-Club. All rights reserved.
 //
 

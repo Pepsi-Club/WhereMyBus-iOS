@@ -27,7 +27,7 @@ public protocol CoordinatorProvider {
         flow: FlowState
     ) -> AddRegularAlarmCoordinator
     
-    func makeBusStopMapCoordinator(
+    func makeNearMapCoordinator(
         navigationController: UINavigationController,
         busStopId: String,
         flow: FlowState

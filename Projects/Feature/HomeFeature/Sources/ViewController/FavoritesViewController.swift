@@ -64,6 +64,7 @@ public final class FavoritesViewController: UIViewController {
             attributes: titleContainer
         )
         let button = UIButton(configuration: config)
+        button.isHidden = true
         return button
     }()
     
@@ -278,18 +279,18 @@ public final class FavoritesViewController: UIViewController {
             )
             .disposed(by: disposeBag)
         
-        isTableViewEditMode
-            .withUnretained(self)
-            .subscribe(
-                onNext: { viewController, isEditMode in
-                    viewController.editBtn.setTitle(
-                        isEditMode ? "완료" : "편집",
-                        for: .normal
-                    )
-                    viewController.favoritesTableView.isEditing = isEditMode
-                }
-            )
-            .disposed(by: disposeBag)
+//        isTableViewEditMode
+//            .withUnretained(self)
+//            .subscribe(
+//                onNext: { viewController, isEditMode in
+//                    viewController.editBtn.setTitle(
+//                        isEditMode ? "완료" : "편집",
+//                        for: .normal
+//                    )
+//                    viewController.favoritesTableView.isEditing = isEditMode
+//                }
+//            )
+//            .disposed(by: disposeBag)
     }
     
     private func configureDataSource() {
@@ -302,6 +303,7 @@ public final class FavoritesViewController: UIViewController {
                 indexPath: indexPath,
                 response: response
             )
+            cell?.selectionStyle = .none
             cell?.alarmBtn.rx.tap
                 .map { _ in indexPath }
                 .bind(to: self.alarmBtnTapEvent)
@@ -330,7 +332,8 @@ public final class FavoritesViewController: UIViewController {
         let firstArrivalTime = response.firstArrivalState.toString
         let secondArrivalTime = response.secondArrivalState.toString
         cell?.updateUI(
-            busName: response.busName,
+            busName: response.busName, 
+            busType: response.busType,
             firstArrivalTime: firstArrivalTime,
             firstArrivalRemaining: response.firstArrivalRemaining,
             secondArrivalTime: secondArrivalTime,
@@ -368,11 +371,11 @@ public final class FavoritesViewController: UIViewController {
         case .emptyFavorites:
             favoritesTableView.backgroundView = EmptyFavoritesView()
             refreshBtn.isHidden = true
-            editBtn.isHidden = true
+//            editBtn.isHidden = true
         case .fetching:
             favoritesTableView.loadingBackground()
             refreshBtn.isHidden = false
-            editBtn.isHidden = false
+//            editBtn.isHidden = false
         case .fetchComplete:
             favoritesTableView.backgroundView = nil
         }

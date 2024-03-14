@@ -23,9 +23,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func register() {
-//        DIContainer.register(
-//            type: SearchRepository.self,
-//            )
-//        )
+        DIContainer.register(
+            type: SearchUseCase.self, DefaultSearchUseCase(stationListRepository: MockStationLIstRepository())
+        )
     }
 }

@@ -12,74 +12,93 @@ public final class SearchViewModel: ViewModel {
     @Injected(SearchUseCase.self) var useCase: SearchUseCase
     
     private let disposeBag = DisposeBag()
-    public let enterPressedSubject = PublishSubject<Void>()
 
-    // MARK: 더 효율적으로 할 순 없나??
     public init(coordinator: SearchCoordinator) {
-         self.coordinator = coordinator
-     }
+        self.coordinator = coordinator
+    }
     
     deinit {
         coordinator.finish()
     }
     
-    private func handleEnterPressed() {
-
-    }
-    
     public func transform(input: Input) -> Output {
         let output = Output(
-            infoAgreeEvent: .init(value: false),
-            enterPressedEvent: .init())
+            afterSearchEnter: .init(),
+            jsontoSearchResponse: .init(value: .init([])),
+            recentSearchResultResponse: .init(value: .init([]))
+        )
         
         input.viewWillAppearEvenet
             .withUnretained(self)
             .subscribe(
+                // MARK: 필요없을수도
                 onNext: { viewModel, _ in
+                    viewModel.useCase.getRecentSearchList()
                 })
             .disposed(by: disposeBag)
         
-        // 수정된 부분
-        input.enterPressedSubject
+        input.enterPressedEvent
             .withUnretained(self)
             .subscribe(
-                onNext: { _, _ in
-                    self.handleEnterPressed()
+                onNext: { viewModel, textfield in
+                    print("엔터누름")
+                    viewModel.coordinator.goAfterSearchView(text: textfield)
                 }
             )
             .disposed(by: disposeBag)
         
-        // MARK: 질문 이 메서드에 문제가 있는 것 같은데 이유를 모르겠습니다
-        //        input.busStopTapEvent
-        //            .withUnretained(self)
-        //            .subscribe(
-        //                onNext: { viewModel, index in
-        //                    do {
-        //                        let response = try viewModel.useCase
-        //                            .busStopInfoResponse
-        //                        viewModel.coordinator.startBusStopFlow(stationId: response[index].first)
-        //                    }
-        //                    catch {
-        //                        print(error.localizedDescription)
-        //                    }
-        //                }
-        //            )
-        //            .disposed(by: disposeBag)
+        input.backbtnEvent
+            .withUnretained(self)
+            .subscribe(
+                onNext: { viewModel, _ in
+                    viewModel.coordinator.popVC()
+                }
+            )
+            .disposed(by: disposeBag)
+        
+        // MARK: 여기 map을 이런식으로 넣은 이유?
+        useCase.jsontoSearchData
+            .withUnretained(self)
+            .map { (_, result) in
+                return result
+            }
+            .bind(to: output.jsontoSearchResponse)
+            .disposed(by: disposeBag)
+        
+        useCase.recentSearchResult
+            .withUnretained(self)
+            .map { (_, result) in
+                return result
+            }
+            .bind(to: output.recentSearchResultResponse)
+            .disposed(by: disposeBag)
         
         return output
     }
 }
 
 extension SearchViewModel {
+    enum InfoAgreeState {
+        case agree, disagree
+    }
+}
+
+extension SearchViewModel {
     public struct Input {
         let viewWillAppearEvenet: Observable<Void>
-        let infoAgreeEvent: Observable<Bool>
-        let busStopTapEvent: Observable<Int>
-        let enterPressedSubject: Observable<Void>
+//        let infoAgreeEvent: Observable<Bool>
+        let enterPressedEvent: Observable<String>
+        let backbtnEvent: Observable<Void>
+        let nearBusStopTapEvent: Observable<Void>
+//        let cellTapEvent: Observable<String>
     }
     
     public struct Output {
-        var infoAgreeEvent: BehaviorSubject<Bool>
-        var enterPressedEvent: PublishSubject<Void>
+        // var infoAgreeEvent: BehaviorSubject<Bool>
+        var afterSearchEnter: PublishSubject<String>
+        var jsontoSearchResponse
+        : BehaviorSubject<[BusStopInfoResponse]>
+        var recentSearchResultResponse
+        : BehaviorSubject<[BusStopInfoResponse]>
     }
 }

@@ -53,6 +53,7 @@ class FavoritesTVCell: UITableViewCell {
         alarmBtn.configuration?.baseForegroundColor = mainColor
         [routeLabel].forEach {
             $0.text = nil
+            $0.textColor = DesignSystemAsset.limeGreen.color
         }
         [firstArrivalInfoView, secondArrivalInfoView].forEach {
             $0.prepareForReuse()
@@ -61,12 +62,14 @@ class FavoritesTVCell: UITableViewCell {
     
     func updateUI(
         busName: String,
+        busType: BusType,
         firstArrivalTime: String,
         firstArrivalRemaining: String,
         secondArrivalTime: String,
         secondArrivalRemaining: String
     ) {
         routeLabel.text = busName
+        routeLabel.textColor = busType.toColor
         firstArrivalInfoView.updateUI(
             time: firstArrivalTime,
             remainingStops: firstArrivalRemaining

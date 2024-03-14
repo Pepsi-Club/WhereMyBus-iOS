@@ -3,7 +3,9 @@ import UIKit
 import Domain
 import FeatureDependency
 
-public final class DefaultSearchCoordinator: SearchCoordinator {
+public final class DefaultSearchCoordinator
+: SearchCoordinator, AfterSearchCoordinator {
+    
     public var parent: Coordinator?
     public var childs: [Coordinator] = []
     public var navigationController: UINavigationController
@@ -47,29 +49,48 @@ public final class DefaultSearchCoordinator: SearchCoordinator {
         childs.append(busStopCoordinator)
         busStopCoordinator.start()
     }
-}
-
-extension DefaultSearchCoordinator: AfterSearchCoordinator {
-    public func starts() {
+    
+    public func goAfterSearchView(text: String) {
         let afterSearchViewController = AfterSearchViewController(
-            viewModel: .init(coordinator: self)
+            viewModel: .init(coordinator: self, texts: text)
         )
         navigationController.pushViewController(
             afterSearchViewController,
             animated: true
         )
     }
-    
-    public func startSearchFlow() {
-        let searchCoordinator = coordinatorProvider.makeSearchCoordinator(
+}
+
+extension DefaultSearchCoordinator {
+//    public func startHomeFlow() {
+//        let homeCoordinator = coordinatorProvider.makeSearchCoordinator(
+//            navigationController: navigationController
+//        )
+//        childs.append(searchCoordinator)
+//        serachCoordinator.start()
+//    }
+//
+    public func startBusStopFlow(stationId: String) {
+        // BusStopCoordinatorFlow
+        let busStopCoordinator = coordinatorProvider.makeBusStopCoordinator(
             navigationController: navigationController,
+            busStopId: stationId,
             flow: flow
         )
-        childs.append(searchCoordinator)
-        searchCoordinator.start()
+        childs.append(busStopCoordinator)
+        busStopCoordinator.start()
     }
     
-    public func complete() {
+    // MARK: 여기는 협의 후에 
+    public func startNearMapFlow(stationId: String) {
+        let nearMapCoordinator = coordinatorProvider.makeNearMapCoordinator(
+            navigationController: navigationController,
+            busStopId: stationId,
+            flow: flow
+        )
+    }
+    
+    public func popVC() {
         navigationController.popViewController(animated: true)
         finish()
     }
