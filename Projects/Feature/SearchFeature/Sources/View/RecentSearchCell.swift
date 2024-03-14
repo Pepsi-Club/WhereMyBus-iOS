@@ -10,15 +10,14 @@ import UIKit
 
 import Core
 import DesignSystem
+import Domain
 
 import RxSwift
 
 final class RecentSearchCell: UITableViewCell {
-    public var disposeBag = DisposeBag()
+    var disposeBag = DisposeBag()
     
-    public let searchBtnTapEvent = PublishSubject<String>()
-    
-    public var busStopNameLabel: UILabel = {
+    private let busStopNameLabel: UILabel = {
         let label = UILabel()
         label.font =
         DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(size: 16)
@@ -28,53 +27,13 @@ final class RecentSearchCell: UITableViewCell {
         return label
     }()
     
-    public var numberLabel: UILabel = {
+    let descriptionLabel: UILabel = {
         let label = UILabel()
         label.font =
         DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(size: 13)
         label.textAlignment = .left
         label.textColor = DesignSystemAsset.gray5.color
-        
         return label
-    }()
-    
-    private let line: UILabel = {
-        let label = UILabel()
-        label.font =
-        DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(size: 13)
-        label.textAlignment = .left
-        label.textColor = DesignSystemAsset.gray5.color
-        label.text = "|"
-        
-        return label
-    }()
-    
-    public var dircetionLabel: UILabel = {
-        let label = UILabel()
-        label.font =
-        DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(size: 13)
-        label.textAlignment = .left
-        label.textColor = DesignSystemAsset.gray5.color
-        
-        return label
-    }()
-    
-    private let numDirectStack: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .horizontal
-        stack.distribution = .fill
-        stack.alignment = .leading
-        stack.spacing = 3
-        return stack
-    }()
-    
-    private let totalStack: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .vertical
-        stack.distribution = .fillEqually
-        stack.alignment = .leading
-        stack.spacing = 3
-        return stack
     }()
     
     override init(
@@ -88,38 +47,52 @@ final class RecentSearchCell: UITableViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        [busStopNameLabel, descriptionLabel].forEach {
+            $0.text = nil
+        }
+        disposeBag = .init()
+    }
+    
+    public func updateUI(response: BusStopInfoResponse) {
+        busStopNameLabel.text = response.busStopName
+        let description = "\(response.busStopId) | \(response.direction) 방면"
+        descriptionLabel.text = description
+    }
+    
     private func configureUI() {
-        [busStopNameLabel, numberLabel, line, dircetionLabel, numDirectStack,
-         totalStack].forEach {
+        [busStopNameLabel, descriptionLabel].forEach {
             addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         
-        [numberLabel, line, dircetionLabel]
-            .forEach { components in
-                numDirectStack.addArrangedSubview(components)
-            }
-        
-        [busStopNameLabel, numDirectStack]
-            .forEach { components in
-                totalStack.addArrangedSubview(components)
-            }
-        
         NSLayoutConstraint.activate([
-            busStopNameLabel.leadingAnchor
-                .constraint(equalTo: leadingAnchor,
-                            constant: 30),
-            busStopNameLabel.topAnchor
-                .constraint(equalTo: bottomAnchor,
-                            constant: 50),
+            busStopNameLabel.topAnchor.constraint(
+                equalTo: topAnchor,
+                constant: 15
+            ),
+            busStopNameLabel.leadingAnchor.constraint(
+                equalTo: leadingAnchor,
+                constant: 15
+            ),
+            busStopNameLabel.bottomAnchor.constraint(
+                equalTo: centerYAnchor,
+                constant: -3
+            ),
             
-            numDirectStack.leadingAnchor
-                .constraint(equalTo: busStopNameLabel.leadingAnchor),
-            numDirectStack.topAnchor
-                .constraint(equalTo: busStopNameLabel.bottomAnchor,
-                            constant: 5)
-            
+            descriptionLabel.topAnchor.constraint(
+                equalTo: centerYAnchor,
+                constant: 3
+            ),
+            descriptionLabel.leadingAnchor.constraint(
+                equalTo: busStopNameLabel.leadingAnchor
+            ),
+            descriptionLabel.bottomAnchor.constraint(
+                equalTo: bottomAnchor,
+                constant: -15
+            ),
         ])
     }
 }

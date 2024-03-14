@@ -80,6 +80,7 @@ public final class BusStopViewController: UIViewController {
         bindTableView(output: output)
         
         output.isRefreshing
+            .observe(on: MainScheduler.asyncInstance)
             .subscribe(onNext: { refresh in
                 print("\(refresh)")
                 switch refresh {

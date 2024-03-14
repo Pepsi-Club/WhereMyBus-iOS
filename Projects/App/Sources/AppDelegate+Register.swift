@@ -54,7 +54,9 @@ extension AppDelegate {
         
         DIContainer.register(
             type: SearchUseCase.self,
-            DefaultSearchUseCase(stationListRepository: stationListRepository)
+            DefaultSearchUseCase(
+                stationListRepository: stationListRepository
+            )
         )
         
         DIContainer.register(

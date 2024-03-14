@@ -185,9 +185,9 @@ public final class AfterSearchViewController
                 cellIdentifier: RecentSearchCell.identifier,
                 cellType: RecentSearchCell.self)
             ) { _, response, cell in
-                cell.busStopNameLabel.text = response.busStopName
-                cell.dircetionLabel.text = response.direction
-                cell.numberLabel.text = response.busStopId
+//                cell.busStopNameLabel.text = response.busStopName
+//                cell.dircetionLabel.text = response.direction
+//                cell.numberLabel.text = response.busStopId
             }
             .disposed(by: disposeBag)
         
@@ -224,9 +224,9 @@ public final class AfterSearchViewController
                 
         else { return nil }
         
-        cell.busStopNameLabel.text = response.busStopName
-        cell.dircetionLabel.text = response.direction
-        cell.numberLabel.text = response.busStopId
+//        cell.busStopNameLabel.text = response.busStopName
+//        cell.dircetionLabel.text = response.direction
+//        cell.numberLabel.text = response.busStopId
         
         return cell
     }
@@ -259,7 +259,7 @@ extension AfterSearchViewController {
         guard let searchText = searchController.searchBar.text else { return }
         
         // MARK: UseCase로 이동중 그런데 잘 모르겠음 
-        viewModel.useCase.jsontoSearchData
+        viewModel.useCase.searchedStationList
             .map { responses in
                 return responses.filter { $0.busStopName.contains(searchText) }
             }

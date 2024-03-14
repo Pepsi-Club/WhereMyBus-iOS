@@ -37,10 +37,6 @@ public final class DefaultHomeCoordinator {
         )
     }
     
-    public func finish() {
-        
-    }
-    
     private func hasViewController(vcType: UIViewController.Type) -> Bool {
         navigationController.viewControllers
             .contains(

@@ -30,12 +30,8 @@ public final class DefaultSearchCoordinator
         )
         navigationController.pushViewController(
             searchViewController,
-            animated: false
+            animated: true
         )
-    }
-    
-    public func finish() {
-        
     }
     
     public func startBusStopFlow() {

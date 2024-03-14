@@ -12,14 +12,13 @@ import RxSwift
 import RxCocoa
 
 public final class DefaultSearchUseCase: SearchUseCase {
-
     private let stationListRepository: StationListRepository
 
     private let disposeBag = DisposeBag()
    
     public var recentSearchResult =
         BehaviorSubject<[BusStopInfoResponse]>(value: [])
-    public let jsontoSearchData =
+    public let searchedStationList =
         PublishSubject<[BusStopInfoResponse]>()
     public var filteringText =
         BehaviorSubject<[BusStopInfoResponse]>(value: [])
@@ -30,24 +29,35 @@ public final class DefaultSearchUseCase: SearchUseCase {
         getRecentSearchList()
     }
     
-    //MARK: 전체 데이터 받아오기
+    public func search(term: String) {
+        do {
+            let filteredList = try stationListRepository.stationList.value()
+                .filter { response in
+                    response.busStopId.contains(term) ||
+                    response.busStopName.contains(term)
+                }
+            searchedStationList.onNext(filteredList)
+        } catch {
+            searchedStationList.onError(error)
+        }
+    }
+    // MARK: 전체 데이터 받아오기
     public func getStationList() {
-        stationListRepository.jsontoBusStopData()
-            .bind(to: jsontoSearchData)
+        stationListRepository.stationList
+            .bind(to: searchedStationList)
             .disposed(by: disposeBag)
     }
     
-    //MARK: 최근 검색어 받아오기
+    // MARK: 최근 검색어 받아오기
     public func getRecentSearchList() {
-        stationListRepository.getRecentSearch()
-            // map은 형태를 바꿔줌
+        stationListRepository.recentlySearchedStation
             .bind(to: recentSearchResult)
             .disposed(by: disposeBag)
     }
     
-    //MARK: 검색어 필터링 해서 연관 검색어 넘겨주기
+    // MARK: 검색어 필터링 해서 연관 검색어 넘겨주기
     public func getFiltering(searchtext: String) {
-        stationListRepository.jsontoBusStopData()
+        stationListRepository.stationList
             .map { responses in
                 return responses.filter {
                     $0.busStopName.contains(searchtext)

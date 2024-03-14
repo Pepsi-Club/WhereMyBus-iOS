@@ -83,8 +83,8 @@ extension DefaultLocationService: CLLocationManagerDelegate {
 	
 	/// 위치 정보 불러오는 도중 에러 처리 메서드
 	public func locationManager(
-		_ manager: CLLocationManager
-		, didFailWithError error: Error
+		_ manager: CLLocationManager,
+        didFailWithError error: Error
 	) {
 		print("Location Error: \(error)")
 	}

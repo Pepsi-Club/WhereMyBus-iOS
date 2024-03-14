@@ -9,9 +9,11 @@
 import Foundation
 
 import RxSwift
+import RxRelay
 
 public protocol StationListRepository {
-    func jsontoBusStopData() -> Observable<[BusStopInfoResponse]>
+    var stationList: BehaviorSubject<[BusStopInfoResponse]> { get }
+    var recentlySearchedStation: BehaviorRelay<[BusStopInfoResponse]> { get }
+    
     func saveRecentSearch(_ searchCell: [BusStopInfoResponse])
-    func getRecentSearch() -> Observable<[BusStopInfoResponse]>
 }
