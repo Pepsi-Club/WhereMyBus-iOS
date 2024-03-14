@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct BusStopInfoResponse: Hashable {
+public struct BusStopInfoResponse: Hashable, Codable {
     public let busStopName: String
     public let busStopId: String // 기존 ID가 아닌 5자리 ID(busStopNum)
     public let direction: String // 데이터 보충 완 -> 옵셔널 X

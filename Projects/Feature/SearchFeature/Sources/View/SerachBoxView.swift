@@ -56,8 +56,10 @@ final class SearchTextFieldBoxView: UIView {
             textField.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
         
-        let tapGesture = UITapGestureRecognizer(target: self,
-                                                action: #selector(handleTap))
+        let tapGesture = UITapGestureRecognizer(
+            target: self,
+            action: #selector(handleTap)
+        )
         addGestureRecognizer(tapGesture)
     }
     

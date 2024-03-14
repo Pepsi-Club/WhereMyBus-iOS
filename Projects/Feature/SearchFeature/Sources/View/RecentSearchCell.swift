@@ -14,12 +14,11 @@ import DesignSystem
 import RxSwift
 
 final class RecentSearchCell: UITableViewCell {
-    // MARK: 얘는 왜 var도 가능할까? 언제든지 변할 수 있는 값이어서?
     public var disposeBag = DisposeBag()
     
     public let searchBtnTapEvent = PublishSubject<String>()
     
-    private let busStopNameLabel: UILabel = {
+    public var busStopNameLabel: UILabel = {
         let label = UILabel()
         label.font =
         DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(size: 16)
@@ -29,7 +28,7 @@ final class RecentSearchCell: UITableViewCell {
         return label
     }()
     
-    private let numberLabel: UILabel = {
+    public var numberLabel: UILabel = {
         let label = UILabel()
         label.font =
         DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(size: 13)
@@ -50,7 +49,7 @@ final class RecentSearchCell: UITableViewCell {
         return label
     }()
     
-    private let dircetionLabel: UILabel = {
+    public var dircetionLabel: UILabel = {
         let label = UILabel()
         label.font =
         DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(size: 13)
@@ -78,9 +77,11 @@ final class RecentSearchCell: UITableViewCell {
         return stack
     }()
     
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+    override init(
+        style: UITableViewCell.CellStyle,
+        reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
+    
         configureUI()
     }
     

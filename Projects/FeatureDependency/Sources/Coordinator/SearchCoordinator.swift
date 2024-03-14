@@ -7,7 +7,11 @@
 //
 
 import Foundation
+import Domain
 
 public protocol SearchCoordinator: Coordinator {
     func startBusStopFlow()
+    func goAfterSearchView(text: String)
+    func popVC()
+    func startBusStopFlow(stationId: String)
 }

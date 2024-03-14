@@ -9,6 +9,7 @@
 import UIKit
 
 import FeatureDependency
+import HomeFeature
 import SearchFeature
 import AlarmFeature
 import BusStopFeature
@@ -16,7 +17,17 @@ import NearMapFeature
 import Domain
 
 final class DefaultCoordinatorProvider: CoordinatorProvider {
-	
+    
+    func makeHomeCoordinator(
+        navigationController: UINavigationController
+    ) -> HomeCoordinator {
+        DefaultHomeCoordinator(
+            parent: nil,
+            navigationController: navigationController,
+            coordinatorProvider: self
+        )
+    }
+    
     func makeBusStopCoordinator(
         navigationController: UINavigationController,
         busStopId: String

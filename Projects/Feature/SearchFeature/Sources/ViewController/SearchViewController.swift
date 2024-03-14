@@ -11,10 +11,11 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
     private let viewModel: SearchViewModel
     
     private let disposeBag = DisposeBag()
-    private let infoAgreeSubject = PublishSubject<Bool>()
-    public let enterPressedSubject = PublishSubject<Void>()
-
-    // 주변 정류장 클릭했을 때 나오는 이벤트
+    
+    private let infoAgreeEvent = BehaviorSubject<Bool>(value: false)
+    private let enterPressedEvent = PublishSubject<String>()
+    private let backBtnTapEvent = PublishSubject<Void>()
+    private let nearBusStopTapEvent = PublishSubject<Void>()
     
     private let recentSerachCell = RecentSearchCell()
     private let searchNearStopView = DeagreeSearchNearStopView()
@@ -23,12 +24,22 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
     private var dataSource: SearchDataSource!
     private var snapshot: SearchDataSource! //
     
+    private var filteredList: [String] = []
+    
     private let backBtn: UIButton = {
         let btn = UIButton()
-        let starImage = UIImage(systemName: "chevron.backward")
-        btn.setImage(starImage, for: .normal)
+        
+        if let originalImage = UIImage(systemName: "chevron.backward") {
+            let boldAndLargeImage = originalImage.withConfiguration(
+                UIImage.SymbolConfiguration(
+                    pointSize: 20,
+                    weight: .regular
+                )
+            )
+            btn.setImage(boldAndLargeImage, for: .normal)
+        }
+        
         btn.tintColor = .black
-        //        btn.backgroundColor = .red
         return btn
     }()
     
@@ -40,22 +51,6 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
         label.text = "최근 검색 정류장"
         
         return label
-    }()
-    
-    private let magniButton: UIButton = {
-        var config = UIButton.Configuration.plain()
-        let image = UIImage(systemName: "magnifyingglass")
-        let configuration = UIImage.SymbolConfiguration(
-                font: UIFont.systemFont(ofSize: 20, weight: .light),
-                scale: .default
-            )
-        config.image = image
-        config.preferredSymbolConfigurationForImage = configuration
-        config.baseForegroundColor = .black
-        
-        let button = UIButton(configuration: config)
-        
-        return button
     }()
     
     private let editBtn: UIButton = {
@@ -129,9 +124,49 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        configureDataSource()
+        self.navigationController?.setNavigationBarHidden(true, animated: false)
+        // 정신차려라
+        searchTextFieldView.delegate = self
+        
         configureUI()
         bind()
+        configureDataSource()
+        hideKeyboard()
+        
+        // MARK: snapShot 여기다 두면 안될 거 같음
+        var snapshot = dataSource.snapshot()
+        snapshot.appendSections([.main])
+        
+        viewModel.useCase.recentSearchResult
+            .subscribe(onNext: { [weak self] recentSearchResult in
+                snapshot.appendItems(recentSearchResult)
+                self?.dataSource.apply(snapshot, animatingDifferences: false)
+            })
+            .disposed(by: disposeBag)
+        dataSource.apply(snapshot, animatingDifferences: false)
+        
+        // setupSearchController()
+    }
+    
+    private func setupSearchController() {
+        let searchController = UISearchController(searchResultsController: nil)
+        searchController.searchBar.placeholder = ""
+        searchController.hidesNavigationBarDuringPresentation = false
+        
+        self.navigationItem.searchController = searchController
+        self.navigationItem.title = "Search"
+        self.navigationItem.hidesSearchBarWhenScrolling = false
+    }
+    
+    private func hideKeyboard() {
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(
+            target: self,
+            action: #selector(dismissKeyboard))
+        view.addGestureRecognizer(tap)
+    }
+    
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
     }
     
     private func configureUI() {
@@ -139,7 +174,7 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
         
         [searchTextFieldView, backBtn, textFieldStack, recentSearchlabel,
          recentSearchTableView, coloredRectangleView, searchNearStopView,
-         editBtn, headerStack, magniStack, magniButton]
+         editBtn, headerStack, magniStack]
             .forEach {
                 view.addSubview($0)
                 $0.translatesAutoresizingMaskIntoConstraints = false
@@ -159,26 +194,12 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
             
             backBtn.widthAnchor.constraint(equalToConstant: 20),
             
-            magniButton.topAnchor.constraint(
-                equalTo: view.safeAreaLayoutGuide.topAnchor,
-                constant: -13
-            ),
-            
-            magniButton.widthAnchor.constraint(
-                equalToConstant: 20
-            ),
-            
-            magniButton.trailingAnchor.constraint(
-                equalTo: view.trailingAnchor,
-                constant: -20
-            ),
-            
             searchTextFieldView.heightAnchor.constraint(
                 equalToConstant: 39),
             
             textFieldStack.topAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.topAnchor,
-                constant: -14
+                constant: 0
             ),
             textFieldStack.leadingAnchor.constraint(
                 equalTo: view.leadingAnchor,
@@ -186,8 +207,8 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
             ),
             
             textFieldStack.trailingAnchor.constraint(
-                equalTo: magniButton.trailingAnchor,
-                constant: 10
+                equalTo: view.safeAreaLayoutGuide.trailingAnchor,
+                constant: -10
             ),
             
             headerStack.topAnchor.constraint(
@@ -195,7 +216,7 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
             headerStack.leadingAnchor.constraint(
                 equalTo: view.leadingAnchor, constant: 15),
             headerStack.trailingAnchor.constraint(
-                equalTo: view.trailingAnchor, constant: -15),
+                equalTo: view.trailingAnchor, constant: -10),
             
             recentSearchTableView.topAnchor.constraint(
                 equalTo: recentSearchlabel.bottomAnchor, constant: -30),
@@ -235,18 +256,30 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
                 multiplier: 0.95),
             searchNearStopView.trailingAnchor.constraint(
                 equalTo: view.trailingAnchor,
-                constant: 10)
-            
+                constant: 10
+            )
         ])
     }
     
     private func bind() {
-        // 엔터 이벤트를 뷰모델에 전달
-        searchTextFieldView.rx.controlEvent(.editingDidEndOnExit)
-            .bind(to: viewModel.enterPressedSubject)
-            .disposed(by: disposeBag)
+        let input = SearchViewModel.Input(
+            viewWillAppearEvenet: rx
+                .methodInvoked(#selector(UIViewController.viewWillAppear))
+                .map { _ in },
+            enterPressedEvent: enterPressedEvent.asObservable(),
+            backbtnEvent: backBtnTapEvent.asObservable(),
+            nearBusStopTapEvent: nearBusStopTapEvent.asObservable())
         
-        print("전달완")
+        _ = viewModel.transform(input: input)
+    }
+    
+    private func bindText() {
+        searchTextFieldView.rx.controlEvent([.editingDidEndOnExit])
+            .map({ _ in
+                return self.searchTextFieldView.text ?? "안들어옴"
+            })
+            .bind(to: enterPressedEvent)
+            .disposed(by: disposeBag)
     }
     
     private func configureDataSource() {
@@ -255,56 +288,51 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
             cellProvider: { [weak self] tableView, indexPath, response
                 in
                 guard let self = self,
-                    let cell = self.configureCell(
+                      let cell = self.configureCell(
                         tableView: tableView,
                         indexPath: indexPath,
                         response: response
-                    )
+                      )
                 else { return UITableViewCell() }
                 
-            return cell
+                return cell
             })
-        
-        // 최대 5개의 셀만 보여주도록 설정 문제 있음
-        var initialSnapshot = NSDiffableDataSourceSnapshot<
-            Int,
-            BusStopInfoResponse>()
-        initialSnapshot.appendSections([0])
-        dataSource.apply(initialSnapshot, animatingDifferences: false)
     }
     
     private func configureCell(
         tableView: UITableView,
         indexPath: IndexPath,
-        response: BusStopInfoResponse) -> RecentSearchCell? {
-            guard let cell = tableView.dequeueReusableCell(
-                withIdentifier: RecentSearchCell.identifier,
-                for: indexPath
-            ) as? RecentSearchCell
-            else { return nil }
-            let busStopName = response.busStopName
-            let busStopId = response.busStopId
-            let direction = response.direction
-            
-            return cell
-        }
+        response: BusStopInfoResponse
+    ) -> RecentSearchCell? {
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: RecentSearchCell.identifier,
+            for: indexPath
+        ) as? RecentSearchCell
+                
+        else { return nil }
+        
+        cell.busStopNameLabel.text = response.busStopName
+        cell.dircetionLabel.text = response.direction
+        cell.numberLabel.text = response.busStopId
+        
+        return cell
+    }
 }
 
 extension SearchViewController {
     typealias SearchDataSource =
     UITableViewDiffableDataSource
-    <Int, BusStopInfoResponse>
+    <Section, BusStopInfoResponse>
 }
 
 extension SearchViewController: UITextFieldDelegate {
-
     public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
-        print("입력완")
+        print("입력완료")
+        bindText()
+        print("bindText실행됨")
+        
         return true
     }
-
-    public func textFieldDidEndEditing(_ textField: UITextField) {
-        textField.resignFirstResponder()
-    }
 }
+
+enum Section: CaseIterable { case main }
