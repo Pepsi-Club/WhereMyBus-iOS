@@ -16,6 +16,18 @@ import NetworkService
 
 extension AppDelegate {
     func registerDependencies() {
+        let coreDataService: CoreDataService = DefaultCoreDataService()
+        let networkService: NetworkService = DefaultNetworkService()
+        
+        let favoritesRepository: FavoritesRepository
+        = DefaultFavoritesRepository(coreDataService: coreDataService)
+        let busStopArrivalInfoRepository: BusStopArrivalInfoRepository
+        = DefaultBusStopArrivalInfoRepository(networkService: networkService)
+        let stationListRepository: StationListRepository
+        = DefaultStationListRepository()
+        let localNotificationService: LocalNotificationService
+        = DefaultLocalNotificationService()
+        
         DIContainer.register(
             type: FavoritesUseCase.self,
             DefaultFavoritesUseCase(
@@ -34,7 +46,6 @@ extension AppDelegate {
         DIContainer.register(
             type: AddRegularAlarmUseCase.self,
             DefaultAddRegularAlarmUseCase(
-                regularAlarmRepository: regularAlarmRepository,
                 localNotificationService: localNotificationService
             )
         )
@@ -51,49 +62,10 @@ extension AppDelegate {
                 favoritesRepository: favoritesRepository
             )
         )
-		
-		DIContainer.register(
-			type: NearMapUseCase.self,
-			DefaultNearMapUseCase(
-				nearMapRepository: nearMapRepository
-			)
-		)
-    }
-}
-
-extension AppDelegate {
-    var regularAlarmRepository: RegularAlarmRepository {
-        DefaultRegularAlarmRepository()
-    }
-    var localNotificationService: LocalNotificationService {
-        DefaultLocalNotificationService(
-            busStopArrivalInfoRepository: busStopArrivalInfoRepository
+        
+        DIContainer.register(
+            type: RegularAlarmEditingService.self,
+            DefaultRegularAlarmEditingService()
         )
-    }
-    
-    var favoritesRepository: FavoritesRepository {
-        DefaultFavoritesRepository(coreDataService: coreDataService)
-    }
-    
-    var busStopArrivalInfoRepository: BusStopArrivalInfoRepository {
-        DefaultBusStopArrivalInfoRepository(networkService: networkService)
-    }
-    
-    var stationListRepository: StationListRepository {
-        DefaultStationListRepository()
-    }
-	
-	var nearMapRepository: NearMapRepository {
-		DefaultNearMapRepository()
-	}
-}
-
-extension AppDelegate {
-    var coreDataService: CoreDataService {
-        DefaultCoreDataService()
-    }
-    
-    var networkService: NetworkService {
-        DefaultNetworkService()
     }
 }

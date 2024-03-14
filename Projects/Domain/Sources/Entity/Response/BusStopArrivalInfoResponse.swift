@@ -27,22 +27,14 @@ public struct BusStopArrivalInfoResponse: Codable, Hashable {
     }
 }
 
-extension Array<BusStopArrivalInfoResponse> {
-    func hasBusStop(busStopId: String) -> Bool {
-        contains { station in
-            station.busStopId == busStopId
-        }
-    }
-}
-
 public struct BusArrivalInfoResponse: Codable, Hashable {
     public let busId: String
     public let busName: String
     public let busType: BusType
     public let nextStation: String
-    public let firstArrivalTime: String
+    public let firstArrivalState: ArrivalState
     public let firstArrivalRemaining: String
-    public let secondArrivalTime: String
+    public let secondArrivalState: ArrivalState
     public let secondArrivalRemaining: String
     public var isFavorites: Bool
     public var isAlarmOn: Bool
@@ -52,9 +44,9 @@ public struct BusArrivalInfoResponse: Codable, Hashable {
         busName: String,
         busType: String,
         nextStation: String,
-        firstArrivalTime: String,
+        firstArrivalState: ArrivalState,
         firstArrivalRemaining: String,
-        secondArrivalTime: String,
+        secondArrivalState: ArrivalState,
         secondArrivalRemaining: String,
         isFavorites: Bool,
         isAlarmOn: Bool
@@ -63,16 +55,29 @@ public struct BusArrivalInfoResponse: Codable, Hashable {
         self.busName = busName
         self.busType = BusType(rawValue: busType) ?? .common
         self.nextStation = nextStation
-        self.firstArrivalTime = firstArrivalTime
+        self.firstArrivalState = firstArrivalState
         self.firstArrivalRemaining = firstArrivalRemaining
-        self.secondArrivalTime = secondArrivalTime
+        self.secondArrivalState = secondArrivalState
         self.secondArrivalRemaining = secondArrivalRemaining
         self.isFavorites = isFavorites
         self.isAlarmOn = isAlarmOn
     }
+}
+
+public enum ArrivalState: Hashable, Codable {
+    case soon, pending, finished, arrivalTime(time: Int)
     
-    public mutating func toggledFavorites() {
-        self.isFavorites.toggle()
+    public var toString: String {
+        switch self {
+        case .soon:
+            return "곧 도착"
+        case .pending:
+            return "출발대기"
+        case .finished:
+            return "운행종료"
+        case .arrivalTime(let time):
+            return "\(time / 60)분후"
+        }
     }
 }
 
