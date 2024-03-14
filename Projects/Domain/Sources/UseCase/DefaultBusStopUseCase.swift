@@ -14,7 +14,7 @@ import RxCocoa
 public final class DefaultBusStopUseCase: BusStopUseCase {
     private let busStopArrivalInfoRepository: BusStopArrivalInfoRepository
     private let favoritesRepository: FavoritesRepository
-    private var regularAlarmEditingService: RegularAlarmEditingService
+    private let regularAlarmEditingService: RegularAlarmEditingService
     
     public let busStopSection = PublishSubject<BusStopArrivalInfoResponse>()
     public var favorites = BehaviorSubject<[FavoritesBusStopResponse]>(
@@ -32,7 +32,6 @@ public final class DefaultBusStopUseCase: BusStopUseCase {
         self.regularAlarmEditingService = regularAlarmEditingService
         
         fetchFavorites()
-        
     }
     
     public func fetchBusArrivals(request: ArrivalInfoRequest) {

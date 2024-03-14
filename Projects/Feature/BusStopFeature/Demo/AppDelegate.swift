@@ -2,7 +2,6 @@ import UIKit
 
 import Core
 import Domain
-import Data
 import FeatureDependency
 
 import RxSwift
@@ -30,7 +29,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
             DefaultBusStopUseCase(
                 busStopArrivalInfoRepository: MockBusStopArrivalInfoRepository(),
                 favoritesRepository: MockFavoritesRepository(),
-                regularAlarmEditingService: DefaultRegularAlarmEditingService()
+                regularAlarmEditingService: MockRegualrAlarmEditingService()
             )
         )
     }
