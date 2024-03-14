@@ -21,9 +21,8 @@ public final class DefaultSearchUseCase: SearchUseCase {
         BehaviorSubject<[BusStopInfoResponse]>(value: [])
     public let jsontoSearchData =
         PublishSubject<[BusStopInfoResponse]>()
-    
-    public var searchTexts =
-    BehaviorSubject<[BusStopInfoResponse]>(value: [])
+    public var filteringText =
+        BehaviorSubject<[BusStopInfoResponse]>(value: [])
     
     public init(stationListRepository: StationListRepository) {
         self.stationListRepository = stationListRepository
@@ -44,7 +43,14 @@ public final class DefaultSearchUseCase: SearchUseCase {
             .disposed(by: disposeBag)
     }
     
-    public func getFiltering() {
-        
+    public func getFiltering(searchtext: String) {
+        stationListRepository.jsontoSearchData()
+            .map { responses in
+                return responses.filter {
+                    $0.busStopName.contains(searchtext)
+                }
+            }
+            .bind(to: filteringText)
+            .disposed(by: disposeBag)
     }
 }

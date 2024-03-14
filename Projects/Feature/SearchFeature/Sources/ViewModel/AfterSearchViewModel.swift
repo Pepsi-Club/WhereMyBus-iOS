@@ -53,7 +53,7 @@ public final class AfterSearchViewModel: ViewModel {
             .withUnretained(self)
             .subscribe(
                 onNext: { viewModel, indexPath in
-//                    viewModel.coordinator.startBusStopFlow(stationId: indexPath.row.stationId)
+//                 viewModel.coordinator.startBusStopFlow(stationId: indexPath.row.stationId)
                 })
             .disposed(by: disposeBag)
 

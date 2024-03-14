@@ -78,7 +78,7 @@ extension DefaultSearchCoordinator {
     
     // MARK: 여기는 협의 후에 
     public func startNearMapFlow(stationId: String) {
-        let _ = coordinatorProvider.makeBusStopMapCoordinator(
+        let nearMapCoordinator = coordinatorProvider.makeBusStopMapCoordinator(
             navigationController: navigationController,
             busStopId: stationId
         )

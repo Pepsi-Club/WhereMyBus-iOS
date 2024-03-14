@@ -77,9 +77,11 @@ final class RecentSearchCell: UITableViewCell {
         return stack
     }()
     
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+    override init(
+        style: UITableViewCell.CellStyle,
+        reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
+    
         configureUI()
     }
     

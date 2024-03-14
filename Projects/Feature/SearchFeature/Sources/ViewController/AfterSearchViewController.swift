@@ -269,7 +269,7 @@ extension AfterSearchViewController {
     public func updateSearchResults(for searchController: UISearchController) {
         guard let searchText = searchController.searchBar.text else { return }
         
-        //UseCase로 이동해야함
+        // MARK: UseCase로 이동중 그런데 잘 모르겠음 
         viewModel.useCase.jsontoSearchData
             .map { responses in
                 return responses.filter { $0.busStopName.contains(searchText) }
