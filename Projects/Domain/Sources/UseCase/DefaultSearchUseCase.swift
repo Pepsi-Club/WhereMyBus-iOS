@@ -17,7 +17,8 @@ public final class DefaultSearchUseCase: SearchUseCase {
 
     private let disposeBag = DisposeBag()
    
-    public var recentSearchResult = BehaviorSubject<[BusStopInfoResponse]>(value: [])
+    public var recentSearchResult =
+        BehaviorSubject<[BusStopInfoResponse]>(value: [])
     public let jsontoSearchData =
         PublishSubject<[BusStopInfoResponse]>()
     

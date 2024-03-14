@@ -58,14 +58,14 @@ public final class DefaultSearchCoordinator
 }
 
 extension DefaultSearchCoordinator {
-    public func startHomeFlow() {
-        let homeCoordinator = coordinatorProvider.makeSearchCoordinator(
-            navigationController: navigationController
-        )
+//    public func startHomeFlow() {
+//        let homeCoordinator = coordinatorProvider.makeSearchCoordinator(
+//            navigationController: navigationController
+//        )
 //        childs.append(searchCoordinator)
 //        serachCoordinator.start()
-    }
-    
+//    }
+//
     public func startBusStopFlow(stationId: String) {
         // BusStopCoordinatorFlow
         let busStopCoordinator = coordinatorProvider.makeBusStopCoordinator(
@@ -74,6 +74,14 @@ extension DefaultSearchCoordinator {
         )
         childs.append(busStopCoordinator)
         busStopCoordinator.start()
+    }
+    
+    // MARK: 여기는 협의 후에 
+    public func startNearMapFlow(stationId: String) {
+        let nearMapCoordinator = coordinatorProvider.makeBusStopMapCoordinator(
+            navigationController: navigationController,
+            busStopId: stationId
+        )
     }
     
     public func popVC() {

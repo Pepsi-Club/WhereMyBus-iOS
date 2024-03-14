@@ -15,7 +15,8 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
     private let enterPressedEvent = PublishSubject<Void>()
     private var textFieldString = PublishSubject<String>()
     private let backBtnTapEvent = PublishSubject<Void>()
-
+    private let nearBusStopTapEvent = PublishSubject<Void>()
+    
     private let recentSerachCell = RecentSearchCell()
     private let searchNearStopView = DeagreeSearchNearStopView()
     private let searchTextFieldView = SearchTextFieldView()
@@ -125,6 +126,12 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
         super.viewDidLoad()
         self.navigationController?.setNavigationBarHidden(true, animated: false)
         
+        configureDataSource()
+        configureUI()
+        bind()
+        hideKeyboard()
+        bindText()
+      
         // MARK: snapShot 여기다 두면 안될 거 같음
         var snapshot = dataSource.snapshot()
         snapshot.appendSections([.main])
@@ -137,11 +144,6 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
                .disposed(by: disposeBag)
         dataSource.apply(snapshot, animatingDifferences: false)
         
-        configureDataSource()
-        configureUI()
-        bind()
-        hideKeyboard()
-        bindText()
         // setupSearchController()
     }
     
@@ -259,12 +261,13 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
 }
     
     private func bind() {
-        let input = SearchViewModel.Input(
+        _ = SearchViewModel.Input(
             viewWillAppearEvenet: rx
                 .methodInvoked(#selector(UIViewController.viewWillAppear))
                 .map { _ in },
             enterPressedEvent: textFieldString.asObservable(),
-            backbtnEvent: backBtnTapEvent.asObservable())
+            backbtnEvent: backBtnTapEvent.asObservable(),
+            nearBusStopTapEvent: nearBusStopTapEvent.asObservable())
     }
     
     private func bindText() {
@@ -273,8 +276,8 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
                         return self?.searchTextFieldView.text ?? ""
                     })
                     .withUnretained(self)
-                    .subscribe(onNext: { viewC, str in
-                        viewC.textFieldString.onNext(str)
+                    .subscribe(onNext: { viewModel, str in
+                        viewModel.textFieldString.onNext(str)
                     })
                     .disposed(by: disposeBag)
     }

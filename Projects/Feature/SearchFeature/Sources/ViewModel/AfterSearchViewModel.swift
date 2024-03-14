@@ -8,7 +8,7 @@ import RxSwift
 
 public final class AfterSearchViewModel: ViewModel {
     
-    private let coordinator: SearchCoordinator
+    public let coordinator: SearchCoordinator
     
     @Injected(SearchUseCase.self) var useCase: SearchUseCase
     
@@ -35,7 +35,7 @@ public final class AfterSearchViewModel: ViewModel {
         
         input.viewWillAppearEvenet
             .withUnretained(self)
-            .subscribe(onNext: { viewModel, _ in
+            .subscribe(onNext: { _, _ in
                 
             })
             .disposed(by: disposeBag)
@@ -53,6 +53,7 @@ public final class AfterSearchViewModel: ViewModel {
             .subscribe(
                 onNext: { viewModel, stationId in
                     viewModel.coordinator.startBusStopFlow(stationId: stationId)
+                    // cell을 [BusInfoResponse]로 보내야함
                 })
             .disposed(by: disposeBag)
 

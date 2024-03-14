@@ -42,6 +42,7 @@ public final class SearchViewModel: ViewModel {
             .subscribe(
                 onNext: { viewModel, textfield in
                     viewModel.coordinator.goAfterSearchView(text: textfield)
+                    print("엔터누름")
                 }
             )
             .disposed(by: disposeBag)
@@ -55,10 +56,10 @@ public final class SearchViewModel: ViewModel {
             )
             .disposed(by: disposeBag)
         
-        //MARK: 여기 map을 이런식으로 넣은 이유?
+        // MARK: 여기 map을 이런식으로 넣은 이유?
         useCase.jsontoSearchData
             .withUnretained(self)
-            .map { (owner, result) in
+            .map { (_, result) in
                 return result
             }
             .bind(to: output.jsontoSearchResponse)
@@ -66,7 +67,7 @@ public final class SearchViewModel: ViewModel {
         
         useCase.recentSearchResult
             .withUnretained(self)
-            .map { (owner, result) in
+            .map { (_, result) in
                 return result
             }
             .bind(to: output.recentSearchResultResponse)
@@ -88,6 +89,7 @@ extension SearchViewModel {
 //        let infoAgreeEvent: Observable<Bool>
         let enterPressedEvent: Observable<String>
         let backbtnEvent: Observable<Void>
+        let nearBusStopTapEvent: Observable<Void>
 //        let cellTapEvent: Observable<String>
     }
     

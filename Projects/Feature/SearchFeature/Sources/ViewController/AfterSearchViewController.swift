@@ -7,16 +7,20 @@ import Domain
 import RxSwift
 import RxCocoa
 
+// 전체적으로 다 수정해야함. 뷰 모델에서 해야할 일을 여기서 담당하고 있음
 public final class AfterSearchViewController
-: UIViewController, UITableViewDelegate {
+: UIViewController, UITableViewDelegate, UISearchResultsUpdating {
+    
     private let viewModel: AfterSearchViewModel
     
     private let disposeBag = DisposeBag()
     
     private let backBtnTapEvent = PublishSubject<Void>()
-    private let cellTapEvent = PublishSubject<Void>()
+    private let cellTapEvent = PublishSubject<String>()
     
-    private let searchController = UISearchController(searchResultsController: nil)
+    private let searchController = UISearchController(
+        searchResultsController: nil
+    )
     private let searchTextFieldView = SearchTextFieldView()
     private let recentSerachCell = RecentSearchCell()
     
@@ -81,16 +85,12 @@ public final class AfterSearchViewController
         return stack
     }()
     
-    private lazy var afterSearchResultTableView: UITableView = {
-            let table = UITableView(frame: .zero, style: .insetGrouped)
-            table.register(RecentSearchCell.self)
-            table.dataSource = dataSource
-            table.delegate = self
-            table.tableHeaderView = searchController.searchBar
-            return table
-        }()
+    private let afterSearchResultTableView: UITableView = {
+         let table = UITableView(frame: .zero, style: .insetGrouped)
+         table.register(RecentSearchCell.self)
+         return table
+     }()
    
-    
     public init(viewModel: AfterSearchViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -128,7 +128,6 @@ public final class AfterSearchViewController
             
             searchTextFieldView.heightAnchor.constraint(
                 equalToConstant: 39),
-            
             textFieldStack.topAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.topAnchor,
                 constant: 0
@@ -142,24 +141,69 @@ public final class AfterSearchViewController
                 equalTo: view.safeAreaLayoutGuide.trailingAnchor,
                 constant: -10
             ),
-            
             headerStack.topAnchor.constraint(
-                equalTo: textFieldStack.bottomAnchor, constant: 15),
+                equalTo: textFieldStack.bottomAnchor,
+                constant: 15
+            ),
             headerStack.leadingAnchor.constraint(
-                equalTo: view.leadingAnchor, constant: 20),
+                equalTo: view.leadingAnchor,
+                constant: 20
+            ),
             headerStack.trailingAnchor.constraint(
-                equalTo: view.trailingAnchor, constant: -15),
+                equalTo: view.trailingAnchor,
+                constant: -15
+            ),
+            afterSearchResultTableView.topAnchor.constraint(
+                equalTo: searchTextFieldView.bottomAnchor
+            ),
+            afterSearchResultTableView.leadingAnchor.constraint(
+                equalTo: view.leadingAnchor
+            ),
+            afterSearchResultTableView.trailingAnchor.constraint(
+                equalTo: view.trailingAnchor
+            ),
+            afterSearchResultTableView.bottomAnchor.constraint(
+                equalTo: view.bottomAnchor
+            )
         ])
     }
     
     private func bind() {
         let input = AfterSearchViewModel.Input(
-            viewWillAppearEvenet: rx
-                .methodInvoked(#selector(UIViewController.viewWillAppear))
+            viewWillAppearEvenet:
+                rx.methodInvoked(#selector(UIViewController.viewWillAppear))
                 .map { _ in },
             backBtnTapEvent: backBtnTapEvent.asObservable(),
-            cellTapEvent: Observable<String>,
-            )
+            cellTapEvent: cellTapEvent.asObservable()
+        )
+        
+        let output = viewModel.transform(input: input)
+        
+        output.jsontoSearchResponse
+            .bind(to: afterSearchResultTableView.rx.items(
+                cellIdentifier: RecentSearchCell.identifier,
+                cellType: RecentSearchCell.self)
+            ) { _, response, cell in
+                cell.busStopNameLabel.text = response.busStopName
+                cell.dircetionLabel.text = response.direction
+                cell.numberLabel.text = response.busStopId
+            }
+            .disposed(by: disposeBag)
+        
+        afterSearchResultTableView.rx.itemSelected
+            .subscribe(onNext: { [weak self] indexPath in
+                guard let cell =
+                    self?.afterSearchResultTableView.cellForRow(at: indexPath)
+                        as? RecentSearchCell
+                else { return }
+                
+                guard let stationId = cell.numberLabel.text else { return }
+                
+                self?.viewModel.coordinator.startBusStopFlow(
+                    stationId: stationId
+                )
+            })
+            .disposed(by: disposeBag)
     }
     
     private func hideKeyboard() {
@@ -209,13 +253,12 @@ public final class AfterSearchViewController
     }
     
     func setupSearchController() {
-        let searchController = UISearchController(searchResultsController: nil)
-        searchController.searchBar.placeholder = ""
-        searchController.hidesNavigationBarDuringPresentation = false
+        searchController.searchResultsUpdater = self
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.searchBar.placeholder = "Search"
         
-        self.navigationItem.searchController = searchController
-        self.navigationItem.title = "Search"
-        self.navigationItem.hidesSearchBarWhenScrolling = false
+        navigationItem.searchController = searchController
+        definesPresentationContext = true
     }
 }
 
@@ -240,14 +283,23 @@ extension AfterSearchViewController: UITextFieldDelegate {
     }
 }
 
-extension SearchViewController: UISearchResultsUpdating {
-    
+extension AfterSearchViewController {
     public func updateSearchResults(for searchController: UISearchController) {
-        guard let text = searchController.searchBar.text?.lowercased()
-        else { return }
-    // self.filteredList = self.arr.filter { $0.localizedCaseInsensitiveContains(text) }
+        guard let searchText = searchController.searchBar.text else { return }
         
-    
-        // self.tableView.reloadData()
+        viewModel.useCase.jsontoSearchData
+            .map { responses in
+                return responses.filter { $0.busStopName.contains(searchText) }
+            }
+            .subscribe(onNext: { filteredResults in
+                var snapshot = NSDiffableDataSourceSnapshot<
+                    Int,
+                    BusStopInfoResponse
+                >()
+                snapshot.appendSections([0])
+                snapshot.appendItems(filteredResults)
+                self.dataSource.apply(snapshot, animatingDifferences: true)
+            })
+            .disposed(by: disposeBag)
     }
 }
