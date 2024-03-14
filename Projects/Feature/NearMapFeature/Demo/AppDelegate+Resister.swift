@@ -13,14 +13,12 @@ import Domain
 import FeatureDependency
 
 extension AppDelegate {
-	
 	func register() {
-		
-		DIContainer.register(
-			type: NearMapUseCase.self,
-			DefaultNearMapUseCase(
-				stationListRepository: MockStationLIstRepository()
-			)
-		)
+        DIContainer.register(
+            type: NearMapUseCase.self,
+            DefaultNearMapUseCase(
+                stationListRepository: MockStationLIstRepository()
+            )
+        )
 	}
 }

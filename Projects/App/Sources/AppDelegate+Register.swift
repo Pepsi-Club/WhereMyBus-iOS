@@ -65,8 +65,8 @@ extension AppDelegate {
         )
         
         DIContainer.register(
-            type: NearBusStopUseCase.self,
-            DefaultNearBusStopUseCase(
+            type: NearMapUseCase.self,
+            DefaultNearMapUseCase(
                 stationListRepository: stationListRepository
             )
         )
