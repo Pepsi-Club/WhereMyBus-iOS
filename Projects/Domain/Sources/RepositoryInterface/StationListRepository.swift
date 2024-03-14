@@ -11,7 +11,7 @@ import Foundation
 import RxSwift
 
 public protocol StationListRepository {
-    func jsontoSearchData() -> Observable<[BusStopInfoResponse]>
+    func jsontoBusStopData() -> Observable<[BusStopInfoResponse]>
     func saveRecentSearch(_ searchCell: [BusStopInfoResponse])
     func getRecentSearch() -> Observable<[BusStopInfoResponse]>
 }

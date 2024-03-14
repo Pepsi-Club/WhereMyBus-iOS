@@ -19,12 +19,10 @@ public final class DefaultStationListRepository: StationListRepository {
     private let maxRecentSearchCount = 5
     
     public init() {
-        // MARK: 바꿔야 할 수도 있음
+
     }
     
-    // MARK: Json값 모델에 저장 <질문> 뷰 어피어할때마다 이게 이루어지면 비효율적일거같은데, 앱 첫단에서 하면 안될까
-    
-    public func jsontoSearchData() -> Observable<[BusStopInfoResponse]> {
+    public func jsontoBusStopData() -> Observable<[BusStopInfoResponse]> {
         return Observable.create { observer in
             var busStopInfoList: [BusStopInfoResponse] = []
 
@@ -64,8 +62,9 @@ public final class DefaultStationListRepository: StationListRepository {
         }
     }
     
+    //MARK: 최근 검색어 저장
     public func saveRecentSearch(_ searchCell: [BusStopInfoResponse]) {
-        var currentSearches = UserDefaults.standard.busStopInfoResponses(forKey: "recentSearches")
+        var currentSearches = UserDefaults.standard.getBusStopInfoResponse(forKey: "recentSearches")
         
         // 최대 갯수에 도달하면 가장 오래된 항목을 제거
         if currentSearches.count >= maxRecentSearchCount {
@@ -74,19 +73,20 @@ public final class DefaultStationListRepository: StationListRepository {
 
         currentSearches.append(contentsOf: searchCell)
 
-        UserDefaults.standard.setBusStopInfoResponses(currentSearches, forKey: "recentSearches")
+        UserDefaults.standard.setBusStopInfoResponse(currentSearches, forKey: "recentSearches")
     }
     
+    //MARK: 최근 검색어 가져오기
     public func getRecentSearch() -> Observable<[BusStopInfoResponse]> {
         return Observable.deferred {
-            let recentSearches = UserDefaults.standard.busStopInfoResponses(forKey: "recentSearches")
+            let recentSearches = UserDefaults.standard.getBusStopInfoResponse(forKey: "recentSearches")
             return Observable.just(recentSearches)
         }
     }
 }
 
 extension UserDefaults {
-    func setBusStopInfoResponses(_ value: [BusStopInfoResponse], forKey key: String) {
+    func setBusStopInfoResponse(_ value: [BusStopInfoResponse], forKey key: String) {
         do {
             let data = try JSONEncoder().encode(value)
             set(data, forKey: key)
@@ -95,7 +95,7 @@ extension UserDefaults {
         }
     }
 
-    func busStopInfoResponses(forKey key: String) -> [BusStopInfoResponse] {
+    func getBusStopInfoResponse(forKey key: String) -> [BusStopInfoResponse] {
         guard let data = data(forKey: key) else { return [] }
 
         do {

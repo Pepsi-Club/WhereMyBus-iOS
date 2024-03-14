@@ -18,7 +18,7 @@ public final class MockStationLIstRepository: StationListRepository {
         
     }
     
-    public func jsontoSearchData() -> Observable<[BusStopInfoResponse]> {
+    public func jsontoBusStopData() -> Observable<[BusStopInfoResponse]> {
         .just([])
     }
     
@@ -28,7 +28,7 @@ public final class MockStationLIstRepository: StationListRepository {
     
     public var busStopInfoList: [BusStopInfoResponse]
     
-    public func jsontoSearchData() {
+    public func jsontoBusStopData() {
     }
     
     public func saveRecentSearch(_ searchText: String) {
