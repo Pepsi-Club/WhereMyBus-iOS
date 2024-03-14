@@ -64,6 +64,7 @@ public final class FavoritesViewController: UIViewController {
             attributes: titleContainer
         )
         let button = UIButton(configuration: config)
+        button.isHidden = true
         return button
     }()
     
@@ -181,37 +182,85 @@ public final class FavoritesViewController: UIViewController {
             )
         )
         
-        output.busStopArrivalInfoResponse
+        Observable.combineLatest(
+            output.distanceFromTimerStart,
+            output.busStopArrivalInfoResponse
+        )
+        .withUnretained(self)
+        .observe(on: MainScheduler.asyncInstance)
+        .subscribe(
+            onNext: { viewController, arg1 in
+                let (timerTime, responses) = arg1
+                let newResponses = responses.map {
+                    return BusStopArrivalInfoResponse(
+                        busStopId: $0.busStopId,
+                        busStopName: $0.busStopName,
+                        direction: $0.direction,
+                        buses: $0.buses.map { busInfo in
+                            let newFirstArrivalState: ArrivalState
+                            let newSecondArrivalState: ArrivalState
+                            switch busInfo.firstArrivalState {
+                            case .soon, .pending, .finished:
+                                newFirstArrivalState = busInfo.firstArrivalState
+                            case .arrivalTime(let time):
+                                newFirstArrivalState = time - timerTime > 60 ?
+                                    .arrivalTime(time: time - timerTime):
+                                    .soon
+                            }
+                            switch busInfo.secondArrivalState {
+                            case .soon, .pending, .finished:
+                                newSecondArrivalState 
+                                = busInfo.secondArrivalState
+                            case .arrivalTime(let time):
+                                newSecondArrivalState = time - timerTime > 60 ?
+                                    .arrivalTime(time: time - timerTime):
+                                    .soon
+                            }
+                            let firstReaining = busInfo.firstArrivalRemaining
+                            let secondReaining = busInfo.secondArrivalRemaining
+                            return BusArrivalInfoResponse(
+                                busId: busInfo.busId,
+                                busName: busInfo.busName,
+                                busType: busInfo.busType.rawValue,
+                                nextStation: busInfo.nextStation,
+                                firstArrivalState: newFirstArrivalState,
+                                firstArrivalRemaining: firstReaining,
+                                secondArrivalState: newSecondArrivalState,
+                                secondArrivalRemaining: secondReaining,
+                                isFavorites: busInfo.isFavorites,
+                                isAlarmOn: busInfo.isAlarmOn
+                            )
+                        }
+                    )
+                }
+                newResponses.forEach { response in
+                    viewController.updateHeaderInfo(
+                        name: response.busStopName,
+                        direction: response.direction
+                    )
+                    let header = viewController.favoritesTableView
+                        .tableHeaderView as? FavoritesHeaderView
+                    header?.updateUI(
+                        name: response.busStopName,
+                        direction: response.direction
+                    )
+                }
+                viewController.updateSnapshot(busStopResponse: newResponses)
+            }
+        )
+        .disposed(by: disposeBag)
+        
+        output.favoritesState
             .withUnretained(self)
+            .observe(on: MainScheduler.asyncInstance)
             .subscribe(
-                onNext: { viewController, response in
-                    response.forEach { response in
-                        viewController.updateHeaderInfo(
-                            name: response.busStopName,
-                            direction: response.direction
-                        )
-                        let header = viewController.favoritesTableView
-                            .tableHeaderView as? FavoritesHeaderView
-                        header?.updateUI(
-                            name: response.busStopName,
-                            direction: response.direction
-                        )
-                    }
-                    viewController.updateSnapshot(busStopResponse: response)
+                onNext: { viewController, state in
+                    viewController.updateState(state: state)
                     let timeStr = Date().toString(dateFormat: "HH:mm")
                     viewController.refreshBtn.setTitle(
                         "\(timeStr) 업데이트",
                         for: .normal
                     )
-                }
-            )
-            .disposed(by: disposeBag)
-        
-        output.favoritesState
-            .withUnretained(self)
-            .subscribe(
-                onNext: { viewController, state in
-                    viewController.updateState(state: state)
                 }
             )
             .disposed(by: disposeBag)
@@ -230,18 +279,18 @@ public final class FavoritesViewController: UIViewController {
             )
             .disposed(by: disposeBag)
         
-        isTableViewEditMode
-            .withUnretained(self)
-            .subscribe(
-                onNext: { viewController, isEditMode in
-                    viewController.editBtn.setTitle(
-                        isEditMode ? "완료" : "편집",
-                        for: .normal
-                    )
-                    viewController.favoritesTableView.isEditing = isEditMode
-                }
-            )
-            .disposed(by: disposeBag)
+//        isTableViewEditMode
+//            .withUnretained(self)
+//            .subscribe(
+//                onNext: { viewController, isEditMode in
+//                    viewController.editBtn.setTitle(
+//                        isEditMode ? "완료" : "편집",
+//                        for: .normal
+//                    )
+//                    viewController.favoritesTableView.isEditing = isEditMode
+//                }
+//            )
+//            .disposed(by: disposeBag)
     }
     
     private func configureDataSource() {
@@ -254,6 +303,7 @@ public final class FavoritesViewController: UIViewController {
                 indexPath: indexPath,
                 response: response
             )
+            cell?.selectionStyle = .none
             cell?.alarmBtn.rx.tap
                 .map { _ in indexPath }
                 .bind(to: self.alarmBtnTapEvent)
@@ -279,7 +329,15 @@ public final class FavoritesViewController: UIViewController {
                 corners: [.bottomLeft, .bottomRight]
             )
         }
-        cell?.updateUI(response: response)
+        let firstArrivalTime = response.firstArrivalState.toString
+        let secondArrivalTime = response.secondArrivalState.toString
+        cell?.updateUI(
+            busName: response.busName,
+            firstArrivalTime: firstArrivalTime,
+            firstArrivalRemaining: response.firstArrivalRemaining,
+            secondArrivalTime: secondArrivalTime,
+            secondArrivalRemaining: response.secondArrivalRemaining
+        )
         return cell
     }
     
@@ -304,7 +362,7 @@ public final class FavoritesViewController: UIViewController {
                 toSection: response
             )
         }
-        dataSource.apply(snapshot)
+        dataSource.apply(snapshot, animatingDifferences: false)
     }
     
     private func updateState(state: FavoritesViewModel.FavoritesState) {
@@ -312,11 +370,11 @@ public final class FavoritesViewController: UIViewController {
         case .emptyFavorites:
             favoritesTableView.backgroundView = EmptyFavoritesView()
             refreshBtn.isHidden = true
-            editBtn.isHidden = true
+//            editBtn.isHidden = true
         case .fetching:
             favoritesTableView.loadingBackground()
             refreshBtn.isHidden = false
-            editBtn.isHidden = false
+//            editBtn.isHidden = false
         case .fetchComplete:
             favoritesTableView.backgroundView = nil
         }

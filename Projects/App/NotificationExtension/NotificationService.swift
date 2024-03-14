@@ -47,14 +47,14 @@ class NotificationService: UNNotificationServiceExtension {
                     )
                     else { return }
                     let busStopName = response.busStopName
-                    let firstArrivalTime = bus.firstArrivalTime
+                    let firstArrivalTime = bus.firstArrivalState.toString
                     let firstArrivalRemaining = bus.firstArrivalRemaining
-                    let secondArrivalTime = bus.secondArrivalTime
+                    let secondArrivalTime = bus.secondArrivalState.toString
                     let routeMessage: String
                     let remainingMessage: String
                     let firstLine: String
                     let secondLine: String
-                    switch bus.firstArrivalTime {
+                    switch bus.firstArrivalState.toString {
                     case "곧 도착":
                         routeMessage = "\(bus.busName)번 버스가 \(busStopName)에"
                         remainingMessage = "곧 도착해요."
@@ -69,11 +69,11 @@ class NotificationService: UNNotificationServiceExtension {
                         secondLine = "다음 버스는 \(secondArrivalTime) 후에 도착해요."
                     default:
                         routeMessage = "\(bus.busName)번 버스가 \(busStopName)에"
-                        remainingMessage = "\n\(firstArrivalTime) 후에 도착해요."
+                        remainingMessage = "\(firstArrivalTime) 후에 도착해요."
                         secondLine = "\(firstArrivalRemaining) 정류장을 지났어요."
                     }
                     firstLine = "\(routeMessage) \(remainingMessage)"
-                    let body = [firstLine, secondLine].joined(separator: "\n")
+                    let body = [firstLine, secondLine].joined(separator: " ")
                     // TODO: 앱 이름 변경되면 수정해야함
                     bestAttemptContent.title = "버스어디"
                     bestAttemptContent.subtitle = ""
@@ -85,9 +85,5 @@ class NotificationService: UNNotificationServiceExtension {
     }
     
     override func serviceExtensionTimeWillExpire() {
-        if let bestAttemptContent {
-            bestAttemptContent.title = "Expire"
-            contentHandler?(bestAttemptContent)
-        }
     }
 }

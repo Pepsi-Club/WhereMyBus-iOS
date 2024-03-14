@@ -164,11 +164,11 @@ public final class BusStopViewController: UIViewController {
             nextRouteName: response.nextStation
         )
         cell?.updateFirstArrival(
-            firstArrivalTime: response.firstArrivalTime,
+            firstArrivalTime: response.firstArrivalState.toString,
             firstArrivalRemaining: response.firstArrivalRemaining
         )
         cell?.updateSecondArrival(
-            secondArrivalTime: response.secondArrivalTime,
+            secondArrivalTime: response.secondArrivalState.toString,
             secondArrivalRemaining: response.secondArrivalRemaining
         )
         

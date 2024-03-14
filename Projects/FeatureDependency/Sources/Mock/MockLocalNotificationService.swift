@@ -26,7 +26,34 @@ public final class MockLocalNotificationService: LocalNotificationService {
     }
     
     public func fetchRegularAlarm() -> Observable<[RegularAlarmResponse]> {
-        .just([])
+        .just(
+            [
+                .init(
+                    busStopId: "테스트",
+                    busStopName: "영등포역",
+                    busId: "테스트",
+                    busName: "영등포02",
+                    time: .now,
+                    weekDay: [0, 5]
+                ),
+                .init(
+                    busStopId: "테스트",
+                    busStopName: "영등포역",
+                    busId: "테스트",
+                    busName: "영등포02",
+                    time: .now,
+                    weekDay: [0, 5]
+                ),
+                .init(
+                    busStopId: "테스트",
+                    busStopName: "영등포역",
+                    busId: "테스트",
+                    busName: "영등포02",
+                    time: .now,
+                    weekDay: [0, 5]
+                ),
+            ]
+        )
     }
     
     public func registNewRegularAlarm(response: Domain.RegularAlarmResponse) throws {

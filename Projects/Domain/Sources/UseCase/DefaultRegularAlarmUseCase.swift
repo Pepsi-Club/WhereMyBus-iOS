@@ -22,6 +22,17 @@ public class DefaultRegularAlarmUseCase: RegularAlarmUseCase {
     
     public func fetchAlarm() {
         localNotificationService.fetchRegularAlarm()
+            .map {
+                $0.sorted {
+                    guard let firstValue = $0.weekday.sorted().first,
+                          let secondValue = $1.weekday.sorted().first
+                    else { return true }
+                    let dateResult = $0.time < $1.time
+                    let weekDayResult = firstValue < secondValue
+                    return firstValue == secondValue ?
+                    dateResult : weekDayResult
+                }
+            }
             .withUnretained(self)
             .subscribe(
                 onNext: { useCase, responses in

@@ -31,45 +31,88 @@ public final class DefaultFavoritesRepository: FavoritesRepository {
     public func addRoute(
         arsId: String,
         bus: BusArrivalInfoResponse
-    ) {
+    ) throws {
         do {
             var oldFavorites = try favorites.value()
-            if oldFavorites.contains(where: { $0.busStopId == arsId }) {
-                guard let favoriteToChange = oldFavorites
-                    .first(where: { $0.busStopId == arsId })
-                else { return }
-                let newBusIds = favoriteToChange.busIds + [bus.busId]
-                var newFavorites = oldFavorites.filter { $0.busStopId != arsId }
-                newFavorites.append(
-                    .init(
-                        busStopId: arsId,
-                        busIds: newBusIds
+            if let busStopToUpdate = oldFavorites
+                .first(
+                    where: { 
+                        $0.busStopId == arsId
+                    }
+                ) {
+                let busIdArrToUpdate = busStopToUpdate.busIds + [bus.busId]
+                let newFavorites = FavoritesBusStopResponse(
+                    busStopId: busStopToUpdate.busStopId,
+                    busIds: busIdArrToUpdate
+                )
+                do {
+                    try coreDataService.update(
+                        data: newFavorites,
+                        uniqueKeyPath: \.busStopId
                     )
-                )
-                favorites.onNext(newFavorites)
-                return
+                } catch {
+                    throw error
+                }
+            } else {
+                do {
+                    try coreDataService.save(
+                        data: FavoritesBusStopResponse(
+                            busStopId: arsId,
+                            busIds: [bus.busId]
+                        )
+                    )
+                } catch {
+                    throw error
+                }
             }
-            oldFavorites.append(
-                .init(
-                    busStopId: arsId,
-                    busIds: [bus.busId]
-                )
-            )
-            favorites.onNext(oldFavorites)
+            fetchFavorites()
         } catch {
-            print(error, "즐겨찾기 업데이트 실패")
+            throw error
         }
     }
     
     public func removeRoute(
         arsId: String,
         bus: BusArrivalInfoResponse
-    ) {
+    ) throws {
         do {
-            let newFavorites = try favorites.value()
-            favorites.onNext(newFavorites)
+            var oldFavorites = try favorites.value()
+            guard let busStopToRemove = oldFavorites
+                .first(
+                    where: {
+                        $0.busStopId == arsId
+                    }
+                )
+            else { return }
+            if busStopToRemove.busIds.count > 1 {
+                let newBusId = busStopToRemove.busIds.filter { $0 != bus.busId }
+                do {
+                    try coreDataService.update(
+                        data: FavoritesBusStopResponse(
+                            busStopId: arsId,
+                            busIds: newBusId
+                        ),
+                        uniqueKeyPath: \.busStopId
+                    )
+                } catch {
+                    throw error
+                }
+            } else {
+                do {
+                    try coreDataService.delete(
+                        data: FavoritesBusStopResponse(
+                            busStopId: arsId,
+                            busIds: [bus.busId]
+                        ),
+                        uniqueKeyPath: \.busStopId
+                    )
+                } catch {
+                    throw error
+                }
+            }
+            fetchFavorites()
         } catch {
-            print(error, "즐겨찾기 업데이트 실패")
+            throw error
         }
     }
     

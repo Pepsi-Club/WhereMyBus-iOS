@@ -16,7 +16,6 @@ import NetworkService
 import RxSwift
 
 public final class DefaultLocalNotificationService: LocalNotificationService {
-    private let busStopArrivalInfoRepository: BusStopArrivalInfoRepository
     private let notificationCenter = UNUserNotificationCenter.current()
     
     public let authState = BehaviorSubject<UNAuthorizationStatus>(
@@ -24,9 +23,7 @@ public final class DefaultLocalNotificationService: LocalNotificationService {
     )
     private let disposeBag = DisposeBag()
     
-    public init(busStopArrivalInfoRepository: BusStopArrivalInfoRepository) {
-        self.busStopArrivalInfoRepository = busStopArrivalInfoRepository
-    }
+    public init() { }
     
     public func authorize() {
         notificationCenter.getNotificationSettings { [weak self] setting in
@@ -97,7 +94,8 @@ public final class DefaultLocalNotificationService: LocalNotificationService {
                 repeats: true
             )
             let content = UNMutableNotificationContent()
-            let body = "앱에서 \(response.busName)번 버스 도착정보를 확인하세요."
+            let remaining = "\(response.busStopName)에 \(response.busName)번 "
+            let body = "\(remaining)버스가 곧 도착합니다."
             content.title = "버스어디"
             content.body = body
             content.userInfo["busStopId"] = response.busStopId

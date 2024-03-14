@@ -20,13 +20,13 @@ final class RegularAlarmTVCell: UITableViewCell {
     
     private let removeBtn: UIButton = {
         var config = UIButton.Configuration.plain()
-        let image = UIImage(systemName: "trash")
+        let image = UIImage(systemName: "minus.circle.fill")
         let imgConfig = UIImage.SymbolConfiguration(
-            font: .systemFont(ofSize: 20)
+            font: .systemFont(ofSize: 16)
         )
         config.image = image
         config.preferredSymbolConfigurationForImage = imgConfig
-        config.baseForegroundColor = DesignSystemAsset.gray5.color
+        config.baseForegroundColor = DesignSystemAsset.redBusColor.color
         let button = UIButton(configuration: config)
         return button
     }()
@@ -53,7 +53,7 @@ final class RegularAlarmTVCell: UITableViewCell {
         stackView.distribution = .equalCentering
         stackView.alignment = .center
         stackView.addDivider(
-            color: DesignSystemAsset.weekDayGray.color,
+            color: DesignSystemAsset.gray4.color,
             hasPadding: true,
             dividerRatio: 1
         )
@@ -134,7 +134,7 @@ final class RegularAlarmTVCell: UITableViewCell {
             string: bus + "\n",
             attributes: [
                 .font: DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(
-                    size: 26
+                    size: 23
                 ),
                 .foregroundColor: DesignSystemAsset.regularAlarmBlue.color
             ]
@@ -143,7 +143,7 @@ final class RegularAlarmTVCell: UITableViewCell {
             string: busStop,
             attributes: [
                 .font: DesignSystemFontFamily.NanumSquareNeoOTF.light.font(
-                    size: 12
+                    size: 15
                 ),
                 .foregroundColor: UIColor.black
             ]

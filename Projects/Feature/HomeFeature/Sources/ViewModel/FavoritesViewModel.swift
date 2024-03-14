@@ -5,15 +5,21 @@ import Domain
 import FeatureDependency
 
 import RxSwift
+import RxRelay
 
 public final class FavoritesViewModel: ViewModel {
     private let coordinator: HomeCoordinator
     @Injected(FavoritesUseCase.self) var useCase: FavoritesUseCase
     
     private let disposeBag = DisposeBag()
+    private var timer: BCTimer
     
-    public init(coordinator: HomeCoordinator) {
+    public init(
+        coordinator: HomeCoordinator,
+        timer: BCTimer
+    ) {
         self.coordinator = coordinator
+        self.timer = timer
     }
     
     deinit {
@@ -23,22 +29,15 @@ public final class FavoritesViewModel: ViewModel {
     public func transform(input: Input) -> Output {
         let output = Output(
             busStopArrivalInfoResponse: .init(),
-            favoritesState: .init()
+            favoritesState: .init(),
+            distanceFromTimerStart: .init(value: 0)
         )
         
         input.viewWillAppearEvent
             .withUnretained(self)
             .subscribe(
                 onNext: { viewModel, _ in
-                    guard let favorites = try? viewModel.useCase.favorites
-                        .value()
-                    else { return }
-                    if favorites.isEmpty {
-                        output.favoritesState.onNext(.emptyFavorites)
-                    } else {
-                        output.favoritesState.onNext(.fetching)
-                        viewModel.useCase.fetchFavoritesArrivals()
-                    }
+                    viewModel.useCase.fetchFavoritesArrivals()
                 }
             )
             .disposed(by: disposeBag)
@@ -53,13 +52,14 @@ public final class FavoritesViewModel: ViewModel {
             .disposed(by: disposeBag)
         
         input.refreshBtnTapEvent
-        .withUnretained(self)
-        .subscribe(
-            onNext: { viewModel, _ in
-                viewModel.useCase.fetchFavoritesArrivals()
-            }
-        )
-        .disposed(by: disposeBag)
+            .withUnretained(self)
+            .subscribe(
+                onNext: { viewModel, _ in
+                    output.favoritesState.onNext(.fetching)
+                    viewModel.useCase.fetchFavoritesArrivals()
+                }
+            )
+            .disposed(by: disposeBag)
         
         input.busStopTapEvent
             .withUnretained(self)
@@ -78,27 +78,40 @@ public final class FavoritesViewModel: ViewModel {
             )
             .disposed(by: disposeBag)
         
-        useCase.favorites
-            .withUnretained(self)
+        timer.distanceFromStart
+            .bind(to: output.distanceFromTimerStart)
+            .disposed(by: disposeBag)
+        
+        useCase.busStopArrivalInfoResponse
             .subscribe(
-                onNext: { viewModel, favorites in
-                    if favorites.isEmpty {
+                onNext: { responses in
+                    output.busStopArrivalInfoResponse.onNext(responses)
+                    if responses.isEmpty {
                         output.favoritesState.onNext(.emptyFavorites)
                     } else {
-                        output.favoritesState.onNext(.fetching)
-                        viewModel.useCase.fetchFavoritesArrivals()
+                        output.favoritesState.onNext(.fetchComplete)
                     }
                 }
             )
             .disposed(by: disposeBag)
         
-        useCase.busStopArrivalInfoResponse
-            .bind(
-                to: output.busStopArrivalInfoResponse
+        output.favoritesState
+            .withUnretained(self)
+            .subscribe(
+                onNext: { viewModel, state in
+                    switch state {
+                    case .emptyFavorites:
+                        break
+                    case .fetching:
+                        viewModel.timer.stop()
+                    case .fetchComplete:
+                        viewModel.timer.start()
+                    }
+                }
             )
             .disposed(by: disposeBag)
         
-        return output
+        return output        
     }
 }
 
@@ -115,6 +128,7 @@ extension FavoritesViewModel {
         var busStopArrivalInfoResponse
         : PublishSubject<[BusStopArrivalInfoResponse]>
         var favoritesState: PublishSubject<FavoritesState>
+        var distanceFromTimerStart: BehaviorRelay<Int>
     }
     
     enum FavoritesState {
