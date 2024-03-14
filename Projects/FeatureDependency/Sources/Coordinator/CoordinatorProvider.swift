@@ -24,7 +24,7 @@ public protocol CoordinatorProvider {
         navigationController: UINavigationController
     ) -> AddRegularAlarmCoordinator
     
-    func makeBusStopMapCoordinator(
+    func makeNearMapCoordinator(
         navigationController: UINavigationController,
         busStopId: String
     ) -> NearMapCoordinator

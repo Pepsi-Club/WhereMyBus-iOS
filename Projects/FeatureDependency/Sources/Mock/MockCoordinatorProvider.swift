@@ -12,6 +12,7 @@ import Domain
 
 #if DEBUG
 public final class MockCoordinatorProvider: CoordinatorProvider {
+	
     public init() { }
     
     public func makeSearchCoordinator(
@@ -42,7 +43,7 @@ public final class MockCoordinatorProvider: CoordinatorProvider {
         )
     }
     
-    public func makeBusStopMapCoordinator(
+    public func makeNearMapCoordinator(
         navigationController: UINavigationController,
         busStopId: String
     ) -> NearMapCoordinator {

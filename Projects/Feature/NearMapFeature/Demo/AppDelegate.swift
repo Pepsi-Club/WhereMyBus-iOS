@@ -35,13 +35,4 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 		didDiscardSceneSessions sceneSessions: Set<UISceneSession>
 	) {
     }
-	
-    func register() {
-        DIContainer.register(
-            type: NearBusStopUseCase.self,
-            DefaultNearBusStopUseCase(
-                stationListRepository: MockStationLIstRepository()
-            )
-        )
-    }
 }

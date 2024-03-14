@@ -97,9 +97,9 @@ public final class DefaultBusStopUseCase: BusStopUseCase {
         bus: BusArrivalInfoResponse
     ) {
         if bus.isFavorites {
-            self.favoritesRepository.removeRoute(arsId: busStop, bus: bus)
+            try? self.favoritesRepository.removeRoute(arsId: busStop, bus: bus)
         } else {
-            self.favoritesRepository.addRoute(arsId: busStop, bus: bus)
+            try? self.favoritesRepository.addRoute(arsId: busStop, bus: bus)
         }
     }
 }

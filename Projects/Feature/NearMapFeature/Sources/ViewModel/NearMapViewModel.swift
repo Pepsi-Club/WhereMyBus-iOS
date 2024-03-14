@@ -11,8 +11,7 @@ import KakaoMapsSDK
 
 public final class NearMapViewModel
 : NSObject, CLLocationManagerDelegate, ViewModel {
-	
-	@Injected(NearBusStopUseCase.self) var useCase: NearBusStopUseCase
+	@Injected(NearMapUseCase.self) var useCase: NearMapUseCase
     private let coordinator: NearMapCoordinator
     
     var mapController: KMController?
@@ -190,6 +189,7 @@ public final class NearMapViewModel
 
 extension NearMapViewModel: MapControllerDelegate {
 	public func addViews() {
+		
 		let defaultPosition = MapPoint(
 			longitude: 127.108678,
 			latitude: 37.402001

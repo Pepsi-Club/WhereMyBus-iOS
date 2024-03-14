@@ -11,25 +11,25 @@ public final class DefaultNearMapCoordinator: NearMapCoordinator {
     public var navigationController: UINavigationController
     public var coordinatorProvider: CoordinatorProvider
 	
-	private let disposeBag = DisposeBag()
-    
     public init(
-		parent: Coordinator?,
+        parent: Coordinator?,
         navigationController: UINavigationController,
         coordinatorProvider: CoordinatorProvider
 	) {
 		self.parent = parent
         self.navigationController = navigationController
-        self.coordinatorProvider = coordinatorProvider
+		self.coordinatorProvider = coordinatorProvider
     }
+	
+	// MARK: - Function
     
     public func start() {
         let nearmapViewController = NearMapViewController(
 			viewModel: NearMapViewModel(coordinator: self)
         )
-        navigationController.setViewControllers(
-            [nearmapViewController],
-            animated: false
+        navigationController.pushViewController(
+            nearmapViewController,
+            animated: true
         )
     }
 }
@@ -43,4 +43,5 @@ extension DefaultNearMapCoordinator {
         childs.append(busStopCoordinator)
         busStopCoordinator.start()
     }
+	
 }
