@@ -2,6 +2,7 @@ import UIKit
 
 import Core
 import Domain
+import FeatureDependency
 
 import RxSwift
 
@@ -12,9 +13,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 		_ application: UIApplication,
 		didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
 	) -> Bool {
-		
-		register()
-		
+        register()
         return true
     }
 
@@ -35,7 +34,5 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 		_ application: UIApplication,
 		didDiscardSceneSessions sceneSessions: Set<UISceneSession>
 	) {
-		
     }
-	
 }

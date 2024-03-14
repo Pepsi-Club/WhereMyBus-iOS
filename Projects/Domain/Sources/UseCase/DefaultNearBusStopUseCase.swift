@@ -1,5 +1,5 @@
 //
-//  DefaultNearMapUseCase.swift
+//  NearMapUseCase.swift
 //  Domain
 //
 //  Created by Muker on 2/14/24.
@@ -12,7 +12,7 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-public final class DefaultNearMapUseCase: NearMapUseCase {
+public final class DefaultNearBusStopUseCase: NearBusStopUseCase {
     public let stationListRepository: StationListRepository
 
     public let nearByBusStop = PublishSubject<BusStopInfoResponse>()

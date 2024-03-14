@@ -27,7 +27,8 @@ extension AppDelegate {
         = DefaultStationListRepository()
         let localNotificationService: LocalNotificationService
         = DefaultLocalNotificationService()
-        
+        let regularAlarmEditingService: RegularAlarmEditingService
+        = DefaultRegularAlarmEditingService()
         DIContainer.register(
             type: FavoritesUseCase.self,
             DefaultFavoritesUseCase(
@@ -64,8 +65,15 @@ extension AppDelegate {
         )
         
         DIContainer.register(
+            type: NearMapUseCase.self,
+            DefaultNearMapUseCase(
+                stationListRepository: stationListRepository
+            )
+        )
+        
+        DIContainer.register(
             type: RegularAlarmEditingService.self,
-            DefaultRegularAlarmEditingService()
+            regularAlarmEditingService
         )
     }
 }

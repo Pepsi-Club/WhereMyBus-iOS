@@ -11,7 +11,7 @@ import Foundation
 
 import RxSwift
 
-public protocol NearMapUseCase {
+public protocol NearBusStopUseCase {
     var stationListRepository: StationListRepository { get }
     var nearByBusStop: PublishSubject<BusStopInfoResponse> { get }
     
