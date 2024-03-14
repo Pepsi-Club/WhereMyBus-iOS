@@ -64,7 +64,7 @@ class SettingButtonView: UIView {
     }
     
     private func configureUI() {
-        [basicAlarmSetting, developVersion,
+        [developVersion,
          termsPrivacyBtn, locationPrivacyBtn]
             .forEach { components in
                 components.translatesAutoresizingMaskIntoConstraints = false
@@ -75,21 +75,24 @@ class SettingButtonView: UIView {
             }
         
         NSLayoutConstraint.activate([
-            basicAlarmSetting.topAnchor.constraint(
-                equalTo: topAnchor
-            ),
-            basicAlarmSetting.leadingAnchor.constraint(
-                equalTo: leadingAnchor
-            ),
-            basicAlarmSetting.trailingAnchor.constraint(
-                equalTo: trailingAnchor
-            ),
-            basicAlarmSetting.widthAnchor.constraint(
-                equalTo: widthAnchor
-            ),
+//            basicAlarmSetting.topAnchor.constraint(
+//                equalTo: topAnchor
+//            ),
+//            basicAlarmSetting.leadingAnchor.constraint(
+//                equalTo: leadingAnchor
+//            ),
+//            basicAlarmSetting.trailingAnchor.constraint(
+//                equalTo: trailingAnchor
+//            ),
+//            basicAlarmSetting.widthAnchor.constraint(
+//                equalTo: widthAnchor
+//            ),
+//            termsPrivacyBtn.topAnchor.constraint(
+//                equalTo: basicAlarmSetting.bottomAnchor,
+//                constant: 20
+//            ),
             termsPrivacyBtn.topAnchor.constraint(
-                equalTo: basicAlarmSetting.bottomAnchor,
-                constant: 20
+                equalTo: topAnchor
             ),
             termsPrivacyBtn.leadingAnchor.constraint(
                 equalTo: leadingAnchor
