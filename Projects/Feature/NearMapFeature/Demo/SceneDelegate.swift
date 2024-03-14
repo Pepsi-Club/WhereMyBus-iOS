@@ -2,6 +2,7 @@ import UIKit
 
 import FeatureDependency
 import NearMapFeature
+import FeatureDependency
 
 final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
@@ -17,11 +18,11 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let navigationController = UINavigationController()
         window?.rootViewController = navigationController
         window?.makeKeyAndVisible()
-                
+        
         let nearMapCoordinator = DefaultNearMapCoordinator(
-			parent: nil,
+			parent: nil, 
 			navigationController: navigationController,
-			coordinatorProvider: MockCoordinatorProvider()
+            coordinatorProvider: MockCoordinatorProvider()
         )
         nearMapCoordinator.start()
     }

@@ -9,5 +9,5 @@
 import Foundation
 
 public protocol NearMapCoordinator: Coordinator {
-
+    func startBusStopFlow(busStopId: String)
 }

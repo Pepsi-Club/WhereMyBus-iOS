@@ -29,7 +29,7 @@ public final class MockCoordinatorProvider: CoordinatorProvider {
         busStopId: String
     ) -> BusStopCoordinator {
         MockCoordinator(
-            testMessage: "BusStop", 
+            testMessage: "BusStop - busStopId: \(busStopId)",
             navigationController: navigationController
         )
     }
@@ -48,7 +48,7 @@ public final class MockCoordinatorProvider: CoordinatorProvider {
         busStopId: String
     ) -> NearMapCoordinator {
         MockCoordinator(
-            testMessage: "NearMap",
+            testMessage: "NearMap - busStopId: \(busStopId)",
             navigationController: navigationController
         )
     }

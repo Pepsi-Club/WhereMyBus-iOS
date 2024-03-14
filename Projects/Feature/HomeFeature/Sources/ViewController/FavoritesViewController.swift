@@ -332,7 +332,8 @@ public final class FavoritesViewController: UIViewController {
         let firstArrivalTime = response.firstArrivalState.toString
         let secondArrivalTime = response.secondArrivalState.toString
         cell?.updateUI(
-            busName: response.busName,
+            busName: response.busName, 
+            busType: response.busType,
             firstArrivalTime: firstArrivalTime,
             firstArrivalRemaining: response.firstArrivalRemaining,
             secondArrivalTime: secondArrivalTime,

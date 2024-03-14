@@ -41,7 +41,7 @@ extension DefaultBusStopCoordinator {
     // 정류장 위치뷰로 이동하기 위한
     public func busStopMapLocation(busStopId: String) {
         let nearMapCoordinator = coordinatorProvider
-            .makeBusStopMapCoordinator(
+            .makeBusStopCoordinator(
                 navigationController: navigationController,
                 busStopId: busStopId
             )
