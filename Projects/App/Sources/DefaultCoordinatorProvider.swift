@@ -16,7 +16,7 @@ import NearMapFeature
 import Domain
 
 final class DefaultCoordinatorProvider: CoordinatorProvider {
-    
+	
     func makeBusStopCoordinator(
         navigationController: UINavigationController,
         busStopId: String
@@ -48,13 +48,14 @@ final class DefaultCoordinatorProvider: CoordinatorProvider {
         )
     }
     
-    func makeBusStopMapCoordinator(
+    func makeNearMapCoordinator(
         navigationController: UINavigationController,
         busStopId: String
     ) -> NearMapCoordinator {
         DefaultNearMapCoordinator(
             parent: nil,
-            navigationController: navigationController
+			navigationController: navigationController, 
+			coordinatorProvider: self
         )
     }
 }

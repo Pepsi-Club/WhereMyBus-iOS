@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreLocation
 
 public extension String {
     func toDate(dateFormat: String) -> Date {
@@ -35,4 +36,24 @@ public extension String {
         else { fatalError("Can't Not Find Server Key") }
         return serverKey
     }
+	
+	static func calculationDistance(
+		startPointLatitude: Double,
+		startPointLongitude: Double,
+		endPointLatitude: Double,
+		endPointLongitude: Double
+	) -> Int {
+		
+		let start = CLLocation(
+			latitude: startPointLatitude,
+			longitude: startPointLongitude
+		)
+		
+		let end = CLLocation(
+			latitude: endPointLatitude,
+			longitude: endPointLongitude
+		)
+		
+		return Int(start.distance(from: end))
+	}
 }
