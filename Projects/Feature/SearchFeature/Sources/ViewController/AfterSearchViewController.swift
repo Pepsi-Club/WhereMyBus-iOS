@@ -196,17 +196,6 @@ public final class AfterSearchViewController
             .disposed(by: disposeBag)
     }
     
-    private func hideKeyboard() {
-        let tap: UITapGestureRecognizer = UITapGestureRecognizer(
-            target: self,
-            action: #selector(dismissKeyboard))
-        view.addGestureRecognizer(tap)
-    }
-    
-    @objc func dismissKeyboard() {
-        view.endEditing(true)
-    }
-    
     private func configureDataSource() {
         dataSource = .init(
             tableView: afterSearchResultTableView,

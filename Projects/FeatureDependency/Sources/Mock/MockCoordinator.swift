@@ -87,6 +87,10 @@ extension MockCoordinator: SearchCoordinator {
 
 
 extension MockCoordinator: BusStopCoordinator {
+    public func moveToRegualrAlarm() {
+        
+    }
+    
     public func popVC() {
         navigationController.popViewController(animated: true)
         finish()

@@ -10,15 +10,18 @@ public final class DefaultSearchCoordinator
     public var childs: [Coordinator] = []
     public var navigationController: UINavigationController
     public let coordinatorProvider: CoordinatorProvider
+    private let flow: FlowState
     
     public init(
         parent: Coordinator?,
         navigationController: UINavigationController,
-        coordinatorProvider: CoordinatorProvider
+        coordinatorProvider: CoordinatorProvider,
+        flow: FlowState
     ) {
         self.navigationController = navigationController
         self.parent = parent
         self.coordinatorProvider = coordinatorProvider
+        self.flow = flow
     }
     
     public func start() {
@@ -39,7 +42,8 @@ public final class DefaultSearchCoordinator
         let busStopCoordinator =
         coordinatorProvider.makeBusStopCoordinator(
             navigationController: navigationController,
-            busStopId: ""
+            busStopId: "",
+            flow: flow
         )
         
         childs.append(busStopCoordinator)
@@ -70,7 +74,8 @@ extension DefaultSearchCoordinator {
         // BusStopCoordinatorFlow
         let busStopCoordinator = coordinatorProvider.makeBusStopCoordinator(
             navigationController: navigationController,
-            busStopId: stationId
+            busStopId: stationId,
+            flow: flow
         )
         childs.append(busStopCoordinator)
         busStopCoordinator.start()
@@ -78,9 +83,10 @@ extension DefaultSearchCoordinator {
     
     // MARK: 여기는 협의 후에 
     public func startNearMapFlow(stationId: String) {
-        let nearMapCoordinator = coordinatorProvider.makeBusStopMapCoordinator(
+        let nearMapCoordinator = coordinatorProvider.makeNearMapCoordinator(
             navigationController: navigationController,
-            busStopId: stationId
+            busStopId: stationId,
+            flow: flow
         )
     }
     

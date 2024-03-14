@@ -1,5 +1,5 @@
 //
-//  UIScrollView+2.swift
+//  UIScrollView.swift
 //  Core
 //
 //  Created by 유하은 on 2024/03/13.

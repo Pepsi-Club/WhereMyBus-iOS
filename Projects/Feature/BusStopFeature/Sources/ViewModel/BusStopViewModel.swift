@@ -8,7 +8,8 @@ import RxSwift
 
 public final class BusStopViewModel: ViewModel {
     private let coordinator: BusStopCoordinator
-    @Injected(BusStopUseCase.self) var useCase: BusStopUseCase
+    @Injected(BusStopUseCase.self)
+    private var useCase: BusStopUseCase
     private let disposeBag = DisposeBag()
     private var fetchData: ArrivalInfoRequest
     
@@ -44,11 +45,12 @@ public final class BusStopViewModel: ViewModel {
             .disposed(by: disposeBag)
         
         input.mapBtnTapEvent
-            .withLatestFrom(output.busStopArrivalInfoResponse
+            .withLatestFrom(
+                output.busStopArrivalInfoResponse
             ) { _, busStopInfo in
                 return busStopInfo
             }
-            .withUnretained(self) // weak self 대신이다 ! -> 아님 -> self를 인자로 받아
+            .withUnretained(self)
             .subscribe { viewModel, busStopInfo in
                 viewModel.coordinator.busStopMapLocation(
                     busStopId: busStopInfo.busStopId
@@ -68,7 +70,8 @@ public final class BusStopViewModel: ViewModel {
             .disposed(by: disposeBag)
         
         input.likeBusBtnTapEvent
-            .withLatestFrom(output.busStopArrivalInfoResponse
+            .withLatestFrom(
+                output.busStopArrivalInfoResponse
             ) { busInfo, busStopInfo in
                 return (busInfo, busStopInfo.busStopId)
             }
@@ -86,6 +89,23 @@ public final class BusStopViewModel: ViewModel {
             .subscribe { viewModel, _ in
                 viewModel.coordinator.popVC()
             }
+            .disposed(by: disposeBag)
+        
+        input.cellSelectTapEvent
+            .withLatestFrom(
+                output.busStopArrivalInfoResponse
+            ) { indexPath, busStopInfo in
+                return (busStopInfo.buses[indexPath.row], busStopInfo)
+            }
+            .withUnretained(self)
+            .subscribe(onNext: { viewModel, arg1 in
+                let (busInfo, busStopInfo) = arg1
+                viewModel.useCase.update(
+                    busStopInfo: busStopInfo,
+                    busInfo: busInfo
+                )
+                viewModel.coordinator.moveToRegualrAlarm()
+            })
             .disposed(by: disposeBag)
         
         useCase.busStopSection
@@ -118,6 +138,7 @@ extension BusStopViewModel {
         let mapBtnTapEvent: Observable<Void>
         let refreshLoading: Observable<Void>
         let navigationBackBtnTapEvent: Observable<Void>
+        let cellSelectTapEvent: Observable<IndexPath>
     }
     
     public struct Output {

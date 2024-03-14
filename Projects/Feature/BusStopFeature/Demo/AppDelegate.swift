@@ -28,7 +28,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
             type: BusStopUseCase.self,
             DefaultBusStopUseCase(
                 busStopArrivalInfoRepository: MockBusStopArrivalInfoRepository(),
-                favoritesRepository: MockFavoritesRepository()
+                favoritesRepository: MockFavoritesRepository(),
+                regularAlarmEditingService: MockRegualrAlarmEditingService()
             )
         )
     }

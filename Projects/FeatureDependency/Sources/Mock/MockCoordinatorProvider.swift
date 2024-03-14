@@ -16,7 +16,8 @@ public final class MockCoordinatorProvider: CoordinatorProvider {
     public init() { }
     
     public func makeSearchCoordinator(
-        navigationController: UINavigationController
+        navigationController: UINavigationController,
+        flow: FlowState
     ) -> SearchCoordinator {
         MockCoordinator(
             testMessage: "Search",
@@ -26,7 +27,8 @@ public final class MockCoordinatorProvider: CoordinatorProvider {
     
     public func makeBusStopCoordinator(
         navigationController: UINavigationController,
-        busStopId: String
+        busStopId: String,
+        flow: FlowState
     ) -> BusStopCoordinator {
         MockCoordinator(
             testMessage: "BusStop - busStopId: \(busStopId)",
@@ -35,7 +37,8 @@ public final class MockCoordinatorProvider: CoordinatorProvider {
     }
     
     public func makeAddRegularAlarmCoordinator(
-        navigationController: UINavigationController
+        navigationController: UINavigationController,
+        flow: FlowState
     ) -> AddRegularAlarmCoordinator {
         MockCoordinator(
             testMessage: "AddRegularAlarm",
@@ -45,7 +48,8 @@ public final class MockCoordinatorProvider: CoordinatorProvider {
     
     public func makeNearMapCoordinator(
         navigationController: UINavigationController,
-        busStopId: String
+        busStopId: String,
+        flow: FlowState
     ) -> NearMapCoordinator {
         MockCoordinator(
             testMessage: "NearMap - busStopId: \(busStopId)",

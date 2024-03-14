@@ -30,43 +30,51 @@ final class DefaultCoordinatorProvider: CoordinatorProvider {
     
     func makeBusStopCoordinator(
         navigationController: UINavigationController,
-        busStopId: String
+        busStopId: String,
+        flow: FlowState
     ) -> BusStopCoordinator {
         DefaultBusStopCoordinator(
             parent: nil,
             navigationController: navigationController,
             busStopId: busStopId,
-            coordinatorProvider: self
+            coordinatorProvider: self,
+            flow: flow
         )
     }
     
     func makeSearchCoordinator(
-        navigationController: UINavigationController
+        navigationController: UINavigationController,
+        flow: FlowState
     ) -> SearchCoordinator {
         DefaultSearchCoordinator(
             parent: nil,
             navigationController: navigationController,
-            coordinatorProvider: self
+            coordinatorProvider: self,
+            flow: flow
         )
     }
     
     func makeAddRegularAlarmCoordinator(
-        navigationController: UINavigationController
+        navigationController: UINavigationController,
+        flow: FlowState
     ) -> AddRegularAlarmCoordinator {
         DefaultAddRegularAlarmCoordinator(
             navigationController: navigationController,
-            coordinatorProvider: self
+            coordinatorProvider: self,
+            flow: .fromAlarm
         )
     }
     
     func makeNearMapCoordinator(
         navigationController: UINavigationController,
-        busStopId: String
+        busStopId: String,
+        flow: FlowState
     ) -> NearMapCoordinator {
         DefaultNearMapCoordinator(
             parent: nil,
 			navigationController: navigationController, 
-			coordinatorProvider: self
+            coordinatorProvider: self,
+            flow: flow
         )
     }
 }

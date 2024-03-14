@@ -29,6 +29,7 @@ extension AppDelegate {
         = DefaultLocalNotificationService()
         let regularAlarmEditingService: RegularAlarmEditingService
         = DefaultRegularAlarmEditingService()
+        
         DIContainer.register(
             type: FavoritesUseCase.self,
             DefaultFavoritesUseCase(
@@ -60,7 +61,8 @@ extension AppDelegate {
             type: BusStopUseCase.self,
             DefaultBusStopUseCase(
                 busStopArrivalInfoRepository: busStopArrivalInfoRepository,
-                favoritesRepository: favoritesRepository
+                favoritesRepository: favoritesRepository,
+                regularAlarmEditingService: regularAlarmEditingService
             )
         )
         

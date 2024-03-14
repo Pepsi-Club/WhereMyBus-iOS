@@ -59,24 +59,24 @@ public final class NearMapViewModel
             )
             .disposed(by: disposeBag)
         
-        input.kakaoMapTouchesEndedEvent
-            .withLatestFrom(
-                // MARK: 전체 1xxxx개 데이터를 넣어서 makeBusIcon에서
-                // filter해서 화면에 보이는 것들만 추가함
-                // TODO: [BusStopInfoResponse]만 리턴받으면 되고 자유롭게 수정해도 괜찮음
-                useCase.stationListRepository.searchResponse
-            ) { _, responses in
-                return responses
-            }
-            .withUnretained(self)
-            .subscribe(
-                onNext: { viewModel, responses in
-                    viewModel.makeBusIcon(
-                        responses: responses
-                    )
-                }
-            )
-            .disposed(by: disposeBag)
+//        input.kakaoMapTouchesEndedEvent
+//            .withLatestFrom(
+//                // MARK: 전체 1xxxx개 데이터를 넣어서 makeBusIcon에서
+//                // filter해서 화면에 보이는 것들만 추가함
+//                // TODO: [BusStopInfoResponse]만 리턴받으면 되고 자유롭게 수정해도 괜찮음
+//                useCase.stationListRepository.searchResponse
+//            ) { _, responses in
+//                return responses
+//            }
+//            .withUnretained(self)
+//            .subscribe(
+//                onNext: { viewModel, responses in
+//                    viewModel.makeBusIcon(
+//                        responses: responses
+//                    )
+//                }
+//            )
+//            .disposed(by: disposeBag)
         
         selectedBusId
             .withUnretained(self)

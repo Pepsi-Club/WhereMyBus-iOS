@@ -158,17 +158,6 @@ public final class SearchViewController: UIViewController, UITableViewDelegate {
         self.navigationItem.hidesSearchBarWhenScrolling = false
     }
     
-    private func hideKeyboard() {
-        let tap: UITapGestureRecognizer = UITapGestureRecognizer(
-            target: self,
-            action: #selector(dismissKeyboard))
-        view.addGestureRecognizer(tap)
-    }
-    
-    @objc func dismissKeyboard() {
-        view.endEditing(true)
-    }
-    
     private func configureUI() {
         view.backgroundColor = .white
         

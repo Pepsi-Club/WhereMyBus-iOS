@@ -9,31 +9,51 @@ public final class DefaultBusStopCoordinator: BusStopCoordinator {
     public var navigationController: UINavigationController
     public var coordinatorProvider: CoordinatorProvider
     private var busStopId: String
+    private let flow: FlowState
     
     public init(
         parent: Coordinator?,
         navigationController: UINavigationController,
         busStopId: String,
-        coordinatorProvider: CoordinatorProvider
+        coordinatorProvider: CoordinatorProvider,
+        flow: FlowState
     ) {
         self.parent = parent
         self.navigationController = navigationController
         self.busStopId = busStopId
         self.coordinatorProvider = coordinatorProvider
+        self.flow = flow
     }
     
     public func start() {
         let fetchData = ArrivalInfoRequest(busStopId: busStopId)
-        let busstopViewController = BusStopViewController(
-            viewModel: BusStopViewModel(
-                coordinator: self,
-                fetchData: fetchData
+        switch flow {
+        case .fromHome:
+            let busstopViewController = BusStopViewController(
+                viewModel: BusStopViewModel(
+                    coordinator: self,
+                    fetchData: fetchData
+                ),
+                flow: .fromHome
             )
-        )
-        navigationController.setViewControllers(
-            [busstopViewController],
-            animated: false
-        )
+            
+            navigationController.setViewControllers(
+                [busstopViewController],
+                animated: false
+            )
+        case .fromAlarm:
+            let busstopViewController = BusStopViewController(
+                viewModel: BusStopViewModel(
+                    coordinator: self,
+                    fetchData: fetchData
+                ),
+                flow: .fromAlarm
+            )
+            navigationController.setViewControllers(
+                [busstopViewController],
+                animated: false
+            )
+        }
     }
 }
 
@@ -43,11 +63,22 @@ extension DefaultBusStopCoordinator {
         let nearMapCoordinator = coordinatorProvider
             .makeBusStopCoordinator(
                 navigationController: navigationController,
-                busStopId: busStopId
+                busStopId: busStopId,
+                flow: flow
             )
         
         childs.append(nearMapCoordinator)
         nearMapCoordinator.start()
+    }
+    
+    public func moveToRegualrAlarm() {
+        let alarmCoordinator = coordinatorProvider
+            .makeAddRegularAlarmCoordinator(
+                navigationController: navigationController,
+                flow: .fromAlarm
+            )
+        childs.append(alarmCoordinator)
+        alarmCoordinator.start()
     }
     
     public func popVC() {

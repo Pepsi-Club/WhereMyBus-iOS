@@ -10,7 +10,11 @@ import UIKit
 
 import DesignSystem
 
+import RxSwift
+
 public final class RegularAlarmForBusTableViewCell: UITableViewCell {
+    public var disposeBag = DisposeBag()
+    
     public var busNumberLb: UILabel = {
         let label = UILabel()
         label.font = DesignSystemFontFamily.NanumSquareNeoOTF
@@ -19,7 +23,7 @@ public final class RegularAlarmForBusTableViewCell: UITableViewCell {
         return label
     }()
     
-    public var nextStationLb: UILabel = {
+    private var nextStationLb: UILabel = {
         let label = UILabel()
         label.font = DesignSystemFontFamily.NanumSquareNeoOTF
             .bold.font(size: 16)
@@ -27,7 +31,7 @@ public final class RegularAlarmForBusTableViewCell: UITableViewCell {
         return label
     }()
     
-    public var nextSymbol: UIImageView = {
+    private var nextSymbol: UIImageView = {
         let configuration = UIImage.SymbolConfiguration(
             pointSize: 16,
             weight: .regular
@@ -61,6 +65,22 @@ public final class RegularAlarmForBusTableViewCell: UITableViewCell {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    public override func prepareForReuse() {
+        super.prepareForReuse()
+        [busNumberLb, nextStationLb]
+            .forEach { $0.text = "" }
+
+        disposeBag = DisposeBag()
+    }
+    
+    public func updateUI(
+        busNumber: String,
+        nextStopName: String
+    ) {
+        busNumberLb.text = busNumber
+        nextStationLb.text = nextStopName
     }
     
     private func configureUI() {

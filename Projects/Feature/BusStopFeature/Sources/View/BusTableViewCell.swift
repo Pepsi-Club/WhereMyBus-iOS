@@ -150,20 +150,19 @@ public final class BusTableViewCell: UITableViewCell {
     
     private func buttonTap() {
         starBtn.rx.tap
-            .map({ _ in
-                print("🤮TAP")
-            })
-            .subscribe(onNext: { _ in
-                self.starBtnTapEvent.onNext(())
+            .map({ _ in })
+            .withUnretained(self)
+            .subscribe(onNext: { cell, _ in
+                cell.starBtnTapEvent.onNext(())
             })
             .disposed(by: disposeBag)
         
 //        alarmBtn.rx.tap
 //            .map({ _ in
-//                print("🤮TAP")
 //            })
-//            .subscribe(onNext: { _ in
-//                self.alarmBtnTapEvent.onNext(())
+//            .withUnretained(self)
+//            .subscribe(onNext: { cell, _ in
+//                cell.alarmBtnTapEvent.onNext(())
 //            })
 //            .disposed(by: disposeBag)
     }
@@ -212,24 +211,21 @@ extension BusTableViewCell {
     private func configureUI() {
         contentView.addSubview(totalStack)
         
-        [
-            starBtn, alarmBtn, busNumStack,
-            totalStack, busNumber, nextStopName,
-            firstArrivalInfoView, secondArrivalInfoView
-        ].forEach { components in
+        [starBtn, alarmBtn, busNumStack,
+         totalStack, busNumber, nextStopName,
+         firstArrivalInfoView, secondArrivalInfoView]
+            .forEach { components in
             components.translatesAutoresizingMaskIntoConstraints = false
         }
         
-        [
-            busNumber, nextStopName
-        ].forEach { components in
+        [busNumber, nextStopName]
+            .forEach { components in
             busNumStack.addArrangedSubview(components)
         }
         
-        [
-            starBtn, busNumStack, firstArrivalInfoView,
-            secondArrivalInfoView, alarmBtn
-        ].forEach { components in
+        [starBtn, busNumStack, firstArrivalInfoView,
+            secondArrivalInfoView, alarmBtn]
+            .forEach { components in
             totalStack.addArrangedSubview(components)
         }
         

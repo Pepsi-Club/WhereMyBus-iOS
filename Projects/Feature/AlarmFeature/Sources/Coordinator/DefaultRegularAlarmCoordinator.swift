@@ -36,7 +36,8 @@ public extension DefaultRegularAlarmCoordinator {
     func startAddRegularAlarmFlow() {
         let addRegularAlarmCoordinator = DefaultAddRegularAlarmCoordinator(
             navigationController: navigationController,
-            coordinatorProvider: coordinatorProvider
+            coordinatorProvider: coordinatorProvider,
+            flow: .fromAlarm
         )
         childs.append(addRegularAlarmCoordinator)
         addRegularAlarmCoordinator.start()
@@ -45,7 +46,8 @@ public extension DefaultRegularAlarmCoordinator {
     func startAddRegularAlarmFlow(with: RegularAlarmResponse) {
         let addRegularAlarmCoordinator = DefaultAddRegularAlarmCoordinator(
             navigationController: navigationController,
-            coordinatorProvider: coordinatorProvider
+            coordinatorProvider: coordinatorProvider,
+            flow: .fromAlarm
         )
         childs.append(addRegularAlarmCoordinator)
         addRegularAlarmCoordinator.start(with: with)
