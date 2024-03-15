@@ -29,7 +29,7 @@ public protocol CoordinatorProvider {
     
     func makeNearMapCoordinator(
         navigationController: UINavigationController,
-        busStopId: String,
-        flow: FlowState
+        flow: FlowState,
+        busStopId: String?
     ) -> NearMapCoordinator
 }

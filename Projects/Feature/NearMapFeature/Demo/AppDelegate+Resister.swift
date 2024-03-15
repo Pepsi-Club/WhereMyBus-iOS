@@ -17,7 +17,8 @@ extension AppDelegate {
         DIContainer.register(
             type: NearMapUseCase.self,
             DefaultNearMapUseCase(
-                stationListRepository: MockStationLIstRepository()
+                stationListRepository: MockStationLIstRepository(), 
+                locationService: MockLocationService()
             )
         )
 	}

@@ -10,14 +10,12 @@ import RxCocoa
 public final class SearchViewController: UIViewController {
     private let viewModel: SearchViewModel
     
-    private let nearBusStopTapEvent = PublishSubject<Void>()
     private let cellTapEvent = PublishSubject<String>()
     private let disposeBag = DisposeBag()
     
-    private let searchNearStopView = DeagreeSearchNearStopView()
-    private let searchTextFieldView = SearchTextFieldView()
-    
     private var dataSource: SearchDataSource!
+    
+    private let searchTextFieldView = SearchTextFieldView()
     
     private let recentSearchlabel: UILabel = {
         let label = UILabel()
@@ -42,17 +40,6 @@ public final class SearchViewController: UIViewController {
         return button
     }()
     
-    private let coloredRectangleView: UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor(
-            red: 230/255,
-            green: 237/255,
-            blue: 255/255,
-            alpha: 1.0
-        )
-        return view
-    }()
-    
     private let tvBackgroundView = RecentSearchBackgroundView()
     
     private lazy var recentSearchTableView: UITableView = {
@@ -64,6 +51,19 @@ public final class SearchViewController: UIViewController {
         table.dataSource = dataSource
         return table
     }()
+    
+    private let nearByStopPaddingView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor(
+            red: 230/255,
+            green: 237/255,
+            blue: 255/255,
+            alpha: 1.0
+        )
+        return view
+    }()
+    
+    private let nearByStopView = DeagreeSearchNearStopView()
     
     private var tableViewBtmConstraint: NSLayoutConstraint!
     
@@ -92,38 +92,14 @@ public final class SearchViewController: UIViewController {
         searchTextFieldView.removeFromSuperview()
     }
     
-    private func configureNavigation() {
-        navigationController?.isNavigationBarHidden = false
-        navigationController?.navigationBar.backItem?.title = ""
-        
-        guard let navigationView = navigationController?.navigationBar
-        else { return }
-        navigationView.addSubview(searchTextFieldView)
-        searchTextFieldView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            searchTextFieldView.trailingAnchor.constraint(
-                equalTo: navigationView.trailingAnchor,
-                constant: -10
-            ),
-            searchTextFieldView.widthAnchor.constraint(
-                equalTo: navigationView.widthAnchor,
-                multiplier: 0.9
-            ),
-            searchTextFieldView.heightAnchor.constraint(
-                equalTo: navigationView.heightAnchor,
-                multiplier: 0.9
-            )
-        ])
-    }
-    
     private func configureUI() {
         view.backgroundColor = .white
         
         [
             recentSearchlabel,
             removeBtn,
-            coloredRectangleView,
-            searchNearStopView,
+            nearByStopPaddingView,
+            nearByStopView,
             recentSearchTableView,
         ].forEach {
             view.addSubview($0)
@@ -132,7 +108,7 @@ public final class SearchViewController: UIViewController {
         
         let safeArea = view.safeAreaLayoutGuide
         tableViewBtmConstraint = recentSearchTableView.bottomAnchor.constraint(
-            equalTo: coloredRectangleView.topAnchor
+            equalTo: nearByStopPaddingView.topAnchor
         )
         NSLayoutConstraint.activate([
             recentSearchlabel.topAnchor.constraint(
@@ -155,33 +131,33 @@ public final class SearchViewController: UIViewController {
                 constant: -10
             ),
             
-            coloredRectangleView.bottomAnchor.constraint(
+            nearByStopPaddingView.bottomAnchor.constraint(
                 equalTo: safeArea.bottomAnchor,
                 constant: -200
             ),
-            coloredRectangleView.leadingAnchor.constraint(
+            nearByStopPaddingView.leadingAnchor.constraint(
                 equalTo: safeArea.leadingAnchor
             ),
-            coloredRectangleView.trailingAnchor.constraint(
+            nearByStopPaddingView.trailingAnchor.constraint(
                 equalTo: safeArea.trailingAnchor
             ),
             
-            searchNearStopView.topAnchor.constraint(
-                equalTo: coloredRectangleView.topAnchor,
+            nearByStopView.topAnchor.constraint(
+                equalTo: nearByStopPaddingView.topAnchor,
                 constant: 10
             ),
-            searchNearStopView.centerXAnchor.constraint(
+            nearByStopView.centerXAnchor.constraint(
                 equalTo: safeArea.centerXAnchor
             ),
-            searchNearStopView.widthAnchor.constraint(
+            nearByStopView.widthAnchor.constraint(
                 equalTo: view.widthAnchor,
                 multiplier: 0.95
             ),
-            searchNearStopView.heightAnchor.constraint(
+            nearByStopView.heightAnchor.constraint(
                 equalToConstant: 87
             ),
-            searchNearStopView.bottomAnchor.constraint(
-                equalTo: coloredRectangleView.bottomAnchor,
+            nearByStopView.bottomAnchor.constraint(
+                equalTo: nearByStopPaddingView.bottomAnchor,
                 constant: -10
             ),
             
@@ -200,21 +176,22 @@ public final class SearchViewController: UIViewController {
     }
     
     private func bind() {
+        let nearByStopTapGesture = UITapGestureRecognizer()
+        nearByStopView.addGestureRecognizer(nearByStopTapGesture)
+        
         let input = SearchViewModel.Input(
-            viewWillAppearEvenet: rx
-                .methodInvoked(#selector(UIViewController.viewWillAppear))
-                .map { _ in },
-            enterPressedEvent: searchTextFieldView.rx.text
+            textFieldChangeEvent: searchTextFieldView.rx.text
                 .orEmpty
+                .skip(1)
                 .asObservable(),
             removeBtnTapEvent: removeBtn.rx.tap.asObservable(),
-            nearBusStopTapEvent: nearBusStopTapEvent.asObservable(),
+            nearByStopTapEvent: nearByStopTapGesture.rx.event.map { _ in },
             cellTapEvent: cellTapEvent
         )
         
         let output = viewModel.transform(input: input)
         
-        output.recentSearchResultResponse
+        output.recentSearchedResponse
             .filter { _ in
                 output.tableViewSection.value == .recentSearch
             }
@@ -274,7 +251,7 @@ public final class SearchViewController: UIViewController {
                         viewController.tableViewBtmConstraint
                         = viewController.recentSearchTableView.bottomAnchor
                             .constraint(
-                                equalTo: viewController.coloredRectangleView
+                                equalTo: viewController.nearByStopPaddingView
                                     .topAnchor
                             )
                     case .searchedData:
@@ -291,6 +268,30 @@ public final class SearchViewController: UIViewController {
                 }
             )
             .disposed(by: disposeBag)
+    }
+    
+    private func configureNavigation() {
+        navigationController?.isNavigationBarHidden = false
+        navigationController?.navigationBar.backItem?.title = ""
+        
+        guard let navigationView = navigationController?.navigationBar
+        else { return }
+        navigationView.addSubview(searchTextFieldView)
+        searchTextFieldView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            searchTextFieldView.trailingAnchor.constraint(
+                equalTo: navigationView.trailingAnchor,
+                constant: -10
+            ),
+            searchTextFieldView.widthAnchor.constraint(
+                equalTo: navigationView.widthAnchor,
+                multiplier: 0.85
+            ),
+            searchTextFieldView.heightAnchor.constraint(
+                equalTo: navigationView.heightAnchor,
+                multiplier: 0.9
+            )
+        ])
     }
     
     private func configureDataSource() {

@@ -25,20 +25,10 @@ public final class SearchViewModel: ViewModel {
     public func transform(input: Input) -> Output {
         let output = Output(
             searchedResponse: useCase.searchedStationList,
-            recentSearchResultResponse: .init(),
+            recentSearchedResponse: .init(),
             nearByStop: .init(),
             tableViewSection: .init(value: .recentSearch)
         )
-        
-        input.viewWillAppearEvenet
-            .withUnretained(self)
-            .subscribe(
-                // MARK: 필요없을수도
-                onNext: { viewModel, _ in
-                    viewModel.useCase.getRecentSearchList()
-                }
-            )
-            .disposed(by: disposeBag)
         
         input.removeBtnTapEvent
             .withUnretained(self)
@@ -49,7 +39,7 @@ public final class SearchViewModel: ViewModel {
             )
             .disposed(by: disposeBag)
         
-        input.enterPressedEvent
+        input.textFieldChangeEvent
             .withLatestFrom(output.tableViewSection) { text, section in
                 return (text, section)
             }
@@ -81,8 +71,17 @@ public final class SearchViewModel: ViewModel {
             )
             .disposed(by: disposeBag)
         
+        input.nearByStopTapEvent
+            .withUnretained(self)
+            .subscribe(
+                onNext: { viewModel, _ in
+                    viewModel.coordinator.startNearMapFlow()
+                }
+            )
+            .disposed(by: disposeBag)
+        
         useCase.recentSearchResult
-            .bind(to: output.recentSearchResultResponse)
+            .bind(to: output.recentSearchedResponse)
             .disposed(by: disposeBag)
         
         return output
@@ -90,23 +89,16 @@ public final class SearchViewModel: ViewModel {
 }
 
 extension SearchViewModel {
-    enum InfoAgreeState {
-        case agree, disagree
-    }
-}
-
-extension SearchViewModel {
     public struct Input {
-        let viewWillAppearEvenet: Observable<Void>
-        let enterPressedEvent: Observable<String>
+        let textFieldChangeEvent: Observable<String>
         let removeBtnTapEvent: Observable<Void>
-        let nearBusStopTapEvent: Observable<Void>
+        let nearByStopTapEvent: Observable<Void>
         let cellTapEvent: Observable<String>
     }
     
     public struct Output {
         var searchedResponse: PublishSubject<[BusStopInfoResponse]>
-        var recentSearchResultResponse: PublishSubject<[BusStopInfoResponse]>
+        var recentSearchedResponse: PublishSubject<[BusStopInfoResponse]>
         var nearByStop: PublishSubject<BusStopInfoResponse>
         var tableViewSection: BehaviorRelay<SearchSection>
     }

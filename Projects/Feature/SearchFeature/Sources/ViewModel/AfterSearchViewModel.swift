@@ -45,7 +45,7 @@ public final class AfterSearchViewModel: ViewModel {
             .withUnretained(self)
             .subscribe(
                 onNext: { viewModel, _ in
-                    viewModel.coordinator.popVC()
+                    viewModel.coordinator.finishFlow()
                 })
             .disposed(by: disposeBag)
 

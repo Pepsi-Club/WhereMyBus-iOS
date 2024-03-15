@@ -22,7 +22,9 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let nearMapCoordinator = DefaultNearMapCoordinator(
 			parent: nil, 
 			navigationController: navigationController,
-            coordinatorProvider: MockCoordinatorProvider()
+            coordinatorProvider: MockCoordinatorProvider(), 
+            flow: .fromHome,
+            busStopId: nil
         )
         nearMapCoordinator.start()
     }

@@ -46,6 +46,7 @@ public final class DefaultStationListRepository: StationListRepository {
             data,
             forKey: userDefaultsKey
         )
+        recentlySearchedStation.accept(currentSearches)
     }
     
     private func fetchStationList() {

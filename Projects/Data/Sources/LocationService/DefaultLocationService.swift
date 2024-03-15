@@ -14,11 +14,7 @@ import Domain
 import RxCocoa
 import RxSwift
 
-final public class DefaultLocationService: NSObject,
-										   LocationService {
-	
-	// MARK: - Property
-	
+final public class DefaultLocationService: NSObject, LocationService {
 	private var locationManager = CLLocationManager()
 	
 	public lazy var authState = BehaviorSubject<CLAuthorizationStatus>(
@@ -27,24 +23,28 @@ final public class DefaultLocationService: NSObject,
 	
 	public lazy var currentLocation = BehaviorSubject<CLLocation>(
 		value: CLLocation(
-			latitude: locationManager.location?.coordinate.latitude ?? 0.0,
-			longitude: locationManager.location?.coordinate.longitude ?? 0.0
+			latitude: 127.108678,
+			longitude: 37.402001
 		)
 	)
 	
 	private let disposeBag = DisposeBag()
-	
-	// MARK: - Life Cycle
-	
-	public override init() { 
-		
+    
+	public override init() {
 		super.init()
 		locationManager.delegate = self
 		locationManager.desiredAccuracy = kCLLocationAccuracyBest
 	}
-	
-	// MARK: - Function
-	
+    
+    public func authorize() {
+        locationManager.requestWhenInUseAuthorization()
+        authState
+            .subscribe(
+                onNext: { print(String(describing: $0)) }
+            )
+            .disposed(by: disposeBag)
+    }
+    
 	/// 한번의 현재 위치 업데이트
 	public func requestLocationOnce() {
 		locationManager.requestLocation()
@@ -62,7 +62,6 @@ final public class DefaultLocationService: NSObject,
 }
 
 extension DefaultLocationService: CLLocationManagerDelegate {
-	
 	/// 현재위치가 바뀔때마다 업데이트되는 메서드
 	/// locations의 첫번째 인덱스는 최근 위치
 	public func locationManager(
@@ -83,10 +82,9 @@ extension DefaultLocationService: CLLocationManagerDelegate {
 	
 	/// 위치 정보 불러오는 도중 에러 처리 메서드
 	public func locationManager(
-		_ manager: CLLocationManager,
+        _ manager: CLLocationManager, 
         didFailWithError error: Error
-	) {
-		print("Location Error: \(error)")
+    ) {
+        currentLocation.onError(error)
 	}
-	
 }
