@@ -96,6 +96,14 @@ final class DeagreeSearchNearStopView: UIButton {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func updateUI(
+        busStopName: String,
+        distance: String
+    ) {
+        nearStopNameLabel.text = busStopName
+        distanceLabel.text = distance
+    }
+    
     private func configureUI() {
         
         [busStopImageView, nearStopLabel, nearStopNameLabel, distanceLabel,

@@ -12,7 +12,6 @@ import Domain
 
 #if DEBUG
 public final class MockCoordinatorProvider: CoordinatorProvider {
-	
     public init() { }
     
     public func makeSearchCoordinator(
@@ -48,8 +47,8 @@ public final class MockCoordinatorProvider: CoordinatorProvider {
     
     public func makeNearMapCoordinator(
         navigationController: UINavigationController,
-        busStopId: String,
-        flow: FlowState
+        flow: FlowState,
+        busStopId: String? = nil
     ) -> NearMapCoordinator {
         MockCoordinator(
             testMessage: "NearMap - busStopId: \(busStopId)",

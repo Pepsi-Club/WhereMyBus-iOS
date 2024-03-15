@@ -17,16 +17,12 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.rootViewController = navigationController
         window?.makeKeyAndVisible()
         
-//        let searchViewModel = SearchViewModel()
-//        let searchViewController = SearchViewController(
-//            viewModel: searchViewModel)
-//
-//        window?.rootViewController = searchViewController
-//
         let searchCoordinator = DefaultSearchCoordinator(
             parent: nil,
             navigationController: navigationController,
-            coordinatorProvider: MockCoordinatorProvider())
+            coordinatorProvider: MockCoordinatorProvider(), 
+            flow: .fromAlarm
+        )
         
         searchCoordinator.start()
     }

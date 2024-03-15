@@ -35,10 +35,12 @@ public final class SearchTextFieldView: UITextField {
         self.leftViewMode = .always
         self.clearButtonMode = .always
         self.addLeftPadding()
+        self.autocorrectionType = .no
+        self.spellCheckingType = .no
     }
     
     private func setPlaceholder(_ placeholder: String?) {
-    self.placeholder = " 버스 정류장을 검색하세요"
+        self.placeholder = " 버스 정류장을 검색하세요"
     }
 }
 

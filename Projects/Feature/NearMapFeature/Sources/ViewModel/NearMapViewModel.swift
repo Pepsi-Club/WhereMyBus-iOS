@@ -13,6 +13,8 @@ public final class NearMapViewModel
 : NSObject, CLLocationManagerDelegate, ViewModel {
 	@Injected(NearMapUseCase.self) var useCase: NearMapUseCase
     private let coordinator: NearMapCoordinator
+    private let busStopId: String?
+    private var busStopList: [BusStopInfoResponse] = []
     
     var mapController: KMController?
     
@@ -20,9 +22,11 @@ public final class NearMapViewModel
     private let disposeBag = DisposeBag()
 	
 	public init(
-        coordinator: NearMapCoordinator
+        coordinator: NearMapCoordinator,
+        busStopId: String?
     ) {
         self.coordinator = coordinator
+        self.busStopId = busStopId
 	}
 	
 	deinit {
@@ -40,6 +44,8 @@ public final class NearMapViewModel
             .withUnretained(self)
             .bind(
                 onNext: { viewModel, _ in
+                    viewModel.busStopList
+                    = viewModel.useCase.getNearBusStopList()
                     viewModel.useCase.getNearByBusStop()
                 }
             )
@@ -59,24 +65,31 @@ public final class NearMapViewModel
             )
             .disposed(by: disposeBag)
         
-//        input.kakaoMapTouchesEndedEvent
-//            .withLatestFrom(
-//                // MARK: 전체 1xxxx개 데이터를 넣어서 makeBusIcon에서
-//                // filter해서 화면에 보이는 것들만 추가함
-//                // TODO: [BusStopInfoResponse]만 리턴받으면 되고 자유롭게 수정해도 괜찮음
-//                useCase.stationListRepository.searchResponse
-//            ) { _, responses in
-//                return responses
-//            }
-//            .withUnretained(self)
-//            .subscribe(
-//                onNext: { viewModel, responses in
-//                    viewModel.makeBusIcon(
-//                        responses: responses
-//                    )
-//                }
-//            )
-//            .disposed(by: disposeBag)
+        input.kakaoMapTouchesEndedEvent
+            .withUnretained(self)
+            .subscribe(
+                onNext: { viewModel, _ in
+                    viewModel.makeBusIcon(
+                        responses: viewModel.busStopList
+                    )
+                }
+            )
+            .disposed(by: disposeBag)
+        
+        useCase.nearByBusStop
+            .withUnretained(self)
+            .subscribe(
+                onNext: { viewModel, response in
+                    guard let longitude = Double(response.longitude),
+                          let latitude = Double(response.latitude)
+                    else { return }
+                    viewModel.moveCamera(
+                        longitude: longitude,
+                        latitude: latitude
+                    )
+                }
+            )
+            .disposed(by: disposeBag)
         
         selectedBusId
             .withUnretained(self)
@@ -117,7 +130,7 @@ public final class NearMapViewModel
                 .withTintColor(DesignSystemAsset.accentColor.color),
             anchorPoint: CGPoint(
                 x: 0.0,
-                y: 0.5
+                y: 0.0
             )
         )
         let busPerLevelStyle = PerLevelPoiStyle(
@@ -182,6 +195,24 @@ public final class NearMapViewModel
             }
     }
     
+    private func moveCamera(
+        longitude: Double,
+        latitude: Double
+    ) {
+        guard let mapView = mapController?.getView("mapview") as? KakaoMap
+        else { return }
+        mapView.moveCamera(
+            .make(
+                target: .init(
+                    longitude: longitude,
+                    latitude: latitude
+                ),
+                mapView: mapView
+            )) {
+                self.makeBusIcon(responses: self.busStopList)
+            }
+    }
+    
     private func poiTappedHandler(_ param: PoiInteractionEventParam) {
         selectedBusId.onNext(param.poiItem.itemID)
     }
@@ -189,7 +220,10 @@ public final class NearMapViewModel
 
 extension NearMapViewModel: MapControllerDelegate {
 	public func addViews() {
-		
+        if let busStopId {
+            useCase.busStopSelected(busStopId: busStopId)
+        }
+        
 		let defaultPosition = MapPoint(
 			longitude: 127.108678,
 			latitude: 37.402001

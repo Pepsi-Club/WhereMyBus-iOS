@@ -36,9 +36,8 @@ public final class DefaultBusStopCoordinator: BusStopCoordinator {
                 ),
                 flow: .fromHome
             )
-            
-            navigationController.setViewControllers(
-                [busstopViewController],
+            navigationController.pushViewController(
+                busstopViewController,
                 animated: false
             )
         case .fromAlarm:
@@ -49,8 +48,8 @@ public final class DefaultBusStopCoordinator: BusStopCoordinator {
                 ),
                 flow: .fromAlarm
             )
-            navigationController.setViewControllers(
-                [busstopViewController],
+            navigationController.pushViewController(
+                busstopViewController,
                 animated: false
             )
         }

@@ -5,6 +5,7 @@ import Core
 import FeatureDependency
 
 import RxSwift
+import RxRelay
 
 public final class SearchViewModel: ViewModel {
     private let coordinator: SearchCoordinator
@@ -23,54 +24,64 @@ public final class SearchViewModel: ViewModel {
     
     public func transform(input: Input) -> Output {
         let output = Output(
-            afterSearchEnter: .init(),
-            jsontoSearchResponse: .init(value: .init([])),
-            recentSearchResultResponse: .init(value: .init([]))
+            searchedResponse: useCase.searchedStationList,
+            recentSearchedResponse: .init(),
+            nearByStop: .init(),
+            tableViewSection: .init(value: .recentSearch)
         )
         
-        input.viewWillAppearEvenet
+        input.removeBtnTapEvent
             .withUnretained(self)
             .subscribe(
-                // MARK: 필요없을수도
                 onNext: { viewModel, _ in
-                    viewModel.useCase.getRecentSearchList()
-                })
-            .disposed(by: disposeBag)
-        
-        input.enterPressedEvent
-            .withUnretained(self)
-            .subscribe(
-                onNext: { viewModel, textfield in
-                    print("엔터누름")
-                    viewModel.coordinator.goAfterSearchView(text: textfield)
+                    print(viewModel)
                 }
             )
             .disposed(by: disposeBag)
         
-        input.backbtnEvent
-            .withUnretained(self)
-            .subscribe(
-                onNext: { viewModel, _ in
-                    viewModel.coordinator.popVC()
-                }
-            )
-            .disposed(by: disposeBag)
-        
-        // MARK: 여기 map을 이런식으로 넣은 이유?
-        useCase.jsontoSearchData
-            .withUnretained(self)
-            .map { (_, result) in
-                return result
+        input.textFieldChangeEvent
+            .withLatestFrom(output.tableViewSection) { text, section in
+                return (text, section)
             }
-            .bind(to: output.jsontoSearchResponse)
+            .withUnretained(self)
+            .subscribe(
+                onNext: { viewModel, tuple in
+                    let (text, section) = tuple
+                    viewModel.useCase.search(term: text)
+                    switch section {
+                    case .recentSearch:
+                        if !text.isEmpty {
+                            output.tableViewSection.accept(.searchedData)
+                        }
+                    case .searchedData:
+                        if text.isEmpty {
+                            output.tableViewSection.accept(.recentSearch)
+                        }
+                    }
+                }
+            )
+            .disposed(by: disposeBag)
+        
+        input.cellTapEvent
+            .withUnretained(self)
+            .subscribe(
+                onNext: { viewModel, busStopId in
+                    viewModel.coordinator.startBusStopFlow(stationId: busStopId)
+                }
+            )
+            .disposed(by: disposeBag)
+        
+        input.nearByStopTapEvent
+            .withUnretained(self)
+            .subscribe(
+                onNext: { viewModel, _ in
+                    viewModel.coordinator.startNearMapFlow()
+                }
+            )
             .disposed(by: disposeBag)
         
         useCase.recentSearchResult
-            .withUnretained(self)
-            .map { (_, result) in
-                return result
-            }
-            .bind(to: output.recentSearchResultResponse)
+            .bind(to: output.recentSearchedResponse)
             .disposed(by: disposeBag)
         
         return output
@@ -78,27 +89,17 @@ public final class SearchViewModel: ViewModel {
 }
 
 extension SearchViewModel {
-    enum InfoAgreeState {
-        case agree, disagree
-    }
-}
-
-extension SearchViewModel {
     public struct Input {
-        let viewWillAppearEvenet: Observable<Void>
-//        let infoAgreeEvent: Observable<Bool>
-        let enterPressedEvent: Observable<String>
-        let backbtnEvent: Observable<Void>
-        let nearBusStopTapEvent: Observable<Void>
-//        let cellTapEvent: Observable<String>
+        let textFieldChangeEvent: Observable<String>
+        let removeBtnTapEvent: Observable<Void>
+        let nearByStopTapEvent: Observable<Void>
+        let cellTapEvent: Observable<String>
     }
     
     public struct Output {
-        // var infoAgreeEvent: BehaviorSubject<Bool>
-        var afterSearchEnter: PublishSubject<String>
-        var jsontoSearchResponse
-        : BehaviorSubject<[BusStopInfoResponse]>
-        var recentSearchResultResponse
-        : BehaviorSubject<[BusStopInfoResponse]>
+        var searchedResponse: PublishSubject<[BusStopInfoResponse]>
+        var recentSearchedResponse: PublishSubject<[BusStopInfoResponse]>
+        var nearByStop: PublishSubject<BusStopInfoResponse>
+        var tableViewSection: BehaviorRelay<SearchSection>
     }
 }

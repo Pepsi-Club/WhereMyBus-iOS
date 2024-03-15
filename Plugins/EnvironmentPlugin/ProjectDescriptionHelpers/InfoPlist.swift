@@ -69,7 +69,9 @@ public extension [String: Plist.Value] {
             "processing",
             "remote-notification"
         ],
-        "BGTaskSchedulerPermittedIdentifiers" : [.string(.bundleID)]
+        "BGTaskSchedulerPermittedIdentifiers" : [.string(.bundleID)],
+        "NSLocationWhenInUseUsageDescription" : "주변 정류장을 찾기 위해 권한이 필요합니다.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription" : "주변 정류장을 찾기 위해 권한이 필요합니다."
     ]
     
     static let baseInfoPlist: Self = [

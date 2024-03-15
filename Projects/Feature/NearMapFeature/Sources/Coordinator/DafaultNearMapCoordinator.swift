@@ -11,6 +11,7 @@ public final class DefaultNearMapCoordinator: NearMapCoordinator {
     public var navigationController: UINavigationController
     public var coordinatorProvider: CoordinatorProvider
     public let flow: FlowState
+    public let busStopId: String?
     
     private let disposeBag = DisposeBag()
     
@@ -18,20 +19,24 @@ public final class DefaultNearMapCoordinator: NearMapCoordinator {
         parent: Coordinator?,
         navigationController: UINavigationController,
         coordinatorProvider: CoordinatorProvider,
-        flow: FlowState
+        flow: FlowState,
+        busStopId: String?
     ) {
         self.parent = parent
         self.navigationController = navigationController
         self.coordinatorProvider = coordinatorProvider
         self.flow = flow
-
+        self.busStopId = busStopId
     }
 	
 	// MARK: - Function
     
     public func start() {
         let nearmapViewController = NearMapViewController(
-            viewModel: NearMapViewModel(coordinator: self)
+            viewModel: NearMapViewModel(
+                coordinator: self,
+                busStopId: busStopId
+            )
         )
         navigationController.pushViewController(
             nearmapViewController,

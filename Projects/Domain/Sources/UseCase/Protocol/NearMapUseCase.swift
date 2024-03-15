@@ -12,9 +12,9 @@ import Foundation
 import RxSwift
 
 public protocol NearMapUseCase {
-    var stationListRepository: StationListRepository { get }
     var nearByBusStop: PublishSubject<BusStopInfoResponse> { get }
     
     func getNearByBusStop()
+    func getNearBusStopList() -> [BusStopInfoResponse]
     func busStopSelected(busStopId: String)
 }
