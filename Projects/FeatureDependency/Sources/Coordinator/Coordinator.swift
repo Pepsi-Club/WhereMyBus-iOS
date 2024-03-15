@@ -13,7 +13,7 @@ import Core
 public protocol Coordinator: AnyObject {
     var parent: Coordinator? { get set }
     var childs: [Coordinator] { get set }
-    var navigationController: UINavigationController { get set }
+    var navigationController: UINavigationController { get }
     
     func start()
     func finish()

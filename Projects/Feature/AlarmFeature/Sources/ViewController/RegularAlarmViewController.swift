@@ -56,7 +56,7 @@ public final class RegularAlarmViewController: UIViewController {
     private func configureUI() {
         view.backgroundColor = .white
         
-        [titleLabel, alarmTableView, addBtn, floatingBtnSpacingView].forEach {
+        [floatingBtnSpacingView, titleLabel, alarmTableView, addBtn].forEach {
             view.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
         }

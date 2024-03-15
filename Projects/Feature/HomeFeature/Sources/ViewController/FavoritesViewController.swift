@@ -95,6 +95,10 @@ public final class FavoritesViewController: UIViewController {
         bind()
     }
     
+    public override func viewWillAppear(_ animated: Bool) {
+        navigationController?.isNavigationBarHidden = true
+    }
+    
     private func configureUI() {
         view.backgroundColor = .white
         navigationController?.isNavigationBarHidden = true

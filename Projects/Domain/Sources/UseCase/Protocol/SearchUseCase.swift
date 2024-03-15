@@ -11,9 +11,8 @@ import Foundation
 import RxSwift
 
 public protocol SearchUseCase {
-    func getStationList()
-    func getRecentSearchList()
+    var searchedStationList: PublishSubject<[BusStopInfoResponse]> { get }
+    var recentSearchResult: BehaviorSubject<[BusStopInfoResponse]> { get }
     
-    var recentSearchResult: BehaviorSubject<[BusStopInfoResponse]> {get}
-    var jsontoSearchData: PublishSubject<[BusStopInfoResponse]> {get}
+    func search(term: String)
 }

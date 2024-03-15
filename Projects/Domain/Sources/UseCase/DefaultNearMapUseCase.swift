@@ -13,44 +13,91 @@ import RxSwift
 import RxCocoa
 
 public final class DefaultNearMapUseCase: NearMapUseCase {
-    public let stationListRepository: StationListRepository
+    private let stationListRepository: StationListRepository
+    private let locationService: LocationService
 
     public let nearByBusStop = PublishSubject<BusStopInfoResponse>()
     private let disposeBag = DisposeBag()
 	
     public init(
-        stationListRepository: StationListRepository
+        stationListRepository: StationListRepository,
+        locationService: LocationService
     ) {
-		self.stationListRepository = stationListRepository
+        self.stationListRepository = stationListRepository
+		self.locationService = locationService
 	}
     
     public func getNearByBusStop() {
-//        do {
-//            let responses = try stationListRepository.searchResponse.value()
-//            // TODO: 위치 정보를 이용해 가장 가까운 정류장 찾기로 로직 수정
-//            let result = responses.first ?? .init(
-//                busStopName: "주변에 정류장이 없습니다.",
-//                busStopId: "",
-//                direction: "",
-//                longitude: "",
-//                latitude: ""
-//            )
-//            nearByBusStop.onNext(result)
-//        } catch {
-//            print(error.localizedDescription)
-//        }
+        locationService.authState
+            .withLatestFrom(
+                stationListRepository.stationList
+            ) { authState, stationList in
+                (authState, stationList)
+            }
+            .withUnretained(self)
+            .subscribe(
+                onNext: { useCase, tuple in
+                    let (authState, stationList) = tuple
+                    switch authState {
+                    case .notDetermined:
+                        useCase.locationService.authorize()
+                    case .restricted:
+                        let desciption = "오류가 발생했습니다. 관리자에게 문의해주세요."
+                        let result = BusStopInfoResponse(
+                            busStopName: desciption,
+                            busStopId: "",
+                            direction: "",
+                            longitude: "",
+                            latitude: ""
+                        )
+                        useCase.nearByBusStop.onNext(result)
+                    case .denied:
+                        let desciption = "주변 정류장을 확인하려면 위치 정보를 동의해주세요."
+                        let result = BusStopInfoResponse(
+                            busStopName: desciption,
+                            busStopId: "",
+                            direction: "",
+                            longitude: "",
+                            latitude: ""
+                        )
+                        useCase.nearByBusStop.onNext(result)
+                    case .authorizedAlways, .authorizedWhenInUse:
+                        let noNearByStop = BusStopInfoResponse(
+                            busStopName: "주변에 정류장이 없습니다.",
+                            busStopId: "",
+                            direction: "",
+                            longitude: "",
+                            latitude: ""
+                        )
+                        // TODO: 가장 가까운 정류장 찾기로 로직 수정
+                        let nearByStop = stationList.first ?? noNearByStop
+                        useCase.nearByBusStop.onNext(nearByStop)
+                    @unknown default:
+                        break
+                    }
+                }
+            )
+            .disposed(by: disposeBag)
+    }
+    
+    public func getNearBusStopList() -> [BusStopInfoResponse] {
+        do {
+            return try stationListRepository.stationList.value()
+        } catch {
+            return []
+        }
     }
     
     public func busStopSelected(busStopId: String) {
-//        do {
-//            let responses = try stationListRepository.searchResponse.value()
-//            guard let selectedBusStop = responses.first(where: { response in
-//                response.busStopId == busStopId
-//            })
-//            else { return }
-//            nearByBusStop.onNext(selectedBusStop)
-//        } catch {
-//            print(error.localizedDescription)
-//        }
+        do {
+            let responses = try stationListRepository.stationList.value()
+            guard let selectedBusStop = responses.first(where: { response in
+                response.busStopId == busStopId
+            })
+            else { return }
+            nearByBusStop.onNext(selectedBusStop)
+        } catch {
+            print(error.localizedDescription)
+        }
     }
 }

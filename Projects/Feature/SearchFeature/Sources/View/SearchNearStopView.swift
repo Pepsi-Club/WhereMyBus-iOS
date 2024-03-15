@@ -12,7 +12,6 @@ import Core
 import DesignSystem
 
 final class SearchNearStopView: UIButton {
-
     private let totalStack1: UIStackView = {
             let stack = UIStackView()
             stack.axis = .horizontal
