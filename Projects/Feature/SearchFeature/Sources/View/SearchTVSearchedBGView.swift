@@ -1,5 +1,5 @@
 //
-//  NoSearchView.swift
+//  SearchTVSearchedBGView.swift
 //  SearchFeature
 //
 //  Created by 유하은 on 2024/03/12.
@@ -10,7 +10,7 @@ import UIKit
 
 import DesignSystem
 
-public final class NoSearchView: UIView {
+public final class SearchTVSearchedBGView: UIView {
     private let nearStopNameLabel: UILabel = {
         let label = UILabel()
         label.font =

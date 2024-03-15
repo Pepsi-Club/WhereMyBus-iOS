@@ -14,7 +14,7 @@ import Domain
 
 import RxSwift
 
-final class RecentSearchCell: UITableViewCell {
+final class SearchTVCell: UITableViewCell {
     var disposeBag = DisposeBag()
     
     private let busStopNameLabel: UILabel = {

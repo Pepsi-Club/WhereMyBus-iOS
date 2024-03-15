@@ -1,6 +1,14 @@
+//
+//  UIViewController+.swift
+//  Core
+//
+//  Created by gnksbm on 3/15/24.
+//  Copyright © 2024 Pepsi-Club. All rights reserved.
+//
+
 import UIKit
 
-extension UIViewController {
+public extension UIViewController {
     func hideKeyboard() {
         view.addGestureRecognizer(
             UITapGestureRecognizer(

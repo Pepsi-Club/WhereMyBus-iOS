@@ -1,5 +1,5 @@
 //
-//  RecentSearchBackgroundView.swift
+//  SearchTVRecentSearchBGView.swift
 //  SearchFeature
 //
 //  Created by gnksbm on 3/15/24.
@@ -10,7 +10,7 @@ import UIKit
 
 import DesignSystem
 
-final class RecentSearchBackgroundView: UIView {
+final class SearchTVRecentSearchBGView: UIView {
     let descriptionLabel: UILabel = {
         let label = UILabel()
         let font = DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(

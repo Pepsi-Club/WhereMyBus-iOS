@@ -40,14 +40,14 @@ public final class SearchViewController: UIViewController {
         return button
     }()
     
-    private let tvBackgroundView = RecentSearchBackgroundView()
+    private let tvBackgroundView = SearchTVRecentSearchBGView()
     
     private lazy var recentSearchTableView: UITableView = {
         let table = UITableView(
             frame: .zero,
             style: .insetGrouped
         )
-        table.register(RecentSearchCell.self)
+        table.register(SearchTVCell.self)
         table.dataSource = dataSource
         return table
     }()
@@ -300,9 +300,9 @@ public final class SearchViewController: UIViewController {
             cellProvider: { [weak self] tableView, indexPath, response in
                 guard let self,
                       let cell = tableView.dequeueReusableCell(
-                        withIdentifier: RecentSearchCell.identifier,
+                        withIdentifier: SearchTVCell.identifier,
                         for: indexPath
-                      ) as? RecentSearchCell
+                      ) as? SearchTVCell
                 else { return .init() }
                 cell.updateUI(response: response)
                 let tapGesture = UITapGestureRecognizer()
