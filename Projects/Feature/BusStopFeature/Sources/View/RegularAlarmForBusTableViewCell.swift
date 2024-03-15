@@ -45,13 +45,11 @@ public final class RegularAlarmForBusTableViewCell: UITableViewCell {
         return image
     }()
     
-    private let horizontalStack: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .horizontal
-        stack.distribution = .equalSpacing
-        stack.alignment = .center
-        stack.spacing = 10
-        return stack
+    public let clearBtn: UIButton = {
+        let button = UIButton()
+        button.backgroundColor = .clear
+        button.isHighlighted = true
+        return button
     }()
     
     override public init(
@@ -59,6 +57,7 @@ public final class RegularAlarmForBusTableViewCell: UITableViewCell {
         reuseIdentifier: String?
     ) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        backgroundColor = .white
         
         configureUI()
     }
@@ -84,13 +83,17 @@ public final class RegularAlarmForBusTableViewCell: UITableViewCell {
     }
     
     private func configureUI() {
-        [busNumberLb, nextStationLb, nextSymbol]
+        [busNumberLb, nextStationLb, nextSymbol, clearBtn]
             .forEach { component in
                 component.translatesAutoresizingMaskIntoConstraints = false
-                addSubview(component)
+                contentView.addSubview(component)
             }
         
         NSLayoutConstraint.activate([
+            clearBtn.widthAnchor.constraint(equalTo: widthAnchor),
+            clearBtn.heightAnchor.constraint(equalToConstant: 60),
+            clearBtn.topAnchor.constraint(equalTo: topAnchor),
+            clearBtn.leadingAnchor.constraint(equalTo: leadingAnchor),
             busNumberLb.topAnchor.constraint(
                 equalTo: topAnchor,
                 constant: 20

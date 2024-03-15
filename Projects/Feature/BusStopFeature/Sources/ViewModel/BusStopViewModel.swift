@@ -94,8 +94,8 @@ public final class BusStopViewModel: ViewModel {
         input.cellSelectTapEvent
             .withLatestFrom(
                 output.busStopArrivalInfoResponse
-            ) { indexPath, busStopInfo in
-                return (busStopInfo.buses[indexPath.row], busStopInfo)
+            ) { busInfo, busStopInfo in
+                return (busInfo, busStopInfo)
             }
             .withUnretained(self)
             .subscribe(onNext: { viewModel, arg1 in
@@ -138,7 +138,7 @@ extension BusStopViewModel {
         let mapBtnTapEvent: Observable<Void>
         let refreshLoading: Observable<Void>
         let navigationBackBtnTapEvent: Observable<Void>
-        let cellSelectTapEvent: Observable<IndexPath>
+        let cellSelectTapEvent: Observable<BusArrivalInfoResponse>
     }
     
     public struct Output {
