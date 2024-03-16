@@ -67,7 +67,7 @@ public final class BusStopViewController: UIViewController {
         super.viewDidLayoutSubviews()
         
         tableViewHeightConstraint.constant
-        = busStopTableView.contentSize.height
+        = busStopTableView.contentSize.height + 122
     }
     
     private func bind() {
@@ -119,6 +119,8 @@ public final class BusStopViewController: UIViewController {
                     )
                     
                     viewController.updateSnapshot(busStopResponse: response)
+                    viewController.tableViewHeightConstraint.constant
+                    = viewController.busStopTableView.contentSize.height + 122
                 }
             )
             .disposed(by: disposeBag)
@@ -259,7 +261,7 @@ public final class BusStopViewController: UIViewController {
 }
 
 extension BusStopViewController {
-    public func configureUI() {
+    private func configureUI() {
         
         view.addSubview(scrollView)
         
@@ -279,7 +281,6 @@ extension BusStopViewController {
             .constraint(equalToConstant: 0)
         
         NSLayoutConstraint.activate([
-            tableViewHeightConstraint,
             headerView.topAnchor.constraint(
                 equalTo: contentView.topAnchor
             ),
@@ -302,6 +303,7 @@ extension BusStopViewController {
             busStopTableView.bottomAnchor.constraint(
                 equalTo: contentView.bottomAnchor
             ),
+            tableViewHeightConstraint,
             
             contentView.topAnchor.constraint(
                 equalTo: scrollView.contentLayoutGuide.topAnchor
