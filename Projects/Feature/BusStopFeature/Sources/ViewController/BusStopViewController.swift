@@ -31,6 +31,9 @@ public final class BusStopViewController: UIViewController {
         table.delegate = self
         table.isScrollEnabled = false
         table.backgroundColor = .systemGray6
+        table.rowHeight = 60
+        table.sectionHeaderHeight = 46
+        table.sectionFooterHeight = 10
         return table
     }()
     private var tableViewHeightConstraint = NSLayoutConstraint()
@@ -129,9 +132,12 @@ public final class BusStopViewController: UIViewController {
         
         dataSource.apply(snapshot, animatingDifferences: false)
         
-        self.tableViewHeightConstraint.constant 
-        = CGFloat(snapshot.numberOfSections) * CGFloat(60.0)
-        + CGFloat(snapshot.numberOfItems) * CGFloat(60.0)
+        tableViewHeightConstraint.constant
+        = CGFloat(snapshot.numberOfSections)
+        * (busStopTableView.sectionHeaderHeight
+           + busStopTableView.sectionFooterHeight)
+        + CGFloat(snapshot.numberOfItems)
+        * busStopTableView.rowHeight
     }
     
     private func configureDataSource() {
@@ -330,13 +336,6 @@ extension BusStopViewController {
 }
 
 extension BusStopViewController: UITableViewDelegate {
-    public func tableView(
-        _ tableView: UITableView,
-        heightForRowAt indexPath: IndexPath
-    ) -> CGFloat {
-        return 60
-    }
-    
     public func tableView(
         _ tableView: UITableView,
         viewForHeaderInSection section: Int
