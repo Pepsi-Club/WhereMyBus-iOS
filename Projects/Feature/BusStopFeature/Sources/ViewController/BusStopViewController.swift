@@ -63,13 +63,6 @@ public final class BusStopViewController: UIViewController {
         configureDataSource()
     }
     
-    public override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        
-        tableViewHeightConstraint.constant
-        = busStopTableView.contentSize.height + 122
-    }
-    
     private func bind() {
         let refreshControl = scrollView.enableRefreshControl(
             refreshStr: "당겨서 새로고침"
@@ -119,8 +112,6 @@ public final class BusStopViewController: UIViewController {
                     )
                     
                     viewController.updateSnapshot(busStopResponse: response)
-                    viewController.tableViewHeightConstraint.constant
-                    = viewController.busStopTableView.contentSize.height + 122
                 }
             )
             .disposed(by: disposeBag)
@@ -137,6 +128,10 @@ public final class BusStopViewController: UIViewController {
         }
         
         dataSource.apply(snapshot, animatingDifferences: false)
+        
+        self.tableViewHeightConstraint.constant 
+        = CGFloat(snapshot.numberOfSections) * CGFloat(60.0)
+        + CGFloat(snapshot.numberOfItems) * CGFloat(60.0)
     }
     
     private func configureDataSource() {
