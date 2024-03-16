@@ -15,7 +15,6 @@ public final class NearMapViewModel
 	@Injected(NearMapUseCase.self) var useCase: NearMapUseCase
     private let coordinator: NearMapCoordinator
     private let busStopId: String?
-    private var busStopList: [BusStopInfoResponse] = []
     
     var mapController: KMController?
     private var mapView: KakaoMap? {
@@ -82,20 +81,16 @@ public final class NearMapViewModel
         useCase.nearByBusStop
             .withUnretained(self)
             .subscribe(
-                onNext: { viewModel, response in
-                    guard let longitude = Double(response.longitude),
-                          let latitude = Double(response.latitude)
+                onNext: { viewModel, nearByBusStop in
+                    guard let longitude = Double(nearByBusStop.longitude),
+                          let latitude = Double(nearByBusStop.latitude)
                     else { return }
-                    let responses = viewModel.busStopId != nil ?
-                    viewModel.busStopList :
-                    [response]
                     viewModel.moveCamera(
-                        responses: responses,
                         longitude: longitude,
                         latitude: latitude
                     )
                     if viewModel.busStopId != nil {
-                        output.navigationTitle.accept(response.busStopName)
+                        output.navigationTitle.accept(nearByBusStop.busStopName)
                     }
                 }
             )
@@ -118,19 +113,31 @@ public final class NearMapViewModel
             .subscribe(
                 onNext: { viewModel, tuple in
                     let (busStopId, response) = tuple
-                    let labelLayer = viewModel.mapView?.getLabelManager()
-                        .getLabelLayer(layerID: "busStopLayer")
-                    labelLayer?.getPoi(poiID: response.busStopId)?
+                    viewModel.mapView?
+                        .getLabelManager()
+                        .getLabelLayer(layerID: "busStopLayer")?
+                        .getPoi(poiID: response.busStopId)?
                         .changeStyle(
                             styleID: "busStop",
                             enableTransition: true
                         )
                     viewModel.useCase.busStopSelected(busStopId: busStopId)
-                    labelLayer?.getPoi(poiID: busStopId)?
+                }
+            )
+            .disposed(by: disposeBag)
+        
+        output.selectedBusStop
+            .withUnretained(self)
+            .subscribe(
+                onNext: { viewModel, response in
+                    viewModel.mapView?
+                        .getLabelManager()
+                        .getLabelLayer(layerID: "busStopLayer")?
+                        .getPoi(poiID: response.busStopId)?
                         .changeStyle(
-                                styleID: "selectedBusStop",
-                                enableTransition: true
-                            )
+                            styleID: "selectedBusStop",
+                            enableTransition: true
+                        )
                 }
             )
             .disposed(by: disposeBag)
@@ -229,7 +236,6 @@ public final class NearMapViewModel
     }
     
     private func moveCamera(
-        responses: [BusStopInfoResponse],
         longitude: Double,
         latitude: Double
     ) {
@@ -242,11 +248,12 @@ public final class NearMapViewModel
             ),
             mapView: mapView
         )
-        let callback: () = makeBusIcon(responses: responses)
+        let callback = { self.updateNearBusStopList() }
         mapView.moveCamera(
             cameraUpdate,
-            callback: { callback }
+            callback: callback
         )
+        
     }
     
     private func updateNearBusStopList() {
@@ -297,7 +304,7 @@ extension NearMapViewModel: MapControllerDelegate {
 			appName: "openmap",
 			viewInfoName: "map",
 			defaultPosition: defaultPosition,
-			defaultLevel: 16
+			defaultLevel: 8
 		)
 				
 		if mapController?.addView(mapviewInfo) == Result.OK {
