@@ -46,6 +46,7 @@ public final class NearMapViewModel
 		)
         
         input.viewWillAppearEvent
+            .take(1)
             .withUnretained(self)
             .bind(
                 onNext: { viewModel, _ in
@@ -60,11 +61,11 @@ public final class NearMapViewModel
             .withUnretained(self)
             .subscribe(
                 onNext: { viewModel, busStop in
-                    guard !busStop.busStopId.isEmpty
-                    else { return }
-                    viewModel.coordinator.startBusStopFlow(
-                        busStopId: busStop.busStopId
-                    )
+                    if viewModel.busStopId == nil {
+                        viewModel.coordinator.startBusStopFlow(
+                            busStopId: busStop.busStopId
+                        )
+                    }
                 }
             )
             .disposed(by: disposeBag)
@@ -110,10 +111,26 @@ public final class NearMapViewModel
             .disposed(by: disposeBag)
         
         selectedBusId
+            .withLatestFrom(output.selectedBusStop) { busStopId, response in
+                (busStopId, response)
+            }
             .withUnretained(self)
             .subscribe(
-                onNext: { viewModel, busStopId in
+                onNext: { viewModel, tuple in
+                    let (busStopId, response) = tuple
+                    let labelLayer = viewModel.mapView?.getLabelManager()
+                        .getLabelLayer(layerID: "busStopLayer")
+                    labelLayer?.getPoi(poiID: response.busStopId)?
+                        .changeStyle(
+                            styleID: "busStop",
+                            enableTransition: true
+                        )
                     viewModel.useCase.busStopSelected(busStopId: busStopId)
+                    labelLayer?.getPoi(poiID: busStopId)?
+                        .changeStyle(
+                                styleID: "selectedBusStop",
+                                enableTransition: true
+                            )
                 }
             )
             .disposed(by: disposeBag)
@@ -145,21 +162,30 @@ public final class NearMapViewModel
         
         let busIconStyle = PoiIconStyle(
             symbol: UIImage(systemName: "bus")?
-                .withTintColor(DesignSystemAsset.accentColor.color),
-            anchorPoint: CGPoint(
-                x: 0.0,
-                y: 0.0
-            )
+                .withTintColor(DesignSystemAsset.accentColor.color)
+        )
+        let selectedIconStyle = PoiIconStyle(
+            symbol: UIImage(systemName: "bus")?
+                .withTintColor(DesignSystemAsset.headerBlue.color)
         )
         let busPerLevelStyle = PerLevelPoiStyle(
             iconStyle: busIconStyle,
+            level: 0
+        )
+        let selectedPerLevelStyle = PerLevelPoiStyle(
+            iconStyle: selectedIconStyle,
             level: 0
         )
         let busPoiStyle = PoiStyle(
             styleID: "busStop",
             styles: [busPerLevelStyle]
         )
+        let selectedBusStyle = PoiStyle(
+            styleID: "selectedBusStop",
+            styles: [selectedPerLevelStyle]
+        )
         labelManager.addPoiStyle(busPoiStyle)
+        labelManager.addPoiStyle(selectedBusStyle)
     }
     
     private func makeBusIcon(responses: [BusStopInfoResponse]) {
@@ -173,10 +199,6 @@ public final class NearMapViewModel
             x: mapView.viewRect.size.width,
             y: mapView.viewRect.size.height
         )
-        let minLatitude = mapView.getPosition(viewMaxPoint).wgsCoord.latitude
-        let maxLatitude = mapView.getPosition(.zero).wgsCoord.latitude
-        let minLongitude = mapView.getPosition(.zero).wgsCoord.longitude
-        let maxLongitude = mapView.getPosition(viewMaxPoint).wgsCoord.longitude
         
         responses
             .forEach { response in
