@@ -234,6 +234,38 @@ extension BusTableViewCell {
                 equalToConstant: contentView.frame.width * 0.38
             ),
             
+            firstArrivalInfoView.topAnchor.constraint(
+                equalTo: topAnchor,
+                constant: 10
+            ),
+            firstArrivalInfoView.bottomAnchor.constraint(
+                equalTo: bottomAnchor,
+                constant: -8
+            ),
+            firstArrivalInfoView.leadingAnchor.constraint(
+                equalTo: nextStopName.trailingAnchor,
+                constant: 10
+            ),
+            firstArrivalInfoView.widthAnchor.constraint(
+                equalToConstant: contentView.frame.width * 0.17
+            ),
+            
+            secondArrivalInfoView.topAnchor.constraint(
+                equalTo: topAnchor,
+                constant: 10
+            ),
+            secondArrivalInfoView.leadingAnchor.constraint(
+                equalTo: firstArrivalInfoView.trailingAnchor,
+                constant: 10
+            ),
+            secondArrivalInfoView.bottomAnchor.constraint(
+                equalTo: bottomAnchor,
+                constant: -8
+            ),
+            secondArrivalInfoView.widthAnchor.constraint(
+                equalToConstant: contentView.frame.width * 0.17
+            ),
+            
             alarmBtn.topAnchor.constraint(
                 equalTo: topAnchor,
                 constant: 15
@@ -241,36 +273,6 @@ extension BusTableViewCell {
             alarmBtn.trailingAnchor.constraint(
                 equalTo: trailingAnchor,
                 constant: -10
-            ),
-            
-            firstArrivalInfoView.topAnchor.constraint(
-                equalTo: topAnchor,
-                constant: 10
-            ),
-            secondArrivalInfoView.topAnchor.constraint(
-                equalTo: topAnchor,
-                constant: 10
-            ),
-            secondArrivalInfoView.trailingAnchor.constraint(
-                equalTo: alarmBtn.leadingAnchor,
-                constant: -15
-            ),
-            secondArrivalInfoView.bottomAnchor.constraint(
-                equalTo: bottomAnchor,
-                constant: -8
-            ),
-            
-            firstArrivalInfoView.trailingAnchor.constraint(
-                equalTo: secondArrivalInfoView.leadingAnchor,
-                constant: -8
-            ),
-            firstArrivalInfoView.leadingAnchor.constraint(
-                equalTo: nextStopName.trailingAnchor,
-                constant: 10
-            ),
-            firstArrivalInfoView.bottomAnchor.constraint(
-                equalTo: bottomAnchor,
-                constant: -8
             ),
             
         ])
