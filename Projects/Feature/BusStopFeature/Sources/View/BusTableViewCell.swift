@@ -51,30 +51,13 @@ public final class BusTableViewCell: UITableViewCell {
         return btn
     }()
     
-    private let totalStack: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .horizontal
-        stack.distribution = .fill
-        stack.alignment = .center
-        stack.spacing = 10
-        return stack
-    }()
-    
-    private let busNumStack: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .vertical
-        stack.distribution = .fillEqually
-        stack.alignment = .leading
-        stack.spacing = 3
-        return stack
-    }()
-    
     public let busNumber: UILabel = {
         let label = UILabel()
         label.font = DesignSystemFontFamily.NanumSquareNeoOTF
             .bold.font(size: 18)
         label.textColor = DesignSystemAsset.blueBus.color
-        label.widthAnchor.constraint(equalToConstant: 80).isActive = true
+        label.adjustsFontSizeToFitWidth = true
+        label.minimumScaleFactor = 0.6
         return label
     }()
     
@@ -83,9 +66,8 @@ public final class BusTableViewCell: UITableViewCell {
         label.font = DesignSystemFontFamily.NanumSquareNeoOTF
             .regular.font(size: 14)
         label.textColor = DesignSystemAsset.remainingColor.color
-        label.widthAnchor.constraint(equalToConstant: 80).isActive = true
         label.adjustsFontSizeToFitWidth = true
-        label.minimumScaleFactor = 0.6
+        label.minimumScaleFactor = 0.8
         return label
     }()
     
@@ -141,7 +123,7 @@ public final class BusTableViewCell: UITableViewCell {
             $0.text = nil
         }
         [firstArrivalInfoView, secondArrivalInfoView].forEach {
-            $0.updateUI(time: "", remainingStops: "")
+            $0.prepareForReuse()
         }
         
         disposeBag = DisposeBag()
@@ -209,44 +191,88 @@ public final class BusTableViewCell: UITableViewCell {
 
 extension BusTableViewCell {
     private func configureUI() {
-        contentView.addSubview(totalStack)
         
-        [starBtn, alarmBtn, busNumStack,
-         totalStack, busNumber, nextStopName,
-         firstArrivalInfoView, secondArrivalInfoView]
+        [starBtn, busNumber, nextStopName,
+         firstArrivalInfoView, secondArrivalInfoView, alarmBtn]
             .forEach { components in
-            components.translatesAutoresizingMaskIntoConstraints = false
-        }
-        
-        [busNumber, nextStopName]
-            .forEach { components in
-            busNumStack.addArrangedSubview(components)
-        }
-        
-        [starBtn, busNumStack, firstArrivalInfoView,
-            secondArrivalInfoView, alarmBtn]
-            .forEach { components in
-            totalStack.addArrangedSubview(components)
-        }
+                components.translatesAutoresizingMaskIntoConstraints = false
+                contentView.addSubview(components)
+            }
         
         NSLayoutConstraint.activate([
-            busNumStack.widthAnchor.constraint(equalToConstant: 110),
-            firstArrivalInfoView.widthAnchor.constraint(equalToConstant: 60),
-            totalStack.topAnchor.constraint(
+            starBtn.topAnchor.constraint(
                 equalTo: topAnchor,
-                constant: 5
+                constant: 15
             ),
-            totalStack.widthAnchor.constraint(
-                equalTo: widthAnchor,
-                constant: -10
+            starBtn.leadingAnchor.constraint(equalTo: leadingAnchor),
+            
+            busNumber.topAnchor.constraint(
+                equalTo: topAnchor,
+                constant: 12
             ),
-            totalStack.leadingAnchor.constraint(
-                equalTo: leadingAnchor
+            busNumber.leadingAnchor.constraint(
+                equalTo: starBtn.trailingAnchor,
+                constant: 10
             ),
-            totalStack.bottomAnchor.constraint(
+            busNumber.widthAnchor.constraint(
+                equalToConstant: contentView.frame.width * 0.38
+            ),
+            
+            nextStopName.topAnchor.constraint(
+                equalTo: busNumber.bottomAnchor,
+                constant: 8
+            ),
+            nextStopName.bottomAnchor.constraint(
                 equalTo: bottomAnchor,
+                constant: -8
+            ),
+            nextStopName.leadingAnchor.constraint(
+                equalTo: starBtn.trailingAnchor,
+                constant: 10
+            ),
+            nextStopName.widthAnchor.constraint(
+                equalToConstant: contentView.frame.width * 0.38
+            ),
+            
+            alarmBtn.topAnchor.constraint(
+                equalTo: topAnchor,
+                constant: 15
+            ),
+            alarmBtn.trailingAnchor.constraint(
+                equalTo: trailingAnchor,
                 constant: -10
-            )
+            ),
+            
+            firstArrivalInfoView.topAnchor.constraint(
+                equalTo: topAnchor,
+                constant: 10
+            ),
+            secondArrivalInfoView.topAnchor.constraint(
+                equalTo: topAnchor,
+                constant: 10
+            ),
+            secondArrivalInfoView.trailingAnchor.constraint(
+                equalTo: alarmBtn.leadingAnchor,
+                constant: -15
+            ),
+            secondArrivalInfoView.bottomAnchor.constraint(
+                equalTo: bottomAnchor,
+                constant: -8
+            ),
+            
+            firstArrivalInfoView.trailingAnchor.constraint(
+                equalTo: secondArrivalInfoView.leadingAnchor,
+                constant: -8
+            ),
+            firstArrivalInfoView.leadingAnchor.constraint(
+                equalTo: nextStopName.trailingAnchor,
+                constant: 10
+            ),
+            firstArrivalInfoView.bottomAnchor.constraint(
+                equalTo: bottomAnchor,
+                constant: -8
+            ),
+            
         ])
         
     }

@@ -20,6 +20,8 @@ public final class RegularAlarmForBusTableViewCell: UITableViewCell {
         label.font = DesignSystemFontFamily.NanumSquareNeoOTF
             .bold.font(size: 16)
         label.textColor = DesignSystemAsset.blueBus.color
+        label.adjustsFontSizeToFitWidth = true
+        label.minimumScaleFactor = 0.6
         return label
     }()
     
@@ -28,6 +30,8 @@ public final class RegularAlarmForBusTableViewCell: UITableViewCell {
         label.font = DesignSystemFontFamily.NanumSquareNeoOTF
             .bold.font(size: 16)
         label.textColor = DesignSystemAsset.remainingColor.color
+        label.adjustsFontSizeToFitWidth = true
+        label.minimumScaleFactor = 0.6
         return label
     }()
     
@@ -110,7 +114,17 @@ public final class RegularAlarmForBusTableViewCell: UITableViewCell {
                 equalTo: leadingAnchor,
                 constant: 30
             ),
-            nextStationLb.centerXAnchor.constraint(equalTo: centerXAnchor),
+            busNumberLb.widthAnchor.constraint(
+                equalToConstant: contentView.frame.width * 0.27
+            ),
+            busNumberLb.trailingAnchor.constraint(
+                equalTo: nextStationLb.leadingAnchor,
+                constant: -10
+            ),
+            nextStationLb.widthAnchor.constraint(
+                equalToConstant: contentView.frame.width * 0.55
+            ),
+            
             nextSymbol.trailingAnchor.constraint(
                 equalTo: trailingAnchor,
                 constant: -30

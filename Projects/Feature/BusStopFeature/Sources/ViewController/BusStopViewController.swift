@@ -33,7 +33,11 @@ public final class BusStopViewController: UIViewController {
         table.backgroundColor = .systemGray6
         return table
     }()
+    private var tableViewHeightConstraint = NSLayoutConstraint()
     
+    deinit {
+        print("\(Self.description()) 해제")
+    }
     public init(
         viewModel: BusStopViewModel,
         flow: FlowState
@@ -51,9 +55,19 @@ public final class BusStopViewController: UIViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
         
+        view.backgroundColor = .white
+        navigationController?.isNavigationBarHidden = true
+        
         configureUI()
         bind()
         configureDataSource()
+    }
+    
+    public override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        tableViewHeightConstraint.constant
+        = busStopTableView.contentSize.height
     }
     
     private func bind() {
@@ -246,15 +260,8 @@ public final class BusStopViewController: UIViewController {
 
 extension BusStopViewController {
     public func configureUI() {
-        view.backgroundColor = .white
-        navigationController?.isNavigationBarHidden = true
         
         view.addSubview(scrollView)
-        
-        [scrollView, contentView, headerView, busStopTableView]
-            .forEach { components in
-                components.translatesAutoresizingMaskIntoConstraints = false
-            }
         
         [headerView, busStopTableView]
             .forEach { components in
@@ -262,9 +269,17 @@ extension BusStopViewController {
             }
         
         scrollView.addSubview(contentView)
-        scrollView.contentInsetAdjustmentBehavior = .never
+        
+        [scrollView, contentView, headerView, busStopTableView]
+            .forEach { components in
+                components.translatesAutoresizingMaskIntoConstraints = false
+            }
+        
+        tableViewHeightConstraint = busStopTableView.heightAnchor
+            .constraint(equalToConstant: 0)
         
         NSLayoutConstraint.activate([
+            tableViewHeightConstraint,
             headerView.topAnchor.constraint(
                 equalTo: contentView.topAnchor
             ),
@@ -300,12 +315,9 @@ extension BusStopViewController {
             contentView.bottomAnchor.constraint(
                 equalTo: scrollView.contentLayoutGuide.bottomAnchor
             ),
-            contentView.heightAnchor.constraint(
-                greaterThanOrEqualTo: view.safeAreaLayoutGuide.heightAnchor
-            ),
             
             scrollView.frameLayoutGuide.topAnchor.constraint(
-                equalTo: view.topAnchor
+                equalTo: view.safeAreaLayoutGuide.topAnchor
             ),
             scrollView.bottomAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.bottomAnchor
