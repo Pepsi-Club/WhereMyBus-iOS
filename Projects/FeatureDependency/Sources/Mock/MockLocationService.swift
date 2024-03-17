@@ -28,11 +28,11 @@ public final class MockLocationService: LocationService {
     public func authorize() {
         
     }
-    
+	
 	public func requestLocationOnce(completion: (() -> Void)?) {
 		
 	}
-    
+	
     public func startUpdatingLocation() {
         
     }
