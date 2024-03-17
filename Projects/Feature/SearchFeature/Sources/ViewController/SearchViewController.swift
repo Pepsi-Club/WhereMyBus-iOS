@@ -40,6 +40,15 @@ public final class SearchViewController: UIViewController {
         return button
     }()
     
+    private let seoulLabel: UILabel = {
+        let label = UILabel()
+        label.font =
+        DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(size: 15)
+        label.textColor = DesignSystemAsset.gray5.color
+        label.text = "서울"
+        return label
+    }()
+    
     private let tvBackgroundView = SearchTVRecentSearchBGView()
     
     private lazy var recentSearchTableView: UITableView = {
@@ -98,6 +107,7 @@ public final class SearchViewController: UIViewController {
         [
             recentSearchlabel,
             removeBtn,
+            seoulLabel,
             nearByStopPaddingView,
             nearByStopView,
             recentSearchTableView,
@@ -131,6 +141,22 @@ public final class SearchViewController: UIViewController {
                 constant: -10
             ),
             
+            seoulLabel.topAnchor.constraint(
+                equalTo: safeArea.topAnchor,
+                constant: 15
+            ),
+            seoulLabel.leadingAnchor.constraint(
+                equalTo: safeArea.leadingAnchor,
+                constant: 15
+            ),
+            seoulLabel.heightAnchor.constraint(
+                equalToConstant: 15
+            ),
+            nearByStopPaddingView.bottomAnchor.constraint(
+                equalTo: safeArea.bottomAnchor,
+                constant: -200
+            ),
+            
             nearByStopPaddingView.bottomAnchor.constraint(
                 equalTo: safeArea.bottomAnchor,
                 constant: -200
@@ -144,7 +170,7 @@ public final class SearchViewController: UIViewController {
             
             nearByStopView.topAnchor.constraint(
                 equalTo: nearByStopPaddingView.topAnchor,
-                constant: 10
+                constant: 25
             ),
             nearByStopView.centerXAnchor.constraint(
                 equalTo: safeArea.centerXAnchor
@@ -158,12 +184,12 @@ public final class SearchViewController: UIViewController {
             ),
             nearByStopView.bottomAnchor.constraint(
                 equalTo: nearByStopPaddingView.bottomAnchor,
-                constant: -10
+                constant: -25
             ),
             
             recentSearchTableView.topAnchor.constraint(
                 equalTo: recentSearchlabel.bottomAnchor,
-                constant: 10
+                constant: 0
             ),
             recentSearchTableView.leadingAnchor.constraint(
                 equalTo: safeArea.leadingAnchor
@@ -171,6 +197,7 @@ public final class SearchViewController: UIViewController {
             recentSearchTableView.trailingAnchor.constraint(
                 equalTo: safeArea.trailingAnchor
             ),
+            
             tableViewBtmConstraint,
         ])
     }
@@ -268,6 +295,15 @@ public final class SearchViewController: UIViewController {
                 }
             )
             .disposed(by: disposeBag)
+        
+        searchTextFieldView.rx.text.orEmpty
+                .map { !$0.isEmpty }
+                .bind { [weak self] hasText in
+                    self?.recentSearchlabel.isHidden = hasText
+                    self?.removeBtn.isHidden = hasText
+                    self?.seoulLabel.isHidden = !hasText
+                }
+                .disposed(by: disposeBag)
     }
     
     private func configureNavigation() {
