@@ -15,7 +15,8 @@ import RxCocoa
 public final class DefaultNearMapUseCase: NearMapUseCase {
     private let stationListRepository: StationListRepository
     private let locationService: LocationService
-
+    
+    public let nearBusStopList = PublishSubject<[BusStopInfoResponse]>()
     public let nearByBusStop = PublishSubject<BusStopInfoResponse>()
     private let disposeBag = DisposeBag()
 	
@@ -27,7 +28,7 @@ public final class DefaultNearMapUseCase: NearMapUseCase {
 		self.locationService = locationService
 	}
     
-    public func getNearByBusStop() {
+    public func updateNearByBusStop() {
         locationService.authState
             .withLatestFrom(
                 stationListRepository.stationList
@@ -80,12 +81,27 @@ public final class DefaultNearMapUseCase: NearMapUseCase {
             .disposed(by: disposeBag)
     }
     
-    public func getNearBusStopList() -> [BusStopInfoResponse] {
-        do {
-            return try stationListRepository.stationList.value()
-        } catch {
-            return []
-        }
+    public func updateNearBusStopList(
+        longitudeRange: ClosedRange<Double>,
+        latitudeRange: ClosedRange<Double>
+    ) {
+        stationListRepository.stationList
+            .map { responses in
+                responses.filter { response in
+                    guard let longitude = Double(response.longitude),
+                          let latitude = Double(response.latitude)
+                    else { return false }
+                    return longitudeRange ~= longitude &&
+                    latitudeRange ~= latitude
+                }
+            }
+            .withUnretained(self)
+            .subscribe(
+                onNext: { useCase, filteredList in
+                    useCase.nearBusStopList.onNext(filteredList)
+                }
+            )
+            .disposed(by: disposeBag)
     }
     
     public func busStopSelected(busStopId: String) {

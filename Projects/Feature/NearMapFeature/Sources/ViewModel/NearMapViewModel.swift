@@ -1,12 +1,13 @@
 import Foundation
+import CoreLocation
 
 import Core
 import DesignSystem
 import Domain
 import FeatureDependency
 
-import CoreLocation
 import RxSwift
+import RxRelay
 import KakaoMapsSDK
 
 public final class NearMapViewModel
@@ -14,9 +15,11 @@ public final class NearMapViewModel
 	@Injected(NearMapUseCase.self) var useCase: NearMapUseCase
     private let coordinator: NearMapCoordinator
     private let busStopId: String?
-    private var busStopList: [BusStopInfoResponse] = []
     
     var mapController: KMController?
+    private var mapView: KakaoMap? {
+        mapController?.getView("mapview") as? KakaoMap
+    }
     
     private var selectedBusId = PublishSubject<String>()
     private let disposeBag = DisposeBag()
@@ -37,16 +40,17 @@ public final class NearMapViewModel
 	
 	public func transform(input: Input) -> Output {
 		let output = Output(
-            selectedBusStop: useCase.nearByBusStop
+            selectedBusStop: useCase.nearByBusStop,
+            navigationTitle: .init(value: "주변 정류장")
 		)
         
         input.viewWillAppearEvent
+            .take(1)
             .withUnretained(self)
             .bind(
                 onNext: { viewModel, _ in
-                    viewModel.busStopList
-                    = viewModel.useCase.getNearBusStopList()
-                    viewModel.useCase.getNearByBusStop()
+                    viewModel.updateNearBusStopList()
+                    viewModel.useCase.updateNearByBusStop()
                 }
             )
             .disposed(by: disposeBag)
@@ -56,11 +60,11 @@ public final class NearMapViewModel
             .withUnretained(self)
             .subscribe(
                 onNext: { viewModel, busStop in
-                    guard !busStop.busStopId.isEmpty
-                    else { return }
-                    viewModel.coordinator.startBusStopFlow(
-                        busStopId: busStop.busStopId
-                    )
+                    if viewModel.busStopId == nil {
+                        viewModel.coordinator.startBusStopFlow(
+                            busStopId: busStop.busStopId
+                        )
+                    }
                 }
             )
             .disposed(by: disposeBag)
@@ -69,9 +73,7 @@ public final class NearMapViewModel
             .withUnretained(self)
             .subscribe(
                 onNext: { viewModel, _ in
-                    viewModel.makeBusIcon(
-                        responses: viewModel.busStopList
-                    )
+                    viewModel.updateNearBusStopList()
                 }
             )
             .disposed(by: disposeBag)
@@ -79,23 +81,63 @@ public final class NearMapViewModel
         useCase.nearByBusStop
             .withUnretained(self)
             .subscribe(
-                onNext: { viewModel, response in
-                    guard let longitude = Double(response.longitude),
-                          let latitude = Double(response.latitude)
+                onNext: { viewModel, nearByBusStop in
+                    guard let longitude = Double(nearByBusStop.longitude),
+                          let latitude = Double(nearByBusStop.latitude)
                     else { return }
                     viewModel.moveCamera(
                         longitude: longitude,
                         latitude: latitude
                     )
+                    if viewModel.busStopId != nil {
+                        output.navigationTitle.accept(nearByBusStop.busStopName)
+                    }
+                }
+            )
+            .disposed(by: disposeBag)
+        
+        useCase.nearBusStopList
+            .withUnretained(self)
+            .subscribe(
+                onNext: { viewModel, responses in
+                    viewModel.makeBusIcon(responses: responses)
                 }
             )
             .disposed(by: disposeBag)
         
         selectedBusId
+            .withLatestFrom(output.selectedBusStop) { busStopId, response in
+                (busStopId, response)
+            }
             .withUnretained(self)
             .subscribe(
-                onNext: { viewModel, busStopId in
+                onNext: { viewModel, tuple in
+                    let (busStopId, response) = tuple
+                    viewModel.mapView?
+                        .getLabelManager()
+                        .getLabelLayer(layerID: "busStopLayer")?
+                        .getPoi(poiID: response.busStopId)?
+                        .changeStyle(
+                            styleID: "busStop",
+                            enableTransition: true
+                        )
                     viewModel.useCase.busStopSelected(busStopId: busStopId)
+                }
+            )
+            .disposed(by: disposeBag)
+        
+        output.selectedBusStop
+            .withUnretained(self)
+            .subscribe(
+                onNext: { viewModel, response in
+                    viewModel.mapView?
+                        .getLabelManager()
+                        .getLabelLayer(layerID: "busStopLayer")?
+                        .getPoi(poiID: response.busStopId)?
+                        .changeStyle(
+                            styleID: "selectedBusStop",
+                            enableTransition: true
+                        )
                 }
             )
             .disposed(by: disposeBag)
@@ -111,7 +153,7 @@ public final class NearMapViewModel
     }
     
     private func addBusPointStyle() {
-        guard let mapView = mapController?.getView("mapview") as? KakaoMap
+        guard let mapView
         else { return }
         
         let labelManager = mapView.getLabelManager()
@@ -127,25 +169,34 @@ public final class NearMapViewModel
         
         let busIconStyle = PoiIconStyle(
             symbol: UIImage(systemName: "bus")?
-                .withTintColor(DesignSystemAsset.accentColor.color),
-            anchorPoint: CGPoint(
-                x: 0.0,
-                y: 0.0
-            )
+                .withTintColor(DesignSystemAsset.accentColor.color)
+        )
+        let selectedIconStyle = PoiIconStyle(
+            symbol: UIImage(systemName: "bus")?
+                .withTintColor(DesignSystemAsset.headerBlue.color)
         )
         let busPerLevelStyle = PerLevelPoiStyle(
             iconStyle: busIconStyle,
+            level: 0
+        )
+        let selectedPerLevelStyle = PerLevelPoiStyle(
+            iconStyle: selectedIconStyle,
             level: 0
         )
         let busPoiStyle = PoiStyle(
             styleID: "busStop",
             styles: [busPerLevelStyle]
         )
+        let selectedBusStyle = PoiStyle(
+            styleID: "selectedBusStop",
+            styles: [selectedPerLevelStyle]
+        )
         labelManager.addPoiStyle(busPoiStyle)
+        labelManager.addPoiStyle(selectedBusStyle)
     }
     
     private func makeBusIcon(responses: [BusStopInfoResponse]) {
-        guard let mapView = mapController?.getView("mapview") as? KakaoMap
+        guard let mapView
         else { return }
         
         let layer = mapView.getLabelManager()
@@ -155,19 +206,8 @@ public final class NearMapViewModel
             x: mapView.viewRect.size.width,
             y: mapView.viewRect.size.height
         )
-        let minLatitude = mapView.getPosition(viewMaxPoint).wgsCoord.latitude
-        let maxLatitude = mapView.getPosition(.zero).wgsCoord.latitude
-        let minLongitude = mapView.getPosition(.zero).wgsCoord.longitude
-        let maxLongitude = mapView.getPosition(viewMaxPoint).wgsCoord.longitude
         
         responses
-            .filter { response in
-                guard let longitude = Double(response.longitude),
-                      let latitude = Double(response.latitude)
-                else { return false }
-                return minLatitude...maxLatitude ~= latitude &&
-                minLongitude...maxLongitude ~= longitude
-            }
             .forEach { response in
                 guard layer?.getPoi(poiID: response.busStopId) == nil
                 else { return }
@@ -199,18 +239,48 @@ public final class NearMapViewModel
         longitude: Double,
         latitude: Double
     ) {
-        guard let mapView = mapController?.getView("mapview") as? KakaoMap
+        guard let mapView
         else { return }
+        let cameraUpdate = CameraUpdate.make(
+            target: .init(
+                longitude: longitude,
+                latitude: latitude
+            ),
+            mapView: mapView
+        )
+        let callback = { self.updateNearBusStopList() }
         mapView.moveCamera(
-            .make(
-                target: .init(
-                    longitude: longitude,
-                    latitude: latitude
-                ),
-                mapView: mapView
-            )) {
-                self.makeBusIcon(responses: self.busStopList)
-            }
+            cameraUpdate,
+            callback: callback
+        )
+        
+    }
+    
+    private func updateNearBusStopList() {
+        guard let mapView
+        else { return }
+        let viewMaxPoint = CGPoint(
+            x: mapView.viewRect.size.width,
+            y: mapView.viewRect.size.height
+        )
+        let minLatitude = mapView
+            .getPosition(viewMaxPoint).wgsCoord.latitude
+        let maxLatitude = mapView
+            .getPosition(.zero).wgsCoord.latitude
+        let minLongitude = mapView
+            .getPosition(.zero).wgsCoord.longitude
+        let maxLongitude = mapView
+            .getPosition(viewMaxPoint).wgsCoord.longitude
+        let longitudeRange = minLongitude < maxLongitude ?
+        minLongitude...maxLongitude :
+        maxLongitude...minLongitude
+        let latitudeRange = minLatitude < maxLatitude ?
+        minLatitude...maxLatitude :
+        maxLatitude...minLatitude
+        useCase.updateNearBusStopList(
+            longitudeRange: longitudeRange,
+            latitudeRange: latitudeRange
+        )
     }
     
     private func poiTappedHandler(_ param: PoiInteractionEventParam) {
@@ -228,12 +298,13 @@ extension NearMapViewModel: MapControllerDelegate {
 			longitude: 127.108678,
 			latitude: 37.402001
 		)
+        
 		let mapviewInfo = MapviewInfo(
 			viewName: "mapview",
 			appName: "openmap",
 			viewInfoName: "map",
 			defaultPosition: defaultPosition,
-			defaultLevel: 7
+			defaultLevel: 8
 		)
 				
 		if mapController?.addView(mapviewInfo) == Result.OK {
@@ -246,7 +317,7 @@ extension NearMapViewModel: MapControllerDelegate {
 	}
 	
 	public func containerDidResized(_ size: CGSize) {
-        guard let mapView = mapController?.getView("mapview") as? KakaoMap
+        guard let mapView
         else { return }
         mapView.viewRect = CGRect(
             origin: CGPoint(x: 0.0, y: 0.0),
@@ -264,5 +335,6 @@ extension NearMapViewModel {
     
     public struct Output {
         let selectedBusStop: PublishSubject<BusStopInfoResponse>
+        let navigationTitle: BehaviorRelay<String>
     }
 }

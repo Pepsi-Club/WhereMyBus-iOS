@@ -59,19 +59,20 @@ public final class NearMapViewController: UIViewController {
 	
 	public override func viewDidLoad() {
 		super.viewDidLoad()
-		
 		viewModel.mapController = KMController(viewContainer: kakaoMapView)
 		viewModel.initKakaoMap()
 		configureUI()
 		bind()
 	}
-	
-	// MARK: - Function
+    
+    public override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.navigationBar.topItem?.title = ""
+        navigationController?.isNavigationBarHidden = false
+    }
 	
 	public func configureUI() {
-		
-		self.navigationItem.title = "주변 정류장"
-		self.navigationController!.navigationBar.titleTextAttributes = [
+		navigationController?.navigationBar.titleTextAttributes = [
 			.font: DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(
 				size: 16
 			)
@@ -169,6 +170,15 @@ public final class NearMapViewController: UIViewController {
                 }
             )
 			.disposed(by: disposeBag)
+        
+        output.navigationTitle
+            .withUnretained(self)
+            .subscribe(
+                onNext: { viewController, title in
+                    viewController.navigationItem.title = title
+                }
+            )
+            .disposed(by: disposeBag)
 	}
 }
 
