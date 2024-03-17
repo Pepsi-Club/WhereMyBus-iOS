@@ -37,7 +37,7 @@ public final class DefaultNearMapUseCase: NearMapUseCase {
             }
             .withUnretained(self)
             .subscribe(
-				onNext: { [self] useCase, tuple in
+                onNext: { [self] useCase, tuple in
                     let (authState, stationList) = tuple
                     switch authState {
                     case .notDetermined:
@@ -63,14 +63,14 @@ public final class DefaultNearMapUseCase: NearMapUseCase {
                         )
                         useCase.nearByBusStop.onNext(result)
                     case .authorizedAlways, .authorizedWhenInUse:
-							do {
-								let result =
-								try stationListRepository
-									.getBusStopNearCurrentLocation()
-								useCase.nearByBusStop.onNext(result.nearBusStop)
-							} catch {
-								print("가까운 정류장을 구할 수 없습니다.")
-							}
+                            do {
+                                let result =
+                                try stationListRepository
+                                    .getBusStopNearCurrentLocation()
+                                useCase.nearByBusStop.onNext(result.nearBusStop)
+                            } catch {
+                                print("가까운 정류장을 구할 수 없습니다.")
+                            }
                     @unknown default:
                         break
                     }

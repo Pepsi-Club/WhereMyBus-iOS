@@ -18,14 +18,14 @@ extension AppDelegate {
     func registerDependencies() {
         let coreDataService: CoreDataService = DefaultCoreDataService()
         let networkService: NetworkService = DefaultNetworkService()
-		let locationService: LocationService = DefaultLocationService()
+        let locationService: LocationService = DefaultLocationService()
 		
         let favoritesRepository: FavoritesRepository
         = DefaultFavoritesRepository(coreDataService: coreDataService)
         let busStopArrivalInfoRepository: BusStopArrivalInfoRepository
         = DefaultBusStopArrivalInfoRepository(networkService: networkService)
         let stationListRepository: StationListRepository
-		= DefaultStationListRepository(locationService: locationService)
+        = DefaultStationListRepository(locationService: locationService)
         let localNotificationService: LocalNotificationService
         = DefaultLocalNotificationService()
         let regularAlarmEditingService: RegularAlarmEditingService
