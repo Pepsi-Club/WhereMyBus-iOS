@@ -79,11 +79,11 @@ public final class DefaultStationListRepository: StationListRepository {
 						let startLocation = CLLocation(
 							latitude: startLatitude,
 							longitude: startlongitude
-							)
+						)
 						let endLocation = CLLocation(
 							latitude: endLatitude,
 							longitude: endLongitude
-							)
+						)
 						let distance = Int(endLocation.distance(
 							from: startLocation
 						))
@@ -103,10 +103,10 @@ public final class DefaultStationListRepository: StationListRepository {
 		} else {
 			stringDistance = "\(nearDistance)m"
 		}
-		#if DEBUG
+#if DEBUG
 		print("🚏 가까운 정류장: \(nearBusStop.busStopName)")
 		print("🚏 가까운 정류장으로 부터 거리\(stringDistance)")
-		#endif
+#endif
 		return ((nearBusStop, stringDistance))
 	}
 	
