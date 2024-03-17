@@ -23,8 +23,8 @@ final public class DefaultLocationService: NSObject, LocationService {
 	
 	public lazy var currentLocation = BehaviorSubject<CLLocation>(
 		value: CLLocation(
-			latitude: 127.108678,
-			longitude: 37.402001
+			latitude: 37.571314,
+			longitude: 126.987886
 		)
 	)
 	
@@ -46,8 +46,12 @@ final public class DefaultLocationService: NSObject, LocationService {
     }
     
 	/// 한번의 현재 위치 업데이트
-	public func requestLocationOnce() {
+	/// completion: 위치 업데이트가 끝나고 실행할 함수를 정의하기 위함
+	public func requestLocationOnce(
+		completion: (() -> Void)?
+	) {
 		locationManager.requestLocation()
+		completion?()
 	}
 	
 	/// 지속적인 현재 위치 업데이트 시작
@@ -71,9 +75,13 @@ extension DefaultLocationService: CLLocationManagerDelegate {
 		if let location = locations.first {
 			currentLocation.onNext(location)
 		}
+		
+		#if DEBUG
+		print("📍 현재 좌표 : \(locations[0])")
+		#endif
 	}
 	
-	/// 위치권한이 바뀔때마다 없데이트되는 메서드
+	/// 위치권한이 바뀔때마다 업데이트되는 메서드
 	public func locationManagerDidChangeAuthorization(
 		_ manager: CLLocationManager
 	) {

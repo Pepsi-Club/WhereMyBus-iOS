@@ -15,6 +15,8 @@ import RxSwift
 
 #if DEBUG
 public final class MockLocationService: LocationService {
+	
+	
     public let authState = BehaviorSubject<CLAuthorizationStatus>(
         value: .notDetermined
     )
@@ -27,9 +29,9 @@ public final class MockLocationService: LocationService {
         
     }
     
-    public func requestLocationOnce() {
-        
-    }
+	public func requestLocationOnce(completion: (() -> Void)?) {
+		
+	}
     
     public func startUpdatingLocation() {
         
