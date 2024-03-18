@@ -21,7 +21,7 @@ public final class BusStopInformationView: UIView {
 		let image = UIImageView(
 			image: UIImage(systemName: "mappin.and.ellipse")!
 		)
-		image.tintColor = .darkGray
+		image.tintColor = DesignSystemAsset.gray5.color
 		return image
 	}()
 	
@@ -30,6 +30,7 @@ public final class BusStopInformationView: UIView {
 		label.font = DesignSystemFontFamily.NanumSquareNeoOTF.extraBold.font(
 			size: 15
 		)
+        label.textColor = .black
 		return label
 	}()
 	
@@ -38,6 +39,7 @@ public final class BusStopInformationView: UIView {
 		label.font = DesignSystemFontFamily.NanumSquareNeoOTF.light.font(
 			size: 13
 		)
+        label.textColor = .black
 		return label
 	}()
 	
@@ -46,12 +48,13 @@ public final class BusStopInformationView: UIView {
 		label.font = DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(
 			size: 13
 		)
+        label.textColor = .black
 		return label
 	}()
 	
     private let separationView: UIView = {
 		let view = UIView()
-		view.backgroundColor = .systemGray4
+		view.backgroundColor = DesignSystemAsset.gray5.color
 		return view
 	}()
 	
@@ -83,7 +86,7 @@ public final class BusStopInformationView: UIView {
 	// MARK: - Function
 	
 	private func configureUI() {
-		self.backgroundColor = .systemGray6
+        self.backgroundColor = DesignSystemAsset.gray1.color
 		
 		[
 			busStopSymbol,
@@ -164,7 +167,7 @@ public final class BusStopInformationView: UIView {
 		
 	}
     
-    func updateUI(response: BusStopInfoResponse) {
+    func updateUI(response: BusStopInfoResponse, distance: String) {
         busStopNameLabel.text = response.busStopName
         if !response.busStopId.isEmpty && !response.direction.isEmpty {
         }

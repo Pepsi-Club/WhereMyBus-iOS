@@ -106,3 +106,4 @@ extension SearchViewModel {
         var tableViewSection: BehaviorRelay<SearchSection>
     }
 }
+

@@ -15,7 +15,8 @@ import RxSwift
 import RxRelay
 
 public final class DefaultStationListRepository: StationListRepository {
-    public let locationService: LocationService
+    private let locationService: LocationService
+    
     public let stationList = BehaviorSubject<[BusStopInfoResponse]>(value: [])
     public let recentlySearchedStation
     = BehaviorRelay<[BusStopInfoResponse]>(value: [])
