@@ -14,14 +14,8 @@ public final class BottomButton: UIButton {
     ) {
         super.init(frame: .zero)
         var config = UIButton.Configuration.filled()
-        var attributeContainer = AttributeContainer()
         let font = DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(
             size: 18
-        )
-        attributeContainer.font = font
-        config.attributedTitle = .init(
-            title,
-            attributes: attributeContainer
         )
         config.cornerStyle = .capsule
         config.contentInsets = .init(
@@ -29,6 +23,23 @@ public final class BottomButton: UIButton {
             leading: 0,
             bottom: 15,
             trailing: 0
+        )
+        setAttributedTitle(
+            .init(
+                string: title,
+                attributes: [.font: font]
+            ),
+            for: .normal
+        )
+        setAttributedTitle(
+            .init(
+                string: title,
+                attributes: [
+                    .font: font,
+                    .foregroundColor: DesignSystemAsset.gray4.color
+                ]
+            ),
+            for: .disabled
         )
         configuration = config
         tintColor = DesignSystemAsset.bottonBtnColor.color
