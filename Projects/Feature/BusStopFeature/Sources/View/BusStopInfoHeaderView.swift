@@ -118,7 +118,7 @@ extension BusStopInfoHeaderView {
         NSLayoutConstraint.activate([
             busStopIcon.topAnchor.constraint(
                 equalTo: topAnchor,
-                constant: 5
+                constant: 15
             ),
             busStopIcon.widthAnchor.constraint(
                 equalToConstant: 60
@@ -147,7 +147,7 @@ extension BusStopInfoHeaderView {
             ),
             mapBtn.bottomAnchor.constraint(
                 equalTo: bottomAnchor,
-                constant: -10
+                constant: -20
             ),
             mapBtn.heightAnchor.constraint(equalToConstant: 25),
             navigationBtn.topAnchor.constraint(
