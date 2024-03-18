@@ -17,6 +17,9 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         setupAppearance()
         registerDependencies()
         configureNotification(application: application)
+        
+        UIBarButtonItem.appearance().setBackButtonTitlePositionAdjustment(UIOffset(horizontal: -1000, vertical: 0), for: .default)
+
         return true
     }
 

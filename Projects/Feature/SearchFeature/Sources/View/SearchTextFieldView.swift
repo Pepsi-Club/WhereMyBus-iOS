@@ -37,10 +37,18 @@ public final class SearchTextFieldView: UITextField {
         self.addLeftPadding()
         self.autocorrectionType = .no
         self.spellCheckingType = .no
+        self.textColor = .black
+        
     }
     
     private func setPlaceholder(_ placeholder: String?) {
         self.placeholder = " 버스 정류장을 검색하세요"
+        self.attributedPlaceholder = NSAttributedString(
+            string: self.placeholder ?? "",
+            attributes:
+                [NSAttributedString.Key.foregroundColor:
+                    DesignSystemAsset.gray4.color]
+        )
     }
 }
 
