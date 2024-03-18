@@ -28,9 +28,9 @@ public final class DefaultNearMapUseCase: NearMapUseCase {
 		self.locationService = locationService
     }
   
-    // MARK: - 함수 호출될 때 마다 
+    // MARK: - 함수 호출될 때 마다
     public func updateNearByBusStop() {
-
+        
         locationService.authState
             .withLatestFrom(
                 stationListRepository.stationList
@@ -42,37 +42,38 @@ public final class DefaultNearMapUseCase: NearMapUseCase {
                 onNext: { useCase, tuple in
                     let (authState, stationList) = tuple
                     switch authState {
-                    case .notDetermined:
-                        useCase.locationService.authorize()
-                    case .restricted:
-                        let desciption = "오류가 발생했습니다. 관리자에게 문의해주세요."
-                        let result = BusStopInfoResponse(
-                            busStopName: desciption,
-                            busStopId: "",
-                            direction: "",
-                            longitude: "",
-                            latitude: ""
-                        )
-                        useCase.nearByBusStop.onNext(result)
-                    case .denied:
-                        let desciption = "주변 정류장을 확인하려면 위치 정보를 동의해주세요."
-                        let result = BusStopInfoResponse(
-                            busStopName: desciption,
-                            busStopId: "",
-                            direction: "",
-                            longitude: "",
-                            latitude: ""
-                        )
-                        useCase.nearByBusStop.onNext(result)
-                    case .authorizedAlways, .authorizedWhenInUse:
+                        case .notDetermined:
+                            useCase.locationService.authorize()
+                        case .restricted:
+                            let desciption = "오류가 발생했습니다. 관리자에게 문의해주세요."
+                            let result = BusStopInfoResponse(
+                                busStopName: desciption,
+                                busStopId: "",
+                                direction: "",
+                                longitude: "",
+                                latitude: ""
+                            )
+                            useCase.nearByBusStop.onNext(result)
+                        case .denied:
+                            let desciption = "주변 정류장을 확인하려면 위치 정보를 동의해주세요."
+                            let result = BusStopInfoResponse(
+                                busStopName: desciption,
+                                busStopId: "",
+                                direction: "",
+                                longitude: "",
+                                latitude: ""
+                            )
+                            useCase.nearByBusStop.onNext(result)
+                        case .authorizedAlways, .authorizedWhenInUse:
                             useCase.locationService.requestLocationOnce()
-                    @unknown default:
-                        break
+                        @unknown default:
+                            break
                     }
                 }
             )
             .disposed(by: disposeBag)
         
+        // TODO: - 함수 실행마다 중복으로 subscribe되고 있음 fix 필요
         locationService.currentLocation
             .subscribe(
                 with: self,
