@@ -26,9 +26,10 @@ public final class DefaultNearMapUseCase: NearMapUseCase {
     ) {
         self.stationListRepository = stationListRepository
 		self.locationService = locationService
-	}
-    
+    }
+  
     public func updateNearByBusStop() {
+
         locationService.authState
             .withLatestFrom(
                 stationListRepository.stationList
@@ -63,16 +64,14 @@ public final class DefaultNearMapUseCase: NearMapUseCase {
                         )
                         useCase.nearByBusStop.onNext(result)
                     case .authorizedAlways, .authorizedWhenInUse:
-                        let noNearByStop = BusStopInfoResponse(
-                            busStopName: "주변에 정류장이 없습니다.",
-                            busStopId: "",
-                            direction: "",
-                            longitude: "",
-                            latitude: ""
-                        )
-                        // TODO: 가장 가까운 정류장 찾기로 로직 수정
-                        let nearByStop = stationList.first ?? noNearByStop
-                        useCase.nearByBusStop.onNext(nearByStop)
+                            do {
+                                let result =
+                                try self.stationListRepository
+                                    .getBusStopNearCurrentLocation()
+                                useCase.nearByBusStop.onNext(result.nearBusStop)
+                            } catch {
+                                print("가까운 정류장을 구할 수 없습니다.")
+                            }
                     @unknown default:
                         break
                     }

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CoreLocation
 
 import Domain
 
@@ -14,6 +15,7 @@ import RxSwift
 import RxRelay
 
 public final class DefaultStationListRepository: StationListRepository {
+    public let locationService: LocationService
     public let stationList = BehaviorSubject<[BusStopInfoResponse]>(value: [])
     public let recentlySearchedStation
     = BehaviorRelay<[BusStopInfoResponse]>(value: [])
@@ -23,7 +25,10 @@ public final class DefaultStationListRepository: StationListRepository {
     private let userDefaultsKey = "recentSearches"
     private let maxRecentSearchCount = 5
     
-    public init() {
+    public init(
+        locationService: LocationService
+    ) {
+        self.locationService = locationService
         fetchStationList()
         fetchRecentlySearched()
     }
@@ -48,7 +53,63 @@ public final class DefaultStationListRepository: StationListRepository {
         )
         recentlySearchedStation.accept(currentSearches)
     }
-    
+	
+    /// 현재위치로 부터 가장 가까운 정류장을 구합니다.
+    /// nearBusStop: 가장 가까운 정류장
+    /// distance: 떨어진 거리(m,km)
+    public func getBusStopNearCurrentLocation(
+    ) throws -> (
+        nearBusStop: BusStopInfoResponse,
+        distance: String
+    ) {
+        let myLocation = self.locationService.currentLocation
+        var nearDistance = Int.max
+        var nearBusStop = try stationList.value()[0]
+        
+        self.locationService.requestLocationOnce {
+            _ = Observable.combineLatest(self.stationList, myLocation)
+                .subscribe { stationList, myLocation in
+                    for (index, busStop) in stationList.enumerated() {
+                        let (startLatitude, startlongitude) =
+                        (myLocation.coordinate.latitude,
+                         myLocation.coordinate.longitude)
+                        let (endLatitude, endLongitude) =
+                        (Double(busStop.latitude) ?? 0.0,
+                         Double(busStop.longitude) ?? 0.0)
+                        let startLocation = CLLocation(
+                            latitude: startLatitude,
+                            longitude: startlongitude
+                        )
+                        let endLocation = CLLocation(
+                            latitude: endLatitude,
+                            longitude: endLongitude
+                        )
+                        let distance = Int(endLocation.distance(
+                            from: startLocation
+                        ))
+                        
+                        if nearDistance > distance {
+                            nearBusStop = stationList[index]
+                            nearDistance = distance
+                        }
+                    }
+                }
+            
+        }
+        var stringDistance = "999m"
+        
+        if nearDistance > 999 {
+            stringDistance =  "\(nearDistance / 1000)km"
+        } else {
+            stringDistance = "\(nearDistance)m"
+        }
+#if DEBUG
+        print("🚏 가까운 정류장: \(nearBusStop.busStopName)")
+        print("🚏 가까운 정류장으로 부터 거리\(stringDistance)")
+#endif
+        return ((nearBusStop, stringDistance))
+    }
+	
     private func fetchStationList() {
         guard let url = Bundle.main.url(
             forResource: "total_stationList",
