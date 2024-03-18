@@ -46,7 +46,6 @@ final public class DefaultLocationService: NSObject, LocationService {
     }
     
     /// 한번의 현재 위치 업데이트
-    /// completion: 위치 업데이트가 끝나고 실행할 함수를 정의하기 위함
     public func requestLocationOnce() {
         locationManager.requestLocation()
     }

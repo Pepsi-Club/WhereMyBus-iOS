@@ -53,7 +53,7 @@ public final class DefaultStationListRepository: StationListRepository {
         )
         recentlySearchedStation.accept(currentSearches)
     }
-	
+    
     /// 현재위치로 부터 가장 가까운 정류장을 구합니다.
     /// nearBusStop: 가장 가까운 정류장
     /// distance: 떨어진 거리(m,km)
@@ -64,44 +64,46 @@ public final class DefaultStationListRepository: StationListRepository {
     ) {
         self.locationService.requestLocationOnce()
         
-        let myLocation = self.locationService.currentLocation
+        let myLocation = locationService.currentLocation
         var nearDistance = Int.max
         var nearBusStop = try stationList.value()[0]
         
-        self.locationService.currentLocation
-            .subscribe {
-                _ = Observable.combineLatest(self.stationList, myLocation)
-                    .subscribe { stationList, myLocation in
-                        for (index, busStop) in stationList.enumerated() {
-                            let (startLatitude, startlongitude) =
-                            (myLocation.coordinate.latitude,
-                             myLocation.coordinate.longitude)
-                            let (endLatitude, endLongitude) =
-                            (Double(busStop.latitude) ?? 0.0,
-                             Double(busStop.longitude) ?? 0.0)
-                            let startLocation = CLLocation(
-                                latitude: startLatitude,
-                                longitude: startlongitude
-                            )
-                            let endLocation = CLLocation(
-                                latitude: endLatitude,
-                                longitude: endLongitude
-                            )
-                            let distance = Int(endLocation.distance(
-                                from: startLocation
-                            ))
-                            
-                            if nearDistance > distance {
-                                nearBusStop = stationList[index]
-                                nearDistance = distance
-                            }
+        _ = Observable.combineLatest(self.stationList, myLocation)
+            .subscribe(
+                onNext: { stationList, myLocation in
+                    for (index, busStop) in stationList.enumerated() {
+                        let (startLatitude, startlongitude) =
+                        (myLocation.coordinate.latitude,
+                         myLocation.coordinate.longitude)
+                        let (endLatitude, endLongitude) =
+                        (Double(busStop.latitude) ?? 0.0,
+                         Double(busStop.longitude) ?? 0.0)
+                        let startLocation = CLLocation(
+                            latitude: startLatitude,
+                            longitude: startlongitude
+                        )
+                        let endLocation = CLLocation(
+                            latitude: endLatitude,
+                            longitude: endLongitude
+                        )
+                        let distance = Int(endLocation.distance(
+                            from: startLocation
+                        ))
+                        
+                        if nearDistance > distance {
+                            nearBusStop = stationList[index]
+                            nearDistance = distance
                         }
                     }
-            }
+                }
+            )
             .disposed(by: disposeBag)
+        
         var stringDistance = "999m"
         
-        if nearDistance > 999 {
+        if nearDistance == Int.max {
+            stringDistance = "측정거리 초과"
+        } else if nearDistance > 999 {
             stringDistance =  "\(nearDistance / 1000)km"
         } else {
             stringDistance = "\(nearDistance)m"
@@ -112,7 +114,7 @@ public final class DefaultStationListRepository: StationListRepository {
 #endif
         return ((nearBusStop, stringDistance))
     }
-	
+    
     private func fetchStationList() {
         guard let url = Bundle.main.url(
             forResource: "total_stationList",
