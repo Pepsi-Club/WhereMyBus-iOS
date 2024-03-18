@@ -59,13 +59,11 @@ public final class DefaultBusStopCoordinator: BusStopCoordinator {
 extension DefaultBusStopCoordinator {
     // 정류장 위치뷰로 이동하기 위한
     public func busStopMapLocation(busStopId: String) {
-        let nearMapCoordinator = coordinatorProvider
-            .makeBusStopCoordinator(
-                navigationController: navigationController,
-                busStopId: busStopId,
-                flow: flow
-            )
-        
+        let nearMapCoordinator = coordinatorProvider.makeNearMapCoordinator(
+            navigationController: navigationController,
+            flow: flow,
+            busStopId: busStopId
+        )
         childs.append(nearMapCoordinator)
         nearMapCoordinator.start()
     }

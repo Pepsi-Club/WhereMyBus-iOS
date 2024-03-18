@@ -13,7 +13,7 @@ public final class BusStopViewController: UIViewController {
     private let mapBtnTapEvent = PublishSubject<Void>()
     private let likeBusBtnTapEvent = PublishSubject<BusArrivalInfoResponse>()
     private let alarmBtnTapEvent = PublishSubject<BusArrivalInfoResponse>()
-    private let alarmCellTapEvent = PublishSubject<IndexPath>()
+    private let tableCellTapEvent = PublishSubject<BusArrivalInfoResponse>()
     
     private var dataSource: BusStopDataSource!
     private var snapshot: BusStopSnapshot!
@@ -31,9 +31,16 @@ public final class BusStopViewController: UIViewController {
         table.delegate = self
         table.isScrollEnabled = false
         table.backgroundColor = .systemGray6
+        table.rowHeight = 60
+        table.sectionHeaderHeight = 46
+        table.sectionFooterHeight = 10
         return table
     }()
+    private var tableViewHeightConstraint = NSLayoutConstraint()
     
+    deinit {
+        print("\(Self.description()) 해제")
+    }
     public init(
         viewModel: BusStopViewModel,
         flow: FlowState
@@ -51,10 +58,12 @@ public final class BusStopViewController: UIViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
         
+        view.backgroundColor = .white
+        navigationController?.isNavigationBarHidden = true
+        
         configureUI()
         bind()
         configureDataSource()
-        tableCellTap()
     }
     
     private func bind() {
@@ -73,7 +82,7 @@ public final class BusStopViewController: UIViewController {
             : refreshControl.rx.controlEvent(.valueChanged).asObservable(),
             navigationBackBtnTapEvent
             : headerView.navigationBtn.rx.tap.asObservable(),
-            cellSelectTapEvent: alarmCellTapEvent.asObservable()
+            cellSelectTapEvent: tableCellTapEvent.asObservable()
         )
         
         let output = viewModel.transform(input: input)
@@ -111,18 +120,6 @@ public final class BusStopViewController: UIViewController {
             .disposed(by: disposeBag)
     }
     
-    private func tableCellTap() {
-        guard flow == .fromAlarm else { return }
-        
-        busStopTableView.rx.itemSelected
-            .map { indexPath in
-                print("\(indexPath)")
-                return indexPath
-            }
-            .bind(to: alarmCellTapEvent)
-            .disposed(by: disposeBag)
-    }
-    
     private func updateSnapshot(busStopResponse: BusStopArrivalInfoResponse) {
         snapshot = .init()
         for busInfo in busStopResponse.buses {
@@ -134,6 +131,13 @@ public final class BusStopViewController: UIViewController {
         }
         
         dataSource.apply(snapshot, animatingDifferences: false)
+        
+        tableViewHeightConstraint.constant
+        = CGFloat(snapshot.numberOfSections)
+        * (busStopTableView.sectionHeaderHeight
+           + busStopTableView.sectionFooterHeight)
+        + CGFloat(snapshot.numberOfItems)
+        * busStopTableView.rowHeight
     }
     
     private func configureDataSource() {
@@ -194,6 +198,16 @@ public final class BusStopViewController: UIViewController {
         
         cell?.busNumberLb.textColor = response.busType.toColor
         
+        cell?.clearBtn.rx.tap
+            .map({ _ in
+                print("\(response)")
+                return response
+            })
+            .subscribe(onNext: { busInfo in
+                self.tableCellTapEvent.onNext(busInfo)
+            })
+            .disposed(by: cell!.disposeBag)
+        
         return cell
     }
     
@@ -248,16 +262,9 @@ public final class BusStopViewController: UIViewController {
 }
 
 extension BusStopViewController {
-    public func configureUI() {
-        view.backgroundColor = .white
-        navigationController?.isNavigationBarHidden = true
+    private func configureUI() {
         
         view.addSubview(scrollView)
-        
-        [scrollView, contentView, headerView, busStopTableView]
-            .forEach { components in
-                components.translatesAutoresizingMaskIntoConstraints = false
-            }
         
         [headerView, busStopTableView]
             .forEach { components in
@@ -265,7 +272,14 @@ extension BusStopViewController {
             }
         
         scrollView.addSubview(contentView)
-        scrollView.contentInsetAdjustmentBehavior = .never
+        
+        [scrollView, contentView, headerView, busStopTableView]
+            .forEach { components in
+                components.translatesAutoresizingMaskIntoConstraints = false
+            }
+        
+        tableViewHeightConstraint = busStopTableView.heightAnchor
+            .constraint(equalToConstant: 0)
         
         NSLayoutConstraint.activate([
             headerView.topAnchor.constraint(
@@ -290,6 +304,7 @@ extension BusStopViewController {
             busStopTableView.bottomAnchor.constraint(
                 equalTo: contentView.bottomAnchor
             ),
+            tableViewHeightConstraint,
             
             contentView.topAnchor.constraint(
                 equalTo: scrollView.contentLayoutGuide.topAnchor
@@ -303,12 +318,9 @@ extension BusStopViewController {
             contentView.bottomAnchor.constraint(
                 equalTo: scrollView.contentLayoutGuide.bottomAnchor
             ),
-            contentView.heightAnchor.constraint(
-                greaterThanOrEqualTo: view.safeAreaLayoutGuide.heightAnchor
-            ),
             
             scrollView.frameLayoutGuide.topAnchor.constraint(
-                equalTo: view.topAnchor
+                equalTo: view.safeAreaLayoutGuide.topAnchor
             ),
             scrollView.bottomAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.bottomAnchor
@@ -324,13 +336,6 @@ extension BusStopViewController {
 }
 
 extension BusStopViewController: UITableViewDelegate {
-    public func tableView(
-        _ tableView: UITableView,
-        heightForRowAt indexPath: IndexPath
-    ) -> CGFloat {
-        return 60
-    }
-    
     public func tableView(
         _ tableView: UITableView,
         viewForHeaderInSection section: Int

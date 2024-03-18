@@ -15,9 +15,6 @@ public final class ArrivalInfoView: UIStackView {
             size: 14
         )
         label.textColor = DesignSystemAsset.routeTimeColor.color
-        label.widthAnchor.constraint(equalToConstant: 60).isActive = true
-        label.adjustsFontSizeToFitWidth = true
-        label.minimumScaleFactor = 0.7
         return label
     }()
     
