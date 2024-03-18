@@ -66,6 +66,10 @@ public final class BusStopViewController: UIViewController {
         configureDataSource()
     }
     
+    public override func viewWillAppear(_ animated: Bool) {
+        navigationController?.isNavigationBarHidden = true
+    }
+    
     private func bind() {
         let refreshControl = scrollView.enableRefreshControl(
             refreshStr: "당겨서 새로고침"
