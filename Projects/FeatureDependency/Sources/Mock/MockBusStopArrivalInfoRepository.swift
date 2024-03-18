@@ -94,6 +94,102 @@ public final class MockBusStopArrivalInfoRepository
                             secondArrivalRemaining: "9번째 전",
                             isFavorites: false,
                             isAlarmOn: false
+                        ),
+                        BusArrivalInfoResponse(
+                            busId: "100100226",
+                            busName: "3414",
+                            busType: BusType.airport.rawValue,
+                            nextStation: "삼성동서광아파트",
+                            firstArrivalState: ArrivalState.soon,
+                            firstArrivalRemaining: "",
+                            secondArrivalState: ArrivalState
+                                .arrivalTime(time: 1086),
+                            secondArrivalRemaining: "9번째 전",
+                            isFavorites: false,
+                            isAlarmOn: false
+                        ),
+                        BusArrivalInfoResponse(
+                            busId: "100100612",
+                            busName: "3426",
+                            busType: BusType.airport.rawValue,
+                            nextStation: "삼성동서광아파트",
+                            firstArrivalState: ArrivalState.soon,
+                            firstArrivalRemaining: "",
+                            secondArrivalState: ArrivalState
+                                .arrivalTime(time: 689),
+                            secondArrivalRemaining: "6번째 전",
+                            isFavorites: false,
+                            isAlarmOn: false
+                        ),
+                        BusArrivalInfoResponse(
+                            busId: "100100500",
+                            busName: "4312",
+                            busType: BusType.airport.rawValue,
+                            nextStation: "강남구청역",
+                            firstArrivalState: ArrivalState
+                                .arrivalTime(time: 490),
+                            firstArrivalRemaining: "4번째 전",
+                            secondArrivalState: ArrivalState
+                                .arrivalTime(time: 916),
+                            secondArrivalRemaining: "9번째 전",
+                            isFavorites: false,
+                            isAlarmOn: false
+                        ),
+                        BusArrivalInfoResponse(
+                            busId: "1001005001",
+                            busName: "4312",
+                            busType: BusType.branchLine.rawValue,
+                            nextStation: "강남구청역",
+                            firstArrivalState: ArrivalState
+                                .arrivalTime(time: 490),
+                            firstArrivalRemaining: "4번째 전",
+                            secondArrivalState: ArrivalState
+                                .arrivalTime(time: 916),
+                            secondArrivalRemaining: "9번째 전",
+                            isFavorites: false,
+                            isAlarmOn: false
+                        ),
+                        BusArrivalInfoResponse(
+                            busId: "1001005002",
+                            busName: "4312",
+                            busType: BusType.branchLine.rawValue,
+                            nextStation: "강남구청역",
+                            firstArrivalState: ArrivalState
+                                .arrivalTime(time: 490),
+                            firstArrivalRemaining: "4번째 전",
+                            secondArrivalState: ArrivalState
+                                .arrivalTime(time: 916),
+                            secondArrivalRemaining: "9번째 전",
+                            isFavorites: false,
+                            isAlarmOn: false
+                        ),
+                        BusArrivalInfoResponse(
+                            busId: "1001005003",
+                            busName: "4312",
+                            busType: BusType.branchLine.rawValue,
+                            nextStation: "강남구청역",
+                            firstArrivalState: ArrivalState
+                                .arrivalTime(time: 490),
+                            firstArrivalRemaining: "4번째 전",
+                            secondArrivalState: ArrivalState
+                                .arrivalTime(time: 916),
+                            secondArrivalRemaining: "9번째 전",
+                            isFavorites: false,
+                            isAlarmOn: false
+                        ),
+                        BusArrivalInfoResponse(
+                            busId: "1001005004",
+                            busName: "4312",
+                            busType: BusType.branchLine.rawValue,
+                            nextStation: "강남구청역",
+                            firstArrivalState: ArrivalState
+                                .arrivalTime(time: 490),
+                            firstArrivalRemaining: "4번째 전",
+                            secondArrivalState: ArrivalState
+                                .arrivalTime(time: 916),
+                            secondArrivalRemaining: "9번째 전",
+                            isFavorites: false,
+                            isAlarmOn: false
                         )
                     ]
                 )

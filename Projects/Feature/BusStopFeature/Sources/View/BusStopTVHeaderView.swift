@@ -24,7 +24,6 @@ final class BusStopTVHeaderView: UITableViewHeaderFooterView {
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)
         
-        backgroundColor = .systemGray6
         configureUI()
     }
     required init?(coder: NSCoder) {

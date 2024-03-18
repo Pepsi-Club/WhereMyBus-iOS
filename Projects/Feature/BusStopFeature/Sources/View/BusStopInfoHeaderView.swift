@@ -12,19 +12,8 @@ import DesignSystem
 
 public final class BusStopInfoHeaderView: UIView {
     
-    private let totalStack: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .vertical
-        stack.distribution = .fill
-        stack.alignment = .center
-        stack.spacing = 7
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        return stack
-    }()
-    
     public let navigationBtn: UIButton = {
         var config = UIButton.Configuration.plain()
-        
         config.image = UIImage(systemName: "chevron.left")
         config.baseForegroundColor = .white
         config.imagePadding = 7
@@ -34,34 +23,11 @@ public final class BusStopInfoHeaderView: UIView {
         imgConfig = UIImage.SymbolConfiguration(weight: .semibold)
         config.preferredSymbolConfigurationForImage = imgConfig
         let btn = UIButton(configuration: config)
-        btn.translatesAutoresizingMaskIntoConstraints = false
         return btn
-    }()
-    
-    private let busIconStack: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .vertical
-        stack.distribution = .fillProportionally
-        stack.alignment = .center
-        stack.spacing = -2
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        return stack
-    }()
-    
-    private let btnStack: UIStackView = {
-        let stack = UIStackView()
-        stack.backgroundColor = DesignSystemAsset.headerBlue.color
-        stack.axis = .horizontal
-        stack.distribution = .fillEqually
-        stack.alignment = .center
-        stack.spacing = 10
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        return stack
     }()
     
     private let busStopNumLb: UILabel = {
         let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
         label.font = DesignSystemFontFamily.NanumSquareNeoOTF
             .regular.font(size: 15)
         label.textColor = .white
@@ -70,7 +36,6 @@ public final class BusStopInfoHeaderView: UIView {
     
     private let busStopNameLb: UILabel = {
         let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
         label.font = DesignSystemFontFamily.NanumSquareNeoOTF
             .extraBold.font(size: 18)
         label.textColor = .white
@@ -79,7 +44,6 @@ public final class BusStopInfoHeaderView: UIView {
     
     private let nextStopNameLb: UILabel = {
         let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
         label.font = DesignSystemFontFamily.NanumSquareNeoOTF
             .regular.font(size: 14)
         label.textColor = .white
@@ -110,7 +74,6 @@ public final class BusStopInfoHeaderView: UIView {
     private let busStopIcon: UIImageView = {
         let imageView = UIImageView()
         imageView.image = DesignSystemAsset.busStop.image
-        imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
     
@@ -138,59 +101,62 @@ public final class BusStopInfoHeaderView: UIView {
 
 extension BusStopInfoHeaderView {
     private func configureUI() {
-        configureSetup()
-        configureLayouts()
-    }
-    
-    private func configureSetup() {
-        addSubview(totalStack)
-        addSubview(btnStack)
+        
         addSubview(navigationBtn)
+        navigationBtn.translatesAutoresizingMaskIntoConstraints = false
         
-        [busStopIcon, busStopNumLb]
-            .forEach { components in
-                busIconStack.addArrangedSubview(components)
+        [busStopIcon, busStopNumLb, busStopNameLb,
+         nextStopNameLb, mapBtn]
+            .forEach {
+                $0.translatesAutoresizingMaskIntoConstraints = false
+                addSubview($0)
+                $0.centerXAnchor.constraint(
+                    equalTo: centerXAnchor
+                ).isActive = true
             }
-        
-        [busIconStack, busStopNameLb, nextStopNameLb]
-            .forEach { components in
-                totalStack.addArrangedSubview(components)
-            }
-        
-        [mapBtn]
-            .forEach { components in
-                btnStack.addArrangedSubview(components)
-            }
-    }
-    
-    private func configureLayouts() {
         
         NSLayoutConstraint.activate([
+            busStopIcon.topAnchor.constraint(
+                equalTo: topAnchor,
+                constant: 5
+            ),
+            busStopIcon.widthAnchor.constraint(
+                equalToConstant: 60
+            ),
+            busStopIcon.heightAnchor.constraint(
+                equalToConstant: 60
+            ),
+            busStopNumLb.topAnchor.constraint(
+                equalTo: busStopIcon.bottomAnchor,
+                constant: 3
+            ),
+            busStopNumLb.heightAnchor.constraint(equalToConstant: 15),
+            busStopNameLb.topAnchor.constraint(
+                equalTo: busStopNumLb.bottomAnchor,
+                constant: 10
+            ),
+            busStopNameLb.heightAnchor.constraint(equalToConstant: 18),
+            nextStopNameLb.topAnchor.constraint(
+                equalTo: busStopNameLb.bottomAnchor,
+                constant: 10
+            ),
+            nextStopNameLb.heightAnchor.constraint(equalToConstant: 15),
+            mapBtn.topAnchor.constraint(
+                equalTo: nextStopNameLb.bottomAnchor,
+                constant: 12
+            ),
+            mapBtn.bottomAnchor.constraint(
+                equalTo: bottomAnchor,
+                constant: -10
+            ),
+            mapBtn.heightAnchor.constraint(equalToConstant: 25),
             navigationBtn.topAnchor.constraint(
                 equalTo: topAnchor,
-                constant: 60
+                constant: 20
             ),
             navigationBtn.leadingAnchor.constraint(
                 equalTo: leadingAnchor,
                 constant: 15
-            ),
-            totalStack.leadingAnchor.constraint(
-                equalTo: leadingAnchor
-            ),
-            totalStack.trailingAnchor.constraint(
-                equalTo: trailingAnchor
-            ),
-            totalStack.topAnchor.constraint(
-                equalTo: navigationBtn.bottomAnchor,
-                constant: -50
-            ),
-            btnStack.topAnchor.constraint(
-                equalTo: totalStack.bottomAnchor,
-                constant: 15
-            ),
-            btnStack.centerXAnchor.constraint(equalTo: centerXAnchor),
-            btnStack.bottomAnchor.constraint(
-                equalTo: bottomAnchor, constant: -15
             )
         ])
     }

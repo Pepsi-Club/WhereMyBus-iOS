@@ -20,6 +20,8 @@ public final class RegularAlarmForBusTableViewCell: UITableViewCell {
         label.font = DesignSystemFontFamily.NanumSquareNeoOTF
             .bold.font(size: 16)
         label.textColor = DesignSystemAsset.blueBus.color
+        label.adjustsFontSizeToFitWidth = true
+        label.minimumScaleFactor = 0.6
         return label
     }()
     
@@ -28,6 +30,8 @@ public final class RegularAlarmForBusTableViewCell: UITableViewCell {
         label.font = DesignSystemFontFamily.NanumSquareNeoOTF
             .bold.font(size: 16)
         label.textColor = DesignSystemAsset.remainingColor.color
+        label.adjustsFontSizeToFitWidth = true
+        label.minimumScaleFactor = 0.6
         return label
     }()
     
@@ -45,13 +49,11 @@ public final class RegularAlarmForBusTableViewCell: UITableViewCell {
         return image
     }()
     
-    private let horizontalStack: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .horizontal
-        stack.distribution = .equalSpacing
-        stack.alignment = .center
-        stack.spacing = 10
-        return stack
+    public let clearBtn: UIButton = {
+        let button = UIButton()
+        button.backgroundColor = .clear
+        button.isHighlighted = true
+        return button
     }()
     
     override public init(
@@ -59,6 +61,7 @@ public final class RegularAlarmForBusTableViewCell: UITableViewCell {
         reuseIdentifier: String?
     ) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        backgroundColor = .white
         
         configureUI()
     }
@@ -84,13 +87,17 @@ public final class RegularAlarmForBusTableViewCell: UITableViewCell {
     }
     
     private func configureUI() {
-        [busNumberLb, nextStationLb, nextSymbol]
+        [busNumberLb, nextStationLb, nextSymbol, clearBtn]
             .forEach { component in
                 component.translatesAutoresizingMaskIntoConstraints = false
-                addSubview(component)
+                contentView.addSubview(component)
             }
         
         NSLayoutConstraint.activate([
+            clearBtn.widthAnchor.constraint(equalTo: widthAnchor),
+            clearBtn.heightAnchor.constraint(equalToConstant: 60),
+            clearBtn.topAnchor.constraint(equalTo: topAnchor),
+            clearBtn.leadingAnchor.constraint(equalTo: leadingAnchor),
             busNumberLb.topAnchor.constraint(
                 equalTo: topAnchor,
                 constant: 20
@@ -107,7 +114,17 @@ public final class RegularAlarmForBusTableViewCell: UITableViewCell {
                 equalTo: leadingAnchor,
                 constant: 30
             ),
-            nextStationLb.centerXAnchor.constraint(equalTo: centerXAnchor),
+            busNumberLb.widthAnchor.constraint(
+                equalToConstant: contentView.frame.width * 0.27
+            ),
+            busNumberLb.trailingAnchor.constraint(
+                equalTo: nextStationLb.leadingAnchor,
+                constant: -10
+            ),
+            nextStationLb.widthAnchor.constraint(
+                equalToConstant: contentView.frame.width * 0.55
+            ),
+            
             nextSymbol.trailingAnchor.constraint(
                 equalTo: trailingAnchor,
                 constant: -30
