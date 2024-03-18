@@ -9,7 +9,7 @@ import ProjectDescription
 
 public extension Array<TargetDependency> {
     enum ThirdPartyExternal: String, CaseIterable {
-        case rxCocoa, swiftyXMLParser
+        case rxCocoa
         
         public var name: String {
             var name = rawValue.map { $0 }

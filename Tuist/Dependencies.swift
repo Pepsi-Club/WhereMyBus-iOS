@@ -22,7 +22,6 @@ let spm = SwiftPackageManagerDependencies(
     }, productTypes: [
         "RxCocoa": .framework,
         "RxCocoaRuntime": .framework,
-        "SwiftyXMLParser": .framework,
     ]
 )
 
