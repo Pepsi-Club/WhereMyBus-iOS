@@ -100,6 +100,13 @@ public final class DefaultCoreDataService: CoreDataService {
             })
             else { return }
             container.viewContext.delete(object)
+            if container.viewContext.hasChanges {
+                do {
+                    try container.viewContext.save()
+                } catch {
+                    throw error
+                }
+            }
         } catch {
             throw error
         }
