@@ -238,7 +238,7 @@ public final class FavoritesViewController: UIViewController {
                     )
                 }
                 viewController.headerInfoList.removeAll()
-                newResponses.enumerated().forEach { index, response in
+                newResponses.forEach { response in
                     viewController.updateHeaderInfo(
                         name: response.busStopName,
                         direction: response.direction,

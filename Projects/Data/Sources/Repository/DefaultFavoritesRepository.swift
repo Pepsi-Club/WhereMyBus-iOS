@@ -34,12 +34,19 @@ public final class DefaultFavoritesRepository: FavoritesRepository {
     ) throws {
         do {
             let oldFavorites = try favorites.value()
-            if let busStopToUpdate = oldFavorites
-                .first(
-                    where: { 
-                        $0.busStopId == arsId
-                    }
-                ) {
+            let hasBusStopId = try coreDataService.duplicationCheck(
+                type: FavoritesBusStopResponse.self,
+                uniqueKeyPath: \.busStopId,
+                uniqueValue: arsId
+            )
+            if hasBusStopId {
+                guard let busStopToUpdate = oldFavorites
+                    .first(
+                        where: {
+                            $0.busStopId == arsId
+                        }
+                    )
+                else { return }
                 let busIdArrToUpdate = busStopToUpdate.busIds + [bus.busId]
                 let newFavorites = FavoritesBusStopResponse(
                     busStopId: busStopToUpdate.busStopId,

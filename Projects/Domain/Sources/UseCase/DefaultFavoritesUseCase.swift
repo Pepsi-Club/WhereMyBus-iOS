@@ -29,8 +29,7 @@ public final class DefaultFavoritesUseCase: FavoritesUseCase {
     
     public func fetchFavoritesArrivals() {
         do {
-            let favoritesBusStops = try favoritesRepository.favorites
-                .value()
+            let favoritesBusStops = try favoritesRepository.favorites.value()
             Observable.combineLatest(
                 favoritesBusStops
                     .map { response in

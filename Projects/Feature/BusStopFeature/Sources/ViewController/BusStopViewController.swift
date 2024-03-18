@@ -91,7 +91,6 @@ public final class BusStopViewController: UIViewController {
         output.isRefreshing
             .observe(on: MainScheduler.asyncInstance)
             .subscribe(onNext: { refresh in
-                print("\(refresh)")
                 switch refresh {
                 case .fetchComplete:
                     refreshControl.endRefreshing()
