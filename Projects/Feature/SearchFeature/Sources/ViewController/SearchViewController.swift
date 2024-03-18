@@ -57,6 +57,7 @@ public final class SearchViewController: UIViewController {
             style: .insetGrouped
         )
         table.register(SearchTVCell.self)
+        table.backgroundColor = DesignSystemAsset.tableViewColor.color
         table.dataSource = dataSource
         return table
     }()
@@ -87,6 +88,7 @@ public final class SearchViewController: UIViewController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
+        
         configureUI()
         configureDataSource()
         bind()
@@ -285,6 +287,9 @@ public final class SearchViewController: UIViewController {
                                 equalTo: viewController.view.safeAreaLayoutGuide
                                     .bottomAnchor
                             )
+                        viewController.recentSearchTableView.contentInset.top
+                        = -40
+                        
                     }
                     viewController.tableViewBtmConstraint.isActive = true
                 }
