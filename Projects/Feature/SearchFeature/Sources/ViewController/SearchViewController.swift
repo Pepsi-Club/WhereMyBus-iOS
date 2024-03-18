@@ -345,7 +345,6 @@ public final class SearchViewController: UIViewController {
                     .map { _ in
                         response
                     }
-//                    .observe(on: MainScheduler.asyncInstance)
                     .withUnretained(self)
                     .subscribe(
                         onNext: { viewController, response in
