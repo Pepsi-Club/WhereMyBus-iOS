@@ -112,7 +112,7 @@ final class AddRegularAlarmViewModel: ViewModel {
                     default:
                         print("\(String(describing: self)): 잘못된 타이틀")
                     }
-                    viewModel.coordinator.complete()
+                    viewModel.coordinator.finishFlow()
                     viewModel.regularAlarmEditingService.resetManagedObject()
                 }
             )

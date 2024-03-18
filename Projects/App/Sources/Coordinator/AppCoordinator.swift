@@ -29,8 +29,4 @@ final class AppCoordinator: Coordinator {
         childs.append(tabBarCoordinator)
         tabBarCoordinator.start()
     }
-    
-    func finish() {
-        
-    }
 }

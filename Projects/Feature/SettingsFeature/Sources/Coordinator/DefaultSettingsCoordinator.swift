@@ -21,10 +21,6 @@ public final class DefaultSettingsCoordinator {
             animated: false
         )
     }
-
-    public func finish() {
-
-    }
 }
 
 extension DefaultSettingsCoordinator: SettingsCoordinator {

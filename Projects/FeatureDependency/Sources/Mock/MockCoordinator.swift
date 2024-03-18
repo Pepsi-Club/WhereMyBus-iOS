@@ -111,7 +111,7 @@ extension MockCoordinator: AddRegularAlarmCoordinator {
         
     }
     
-    public func complete() {
+    public func removeChildViewController() {
         
     }
 }

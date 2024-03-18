@@ -19,6 +19,8 @@ public final class DefaultAddRegularAlarmCoordinator {
     private let flow: FlowState
     public var coordinatorType: CoordinatorType = .addAlarm
     
+    private var vcForFinishFlow: UIViewController?
+    
     public init(
         parent: Coordinator,
         navigationController: UINavigationController,
@@ -37,6 +39,7 @@ public final class DefaultAddRegularAlarmCoordinator {
                 coordinator: self
             )
         )
+        vcForFinishFlow = addRegularAlarmViewController
         navigationController.pushViewController(
             addRegularAlarmViewController,
             animated: true
@@ -52,6 +55,7 @@ extension DefaultAddRegularAlarmCoordinator: AddRegularAlarmCoordinator {
                 coordinator: self
             )
         )
+        vcForFinishFlow = addRegularAlarmViewController
         navigationController.pushViewController(
             addRegularAlarmViewController,
             animated: true
@@ -68,8 +72,11 @@ extension DefaultAddRegularAlarmCoordinator: AddRegularAlarmCoordinator {
         searchCoordinator.start()
     }
     
-    public func complete() {
-        navigationController.popViewController(animated: true)
-        finish()
+    public func removeChildViewController() {
+        guard let vcForFinishFlow else { return }
+        navigationController.popToViewController(
+            vcForFinishFlow,
+            animated: true
+        )
     }
 }

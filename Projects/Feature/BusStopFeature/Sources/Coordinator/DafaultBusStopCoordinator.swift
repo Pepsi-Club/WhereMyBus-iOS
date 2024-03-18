@@ -28,32 +28,17 @@ public final class DefaultBusStopCoordinator: BusStopCoordinator {
     
     public func start() {
         let fetchData = ArrivalInfoRequest(busStopId: busStopId)
-        switch flow {
-        case .fromHome:
-            let busstopViewController = BusStopViewController(
-                viewModel: BusStopViewModel(
-                    coordinator: self,
-                    fetchData: fetchData
-                ),
-                flow: .fromHome
-            )
-            navigationController.pushViewController(
-                busstopViewController,
-                animated: false
-            )
-        case .fromAlarm:
-            let busstopViewController = BusStopViewController(
-                viewModel: BusStopViewModel(
-                    coordinator: self,
-                    fetchData: fetchData
-                ),
-                flow: .fromAlarm
-            )
-            navigationController.pushViewController(
-                busstopViewController,
-                animated: false
-            )
-        }
+        let busStopViewController = BusStopViewController(
+            viewModel: BusStopViewModel(
+                coordinator: self,
+                fetchData: fetchData
+            ),
+            flow: flow
+        )
+        navigationController.pushViewController(
+            busStopViewController,
+            animated: false
+        )
     }
 }
 

@@ -19,17 +19,13 @@ public final class DefaultRegularAlarmCoordinator: RegularAlarmCoordinator {
     }
     
     public func start() {
-        let homeViewController = RegularAlarmViewController(
+        let regularAlarmViewController = RegularAlarmViewController(
             viewModel: RegularAlarmViewModel(coordinator: self)
         )
         navigationController.setViewControllers(
-            [homeViewController],
+            [regularAlarmViewController],
             animated: false
         )
-    }
-    
-    public func finish() {
-        
     }
 }
 

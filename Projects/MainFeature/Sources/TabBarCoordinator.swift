@@ -83,8 +83,4 @@ public final class TabBarCoordinator: Coordinator {
         childs.append(coordinator)
         coordinator.start()
     }
-    
-    public func finish() {
-        
-    }
 }

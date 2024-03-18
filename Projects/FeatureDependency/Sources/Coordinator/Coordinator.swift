@@ -34,15 +34,19 @@ public extension Coordinator {
         parent?.childDidFinish(self)
     }
     
-    func finishFlow(upTo coordinatorType: CoordinatorType) {
+    func finishFlow(
+        upTo coordinatorKind: CoordinatorType
+    ) {
         var currentCoordinator: Coordinator = self
         var isRoot = false
         while !isRoot {
-            isRoot = currentCoordinator.coordinatorType == coordinatorType
             guard let nextCoordinator = currentCoordinator.parent else { break }
-            currentCoordinator.finishFlow()
+            currentCoordinator.finish()
             currentCoordinator = nextCoordinator
+            isRoot = currentCoordinator.coordinatorType == coordinatorKind
         }
-        print(currentCoordinator)
+        // TODO: 재사용 로직으로 수정
+        (currentCoordinator as? AddRegularAlarmCoordinator)?
+            .removeChildViewController()
     }
 }
