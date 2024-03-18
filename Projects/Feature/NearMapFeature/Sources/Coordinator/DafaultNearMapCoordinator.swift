@@ -12,6 +12,7 @@ public final class DefaultNearMapCoordinator: NearMapCoordinator {
     public var coordinatorProvider: CoordinatorProvider
     public let flow: FlowState
     public let busStopId: String?
+    public var coordinatorType: CoordinatorType = .nearMap
     
     private let disposeBag = DisposeBag()
     
@@ -48,6 +49,7 @@ public final class DefaultNearMapCoordinator: NearMapCoordinator {
 extension DefaultNearMapCoordinator {
     public func startBusStopFlow(busStopId: String) {
         let busStopCoordinator = coordinatorProvider.makeBusStopCoordinator(
+            parent: self,
             navigationController: navigationController,
             busStopId: busStopId,
             flow: flow

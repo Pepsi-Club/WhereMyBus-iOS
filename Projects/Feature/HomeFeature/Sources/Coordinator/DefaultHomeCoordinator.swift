@@ -10,6 +10,7 @@ public final class DefaultHomeCoordinator {
     public var childs: [Coordinator] = []
     public var navigationController: UINavigationController
     public let coordinatorProvider: CoordinatorProvider
+    public var coordinatorType: CoordinatorType = .home
     
     private let favoritesStatus = PublishSubject<FavoritesStatus>()
     private let disposeBag = DisposeBag()
@@ -54,6 +55,7 @@ extension DefaultHomeCoordinator: HomeCoordinator {
     
     public func startSearchFlow() {
         let searchCoordinator = coordinatorProvider.makeSearchCoordinator(
+            parent: self,
             navigationController: navigationController,
             flow: .fromHome
         )
@@ -64,6 +66,7 @@ extension DefaultHomeCoordinator: HomeCoordinator {
     public func startBusStopFlow(stationId: String) {
         // BusStopCoordinatorFlow
         let busStopCoordinator = coordinatorProvider.makeBusStopCoordinator(
+            parent: self,
             navigationController: navigationController,
             busStopId: stationId,
             flow: .fromHome

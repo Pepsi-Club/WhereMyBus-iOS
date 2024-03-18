@@ -18,22 +18,24 @@ import Domain
 
 final class DefaultCoordinatorProvider: CoordinatorProvider {
     func makeHomeCoordinator(
+        parent: Coordinator,
         navigationController: UINavigationController
     ) -> HomeCoordinator {
         DefaultHomeCoordinator(
-            parent: nil,
+            parent: parent,
             navigationController: navigationController,
             coordinatorProvider: self
         )
     }
     
     func makeBusStopCoordinator(
+        parent: Coordinator,
         navigationController: UINavigationController,
         busStopId: String,
         flow: FlowState
     ) -> BusStopCoordinator {
         DefaultBusStopCoordinator(
-            parent: nil,
+            parent: parent,
             navigationController: navigationController,
             busStopId: busStopId,
             coordinatorProvider: self,
@@ -42,11 +44,12 @@ final class DefaultCoordinatorProvider: CoordinatorProvider {
     }
     
     func makeSearchCoordinator(
+        parent: Coordinator,
         navigationController: UINavigationController,
         flow: FlowState
     ) -> SearchCoordinator {
         DefaultSearchCoordinator(
-            parent: nil,
+            parent: parent,
             navigationController: navigationController,
             coordinatorProvider: self,
             flow: flow
@@ -54,10 +57,12 @@ final class DefaultCoordinatorProvider: CoordinatorProvider {
     }
     
     func makeAddRegularAlarmCoordinator(
+        parent: Coordinator,
         navigationController: UINavigationController,
         flow: FlowState
     ) -> AddRegularAlarmCoordinator {
         DefaultAddRegularAlarmCoordinator(
+            parent: parent,
             navigationController: navigationController,
             coordinatorProvider: self,
             flow: .fromAlarm
@@ -65,13 +70,14 @@ final class DefaultCoordinatorProvider: CoordinatorProvider {
     }
     
     func makeNearMapCoordinator(
+        parent: Coordinator,
         navigationController: UINavigationController,
         flow: FlowState,
         busStopId: String?
     ) -> NearMapCoordinator {
         DefaultNearMapCoordinator(
-            parent: nil,
-			navigationController: navigationController, 
+            parent: parent,
+			navigationController: navigationController,
             coordinatorProvider: self,
             flow: flow, 
             busStopId: busStopId

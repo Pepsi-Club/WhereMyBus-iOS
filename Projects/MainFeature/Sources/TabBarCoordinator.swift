@@ -18,6 +18,7 @@ public final class TabBarCoordinator: Coordinator {
     public var childs: [Coordinator] = []
     public var navigationController: UINavigationController
     public let coordinatorProvider: CoordinatorProvider
+    public var coordinatorType: CoordinatorType = .tab
     
     public init(
         navigationController: UINavigationController,

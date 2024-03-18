@@ -87,7 +87,7 @@ public final class BusStopViewModel: ViewModel {
         input.navigationBackBtnTapEvent
             .withUnretained(self)
             .subscribe { viewModel, _ in
-                viewModel.coordinator.popVC()
+                viewModel.coordinator.finishFlow()
             }
             .disposed(by: disposeBag)
         
@@ -104,7 +104,7 @@ public final class BusStopViewModel: ViewModel {
                     busStopInfo: busStopInfo,
                     busInfo: busInfo
                 )
-                viewModel.coordinator.moveToRegualrAlarm()
+                viewModel.coordinator.finishFlow(upTo: .addAlarm)
             })
             .disposed(by: disposeBag)
         

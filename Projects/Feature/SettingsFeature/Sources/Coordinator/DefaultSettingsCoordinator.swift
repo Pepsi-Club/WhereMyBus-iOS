@@ -6,6 +6,7 @@ public final class DefaultSettingsCoordinator {
     public var parent: Coordinator?
     public var childs: [Coordinator] = []
     public var navigationController: UINavigationController
+    public var coordinatorType: CoordinatorType = .setting
 
     public init(navigationController: UINavigationController) {
         self.navigationController = navigationController

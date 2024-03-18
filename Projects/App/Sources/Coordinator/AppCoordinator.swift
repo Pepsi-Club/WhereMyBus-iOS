@@ -15,6 +15,7 @@ final class AppCoordinator: Coordinator {
     var parent: Coordinator?
     var childs: [Coordinator] = []
     var navigationController: UINavigationController
+    public var coordinatorType: CoordinatorType = .app
     
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController

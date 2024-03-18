@@ -15,6 +15,7 @@ public final class MockCoordinatorProvider: CoordinatorProvider {
     public init() { }
     
     public func makeSearchCoordinator(
+        parent: Coordinator,
         navigationController: UINavigationController,
         flow: FlowState
     ) -> SearchCoordinator {
@@ -25,6 +26,7 @@ public final class MockCoordinatorProvider: CoordinatorProvider {
     }
     
     public func makeBusStopCoordinator(
+        parent: Coordinator,
         navigationController: UINavigationController,
         busStopId: String,
         flow: FlowState
@@ -36,6 +38,7 @@ public final class MockCoordinatorProvider: CoordinatorProvider {
     }
     
     public func makeAddRegularAlarmCoordinator(
+        parent: Coordinator,
         navigationController: UINavigationController,
         flow: FlowState
     ) -> AddRegularAlarmCoordinator {
@@ -46,6 +49,7 @@ public final class MockCoordinatorProvider: CoordinatorProvider {
     }
     
     public func makeNearMapCoordinator(
+        parent: Coordinator,
         navigationController: UINavigationController,
         flow: FlowState,
         busStopId: String? = nil
