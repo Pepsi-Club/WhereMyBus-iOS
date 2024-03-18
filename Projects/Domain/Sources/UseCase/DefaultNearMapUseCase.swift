@@ -28,6 +28,7 @@ public final class DefaultNearMapUseCase: NearMapUseCase {
 		self.locationService = locationService
     }
   
+    // MARK: - 함수 호출될 때 마다 
     public func updateNearByBusStop() {
 
         locationService.authState
@@ -64,17 +65,30 @@ public final class DefaultNearMapUseCase: NearMapUseCase {
                         )
                         useCase.nearByBusStop.onNext(result)
                     case .authorizedAlways, .authorizedWhenInUse:
-                            do {
-                                let result =
-                                try self.stationListRepository
-                                    .getBusStopNearCurrentLocation()
-                                useCase.nearByBusStop.onNext(result.nearBusStop)
-                            } catch {
-                                print("가까운 정류장을 구할 수 없습니다.")
-                            }
+                            useCase.locationService.requestLocationOnce()
                     @unknown default:
                         break
                     }
+                }
+            )
+            .disposed(by: disposeBag)
+        
+        locationService.currentLocation
+            .subscribe(
+                with: self,
+                onNext: { usecase, _ in
+                    do {
+                        let result =
+                        try usecase.stationListRepository
+                            .getBusStopNearCurrentLocation()
+                        
+                        usecase.nearByBusStop
+                            .onNext(result.nearBusStop)
+                        
+                    } catch {
+                        print("가까운 정류장을 구할 수 없습니다.")
+                    }
+                    
                 }
             )
             .disposed(by: disposeBag)

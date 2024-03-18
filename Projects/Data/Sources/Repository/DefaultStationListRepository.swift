@@ -62,22 +62,24 @@ public final class DefaultStationListRepository: StationListRepository {
         nearBusStop: BusStopInfoResponse,
         distance: String
     ) {
-        self.locationService.requestLocationOnce()
+        print("하이")
         
-        let myLocation = locationService.currentLocation
+        let myLocation = try locationService.currentLocation.value()
         var nearDistance = Int.max
         var nearBusStop = try stationList.value()[0]
         
-        _ = Observable.combineLatest(self.stationList, myLocation)
+        stationList
             .subscribe(
-                onNext: { stationList, myLocation in
+                onNext: { stationList in
                     for (index, busStop) in stationList.enumerated() {
+                        
                         let (startLatitude, startlongitude) =
                         (myLocation.coordinate.latitude,
                          myLocation.coordinate.longitude)
                         let (endLatitude, endLongitude) =
                         (Double(busStop.latitude) ?? 0.0,
                          Double(busStop.longitude) ?? 0.0)
+                        
                         let startLocation = CLLocation(
                             latitude: startLatitude,
                             longitude: startlongitude
@@ -97,7 +99,38 @@ public final class DefaultStationListRepository: StationListRepository {
                     }
                 }
             )
-            .disposed(by: disposeBag)
+            .disposed(by: DisposeBag())
+        
+//        _ = Observable.combineLatest(self.stationList, myLocation)
+//            .subscribe(
+//                onNext: { stationList, myLocation in
+//                    for (index, busStop) in stationList.enumerated() {
+//                        let (startLatitude, startlongitude) =
+//                        (myLocation.coordinate.latitude,
+//                         myLocation.coordinate.longitude)
+//                        let (endLatitude, endLongitude) =
+//                        (Double(busStop.latitude) ?? 0.0,
+//                         Double(busStop.longitude) ?? 0.0)
+//                        let startLocation = CLLocation(
+//                            latitude: startLatitude,
+//                            longitude: startlongitude
+//                        )
+//                        let endLocation = CLLocation(
+//                            latitude: endLatitude,
+//                            longitude: endLongitude
+//                        )
+//                        let distance = Int(endLocation.distance(
+//                            from: startLocation
+//                        ))
+//                        
+//                        if nearDistance > distance {
+//                            nearBusStop = stationList[index]
+//                            nearDistance = distance
+//                        }
+//                    }
+//                }
+//            )
+//            .disposed(by: disposeBag)
         
         var stringDistance = "999m"
         
