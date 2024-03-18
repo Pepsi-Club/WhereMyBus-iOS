@@ -59,7 +59,6 @@ public final class DefaultBusStopUseCase: BusStopUseCase {
             .observe(on: MainScheduler.asyncInstance)
             .subscribe(
                 onNext: { useCase, favorites in
-                    print("✅ \(favorites)")
                     useCase.favorites.onNext(favorites)
                 }
             )

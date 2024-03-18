@@ -56,14 +56,19 @@ public final class DefaultCoreDataService: CoreDataService {
         }
     }
     
-    public func update<T: CoreDataStorable, U>(
+    public func update<T: CoreDataStorable, U: Equatable>(
         data: T,
         uniqueKeyPath: KeyPath<T, U>
     ) throws {
         do {
             let fetchedMo = try fetchMO(type: type(of: data))
+            let uniqueValue = data[keyPath: uniqueKeyPath]
             var object = fetchedMo.first { object in
-                object.value(forKey: uniqueKeyPath.propertyName) != nil
+                guard let fetchedValue = object.value(
+                    forKey: uniqueKeyPath.propertyName
+                ) as? U
+                else { return false }
+                return fetchedValue == uniqueValue
             }
             let mirror = Mirror(reflecting: data)
             mirror.children.forEach { key, value in
@@ -100,6 +105,32 @@ public final class DefaultCoreDataService: CoreDataService {
             })
             else { return }
             container.viewContext.delete(object)
+            if container.viewContext.hasChanges {
+                do {
+                    try container.viewContext.save()
+                } catch {
+                    throw error
+                }
+            }
+        } catch {
+            throw error
+        }
+    }
+    
+    public func duplicationCheck<T: CoreDataStorable, U: Equatable>(
+        type: T.Type,
+        uniqueKeyPath: KeyPath<T, U>,
+        uniqueValue: U
+    ) throws -> Bool {
+        do {
+            let fetchedMO = try fetchMO(type: type)
+            return fetchedMO.contains { object in
+                guard let uniqueProperty = object.value(
+                    forKey: uniqueKeyPath.propertyName
+                ) as? U
+                else { return false }
+                return uniqueProperty == uniqueValue
+            }
         } catch {
             throw error
         }

@@ -261,26 +261,22 @@ final class AddRegularAlarmViewController: UIViewController {
             .disposed(by: disposeBag)
         
         output.regularAlarm
-            .map { response in
-                response.weekday
-            }
             .withUnretained(self)
             .subscribe(
-                onNext: { viewController, weekday in
+                onNext: { viewController, response in
                     viewController.weekDayBtns
                         .forEach { btn in
                             var color: UIColor
-                            if weekday.contains(btn.tag) {
+                            if response.weekday.contains(btn.tag) {
                                 color = DesignSystemAsset.weekDayBlue.color
                             } else {
                                 color = DesignSystemAsset.weekDayGray.color
                             }
                             btn.backgroundColor = color
                         }
-                    let completeEnabled = !weekday.isEmpty
-                    // TODO: SearchFeature에서 정보 받아오고 로직 수정
-//                    && !response.busStopName.isEmpty
-//                    && !response.busName.isEmpty
+                    let completeEnabled = !response.weekday.isEmpty
+                    && !response.busStopName.isEmpty
+                    && !response.busName.isEmpty
                     
                     viewController.completeBtn.isEnabled = completeEnabled
                 }

@@ -19,6 +19,8 @@ class FavoritesTVCell: UITableViewCell {
             size: 20
         )
         label.textColor = DesignSystemAsset.limeGreen.color
+        label.adjustsFontSizeToFitWidth = true
+        label.minimumScaleFactor = 0.6
         return label
     }()
     

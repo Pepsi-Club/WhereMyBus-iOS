@@ -11,7 +11,10 @@ import UIKit
 import Core
 import DesignSystem
 
+import RxSwift
+
 internal final class FavoritesHeaderView: UITableViewHeaderFooterView {
+    var disposeBag = DisposeBag()
     private let busStopNameLabel: UILabel = {
         let label = UILabel()
         label.font = DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(

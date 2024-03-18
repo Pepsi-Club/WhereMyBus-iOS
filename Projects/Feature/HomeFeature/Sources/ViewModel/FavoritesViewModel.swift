@@ -64,12 +64,18 @@ public final class FavoritesViewModel: ViewModel {
         input.busStopTapEvent
             .withUnretained(self)
             .subscribe(
-                onNext: { viewModel, sectionIndex in
+                onNext: { viewModel, selectedId in
                     do {
-                        let response = try viewModel.useCase
+                        let responses = try viewModel.useCase
                             .busStopArrivalInfoResponse.value()
+                        guard let selectedBusStop = responses.first(
+                            where: { response in
+                                response.busStopId == selectedId
+                            }
+                        )
+                        else { return }
                         viewModel.coordinator.startBusStopFlow(
-                            stationId: response[sectionIndex].busStopId
+                            stationId: selectedBusStop.busStopId
                         )
                     } catch {
                         print(error.localizedDescription)
@@ -121,7 +127,7 @@ extension FavoritesViewModel {
         let searchBtnTapEvent: Observable<Void>
         let refreshBtnTapEvent: Observable<Void>
         let alarmBtnTapEvent: Observable<IndexPath>
-        let busStopTapEvent: Observable<Int>
+        let busStopTapEvent: Observable<String>
     }
     
     public struct Output {

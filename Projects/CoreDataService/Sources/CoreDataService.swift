@@ -15,7 +15,7 @@ public protocol CoreDataService {
     
     func save(data: some CoreDataStorable) throws
     
-    func update<T: CoreDataStorable, U>(
+    func update<T: CoreDataStorable, U: Equatable>(
         data: T,
         uniqueKeyPath: KeyPath<T, U>
     ) throws
@@ -24,4 +24,10 @@ public protocol CoreDataService {
         data: T,
         uniqueKeyPath: KeyPath<T, U>
     ) throws
+    
+    func duplicationCheck<T: CoreDataStorable, U: Equatable>(
+        type: T.Type,
+        uniqueKeyPath: KeyPath<T, U>,
+        uniqueValue: U
+    ) throws -> Bool
 }
