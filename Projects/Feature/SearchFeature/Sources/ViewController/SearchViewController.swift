@@ -32,7 +32,7 @@ public final class SearchViewController: UIViewController {
         var titleContainer = AttributeContainer()
         titleContainer.font =
         DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(size: 15)
-        config.attributedTitle = AttributedString( 
+        config.attributedTitle = AttributedString(
             "삭제",
             attributes: titleContainer
         )
@@ -214,9 +214,6 @@ public final class SearchViewController: UIViewController {
         nearByStopView.addGestureRecognizer(nearByStopTapGesture)
         
         let input = SearchViewModel.Input(
-            viewWillAppearEvent: rx.methodInvoked(
-                #selector(UIViewController.viewWillAppear)
-            ).map { _ in },
             textFieldChangeEvent: searchTextFieldView.rx.text
                 .orEmpty
                 .skip(1)
@@ -292,18 +289,6 @@ public final class SearchViewController: UIViewController {
                 
                     }
                     viewController.tableViewBtmConstraint.isActive = true
-                }
-            )
-            .disposed(by: disposeBag)
-        
-        output.nearByStop
-            .withUnretained(self)
-            .subscribe(
-                onNext: { viewController, nearByStopInfo in
-                    viewController.nearByStopView.updateUI(
-                        busStopName: nearByStopInfo.0.busStopName,
-                        distance: nearByStopInfo.1
-                    )
                 }
             )
             .disposed(by: disposeBag)
@@ -408,3 +393,4 @@ extension SearchViewController {
 enum SearchSection: CaseIterable {
     case recentSearch, searchedData
 }
+
