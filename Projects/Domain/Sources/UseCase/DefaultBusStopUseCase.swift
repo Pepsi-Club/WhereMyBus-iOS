@@ -56,7 +56,6 @@ public final class DefaultBusStopUseCase: BusStopUseCase {
     private func fetchFavorites() {
         favoritesRepository.favorites
             .withUnretained(self)
-            .observe(on: MainScheduler.asyncInstance)
             .subscribe(
                 onNext: { useCase, favorites in
                     useCase.favorites.onNext(favorites)

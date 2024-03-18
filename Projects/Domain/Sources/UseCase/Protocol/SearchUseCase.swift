@@ -15,5 +15,8 @@ public protocol SearchUseCase {
     var recentSearchResult: BehaviorSubject<[BusStopInfoResponse]> { get }
     
     func search(term: String)
-    func fetchNearByStop() throws -> (BusStopInfoResponse, String)
+    func removeRecentSearch()
+    func saveRecentSearch(cell: BusStopInfoResponse)
+    func getBusStopInfo(for busStopId: String
+    ) -> Observable<[BusStopInfoResponse]>
 }
