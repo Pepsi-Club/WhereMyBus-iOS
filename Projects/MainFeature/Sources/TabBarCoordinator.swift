@@ -8,6 +8,8 @@
 
 import UIKit
 
+import DesignSystem
+
 import FeatureDependency
 import HomeFeature
 import AlarmFeature
@@ -34,6 +36,14 @@ public final class TabBarCoordinator: Coordinator {
     private func setupTabBarController() {
         let tabBarController = TabBarViewController()
         
+        let appearance = UITabBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = DesignSystemAsset.gray2.color
+        
+        tabBarController.tabBar.standardAppearance = appearance
+        tabBarController.tabBar.scrollEdgeAppearance = 
+        tabBarController.tabBar.standardAppearance
+        
         navigationController.setViewControllers(
             [tabBarController], animated: true
         )
@@ -43,6 +53,7 @@ public final class TabBarCoordinator: Coordinator {
         }
         
         tabBarController.viewControllers = viewControllers
+        
     }
     
     private func makeNavigationController(
