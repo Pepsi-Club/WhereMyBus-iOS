@@ -29,7 +29,7 @@ public final class MockLocationService: LocationService {
         
     }
 	
-    public func requestLocationOnce(completion: (() -> Void)?) {
+    public func requestLocationOnce() {
         
     }
     

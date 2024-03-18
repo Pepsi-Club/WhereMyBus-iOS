@@ -17,7 +17,7 @@ public protocol LocationService {
 	var currentLocation: BehaviorSubject<CLLocation> { get }
 	
     func authorize()
-	func requestLocationOnce(completion: (() -> Void)?)
+	func requestLocationOnce()
 	func startUpdatingLocation()
 	func stopUpdatingLocation()
 }
