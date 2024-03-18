@@ -37,7 +37,7 @@ public final class DefaultNearMapUseCase: NearMapUseCase {
             }
             .withUnretained(self)
             .subscribe(
-                onNext: { [self] useCase, tuple in
+                onNext: { useCase, tuple in
                     let (authState, stationList) = tuple
                     switch authState {
                     case .notDetermined:
@@ -65,7 +65,7 @@ public final class DefaultNearMapUseCase: NearMapUseCase {
                     case .authorizedAlways, .authorizedWhenInUse:
                             do {
                                 let result =
-                                try stationListRepository
+                                try self.stationListRepository
                                     .getBusStopNearCurrentLocation()
                                 useCase.nearByBusStop.onNext(result.nearBusStop)
                             } catch {
