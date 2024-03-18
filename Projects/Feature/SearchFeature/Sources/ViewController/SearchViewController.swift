@@ -123,7 +123,7 @@ public final class SearchViewController: UIViewController {
         NSLayoutConstraint.activate([
             recentSearchlabel.topAnchor.constraint(
                 equalTo: safeArea.topAnchor,
-                constant: 15
+                constant: 20
             ),
             recentSearchlabel.leadingAnchor.constraint(
                 equalTo: safeArea.leadingAnchor,
