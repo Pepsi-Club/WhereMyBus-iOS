@@ -34,7 +34,7 @@ public final class DefaultStationListRepository: StationListRepository {
     }
     
     // MARK: 최근 검색어 저장
-    public func saveRecentSearch(_ searchCell: [BusStopInfoResponse]) {
+    public func saveRecentSearch(_ searchCell: BusStopInfoResponse) {
         var currentSearches = recentlySearchedStation.value
         
         // 최대 갯수에 도달하면 가장 오래된 항목을 제거
@@ -42,7 +42,7 @@ public final class DefaultStationListRepository: StationListRepository {
             currentSearches.removeFirst()
         }
         
-        currentSearches.append(contentsOf: searchCell)
+        currentSearches.append(searchCell)
         
         guard let data = currentSearches.encode()
         else { return }
@@ -52,6 +52,7 @@ public final class DefaultStationListRepository: StationListRepository {
             forKey: userDefaultsKey
         )
         recentlySearchedStation.accept(currentSearches)
+        print("🚏🚏🚏 멈춰멈춰 🚏🚏🚏🚏🚏")
     }
 	
     /// 현재위치로 부터 가장 가까운 정류장을 구합니다.

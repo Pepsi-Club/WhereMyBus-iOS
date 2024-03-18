@@ -12,7 +12,10 @@ import RxSwift
 
 public protocol SearchUseCase {
     var searchedStationList: PublishSubject<[BusStopInfoResponse]> { get }
-    var recentSearchResult: BehaviorSubject<[BusStopInfoResponse]> { get }
+    var recentSearchResult: PublishSubject<[BusStopInfoResponse]> { get }
     
     func search(term: String)
+    func saveRecentSearch(cell: BusStopInfoResponse)
+    func getBusStopInfo(for busStopId: String
+    ) -> Observable<[BusStopInfoResponse]>
 }

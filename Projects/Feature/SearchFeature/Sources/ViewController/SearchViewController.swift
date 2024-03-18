@@ -10,7 +10,7 @@ import RxCocoa
 public final class SearchViewController: UIViewController {
     private let viewModel: SearchViewModel
     
-    private let cellTapEvent = PublishSubject<String>()
+    private let cellTapEvent = PublishSubject<BusStopInfoResponse>()
     private let disposeBag = DisposeBag()
     
     private var dataSource: SearchDataSource!
@@ -224,6 +224,7 @@ public final class SearchViewController: UIViewController {
             .filter { _ in
                 output.tableViewSection.value == .recentSearch
             }
+            .observe(on: MainScheduler.asyncInstance)
             .withUnretained(self)
             .subscribe(
                 onNext: { viewController, responses in
@@ -342,12 +343,13 @@ public final class SearchViewController: UIViewController {
                 cell.addGestureRecognizer(tapGesture)
                 tapGesture.rx.event
                     .map { _ in
-                        response.busStopId
+                        response
                     }
+//                    .observe(on: MainScheduler.asyncInstance)
                     .withUnretained(self)
                     .subscribe(
-                        onNext: { viewController, busStopId in
-                            viewController.cellTapEvent.onNext(busStopId)
+                        onNext: { viewController, response in
+                            viewController.cellTapEvent.onNext(response)
                         }
                     )
                     .disposed(by: cell.disposeBag)

@@ -25,7 +25,7 @@ public final class SearchViewModel: ViewModel {
     public func transform(input: Input) -> Output {
         let output = Output(
             searchedResponse: useCase.searchedStationList,
-            recentSearchedResponse: .init(),
+            recentSearchedResponse: useCase.recentSearchResult,
             nearByStop: .init(),
             tableViewSection: .init(value: .recentSearch)
         )
@@ -65,8 +65,11 @@ public final class SearchViewModel: ViewModel {
         input.cellTapEvent
             .withUnretained(self)
             .subscribe(
-                onNext: { viewModel, busStopId in
-                    viewModel.coordinator.startBusStopFlow(stationId: busStopId)
+                onNext: { viewModel, response in
+                    viewModel.useCase.saveRecentSearch(cell: response)
+                    viewModel.coordinator.startBusStopFlow(
+                        stationId: response.busStopId
+                    )
                 }
             )
             .disposed(by: disposeBag)
@@ -93,7 +96,7 @@ extension SearchViewModel {
         let textFieldChangeEvent: Observable<String>
         let removeBtnTapEvent: Observable<Void>
         let nearByStopTapEvent: Observable<Void>
-        let cellTapEvent: Observable<String>
+        let cellTapEvent: Observable<BusStopInfoResponse>
     }
     
     public struct Output {
