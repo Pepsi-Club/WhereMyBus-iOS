@@ -222,15 +222,11 @@ public final class SearchViewController: UIViewController {
             .filter { _ in
                 output.tableViewSection.value == .recentSearch
             }
-            .withLatestFrom(output.tableViewSection) { responses, section in
-                (responses, section)
-            }
             .withUnretained(self)
             .subscribe(
-                onNext: { viewController, tuple in
-                    let (responses, section) = tuple
+                onNext: { viewController, responses in
                     viewController.updateSnapshot(
-                        section: section,
+                        section: .recentSearch,
                         responses: responses
                     )
                 }
@@ -241,15 +237,11 @@ public final class SearchViewController: UIViewController {
             .filter { _ in
                 output.tableViewSection.value == .searchedData
             }
-            .withLatestFrom(output.tableViewSection) { responses, section in
-                (responses, section)
-            }
             .withUnretained(self)
             .subscribe(
-                onNext: { viewController, tuple in
-                    let (responses, section) = tuple
+                onNext: { viewController, responses in
                     viewController.updateSnapshot(
-                        section: section,
+                        section: .searchedData,
                         responses: responses
                     )
                 }

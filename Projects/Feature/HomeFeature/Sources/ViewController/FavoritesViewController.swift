@@ -75,7 +75,7 @@ public final class FavoritesViewController: UIViewController {
         tableView.register(FavoritesTVCell.self)
         tableView.dataSource = dataSource
         tableView.delegate = self
-        tableView.sectionHeaderTopPadding = .zero
+        tableView.sectionHeaderTopPadding = 20
         return tableView
     }()
     

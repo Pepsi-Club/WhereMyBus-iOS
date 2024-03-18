@@ -33,7 +33,7 @@ public final class DefaultFavoritesRepository: FavoritesRepository {
         bus: BusArrivalInfoResponse
     ) throws {
         do {
-            var oldFavorites = try favorites.value()
+            let oldFavorites = try favorites.value()
             if let busStopToUpdate = oldFavorites
                 .first(
                     where: { 
@@ -76,7 +76,7 @@ public final class DefaultFavoritesRepository: FavoritesRepository {
         bus: BusArrivalInfoResponse
     ) throws {
         do {
-            var oldFavorites = try favorites.value()
+            let oldFavorites = try favorites.value()
             guard let busStopToRemove = oldFavorites
                 .first(
                     where: {
