@@ -50,7 +50,7 @@ public final class DefaultSearchUseCase: SearchUseCase {
     }
     
     public func saveRecentSearch(cell: BusStopInfoResponse) {
-        self.stationListRepository.saveRecentSearch(cell)
+       stationListRepository.saveRecentSearch(cell)
     }
     
     private func bindRecentSearchList() {

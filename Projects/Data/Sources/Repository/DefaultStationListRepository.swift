@@ -39,10 +39,10 @@ public final class DefaultStationListRepository: StationListRepository {
         
         // 최대 갯수에 도달하면 가장 오래된 항목을 제거
         if currentSearches.count >= maxRecentSearchCount {
-            currentSearches.removeFirst()
+            currentSearches.removeLast()
         }
         
-        currentSearches.append(searchCell)
+        currentSearches.insert(searchCell, at: 0)
         
         guard let data = currentSearches.encode()
         else { return }
