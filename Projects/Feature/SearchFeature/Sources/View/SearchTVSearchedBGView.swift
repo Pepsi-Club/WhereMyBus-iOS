@@ -16,7 +16,7 @@ public final class SearchTVSearchedBGView: UIView {
         label.font =
         DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(size: 14)
         label.textColor = DesignSystemAsset.gray6.color
-        label.text = "찾는 검색어가 없습니다 "
+        label.text = "찾는 검색어가 없습니다."
         
         return label
     }()

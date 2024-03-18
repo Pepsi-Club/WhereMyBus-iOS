@@ -22,6 +22,7 @@ public final class SearchViewModel: ViewModel {
         coordinator.finish()
     }
     
+    // MARK: 질문하기
     public func transform(input: Input) -> Output {
         let output = Output(
             searchedResponse: useCase.searchedStationList,
