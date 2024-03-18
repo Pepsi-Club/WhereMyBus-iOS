@@ -25,6 +25,10 @@ public final class MockStationLIstRepository: StationListRepository {
         
     }
     
+    public func removeRecentSearch() {
+        
+    }
+    
     public func getBusStopNearCurrentLocation(
     ) -> (
         nearBusStop: BusStopInfoResponse,

@@ -55,6 +55,11 @@ public final class DefaultStationListRepository: StationListRepository {
         print("🚏🚏🚏 멈춰멈춰 🚏🚏🚏🚏🚏")
     }
 	
+    public func removeRecentSearch() {
+        UserDefaults.standard.removeObject(forKey: userDefaultsKey)
+        recentlySearchedStation.accept([])
+    }
+    
     /// 현재위치로 부터 가장 가까운 정류장을 구합니다.
     /// nearBusStop: 가장 가까운 정류장
     /// distance: 떨어진 거리(m,km)

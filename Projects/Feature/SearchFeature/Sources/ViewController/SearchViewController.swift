@@ -252,33 +252,29 @@ public final class SearchViewController: UIViewController {
             .disposed(by: disposeBag)
         
         output.tableViewSection
+            .withLatestFrom(
+                output.recentSearchedResponse
+            ) { section, recentSearch in
+                (section, recentSearch)
+            }
             .withUnretained(self)
             .subscribe(
-                onNext: { viewController, section in
+                onNext: { viewController, tuple in
+                    let (section, recentSearch) = tuple
                     viewController.tableViewBtmConstraint.isActive = false
                     switch section {
                     case .recentSearch:
-                        if viewController.recentSearchTableView.cellForRow(
-                            at: .init(
-                                row: 0,
-                                section: 0
-                            )
-                        ) == nil {
-                            viewController.recentSearchTableView.backgroundView
-                            = viewController.tvBackgroundView
-                        } else {
-                            viewController.recentSearchTableView.backgroundView
-                            = nil
-                        }
                         viewController.tableViewBtmConstraint
                         = viewController.recentSearchTableView.bottomAnchor
                             .constraint(
                                 equalTo: viewController.nearByStopPaddingView
                                     .topAnchor
                             )
+                        viewController.updateSnapshot(
+                            section: .recentSearch,
+                            responses: recentSearch
+                        )
                     case .searchedData:
-                        viewController.recentSearchTableView.backgroundView
-                        = nil
                         viewController.tableViewBtmConstraint
                         = viewController.recentSearchTableView.bottomAnchor
                             .constraint(
@@ -345,7 +341,6 @@ public final class SearchViewController: UIViewController {
                     .map { _ in
                         response
                     }
-//                    .observe(on: MainScheduler.asyncInstance)
                     .withUnretained(self)
                     .subscribe(
                         onNext: { viewController, response in
@@ -362,6 +357,16 @@ public final class SearchViewController: UIViewController {
         section: SearchSection,
         responses: [BusStopInfoResponse]
     ) {
+        switch section {
+        case .recentSearch:
+            if responses.isEmpty {
+                recentSearchTableView.backgroundView = tvBackgroundView
+            } else {
+                recentSearchTableView.backgroundView = nil
+            }
+        case .searchedData:
+            recentSearchTableView.backgroundView = nil
+        }
         var snapshot = SearchSnapshot()
         snapshot.appendSections([section])
         snapshot.appendItems(
