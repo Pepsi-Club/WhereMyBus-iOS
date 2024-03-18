@@ -59,6 +59,7 @@ public final class SearchViewController: UIViewController {
         table.register(SearchTVCell.self)
         table.backgroundColor = DesignSystemAsset.tableViewColor.color
         table.dataSource = dataSource
+        table.contentInset.top = -20
         return table
     }()
     
@@ -133,7 +134,7 @@ public final class SearchViewController: UIViewController {
             ),
             recentSearchlabel.bottomAnchor.constraint(
                 equalTo: recentSearchTableView.topAnchor,
-                constant: 10
+                constant: -10
             ),
             recentSearchlabel.heightAnchor.constraint(
                 equalToConstant: 15
@@ -285,9 +286,7 @@ public final class SearchViewController: UIViewController {
                                 equalTo: viewController.view.safeAreaLayoutGuide
                                     .bottomAnchor
                             )
-                        viewController.recentSearchTableView.contentInset.top
-                        = -40
-                        
+                
                     }
                     viewController.tableViewBtmConstraint.isActive = true
                 }
