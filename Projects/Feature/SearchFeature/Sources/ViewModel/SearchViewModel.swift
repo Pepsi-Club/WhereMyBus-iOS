@@ -25,7 +25,7 @@ public final class SearchViewModel: ViewModel {
     public func transform(input: Input) -> Output {
         let output = Output(
             searchedResponse: useCase.searchedStationList,
-            recentSearchedResponse: .init(),
+            recentSearchedResponse: .init(value: []),
             nearByStop: .init(),
             tableViewSection: .init(value: .recentSearch)
         )
@@ -34,7 +34,7 @@ public final class SearchViewModel: ViewModel {
             .withUnretained(self)
             .subscribe(
                 onNext: { viewModel, _ in
-                    print(viewModel)
+                    viewModel.useCase.removeRecentSearch()
                 }
             )
             .disposed(by: disposeBag)
@@ -101,7 +101,7 @@ extension SearchViewModel {
     
     public struct Output {
         var searchedResponse: PublishSubject<[BusStopInfoResponse]>
-        var recentSearchedResponse: PublishSubject<[BusStopInfoResponse]>
+        var recentSearchedResponse: BehaviorSubject<[BusStopInfoResponse]>
         var nearByStop: PublishSubject<BusStopInfoResponse>
         var tableViewSection: BehaviorRelay<SearchSection>
     }

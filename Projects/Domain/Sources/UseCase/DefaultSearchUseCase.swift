@@ -15,10 +15,11 @@ public final class DefaultSearchUseCase: SearchUseCase {
     private let stationListRepository: StationListRepository
 
     private let disposeBag = DisposeBag()
-   
-    public var recentSearchResult
-    = PublishSubject<[BusStopInfoResponse]>()
+    
     public let searchedStationList = PublishSubject<[BusStopInfoResponse]>()
+    public var recentSearchResult = BehaviorSubject<[BusStopInfoResponse]>(
+        value: []
+    )
     
     public init(stationListRepository: StationListRepository) {
         self.stationListRepository = stationListRepository
@@ -41,16 +42,20 @@ public final class DefaultSearchUseCase: SearchUseCase {
         }
     }
     
+    public func removeRecentSearch() {
+        stationListRepository.removeRecentSearch()
+    }
+    
+    public func saveRecentSearch(cell: BusStopInfoResponse) {
+        stationListRepository.saveRecentSearch(cell)
+    }
+    
     public func getBusStopInfo(for busStopId: String
     ) -> Observable<[BusStopInfoResponse]> {
         return stationListRepository.stationList
             .map { stationList in
                 return stationList.filter { $0.busStopId == busStopId }
         }
-    }
-    
-    public func saveRecentSearch(cell: BusStopInfoResponse) {
-       stationListRepository.saveRecentSearch(cell)
     }
     
     private func bindRecentSearchList() {
