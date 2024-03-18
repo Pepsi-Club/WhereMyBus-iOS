@@ -41,7 +41,7 @@ final class DeagreeSearchNearStopView: UIButton {
         }()
     
     private let busStopImageView: UIImageView = {
-        let symbolName = "questionmark.app.dashed"
+        let symbolName = "pin.fill"
 
         var configuration = UIImage.SymbolConfiguration(pointSize: 35,
                                                         weight: .bold)
