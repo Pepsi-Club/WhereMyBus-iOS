@@ -172,9 +172,9 @@ public final class BusStopInformationView: UIView {
         !response.direction.isEmpty ?
         "\(response.busStopId) | \(response.direction) 방면" : ""
         busStopDescription.text = description
-        let distance = !response.latitude.isEmpty &&
-        // TODO: 위치정보값 받고 로직 수정
-        !response.longitude.isEmpty ? "999m" : ""
+    }
+    
+    func updateUI(distance: String) {
         distanceFromBusStopLabel.text = distance
     }
 }

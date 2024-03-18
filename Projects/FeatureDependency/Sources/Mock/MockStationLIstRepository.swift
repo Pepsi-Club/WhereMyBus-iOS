@@ -6,6 +6,7 @@
 //  Copyright © 2024 Pepsi-Club. All rights reserved.
 //
 
+import CoreLocation
 import Foundation
 
 import RxSwift
@@ -25,21 +26,20 @@ public final class MockStationLIstRepository: StationListRepository {
         
     }
     
-    public func getBusStopNearCurrentLocation(
-    ) -> (
-        nearBusStop: BusStopInfoResponse,
-        distance: String) {
-            return (
-                BusStopInfoResponse(
-                    busStopName: "관현사입구",
-                    busStopId: "22320",
-                    direction: "새쟁이마을",
-                    longitude: "127.0632387636",
-                    latitude: "37.4373210738"
-                ),
-                "300m"
-            )
-        }
+    public func getNearByStopInfo(
+        startPointLocation: CLLocation
+    ) -> (BusStopInfoResponse, String) {
+        return (
+            BusStopInfoResponse(
+                busStopName: "관현사입구",
+                busStopId: "22320",
+                direction: "새쟁이마을",
+                longitude: "127.0632387636",
+                latitude: "37.4373210738"
+            ),
+            "300m"
+        )
+    }
     
     private func fetchStationList() {
         Timer.scheduledTimer(

@@ -6,6 +6,7 @@
 //  Copyright © 2024 Pepsi-Club. All rights reserved.
 //
 
+import CoreLocation
 import Foundation
 
 import RxSwift
@@ -16,8 +17,7 @@ public protocol StationListRepository {
     var recentlySearchedStation: BehaviorRelay<[BusStopInfoResponse]> { get }
     
     func saveRecentSearch(_ searchCell: [BusStopInfoResponse])
-	func getBusStopNearCurrentLocation() throws -> (
-		nearBusStop: BusStopInfoResponse,
-		distance: String
-	)
+    func getNearByStopInfo(
+        startPointLocation: CLLocation
+    ) -> (BusStopInfoResponse, String)
 }

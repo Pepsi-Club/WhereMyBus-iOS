@@ -25,7 +25,7 @@ extension AppDelegate {
         let busStopArrivalInfoRepository: BusStopArrivalInfoRepository
         = DefaultBusStopArrivalInfoRepository(networkService: networkService)
         let stationListRepository: StationListRepository
-        = DefaultStationListRepository(locationService: locationService)
+        = DefaultStationListRepository()
         let localNotificationService: LocalNotificationService
         = DefaultLocalNotificationService()
         let regularAlarmEditingService: RegularAlarmEditingService

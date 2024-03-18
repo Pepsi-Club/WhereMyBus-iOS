@@ -21,12 +21,7 @@ final public class DefaultLocationService: NSObject, LocationService {
         value: locationManager.authorizationStatus
     )
     
-    public lazy var currentLocation = BehaviorSubject<CLLocation>(
-        value: CLLocation(
-            latitude: 37.571314,
-            longitude: 126.987886
-        )
-    )
+    public lazy var currentLocation = PublishSubject<CLLocation>()
     
     private let disposeBag = DisposeBag()
     
@@ -38,11 +33,6 @@ final public class DefaultLocationService: NSObject, LocationService {
     
     public func authorize() {
         locationManager.requestWhenInUseAuthorization()
-        authState
-            .subscribe(
-                onNext: { print(String(describing: $0)) }
-            )
-            .disposed(by: disposeBag)
     }
     
     /// 한번의 현재 위치 업데이트

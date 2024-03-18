@@ -17,7 +17,8 @@ public final class DefaultNearMapUseCase: NearMapUseCase {
     private let locationService: LocationService
     
     public let nearBusStopList = PublishSubject<[BusStopInfoResponse]>()
-    public let nearByBusStop = PublishSubject<BusStopInfoResponse>()
+    public let selectedBusStop = PublishSubject<BusStopInfoResponse>()
+    public let distanceFromNearByStop = PublishSubject<String>()
     private let disposeBag = DisposeBag()
 	
     public init(
@@ -26,70 +27,54 @@ public final class DefaultNearMapUseCase: NearMapUseCase {
     ) {
         self.stationListRepository = stationListRepository
 		self.locationService = locationService
+        bindDistance()
     }
-  
-    // MARK: - 함수 호출될 때 마다
+    
     public func updateNearByBusStop() {
-        
-        locationService.authState
-            .withLatestFrom(
-                stationListRepository.stationList
-            ) { authState, stationList in
-                (authState, stationList)
-            }
-            .withUnretained(self)
+        locationService.currentLocation
+            .take(1)
             .subscribe(
-                onNext: { useCase, tuple in
-                    let (authState, stationList) = tuple
-                    switch authState {
-                        case .notDetermined:
-                            useCase.locationService.authorize()
-                        case .restricted:
-                            let desciption = "오류가 발생했습니다. 관리자에게 문의해주세요."
-                            let result = BusStopInfoResponse(
-                                busStopName: desciption,
-                                busStopId: "",
-                                direction: "",
-                                longitude: "",
-                                latitude: ""
-                            )
-                            useCase.nearByBusStop.onNext(result)
-                        case .denied:
-                            let desciption = "주변 정류장을 확인하려면 위치 정보를 동의해주세요."
-                            let result = BusStopInfoResponse(
-                                busStopName: desciption,
-                                busStopId: "",
-                                direction: "",
-                                longitude: "",
-                                latitude: ""
-                            )
-                            useCase.nearByBusStop.onNext(result)
-                        case .authorizedAlways, .authorizedWhenInUse:
-                            useCase.locationService.requestLocationOnce()
-                        @unknown default:
-                            break
-                    }
+                with: self,
+                onNext: { useCase, location in
+                    let (nearBusStop, distance) = useCase.stationListRepository
+                        .getNearByStopInfo(startPointLocation: location)
+                    useCase.selectedBusStop.onNext(nearBusStop)
                 }
             )
             .disposed(by: disposeBag)
         
-        // TODO: - 함수 실행마다 중복으로 subscribe되고 있음 fix 필요
-        locationService.currentLocation
+        locationService.authState
+            .withUnretained(self)
             .subscribe(
-                with: self,
-                onNext: { usecase, _ in
-                    do {
-                        let result =
-                        try usecase.stationListRepository
-                            .getBusStopNearCurrentLocation()
-                        
-                        usecase.nearByBusStop
-                            .onNext(result.nearBusStop)
-                        
-                    } catch {
-                        print("가까운 정류장을 구할 수 없습니다.")
+                onNext: { useCase, authState in
+                    switch authState {
+                    case .notDetermined:
+                        useCase.locationService.authorize()
+                    case .restricted:
+                        let desciption = "오류가 발생했습니다. 관리자에게 문의해주세요."
+                        let result = BusStopInfoResponse(
+                            busStopName: desciption,
+                            busStopId: "",
+                            direction: "",
+                            longitude: "",
+                            latitude: ""
+                        )
+                        useCase.selectedBusStop.onNext(result)
+                    case .denied:
+                        let desciption = "주변 정류장을 확인하려면 위치 정보를 동의해주세요."
+                        let result = BusStopInfoResponse(
+                            busStopName: desciption,
+                            busStopId: "",
+                            direction: "",
+                            longitude: "",
+                            latitude: ""
+                        )
+                        useCase.selectedBusStop.onNext(result)
+                    case .authorizedAlways, .authorizedWhenInUse:
+                        useCase.locationService.requestLocationOnce()
+                    @unknown default:
+                        break
                     }
-                    
                 }
             )
             .disposed(by: disposeBag)
@@ -121,13 +106,51 @@ public final class DefaultNearMapUseCase: NearMapUseCase {
     public func busStopSelected(busStopId: String) {
         do {
             let responses = try stationListRepository.stationList.value()
-            guard let selectedBusStop = responses.first(where: { response in
-                response.busStopId == busStopId
-            })
+            guard let response = responses.first(
+                where: { response in
+                    response.busStopId == busStopId
+                }
+            )
             else { return }
-            nearByBusStop.onNext(selectedBusStop)
+            selectedBusStop.onNext(response)
         } catch {
             print(error.localizedDescription)
         }
+    }
+    
+    private func bindDistance() {
+        selectedBusStop
+            .withLatestFrom(
+                locationService.currentLocation
+            ) { response, location in
+                (response, location)
+            }
+            .withUnretained(self)
+            .subscribe(
+                onNext: { useCase, tuple in
+                    let (response, startPoint) = tuple
+                    guard let endPointLatitude = Double(response.latitude),
+                          let endPointLongitude = Double(response.longitude)
+                    else { return }
+                    let distance = Int(
+                        CLLocation(
+                            latitude: endPointLatitude,
+                            longitude: endPointLongitude
+                        )
+                        .distance(from: startPoint)
+                    )
+                    let distanceStr: String
+                    switch distance {
+                    case ..<1000:
+                        distanceStr = "\(distance)m"
+                    case Int.max:
+                        distanceStr = "측정거리 초과"
+                    default:
+                        distanceStr =  "\(distance / 1000)km"
+                    }
+                    useCase.distanceFromNearByStop.onNext(distanceStr)
+                }
+            )
+            .disposed(by: disposeBag)
     }
 }

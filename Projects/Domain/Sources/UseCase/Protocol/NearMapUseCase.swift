@@ -13,7 +13,8 @@ import RxSwift
 
 public protocol NearMapUseCase {
     var nearBusStopList: PublishSubject<[BusStopInfoResponse]> { get }
-    var nearByBusStop: PublishSubject<BusStopInfoResponse> { get }
+    var selectedBusStop: PublishSubject<BusStopInfoResponse> { get }
+    var distanceFromNearByStop: PublishSubject<String> { get }
     
     func updateNearByBusStop()
     func updateNearBusStopList(
