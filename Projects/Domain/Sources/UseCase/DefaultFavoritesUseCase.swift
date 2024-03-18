@@ -40,13 +40,15 @@ public final class DefaultFavoritesUseCase: FavoritesUseCase {
                     }
             )
             .withUnretained(self)
-            .map { useCase, responses in
-                useCase.filterFavorites(
-                    fetchedResponses: responses,
-                    favoritesBusStops: favoritesBusStops
-                )
-            }
-            .bind(to: busStopArrivalInfoResponse)
+            .subscribe(
+                onNext: { useCase, responses in
+                    let filteredResponses = useCase.filterFavorites(
+                        fetchedResponses: responses,
+                        favoritesBusStops: favoritesBusStops
+                    )
+                    useCase.busStopArrivalInfoResponse.onNext(filteredResponses)
+                }
+            )
             .disposed(by: disposeBag)
         } catch {
             busStopArrivalInfoResponse.onError(error)
