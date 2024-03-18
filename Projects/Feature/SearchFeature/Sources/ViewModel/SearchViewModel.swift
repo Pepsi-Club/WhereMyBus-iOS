@@ -25,7 +25,7 @@ public final class SearchViewModel: ViewModel {
     public func transform(input: Input) -> Output {
         let output = Output(
             searchedResponse: useCase.searchedStationList,
-            recentSearchedResponse: useCase.recentSearchResult,
+            recentSearchedResponse: .init(),
             nearByStop: .init(),
             tableViewSection: .init(value: .recentSearch)
         )
