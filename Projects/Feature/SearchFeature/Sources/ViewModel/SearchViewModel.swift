@@ -30,6 +30,20 @@ public final class SearchViewModel: ViewModel {
             tableViewSection: .init(value: .recentSearch)
         )
         
+        input.viewWillAppearEvent
+            .withUnretained(self)
+            .subscribe(
+                onNext: { viewModel, _ in
+                    do {
+                        let nearByStopInfo = try viewModel.useCase.fetchNearByStop()
+                        output.nearByStop.onNext(nearByStopInfo)
+                    } catch {
+                        print(error.localizedDescription)
+                    }
+                }
+            )
+            .disposed(by: disposeBag)
+        
         input.removeBtnTapEvent
             .withUnretained(self)
             .subscribe(
@@ -90,6 +104,7 @@ public final class SearchViewModel: ViewModel {
 
 extension SearchViewModel {
     public struct Input {
+        let viewWillAppearEvent: Observable<Void>
         let textFieldChangeEvent: Observable<String>
         let removeBtnTapEvent: Observable<Void>
         let nearByStopTapEvent: Observable<Void>
@@ -99,7 +114,7 @@ extension SearchViewModel {
     public struct Output {
         var searchedResponse: PublishSubject<[BusStopInfoResponse]>
         var recentSearchedResponse: PublishSubject<[BusStopInfoResponse]>
-        var nearByStop: PublishSubject<BusStopInfoResponse>
+        var nearByStop: PublishSubject<(BusStopInfoResponse, String)>
         var tableViewSection: BehaviorRelay<SearchSection>
     }
 }
