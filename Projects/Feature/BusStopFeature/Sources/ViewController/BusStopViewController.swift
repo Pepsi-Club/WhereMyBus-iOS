@@ -206,9 +206,7 @@ public final class BusStopViewController: UIViewController {
                 print("\(response)")
                 return response
             })
-            .subscribe(onNext: { busInfo in
-                self.tableCellTapEvent.onNext(busInfo)
-            })
+            .bind(to: tableCellTapEvent)
             .disposed(by: cell!.disposeBag)
         
         return cell

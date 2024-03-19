@@ -17,12 +17,17 @@ public final class DefaultAddRegularAlarmCoordinator {
     public var navigationController: UINavigationController
     public let coordinatorProvider: CoordinatorProvider
     private let flow: FlowState
+    public var coordinatorType: CoordinatorType = .addAlarm
+    
+    private var vcForFinishFlow: UIViewController?
     
     public init(
+        parent: Coordinator,
         navigationController: UINavigationController,
         coordinatorProvider: CoordinatorProvider,
         flow: FlowState
     ) {
+        self.parent = parent
         self.navigationController = navigationController
         self.coordinatorProvider = coordinatorProvider
         self.flow = flow
@@ -34,6 +39,7 @@ public final class DefaultAddRegularAlarmCoordinator {
                 coordinator: self
             )
         )
+        vcForFinishFlow = addRegularAlarmViewController
         navigationController.pushViewController(
             addRegularAlarmViewController,
             animated: true
@@ -49,6 +55,7 @@ extension DefaultAddRegularAlarmCoordinator: AddRegularAlarmCoordinator {
                 coordinator: self
             )
         )
+        vcForFinishFlow = addRegularAlarmViewController
         navigationController.pushViewController(
             addRegularAlarmViewController,
             animated: true
@@ -57,6 +64,7 @@ extension DefaultAddRegularAlarmCoordinator: AddRegularAlarmCoordinator {
     
     public func startSearchFlow() {
         let searchCoordinator = coordinatorProvider.makeSearchCoordinator(
+            parent: self,
             navigationController: navigationController,
             flow: .fromAlarm
         )
@@ -64,8 +72,11 @@ extension DefaultAddRegularAlarmCoordinator: AddRegularAlarmCoordinator {
         searchCoordinator.start()
     }
     
-    public func complete() {
-        navigationController.popViewController(animated: true)
-        finish()
+    public func removeChildViewController() {
+        guard let vcForFinishFlow else { return }
+        navigationController.popToViewController(
+            vcForFinishFlow,
+            animated: true
+        )
     }
 }

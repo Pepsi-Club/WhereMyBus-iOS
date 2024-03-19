@@ -12,5 +12,5 @@ import Domain
 public protocol SearchCoordinator: Coordinator {
     func startBusStopFlow(stationId: String)
     func startNearMapFlow()
-    func finishFlow()
+//    func finishFlow()
 }

@@ -13,5 +13,5 @@ import Domain
 public protocol AddRegularAlarmCoordinator: Coordinator {
     func start(with: RegularAlarmResponse)
     func startSearchFlow()
-    func complete()
+    func removeChildViewController()
 }

@@ -8,6 +8,7 @@ public final class DefaultRegularAlarmCoordinator: RegularAlarmCoordinator {
     public var childs: [Coordinator] = []
     public var navigationController: UINavigationController
     public var coordinatorProvider: CoordinatorProvider
+    public var coordinatorType: CoordinatorType = .regularAlarm
     
     public init(
         navigationController: UINavigationController,
@@ -18,23 +19,20 @@ public final class DefaultRegularAlarmCoordinator: RegularAlarmCoordinator {
     }
     
     public func start() {
-        let homeViewController = RegularAlarmViewController(
+        let regularAlarmViewController = RegularAlarmViewController(
             viewModel: RegularAlarmViewModel(coordinator: self)
         )
         navigationController.setViewControllers(
-            [homeViewController],
+            [regularAlarmViewController],
             animated: false
         )
-    }
-    
-    public func finish() {
-        
     }
 }
 
 public extension DefaultRegularAlarmCoordinator {
     func startAddRegularAlarmFlow() {
         let addRegularAlarmCoordinator = DefaultAddRegularAlarmCoordinator(
+            parent: self,
             navigationController: navigationController,
             coordinatorProvider: coordinatorProvider,
             flow: .fromAlarm
@@ -45,6 +43,7 @@ public extension DefaultRegularAlarmCoordinator {
     
     func startAddRegularAlarmFlow(with: RegularAlarmResponse) {
         let addRegularAlarmCoordinator = DefaultAddRegularAlarmCoordinator(
+            parent: self,
             navigationController: navigationController,
             coordinatorProvider: coordinatorProvider,
             flow: .fromAlarm

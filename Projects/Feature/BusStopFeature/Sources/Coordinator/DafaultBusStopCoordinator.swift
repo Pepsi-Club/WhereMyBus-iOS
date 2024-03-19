@@ -10,6 +10,7 @@ public final class DefaultBusStopCoordinator: BusStopCoordinator {
     public var coordinatorProvider: CoordinatorProvider
     private var busStopId: String
     private let flow: FlowState
+    public var coordinatorType: CoordinatorType = .busStop
     
     public init(
         parent: Coordinator?,
@@ -27,32 +28,17 @@ public final class DefaultBusStopCoordinator: BusStopCoordinator {
     
     public func start() {
         let fetchData = ArrivalInfoRequest(busStopId: busStopId)
-        switch flow {
-        case .fromHome:
-            let busstopViewController = BusStopViewController(
-                viewModel: BusStopViewModel(
-                    coordinator: self,
-                    fetchData: fetchData
-                ),
-                flow: .fromHome
-            )
-            navigationController.pushViewController(
-                busstopViewController,
-                animated: false
-            )
-        case .fromAlarm:
-            let busstopViewController = BusStopViewController(
-                viewModel: BusStopViewModel(
-                    coordinator: self,
-                    fetchData: fetchData
-                ),
-                flow: .fromAlarm
-            )
-            navigationController.pushViewController(
-                busstopViewController,
-                animated: false
-            )
-        }
+        let busStopViewController = BusStopViewController(
+            viewModel: BusStopViewModel(
+                coordinator: self,
+                fetchData: fetchData
+            ),
+            flow: flow
+        )
+        navigationController.pushViewController(
+            busStopViewController,
+            animated: false
+        )
     }
 }
 
@@ -60,6 +46,7 @@ extension DefaultBusStopCoordinator {
     // 정류장 위치뷰로 이동하기 위한
     public func busStopMapLocation(busStopId: String) {
         let nearMapCoordinator = coordinatorProvider.makeNearMapCoordinator(
+            parent: self,
             navigationController: navigationController,
             flow: flow,
             busStopId: busStopId
@@ -71,6 +58,7 @@ extension DefaultBusStopCoordinator {
     public func moveToRegualrAlarm() {
         let alarmCoordinator = coordinatorProvider
             .makeAddRegularAlarmCoordinator(
+                parent: self,
                 navigationController: navigationController,
                 flow: .fromAlarm
             )
@@ -78,8 +66,4 @@ extension DefaultBusStopCoordinator {
         alarmCoordinator.start()
     }
     
-    public func popVC() {
-        navigationController.popViewController(animated: true)
-        finish()
-    }
 }

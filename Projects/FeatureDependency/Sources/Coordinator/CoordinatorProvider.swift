@@ -12,22 +12,26 @@ import Domain
 
 public protocol CoordinatorProvider {
     func makeSearchCoordinator(
+        parent: Coordinator,
         navigationController: UINavigationController,
         flow: FlowState
     ) -> SearchCoordinator
     
     func makeBusStopCoordinator(
+        parent: Coordinator,
         navigationController: UINavigationController,
         busStopId: String,
         flow: FlowState
     ) -> BusStopCoordinator
 
     func makeAddRegularAlarmCoordinator(
+        parent: Coordinator,
         navigationController: UINavigationController,
         flow: FlowState
     ) -> AddRegularAlarmCoordinator
     
     func makeNearMapCoordinator(
+        parent: Coordinator,
         navigationController: UINavigationController,
         flow: FlowState,
         busStopId: String?

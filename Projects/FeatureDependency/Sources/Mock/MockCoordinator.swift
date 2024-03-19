@@ -14,6 +14,7 @@ import Domain
 public final class MockCoordinator: Coordinator {
     public var parent: Coordinator?
     public var childs: [Coordinator] = []
+    public var coordinatorType: CoordinatorType = .home
     
     private let testMessage: String
     public var navigationController: UINavigationController
@@ -78,6 +79,11 @@ extension MockCoordinator: SearchCoordinator {
 
 
 extension MockCoordinator: BusStopCoordinator {
+    public func example() {
+        
+    }
+    
+    
     public func popVC() {
         
     }
@@ -105,7 +111,7 @@ extension MockCoordinator: AddRegularAlarmCoordinator {
         
     }
     
-    public func complete() {
+    public func removeChildViewController() {
         
     }
 }

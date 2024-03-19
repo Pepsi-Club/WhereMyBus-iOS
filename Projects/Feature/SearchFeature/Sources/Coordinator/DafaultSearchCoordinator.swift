@@ -9,6 +9,7 @@ public final class DefaultSearchCoordinator: SearchCoordinator {
     public let navigationController: UINavigationController
     public let coordinatorProvider: CoordinatorProvider
     private let flow: FlowState
+    public var coordinatorType: CoordinatorType = .search
     
     public init(
         parent: Coordinator?,
@@ -16,8 +17,8 @@ public final class DefaultSearchCoordinator: SearchCoordinator {
         coordinatorProvider: CoordinatorProvider,
         flow: FlowState
     ) {
-        self.navigationController = navigationController
         self.parent = parent
+        self.navigationController = navigationController
         self.coordinatorProvider = coordinatorProvider
         self.flow = flow
     }
@@ -37,6 +38,7 @@ extension DefaultSearchCoordinator {
     public func startBusStopFlow(stationId: String) {
         // BusStopCoordinatorFlow
         let busStopCoordinator = coordinatorProvider.makeBusStopCoordinator(
+            parent: self,
             navigationController: navigationController,
             busStopId: stationId,
             flow: flow
@@ -47,6 +49,7 @@ extension DefaultSearchCoordinator {
     
     public func startNearMapFlow() {
         let nearMapCoordinator = coordinatorProvider.makeNearMapCoordinator(
+            parent: self,
             navigationController: navigationController,
             flow: flow, 
             busStopId: nil
@@ -55,8 +58,8 @@ extension DefaultSearchCoordinator {
         nearMapCoordinator.start()
     }
     
-    public func finishFlow() {
-        navigationController.popViewController(animated: true)
-        finish()
-    }
+//    public func finishFlow() {
+//        navigationController.popViewController(animated: true)
+//        finish()
+//    }
 }
