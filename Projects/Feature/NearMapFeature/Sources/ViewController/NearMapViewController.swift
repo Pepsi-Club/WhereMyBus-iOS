@@ -172,6 +172,17 @@ public final class NearMapViewController: UIViewController {
                     )
                 }
             )
+            .disposed(by: disposeBag)
+        
+        output.distanceFromNearByStop
+            .withUnretained(self)
+            .subscribe(
+                onNext: { viewModel, distance in
+                    viewModel.busStopInformationView.updateUI(
+                        distance: distance
+                    )
+                }
+            )
 			.disposed(by: disposeBag)
         
         output.navigationTitle

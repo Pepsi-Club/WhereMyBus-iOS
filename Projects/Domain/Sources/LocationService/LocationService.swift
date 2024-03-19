@@ -14,10 +14,10 @@ import RxRelay
 
 public protocol LocationService {
 	var authState: BehaviorSubject<CLAuthorizationStatus> { get }
-	var currentLocation: BehaviorSubject<CLLocation> { get }
+	var currentLocation: PublishSubject<CLLocation> { get }
 	
     func authorize()
-	func requestLocationOnce(completion: (() -> Void)?)
+	func requestLocationOnce()
 	func startUpdatingLocation()
 	func stopUpdatingLocation()
 }

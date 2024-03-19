@@ -40,7 +40,8 @@ public final class NearMapViewModel
 	
 	public func transform(input: Input) -> Output {
 		let output = Output(
-            selectedBusStop: useCase.nearByBusStop,
+            selectedBusStop: useCase.selectedBusStop,
+            distanceFromNearByStop: useCase.distanceFromNearByStop,
             navigationTitle: .init(value: "주변 정류장")
 		)
         
@@ -49,6 +50,7 @@ public final class NearMapViewModel
             .withUnretained(self)
             .bind(
                 onNext: { viewModel, _ in
+                    print(Date())
                     viewModel.updateNearBusStopList()
                     viewModel.useCase.updateNearByBusStop()
                 }
@@ -78,7 +80,7 @@ public final class NearMapViewModel
             )
             .disposed(by: disposeBag)
         
-        useCase.nearByBusStop
+        useCase.selectedBusStop
             .withUnretained(self)
             .subscribe(
                 onNext: { viewModel, nearByBusStop in
@@ -199,13 +201,9 @@ public final class NearMapViewModel
         guard let mapView
         else { return }
         
-        let layer = mapView.getLabelManager()
+        let layer = mapView
+            .getLabelManager()
             .getLabelLayer(layerID: "busStopLayer")
-        
-        let viewMaxPoint = CGPoint(
-            x: mapView.viewRect.size.width,
-            y: mapView.viewRect.size.height
-        )
         
         responses
             .forEach { response in
@@ -335,6 +333,7 @@ extension NearMapViewModel {
     
     public struct Output {
         let selectedBusStop: PublishSubject<BusStopInfoResponse>
+        let distanceFromNearByStop: PublishSubject<String>
         let navigationTitle: BehaviorRelay<String>
     }
 }
