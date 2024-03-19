@@ -73,6 +73,7 @@ public final class NearMapViewController: UIViewController {
 	
 	public func configureUI() {
 		navigationController?.navigationBar.titleTextAttributes = [
+            .foregroundColor: UIColor.black,
 			.font: DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(
 				size: 16
 			)
@@ -164,8 +165,10 @@ public final class NearMapViewController: UIViewController {
             .withUnretained(self)
             .subscribe(
                 onNext: { viewModel, response in
+                    
                     viewModel.busStopInformationView.updateUI(
-                        response: response
+                        response: response,
+                        distance: " "
                     )
                 }
             )

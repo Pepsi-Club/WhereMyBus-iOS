@@ -17,6 +17,10 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         setupAppearance()
         registerDependencies()
         configureNotification(application: application)
+        
+        //모든 BackButton의 타이틀을 없애버림
+        UIBarButtonItem.appearance().setBackButtonTitlePositionAdjustment(UIOffset(horizontal: -1000, vertical: 0), for: .default)
+
         return true
     }
 

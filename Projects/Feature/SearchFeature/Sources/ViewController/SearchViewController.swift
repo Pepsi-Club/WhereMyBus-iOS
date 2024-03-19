@@ -10,7 +10,7 @@ import RxCocoa
 public final class SearchViewController: UIViewController {
     private let viewModel: SearchViewModel
     
-    private let cellTapEvent = PublishSubject<String>()
+    private let cellTapEvent = PublishSubject<BusStopInfoResponse>()
     private let disposeBag = DisposeBag()
     
     private var dataSource: SearchDataSource!
@@ -32,7 +32,7 @@ public final class SearchViewController: UIViewController {
         var titleContainer = AttributeContainer()
         titleContainer.font =
         DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(size: 15)
-        config.attributedTitle = AttributedString( 
+        config.attributedTitle = AttributedString(
             "삭제",
             attributes: titleContainer
         )
@@ -57,7 +57,9 @@ public final class SearchViewController: UIViewController {
             style: .insetGrouped
         )
         table.register(SearchTVCell.self)
+        table.backgroundColor = DesignSystemAsset.tableViewColor.color
         table.dataSource = dataSource
+        table.contentInset.top = -20
         return table
     }()
     
@@ -123,11 +125,15 @@ public final class SearchViewController: UIViewController {
         NSLayoutConstraint.activate([
             recentSearchlabel.topAnchor.constraint(
                 equalTo: safeArea.topAnchor,
-                constant: 15
+                constant: 20
             ),
             recentSearchlabel.leadingAnchor.constraint(
                 equalTo: safeArea.leadingAnchor,
                 constant: 15
+            ),
+            recentSearchlabel.bottomAnchor.constraint(
+                equalTo: recentSearchTableView.topAnchor,
+                constant: -10
             ),
             recentSearchlabel.heightAnchor.constraint(
                 equalToConstant: 15
@@ -207,6 +213,9 @@ public final class SearchViewController: UIViewController {
         nearByStopView.addGestureRecognizer(nearByStopTapGesture)
         
         let input = SearchViewModel.Input(
+            viewWillAppearEvent: rx.methodInvoked(
+                           #selector(UIViewController.viewWillAppear)
+                       ).map { _ in },
             textFieldChangeEvent: searchTextFieldView.rx.text
                 .orEmpty
                 .skip(1)
@@ -222,16 +231,25 @@ public final class SearchViewController: UIViewController {
             .filter { _ in
                 output.tableViewSection.value == .recentSearch
             }
-            .withLatestFrom(output.tableViewSection) { responses, section in
-                (responses, section)
-            }
+            .observe(on: MainScheduler.asyncInstance)
             .withUnretained(self)
             .subscribe(
-                onNext: { viewController, tuple in
-                    let (responses, section) = tuple
+                onNext: { viewController, responses in
                     viewController.updateSnapshot(
-                        section: section,
+                        section: .recentSearch,
                         responses: responses
+                    )
+                }
+            )
+            .disposed(by: disposeBag)
+        
+        output.nearByStop
+            .withUnretained(self)
+            .subscribe(
+                onNext: { viewController, nearByStopInfo in
+                    viewController.nearByStopView.updateUI(
+                        busStopName: nearByStopInfo.0.busStopName,
+                        distance: nearByStopInfo.1
                     )
                 }
             )
@@ -241,15 +259,11 @@ public final class SearchViewController: UIViewController {
             .filter { _ in
                 output.tableViewSection.value == .searchedData
             }
-            .withLatestFrom(output.tableViewSection) { responses, section in
-                (responses, section)
-            }
             .withUnretained(self)
             .subscribe(
-                onNext: { viewController, tuple in
-                    let (responses, section) = tuple
+                onNext: { viewController, responses in
                     viewController.updateSnapshot(
-                        section: section,
+                        section: .searchedData,
                         responses: responses
                     )
                 }
@@ -257,39 +271,36 @@ public final class SearchViewController: UIViewController {
             .disposed(by: disposeBag)
         
         output.tableViewSection
+            .withLatestFrom(
+                output.recentSearchedResponse
+            ) { section, recentSearch in
+                (section, recentSearch)
+            }
             .withUnretained(self)
             .subscribe(
-                onNext: { viewController, section in
+                onNext: { viewController, tuple in
+                    let (section, recentSearch) = tuple
                     viewController.tableViewBtmConstraint.isActive = false
                     switch section {
                     case .recentSearch:
-                        if viewController.recentSearchTableView.cellForRow(
-                            at: .init(
-                                row: 0,
-                                section: 0
-                            )
-                        ) == nil {
-                            viewController.recentSearchTableView.backgroundView
-                            = viewController.tvBackgroundView
-                        } else {
-                            viewController.recentSearchTableView.backgroundView
-                            = nil
-                        }
                         viewController.tableViewBtmConstraint
                         = viewController.recentSearchTableView.bottomAnchor
                             .constraint(
                                 equalTo: viewController.nearByStopPaddingView
                                     .topAnchor
                             )
+                        viewController.updateSnapshot(
+                            section: .recentSearch,
+                            responses: recentSearch
+                        )
                     case .searchedData:
-                        viewController.recentSearchTableView.backgroundView
-                        = nil
                         viewController.tableViewBtmConstraint
                         = viewController.recentSearchTableView.bottomAnchor
                             .constraint(
                                 equalTo: viewController.view.safeAreaLayoutGuide
                                     .bottomAnchor
                             )
+                
                     }
                     viewController.tableViewBtmConstraint.isActive = true
                 }
@@ -345,12 +356,12 @@ public final class SearchViewController: UIViewController {
                 cell.addGestureRecognizer(tapGesture)
                 tapGesture.rx.event
                     .map { _ in
-                        response.busStopId
+                        response
                     }
                     .withUnretained(self)
                     .subscribe(
-                        onNext: { viewController, busStopId in
-                            viewController.cellTapEvent.onNext(busStopId)
+                        onNext: { viewController, response in
+                            viewController.cellTapEvent.onNext(response)
                         }
                     )
                     .disposed(by: cell.disposeBag)
@@ -363,6 +374,16 @@ public final class SearchViewController: UIViewController {
         section: SearchSection,
         responses: [BusStopInfoResponse]
     ) {
+        switch section {
+        case .recentSearch:
+            if responses.isEmpty {
+                recentSearchTableView.backgroundView = tvBackgroundView
+            } else {
+                recentSearchTableView.backgroundView = nil
+            }
+        case .searchedData:
+            recentSearchTableView.backgroundView = nil
+        }
         var snapshot = SearchSnapshot()
         snapshot.appendSections([section])
         snapshot.appendItems(

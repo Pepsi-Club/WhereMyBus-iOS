@@ -22,7 +22,11 @@ public final class MockStationLIstRepository: StationListRepository {
     
     public init(){ }
     
-    public func saveRecentSearch(_ searchCell: [BusStopInfoResponse]) {
+    public func saveRecentSearch(_ searchCell: BusStopInfoResponse) {
+        
+    }
+    
+    public func removeRecentSearch() {
         
     }
     

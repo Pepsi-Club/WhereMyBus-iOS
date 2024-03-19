@@ -25,7 +25,7 @@ public final class SearchViewModel: ViewModel {
     public func transform(input: Input) -> Output {
         let output = Output(
             searchedResponse: useCase.searchedStationList,
-            recentSearchedResponse: .init(),
+            recentSearchedResponse: .init(value: []),
             nearByStop: .init(),
             tableViewSection: .init(value: .recentSearch)
         )
@@ -34,7 +34,7 @@ public final class SearchViewModel: ViewModel {
             .withUnretained(self)
             .subscribe(
                 onNext: { viewModel, _ in
-                    print(viewModel)
+                    viewModel.useCase.removeRecentSearch()
                 }
             )
             .disposed(by: disposeBag)
@@ -65,8 +65,11 @@ public final class SearchViewModel: ViewModel {
         input.cellTapEvent
             .withUnretained(self)
             .subscribe(
-                onNext: { viewModel, busStopId in
-                    viewModel.coordinator.startBusStopFlow(stationId: busStopId)
+                onNext: { viewModel, response in
+                    viewModel.useCase.saveRecentSearch(cell: response)
+                    viewModel.coordinator.startBusStopFlow(
+                        stationId: response.busStopId
+                    )
                 }
             )
             .disposed(by: disposeBag)
@@ -90,16 +93,17 @@ public final class SearchViewModel: ViewModel {
 
 extension SearchViewModel {
     public struct Input {
+        let viewWillAppearEvent: Observable<Void>
         let textFieldChangeEvent: Observable<String>
         let removeBtnTapEvent: Observable<Void>
         let nearByStopTapEvent: Observable<Void>
-        let cellTapEvent: Observable<String>
+        let cellTapEvent: Observable<BusStopInfoResponse>
     }
     
     public struct Output {
         var searchedResponse: PublishSubject<[BusStopInfoResponse]>
-        var recentSearchedResponse: PublishSubject<[BusStopInfoResponse]>
-        var nearByStop: PublishSubject<BusStopInfoResponse>
+        var recentSearchedResponse: BehaviorSubject<[BusStopInfoResponse]>
+        var nearByStop: PublishSubject<(BusStopInfoResponse, String)>
         var tableViewSection: BehaviorRelay<SearchSection>
     }
 }

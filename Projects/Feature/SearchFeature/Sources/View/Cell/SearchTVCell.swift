@@ -40,7 +40,8 @@ final class SearchTVCell: UITableViewCell {
         style: UITableViewCell.CellStyle,
         reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-    
+        
+        backgroundColor = .white
         configureUI()
     }
     

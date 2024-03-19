@@ -62,6 +62,7 @@ final class SearchNearStopView: UIButton {
         let label = UILabel()
         label.font =
         DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(size: 16)
+        label.textColor = .black
         label.text = "주변정류장"
         
         return label

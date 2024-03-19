@@ -16,7 +16,8 @@ public protocol StationListRepository {
     var stationList: BehaviorSubject<[BusStopInfoResponse]> { get }
     var recentlySearchedStation: BehaviorRelay<[BusStopInfoResponse]> { get }
     
-    func saveRecentSearch(_ searchCell: [BusStopInfoResponse])
+    func saveRecentSearch(_ searchCell: BusStopInfoResponse)
+    func removeRecentSearch()
     func getNearByStopInfo(
         startPointLocation: CLLocation
     ) -> (BusStopInfoResponse, String)

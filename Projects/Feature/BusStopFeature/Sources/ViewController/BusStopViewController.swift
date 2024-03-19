@@ -30,7 +30,7 @@ public final class BusStopViewController: UIViewController {
         )
         table.delegate = self
         table.isScrollEnabled = false
-        table.backgroundColor = .systemGray6
+        table.backgroundColor = DesignSystemAsset.tableViewColor.color
         table.rowHeight = 60
         table.sectionHeaderHeight = 46
         table.sectionFooterHeight = 10
@@ -66,6 +66,10 @@ public final class BusStopViewController: UIViewController {
         configureDataSource()
     }
     
+    public override func viewWillAppear(_ animated: Bool) {
+        navigationController?.isNavigationBarHidden = true
+    }
+    
     private func bind() {
         let refreshControl = scrollView.enableRefreshControl(
             refreshStr: "당겨서 새로고침"
@@ -91,7 +95,6 @@ public final class BusStopViewController: UIViewController {
         output.isRefreshing
             .observe(on: MainScheduler.asyncInstance)
             .subscribe(onNext: { refresh in
-                print("\(refresh)")
                 switch refresh {
                 case .fetchComplete:
                     refreshControl.endRefreshing()

@@ -12,7 +12,6 @@ import Domain
 import NetworkService
 
 import RxSwift
-import SwiftyXMLParser
 
 public final class DefaultBusStopArrivalInfoRepository:
     NSObject, BusStopArrivalInfoRepository {

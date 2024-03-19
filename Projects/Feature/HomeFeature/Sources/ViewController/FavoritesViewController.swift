@@ -10,10 +10,10 @@ import RxCocoa
 public final class FavoritesViewController: UIViewController {
     private let viewModel: FavoritesViewModel
     
-    private let disposeBag = DisposeBag()
-    private let headerTapEvent = PublishSubject<Int>()
+    private let headerTapEvent = PublishSubject<String>()
     private let alarmBtnTapEvent = PublishSubject<IndexPath>()
     private let isTableViewEditMode = BehaviorSubject(value: false)
+    private let disposeBag = DisposeBag()
     
     private var dataSource: FavoritesDataSource!
     private var snapshot: FavoritesSnapshot!
@@ -75,7 +75,7 @@ public final class FavoritesViewController: UIViewController {
         tableView.register(FavoritesTVCell.self)
         tableView.dataSource = dataSource
         tableView.delegate = self
-        tableView.sectionHeaderTopPadding = .zero
+        tableView.sectionHeaderTopPadding = 20
         return tableView
     }()
     
@@ -237,16 +237,12 @@ public final class FavoritesViewController: UIViewController {
                         }
                     )
                 }
+                viewController.headerInfoList.removeAll()
                 newResponses.forEach { response in
                     viewController.updateHeaderInfo(
                         name: response.busStopName,
-                        direction: response.direction
-                    )
-                    let header = viewController.favoritesTableView
-                        .tableHeaderView as? FavoritesHeaderView
-                    header?.updateUI(
-                        name: response.busStopName,
-                        direction: response.direction
+                        direction: response.direction,
+                        busStopId: response.busStopId
                     )
                 }
                 viewController.updateSnapshot(busStopResponse: newResponses)
@@ -348,12 +344,14 @@ public final class FavoritesViewController: UIViewController {
     
     private func updateHeaderInfo(
         name: String,
-        direction: String
+        direction: String,
+        busStopId: String
     ) {
         headerInfoList += [
             [
                 "name": name,
-                "direction": direction
+                "direction": direction,
+                "busStopId": busStopId
             ]
         ]
     }
@@ -405,21 +403,25 @@ extension FavoritesViewController: UITableViewDelegate {
         _ tableView: UITableView,
         viewForHeaderInSection section: Int
     ) -> UIView? {
-        let header = tableView.dequeueReusableHeaderFooterView(
+        guard let header = tableView.dequeueReusableHeaderFooterView(
             withIdentifier: FavoritesHeaderView.identifier
         ) as? FavoritesHeaderView
+        else { return .init() }
         if section < headerInfoList.count {
-            header?.updateUI(
+            header.updateUI(
                 name: headerInfoList[section]["name"],
                 direction: headerInfoList[section]["direction"]
             )
         }
+        guard let busStopId = headerInfoList[section]["busStopId"]
+        else { return header }
         let tapGesture = UITapGestureRecognizer()
-        header?.contentView.addGestureRecognizer(tapGesture)
+        header.contentView.addGestureRecognizer(tapGesture)
+        header.disposeBag = .init()
         tapGesture.rx.event
-            .map { _ in section }
+            .map { _ in busStopId }
             .bind(to: headerTapEvent)
-            .disposed(by: disposeBag)
+            .disposed(by: header.disposeBag)
         return header
     }
 }

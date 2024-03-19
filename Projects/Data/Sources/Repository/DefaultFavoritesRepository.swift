@@ -33,13 +33,20 @@ public final class DefaultFavoritesRepository: FavoritesRepository {
         bus: BusArrivalInfoResponse
     ) throws {
         do {
-            var oldFavorites = try favorites.value()
-            if let busStopToUpdate = oldFavorites
-                .first(
-                    where: { 
-                        $0.busStopId == arsId
-                    }
-                ) {
+            let oldFavorites = try favorites.value()
+            let hasBusStopId = try coreDataService.duplicationCheck(
+                type: FavoritesBusStopResponse.self,
+                uniqueKeyPath: \.busStopId,
+                uniqueValue: arsId
+            )
+            if hasBusStopId {
+                guard let busStopToUpdate = oldFavorites
+                    .first(
+                        where: {
+                            $0.busStopId == arsId
+                        }
+                    )
+                else { return }
                 let busIdArrToUpdate = busStopToUpdate.busIds + [bus.busId]
                 let newFavorites = FavoritesBusStopResponse(
                     busStopId: busStopToUpdate.busStopId,
@@ -76,7 +83,7 @@ public final class DefaultFavoritesRepository: FavoritesRepository {
         bus: BusArrivalInfoResponse
     ) throws {
         do {
-            var oldFavorites = try favorites.value()
+            let oldFavorites = try favorites.value()
             guard let busStopToRemove = oldFavorites
                 .first(
                     where: {
