@@ -12,28 +12,31 @@ import UserNotifications
 import Firebase
 import FirebaseMessaging
 
-extension AppDelegate: UNUserNotificationCenterDelegate {
+extension AppDelegate {
     func configureNotification(application: UIApplication) {
-        guard let filePath = Bundle.main.path(
-            forResource: "GoogleService-Info", 
-            ofType: "plist"
-        ),
-              let options = FirebaseOptions(contentsOfFile: filePath)
-        else { return }
-        
-        FirebaseApp.configure(options: options)
         UNUserNotificationCenter.current().delegate = self
-        application.registerForRemoteNotifications()
-        Messaging.messaging().delegate = self
+//        guard let filePath = Bundle.main.path(
+//            forResource: "GoogleService-Info",
+//            ofType: "plist"
+//        ),
+//              let options = FirebaseOptions(contentsOfFile: filePath)
+//        else { return }
+//        FirebaseApp.configure(options: options)
+//        application.registerForRemoteNotifications()
+//        Messaging.messaging().delegate = self
     }
-    
+}
+// MARK: Remote
+extension AppDelegate {
     func application(
         _ application: UIApplication,
         didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
     ) {
         Messaging.messaging().apnsToken = deviceToken
     }
-    
+}
+
+extension AppDelegate: UNUserNotificationCenterDelegate {
     func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         willPresent notification: UNNotification,
@@ -41,7 +44,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             UNNotificationPresentationOptions
         ) -> Void
     ) {
-        completionHandler([.banner, .badge, .sound])
+        completionHandler([.banner, .badge, .sound, .list])
     }
     
     func userNotificationCenter(
