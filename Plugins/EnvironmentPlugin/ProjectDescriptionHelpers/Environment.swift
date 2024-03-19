@@ -9,7 +9,7 @@ import Foundation
 import ProjectDescription
 
 public extension String {
-    static let appName: Self = "BusComing"
+    static let appName: Self = "WhereMyBus"
     static let displayName: Self = "버스어디"
     static let organizationName = "Pepsi-Club"
     /// 앱스토어에 게시할 때마다 증가해줘야 하는 버전
