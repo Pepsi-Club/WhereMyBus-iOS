@@ -116,7 +116,7 @@ public extension [String: Plist.Value] {
         "CFBundleInfoDictionaryVersion": "6.0",
         "CFBundleName": "$(PRODUCT_NAME)",
         "CFBundlePackageType": "FMWK",
-        "CFBundleShortVersionString": "1.0",
-        "CFBundleVersion": "1",
+        "CFBundleShortVersionString": .bundleShortVersionString,
+        "CFBundleVersion": .bundleVersion,
     ]
 }

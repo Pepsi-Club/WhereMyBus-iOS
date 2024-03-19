@@ -16,12 +16,12 @@ platform :ios do
       sh("tuist fetch")
       sh("tuist generate")
       match(
- 	type: "development",
-	git_url: ENV["MATCH_URL"],
+        type: "development",
+        git_url: ENV["MATCH_URL"],
         app_identifier:[
-	  "com.Pepsi-Club.BusComing", 
-	  "com.Pepsi-Club.BusComing.NotificationExtension" 
-	],
+            "com.Pepsi-Club.WhereMyBus",
+            "com.Pepsi-Club.WhereMyBus.NotificationExtension"
+        ],
         readonly: true
       )
     end
