@@ -90,6 +90,7 @@ public extension [String: Plist.Value] {
                 ]
             ]
         ],
+        "UISupportedInterfaceOrientations": ["UIInterfaceOrientationPortrait"],
     ]
     
     static let notificationInfoPlist: Self = [
