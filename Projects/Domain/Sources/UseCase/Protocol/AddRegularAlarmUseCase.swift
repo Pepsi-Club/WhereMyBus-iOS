@@ -12,7 +12,6 @@ import RxSwift
 
 public protocol AddRegularAlarmUseCase {
     func checkNotificationAuth()
-    func fetchAlarm() -> Observable<[RegularAlarmResponse]>
     func addNewAlarm(response: RegularAlarmResponse)
     func editAlarm(response: RegularAlarmResponse)
 }
