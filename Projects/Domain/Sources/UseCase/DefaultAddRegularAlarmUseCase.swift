@@ -23,10 +23,6 @@ public final class DefaultAddRegularAlarmUseCase: AddRegularAlarmUseCase {
         localNotificationService.authorize()
     }
     
-    public func fetchAlarm() -> Observable<[RegularAlarmResponse]> {
-        localNotificationService.fetchRegularAlarm()
-    }
-    
     public func addNewAlarm(response: RegularAlarmResponse) {
         do {
             try localNotificationService.registNewRegularAlarm(
