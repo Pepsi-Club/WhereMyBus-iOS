@@ -58,6 +58,15 @@ public final class DefaultSearchUseCase: SearchUseCase {
         }
     }
     
+    public func fetchNearByStop() throws -> (BusStopInfoResponse, String) {
+        do {
+            return try stationListRepository
+                .getBusStopNearCurrentLocation()
+        } catch {
+            throw error
+        }
+    }
+    
     private func bindRecentSearchList() {
         stationListRepository.recentlySearchedStation
             .bind(to: recentSearchResult)

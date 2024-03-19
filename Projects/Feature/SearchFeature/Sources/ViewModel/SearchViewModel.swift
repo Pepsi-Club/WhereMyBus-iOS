@@ -22,7 +22,6 @@ public final class SearchViewModel: ViewModel {
         coordinator.finish()
     }
     
-    // MARK: 질문하기
     public func transform(input: Input) -> Output {
         let output = Output(
             searchedResponse: useCase.searchedStationList,
@@ -94,6 +93,7 @@ public final class SearchViewModel: ViewModel {
 
 extension SearchViewModel {
     public struct Input {
+        let viewWillAppearEvent: Observable<Void>
         let textFieldChangeEvent: Observable<String>
         let removeBtnTapEvent: Observable<Void>
         let nearByStopTapEvent: Observable<Void>
@@ -103,8 +103,7 @@ extension SearchViewModel {
     public struct Output {
         var searchedResponse: PublishSubject<[BusStopInfoResponse]>
         var recentSearchedResponse: BehaviorSubject<[BusStopInfoResponse]>
-        var nearByStop: PublishSubject<BusStopInfoResponse>
+        var nearByStop: PublishSubject<(BusStopInfoResponse, String)>
         var tableViewSection: BehaviorRelay<SearchSection>
     }
 }
-

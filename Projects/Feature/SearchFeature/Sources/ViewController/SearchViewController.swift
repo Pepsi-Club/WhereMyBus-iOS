@@ -89,7 +89,6 @@ public final class SearchViewController: UIViewController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        
         configureUI()
         configureDataSource()
         bind()
@@ -214,6 +213,9 @@ public final class SearchViewController: UIViewController {
         nearByStopView.addGestureRecognizer(nearByStopTapGesture)
         
         let input = SearchViewModel.Input(
+            viewWillAppearEvent: rx.methodInvoked(
+                           #selector(UIViewController.viewWillAppear)
+                       ).map { _ in },
             textFieldChangeEvent: searchTextFieldView.rx.text
                 .orEmpty
                 .skip(1)
@@ -236,6 +238,18 @@ public final class SearchViewController: UIViewController {
                     viewController.updateSnapshot(
                         section: .recentSearch,
                         responses: responses
+                    )
+                }
+            )
+            .disposed(by: disposeBag)
+        
+        output.nearByStop
+            .withUnretained(self)
+            .subscribe(
+                onNext: { viewController, nearByStopInfo in
+                    viewController.nearByStopView.updateUI(
+                        busStopName: nearByStopInfo.0.busStopName,
+                        distance: nearByStopInfo.1
                     )
                 }
             )
@@ -393,4 +407,3 @@ extension SearchViewController {
 enum SearchSection: CaseIterable {
     case recentSearch, searchedData
 }
-
