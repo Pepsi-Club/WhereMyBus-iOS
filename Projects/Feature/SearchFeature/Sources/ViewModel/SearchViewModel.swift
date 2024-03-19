@@ -27,8 +27,18 @@ public final class SearchViewModel: ViewModel {
             searchedResponse: useCase.searchedStationList,
             recentSearchedResponse: .init(value: []),
             nearByStop: .init(),
+            distanceFromNearByStop: .init(),
             tableViewSection: .init(value: .recentSearch)
         )
+        
+        input.viewWillAppearEvent
+            .withUnretained(self)
+            .subscribe(
+                onNext: { viewModel, _ in
+                    viewModel.useCase.updateNearByStop()
+                }
+            )
+            .disposed(by: disposeBag)
         
         input.removeBtnTapEvent
             .withUnretained(self)
@@ -87,6 +97,13 @@ public final class SearchViewModel: ViewModel {
             .bind(to: output.recentSearchedResponse)
             .disposed(by: disposeBag)
         
+        useCase.nearByStop
+            .bind(to: output.nearByStop)
+            .disposed(by: disposeBag)
+        useCase.distanceFromNearByStop
+            .bind(to: output.distanceFromNearByStop)
+            .disposed(by: disposeBag)
+        
         return output
     }
 }
@@ -103,7 +120,8 @@ extension SearchViewModel {
     public struct Output {
         var searchedResponse: PublishSubject<[BusStopInfoResponse]>
         var recentSearchedResponse: BehaviorSubject<[BusStopInfoResponse]>
-        var nearByStop: PublishSubject<(BusStopInfoResponse, String)>
+        var nearByStop: PublishSubject<BusStopInfoResponse>
+        var distanceFromNearByStop: PublishSubject<String>
         var tableViewSection: BehaviorRelay<SearchSection>
     }
 }

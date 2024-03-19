@@ -75,10 +75,14 @@ final class DeagreeSearchNearStopView: UIButton {
     }
     
     func updateUI(
-        busStopName: String,
-        distance: String
+        busStopName: String
     ) {
         nearStopNameLabel.text = busStopName
+    }
+    
+    func updateUI(
+        distance: String
+    ) {
         distanceLabel.text = distance
     }
     

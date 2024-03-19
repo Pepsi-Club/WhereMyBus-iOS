@@ -36,7 +36,7 @@ public final class DefaultNearMapUseCase: NearMapUseCase {
             .subscribe(
                 with: self,
                 onNext: { useCase, location in
-                    let (nearBusStop, distance) = useCase.stationListRepository
+                    let nearBusStop = useCase.stationListRepository
                         .getNearByStopInfo(startPointLocation: location)
                     useCase.selectedBusStop.onNext(nearBusStop)
                 }

@@ -32,7 +32,7 @@ public final class MockStationLIstRepository: StationListRepository {
     
     public func getNearByStopInfo(
         startPointLocation: CLLocation
-    ) -> (BusStopInfoResponse, String) {
+    ) -> BusStopInfoResponse {
         return (
             BusStopInfoResponse(
                 busStopName: "관현사입구",
@@ -40,8 +40,7 @@ public final class MockStationLIstRepository: StationListRepository {
                 direction: "새쟁이마을",
                 longitude: "127.0632387636",
                 latitude: "37.4373210738"
-            ),
-            "300m"
+            )
         )
     }
     

@@ -11,13 +11,15 @@ import Foundation
 import RxSwift
 
 public protocol SearchUseCase {
+    var nearByStop: PublishSubject<BusStopInfoResponse> { get }
+    var distanceFromNearByStop: PublishSubject<String> { get }
     var searchedStationList: PublishSubject<[BusStopInfoResponse]> { get }
     var recentSearchResult: BehaviorSubject<[BusStopInfoResponse]> { get }
     
     func search(term: String)
     func removeRecentSearch()
     func saveRecentSearch(cell: BusStopInfoResponse)
-    func fetchNearByStop() throws -> (BusStopInfoResponse, String)
+    func updateNearByStop()
     func getBusStopInfo(for busStopId: String
     ) -> Observable<[BusStopInfoResponse]>
 }

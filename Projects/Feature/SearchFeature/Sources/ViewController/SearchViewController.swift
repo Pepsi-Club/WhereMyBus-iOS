@@ -246,10 +246,20 @@ public final class SearchViewController: UIViewController {
         output.nearByStop
             .withUnretained(self)
             .subscribe(
-                onNext: { viewController, nearByStopInfo in
+                onNext: { viewController, nearByStop in
                     viewController.nearByStopView.updateUI(
-                        busStopName: nearByStopInfo.0.busStopName,
-                        distance: nearByStopInfo.1
+                        busStopName: nearByStop.busStopName
+                    )
+                }
+            )
+            .disposed(by: disposeBag)
+        
+        output.distanceFromNearByStop
+            .withUnretained(self)
+            .subscribe(
+                onNext: { viewController, distance in
+                    viewController.nearByStopView.updateUI(
+                        distance: distance
                     )
                 }
             )

@@ -64,7 +64,7 @@ public final class DefaultStationListRepository: StationListRepository {
     /// distance: 떨어진 거리(m,km)
     public func getNearByStopInfo(
         startPointLocation: CLLocation
-    ) -> (BusStopInfoResponse, String) {
+    ) -> BusStopInfoResponse {
         let errorResponse = BusStopInfoResponse(
             busStopName: "가까운 정류장을 찾을 수 없습니다.",
             busStopId: "",
@@ -92,23 +92,9 @@ public final class DefaultStationListRepository: StationListRepository {
                     nearByStopDistance = distance
                 }
             }
-            let distanceStr: String
-            switch nearByStopDistance {
-            case ..<1000:
-                distanceStr = "\(nearByStopDistance)m"
-            case Int.max:
-                distanceStr = "측정거리 초과"
-            default:
-                distanceStr =  "\(nearByStopDistance / 1000)km"
-            }
-#if DEBUG
-            print("🚏 가까운 정류장: \(nearByStop.busStopName)")
-            print("🚏 가까운 정류장으로 부터 거리: \(distanceStr)")
-            print(Date())
-#endif
-            return (nearByStop, distanceStr)
+            return nearByStop
         } catch {
-            return (errorResponse, errorDistance)
+            return errorResponse
         }
     }
     
