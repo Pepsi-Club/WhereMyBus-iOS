@@ -31,7 +31,7 @@ class SettingButtonView: UIView {
     public lazy var termsPrivacyBtn: SettingButton = {
         let view = SettingButton(
             iconName: "lock.shield",
-            title: "개인정보처리방침",
+            title: "서비스 이용약관",
             rightTitle: "",
             isHiddenArrowRight: false
         )
@@ -40,7 +40,7 @@ class SettingButtonView: UIView {
     public lazy var locationPrivacyBtn: SettingButton = {
         let btn = SettingButton(
             iconName: "location.circle",
-            title: "위치정보처리방침",
+            title: "개인정보처리방침",
             rightTitle: "",
             isHiddenArrowRight: false
         )
