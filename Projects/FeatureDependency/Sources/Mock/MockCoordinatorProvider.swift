@@ -55,7 +55,7 @@ public final class MockCoordinatorProvider: CoordinatorProvider {
         busStopId: String? = nil
     ) -> NearMapCoordinator {
         MockCoordinator(
-            testMessage: "NearMap - busStopId: \(busStopId)",
+            testMessage: "NearMap - busStopId: \(busStopId ?? "nil")",
             navigationController: navigationController
         )
     }

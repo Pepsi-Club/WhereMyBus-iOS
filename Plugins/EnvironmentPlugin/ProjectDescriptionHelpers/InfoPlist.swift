@@ -95,6 +95,8 @@ public extension [String: Plist.Value] {
     
     static let notificationInfoPlist: Self = [
         "DATA_GO_KR_API_KEY": "$(DATA_GO_KR_API_KEY)",
+        "CFBundleShortVersionString": .bundleShortVersionString,
+        "CFBundleVersion": .bundleVersion,
         "CFBundleDisplayName": "$(PRODUCT_NAME)",
         "NSExtension": [
             "NSExtensionPointIdentifier": "com.apple.usernotifications.service",

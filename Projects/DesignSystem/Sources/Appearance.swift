@@ -20,7 +20,7 @@ public final class Appearance {
         UITabBar.appearance().tintColor = accentColor
         UITabBar.appearance().unselectedItemTintColor = mainColor
         UITabBar.appearance().isTranslucent = false
-        //모든 BackButton의 타이틀을 없애버림
+        // 모든 BackButton의 타이틀을 없애버림
         UIBarButtonItem.appearance().setBackButtonTitlePositionAdjustment(
             UIOffset(horizontal: -1000, vertical: 0),
             for: .default

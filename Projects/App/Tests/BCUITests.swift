@@ -34,6 +34,7 @@ final class BCUITests: XCTestCase {
             alert.buttons["한 번 허용"].tap()
             return true
         }
+        sleep(5)
         snapshot("2_RecentSearch")
         let searchNavigationBar = app.navigationBars["SearchFeature.SearchView"]
         searchNavigationBar
@@ -112,7 +113,7 @@ final class BCUITests: XCTestCase {
             )
             .element
             .tap()
-        sleep(3)
+        sleep(10)
         snapshot("5_NearMap")
         
         // MARK: AlarmTab으로 이동해 정류장 선택 후 요일 버튼을 누른 뒤 Snapshot
