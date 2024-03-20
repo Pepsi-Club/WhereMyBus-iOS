@@ -96,7 +96,7 @@ public final class BusTableViewCell: UITableViewCell {
         nextRouteName: String
     ) {
         busNumber.text = routeName
-        nextStopName.text = nextRouteName
+        nextStopName.text = nextRouteName + " 방면"
     }
     
     public func updateFirstArrival(

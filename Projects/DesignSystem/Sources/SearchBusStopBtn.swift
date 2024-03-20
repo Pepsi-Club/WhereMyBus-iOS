@@ -38,14 +38,22 @@ public final class SearchBusStopBtn: UIButton {
         fatalError("init(coder:) has not been implemented")
     }
     
-    public override func draw(_ rect: CGRect) {
-        super.draw(rect)
-        guard let titleWidth = titleLabel?.bounds.width,
-              let imgWidth = imageView?.bounds.width
+    public override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        guard let titleLabel = titleLabel,
+              let imageView = imageView
         else { return }
-        let space = rect.width * 0.1
-        let padding = rect.width - titleWidth - imgWidth - space
-        configuration?.imagePadding = padding
+        
+        let space: CGFloat = 10
+        titleLabel.frame.origin.x = layoutMargins.left + space
+        
+        let imageViewX 
+        = bounds.width - imageView.bounds.width - layoutMargins.right - space
+        imageView.frame.origin.x = imageViewX
+        
+        titleLabel.center.y = bounds.midY
+        imageView.center.y = bounds.midY
     }
     
     private func makeConfiguration(

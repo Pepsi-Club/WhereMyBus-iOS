@@ -72,7 +72,7 @@ final class AddRegularAlarmViewController: UIViewController {
     
     private let thirdDescriptionLabel: UILabel = {
         let label = UILabel()
-        label.text = "2. 요일 등록하기"
+        label.text = "3. 요일 등록하기"
         label.font = DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(
             size: 16
         )
@@ -129,6 +129,8 @@ final class AddRegularAlarmViewController: UIViewController {
         }
         
         let safeArea = view.safeAreaLayoutGuide
+        let screenHeight = UIScreen.main.bounds.height
+        let descriptionGap: CGFloat = screenHeight > 700 ? 35 : 20
         
         NSLayoutConstraint.activate([
             titleLabel.topAnchor.constraint(
@@ -164,7 +166,7 @@ final class AddRegularAlarmViewController: UIViewController {
             
             secondDescriptionLabel.topAnchor.constraint(
                 equalTo: searchBtn.bottomAnchor,
-                constant: 35
+                constant: descriptionGap
             ),
             secondDescriptionLabel.leadingAnchor.constraint(
                 equalTo: firstDescriptionLabel.leadingAnchor
@@ -183,7 +185,7 @@ final class AddRegularAlarmViewController: UIViewController {
             
             thirdDescriptionLabel.topAnchor.constraint(
                 equalTo: timePicker.bottomAnchor,
-                constant: 35
+                constant: descriptionGap
             ),
             thirdDescriptionLabel.leadingAnchor.constraint(
                 equalTo: firstDescriptionLabel.leadingAnchor
@@ -211,11 +213,19 @@ final class AddRegularAlarmViewController: UIViewController {
                 equalTo: safeArea.widthAnchor,
                 multiplier: 0.5
             ),
+        ])
+        
+        if screenHeight > 700 {
             completeBtn.bottomAnchor.constraint(
                 equalTo: safeArea.bottomAnchor,
                 constant: -40
-            )
-        ])
+            ).isActive = true
+        } else {
+            completeBtn.bottomAnchor.constraint(
+                equalTo: safeArea.bottomAnchor,
+                constant: -5
+            ).isActive = true
+        }
     }
     
     private func bind() {
