@@ -18,6 +18,11 @@ public final class FavoritesViewController: UIViewController {
     private var dataSource: FavoritesDataSource!
     private var snapshot: FavoritesSnapshot!
     private var headerInfoList: [[String: String]] = []
+    private let refreshAttribute: AttributeContainer = {
+        var titleContainer = AttributeContainer()
+        titleContainer.font = .systemFont(ofSize: 14)
+        return titleContainer
+    }()
     
     private let busIconView: UIImageView = {
         let imageView = UIImageView()
@@ -30,24 +35,22 @@ public final class FavoritesViewController: UIViewController {
         image: UIImage(systemName: "magnifyingglass")
     )
     
-    private let refreshBtn: UIButton = {
+    private lazy var refreshBtn: UIButton = {
         var config = UIButton.Configuration.plain()
         config.baseForegroundColor = .black
-        config.imagePadding = 5
+        config.imagePadding = 6
         // Image
         let image = UIImage(systemName: "arrow.triangle.2.circlepath")
         let imgConfig = UIImage.SymbolConfiguration(
-            font: .systemFont(ofSize: 13)
+            font: .systemFont(ofSize: 11)
         )
         config.image = image
         config.preferredSymbolConfigurationForImage = imgConfig
         // Title
-        var titleContainer = AttributeContainer()
-        titleContainer.font = .systemFont(ofSize: 12)
         let timeStr = Date().toString(dateFormat: "HH:mm")
         config.attributedTitle = AttributedString(
             "\(timeStr) 업데이트",
-            attributes: titleContainer
+            attributes: refreshAttribute
         )
         let button = UIButton(configuration: config)
         return button
@@ -75,7 +78,7 @@ public final class FavoritesViewController: UIViewController {
         tableView.register(FavoritesTVCell.self)
         tableView.dataSource = dataSource
         tableView.delegate = self
-        tableView.sectionHeaderTopPadding = 20
+        tableView.sectionHeaderTopPadding = 0
         return tableView
     }()
     
@@ -142,7 +145,7 @@ public final class FavoritesViewController: UIViewController {
             ),
             refreshBtn.leadingAnchor.constraint(
                 equalTo: safeArea.leadingAnchor,
-                constant: 15
+                constant: 5
             ),
             
             editBtn.topAnchor.constraint(
@@ -155,7 +158,8 @@ public final class FavoritesViewController: UIViewController {
             ),
             
             favoritesTableView.topAnchor.constraint(
-                equalTo: refreshBtn.bottomAnchor
+                equalTo: refreshBtn.bottomAnchor,
+                constant: 3
             ),
             favoritesTableView.leadingAnchor.constraint(
                 equalTo: safeArea.leadingAnchor,
@@ -257,10 +261,11 @@ public final class FavoritesViewController: UIViewController {
                 onNext: { viewController, state in
                     viewController.updateState(state: state)
                     let timeStr = Date().toString(dateFormat: "HH:mm")
-                    viewController.refreshBtn.setTitle(
-                        "\(timeStr) 업데이트",
-                        for: .normal
-                    )
+                    viewController.refreshBtn.configuration?.attributedTitle =
+                        .init(
+                            "\(timeStr) 업데이트",
+                            attributes: viewController.refreshAttribute
+                        )
                 }
             )
             .disposed(by: disposeBag)
@@ -386,6 +391,16 @@ public final class FavoritesViewController: UIViewController {
 }
 
 extension FavoritesViewController: UITableViewDelegate {
+    
+    public func tableView(
+        _ tableView: UITableView,
+        viewForFooterInSection section: Int
+    ) -> UIView? {
+        let footerView = UIView()
+        footerView.backgroundColor = .clear
+        return footerView
+    }
+    
     public func tableView(
         _ tableView: UITableView,
         heightForRowAt indexPath: IndexPath
@@ -398,6 +413,13 @@ extension FavoritesViewController: UITableViewDelegate {
         heightForHeaderInSection section: Int
     ) -> CGFloat {
         60
+    }
+    
+    public func tableView(
+        _ tableView: UITableView,
+        heightForFooterInSection section: Int
+    ) -> CGFloat {
+        15
     }
     
     public func tableView(

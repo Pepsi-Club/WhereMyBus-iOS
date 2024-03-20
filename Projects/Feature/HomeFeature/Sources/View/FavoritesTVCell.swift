@@ -105,7 +105,7 @@ class FavoritesTVCell: UITableViewCell {
             ),
             routeLabel.widthAnchor.constraint(
                 equalTo: contentView.widthAnchor,
-                multiplier: 0.2
+                multiplier: 0.25
             ),
             
             firstArrivalInfoView.leadingAnchor.constraint(
@@ -114,8 +114,8 @@ class FavoritesTVCell: UITableViewCell {
             ),
             
             secondArrivalInfoView.leadingAnchor.constraint(
-                equalTo: routeLabel.trailingAnchor,
-                constant: .screenWidth * 0.35
+                equalTo: firstArrivalInfoView.trailingAnchor,
+                constant: .screenWidth * 0.1
             ),
             
             alarmBtn.trailingAnchor.constraint(
