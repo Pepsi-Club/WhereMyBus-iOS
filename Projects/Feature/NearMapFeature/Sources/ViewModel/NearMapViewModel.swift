@@ -284,7 +284,7 @@ public final class NearMapViewModel
             ),
             mapView: mapView
         )
-        let callback = {   }
+        let callback = { self.updateNearBusStopList() }
         mapView.moveCamera(
             cameraUpdate,
             callback: callback
