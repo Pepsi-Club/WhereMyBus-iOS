@@ -71,11 +71,13 @@ public extension BusStopArrivalInfoDTO {
                 var secondArrivalRemaining = ""
                 if firstMsgArr.count > 1 {
                     firstArrivalRemaining = firstMsgArr[1]
-                    firstArrivalRemaining.removeLast()
+                    firstArrivalRemaining = 
+                    firstArrivalRemaining.components(separatedBy: "]")[0]
                 }
                 if secondMsgArr.count > 1 {
                     secondArrivalRemaining = secondMsgArr[1]
-                    secondArrivalRemaining.removeLast()
+                    secondArrivalRemaining =
+                    secondArrivalRemaining.components(separatedBy: "]")[0]
                 }
                 let firstArrivalState: ArrivalState
                 let secondArrivalState: ArrivalState
