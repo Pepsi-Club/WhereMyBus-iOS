@@ -72,7 +72,7 @@ final class AddRegularAlarmViewController: UIViewController {
     
     private let thirdDescriptionLabel: UILabel = {
         let label = UILabel()
-        label.text = "2. 요일 등록하기"
+        label.text = "3. 요일 등록하기"
         label.font = DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(
             size: 16
         )
