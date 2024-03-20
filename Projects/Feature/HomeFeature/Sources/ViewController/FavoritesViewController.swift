@@ -380,6 +380,7 @@ public final class FavoritesViewController: UIViewController {
 //            editBtn.isHidden = false
         case .fetchComplete:
             favoritesTableView.backgroundView = nil
+            refreshBtn.isHidden = false
         }
     }
 }
