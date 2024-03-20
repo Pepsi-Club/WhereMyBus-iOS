@@ -19,7 +19,12 @@ public final class MockLocationService: LocationService {
         value: .notDetermined
     )
     
-    public let currentLocation = PublishSubject<CLLocation>()
+    public let currentLocation = BehaviorSubject<CLLocation>(
+        value: .init(
+            latitude: 126.979620,
+            longitude: 37.570028
+        )
+    )
     
     public init() { }
 
@@ -37,6 +42,10 @@ public final class MockLocationService: LocationService {
     
     public func stopUpdatingLocation() {
         
+    }
+    
+    public func getDistance(response: Domain.BusStopInfoResponse) -> String {
+        ""
     }
 }
 #endif

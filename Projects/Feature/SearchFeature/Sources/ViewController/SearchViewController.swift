@@ -243,22 +243,13 @@ public final class SearchViewController: UIViewController {
             )
             .disposed(by: disposeBag)
         
-        output.nearByStop
+        output.nearByStopInfo
             .withUnretained(self)
             .subscribe(
-                onNext: { viewController, nearByStop in
+                onNext: { viewController, tuple in
+                    let (response, distance) = tuple
                     viewController.nearByStopView.updateUI(
-                        busStopName: nearByStop.busStopName
-                    )
-                }
-            )
-            .disposed(by: disposeBag)
-        
-        output.distanceFromNearByStop
-            .withUnretained(self)
-            .subscribe(
-                onNext: { viewController, distance in
-                    viewController.nearByStopView.updateUI(
+                        busStopName: response.busStopName,
                         distance: distance
                     )
                 }

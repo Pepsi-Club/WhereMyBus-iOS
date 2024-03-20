@@ -20,5 +20,5 @@ public protocol StationListRepository {
     func removeRecentSearch()
     func getNearByStopInfo(
         startPointLocation: CLLocation
-    ) -> BusStopInfoResponse
+    ) -> (BusStopInfoResponse, String)
 }

@@ -26,8 +26,7 @@ public final class SearchViewModel: ViewModel {
         let output = Output(
             searchedResponse: useCase.searchedStationList,
             recentSearchedResponse: .init(value: []),
-            nearByStop: .init(),
-            distanceFromNearByStop: .init(),
+            nearByStopInfo: .init(),
             tableViewSection: .init(value: .recentSearch)
         )
         
@@ -97,11 +96,8 @@ public final class SearchViewModel: ViewModel {
             .bind(to: output.recentSearchedResponse)
             .disposed(by: disposeBag)
         
-        useCase.nearByStop
-            .bind(to: output.nearByStop)
-            .disposed(by: disposeBag)
-        useCase.distanceFromNearByStop
-            .bind(to: output.distanceFromNearByStop)
+        useCase.nearByStopInfo
+            .bind(to: output.nearByStopInfo)
             .disposed(by: disposeBag)
         
         return output
@@ -120,8 +116,7 @@ extension SearchViewModel {
     public struct Output {
         var searchedResponse: PublishSubject<[BusStopInfoResponse]>
         var recentSearchedResponse: BehaviorSubject<[BusStopInfoResponse]>
-        var nearByStop: PublishSubject<BusStopInfoResponse>
-        var distanceFromNearByStop: PublishSubject<String>
+        var nearByStopInfo: PublishSubject<(BusStopInfoResponse, String)>
         var tableViewSection: BehaviorRelay<SearchSection>
     }
 }

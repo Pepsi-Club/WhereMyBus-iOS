@@ -7,14 +7,10 @@ import RxSwift
 import RxCocoa
 
 public final class NearMapViewController: UIViewController {
-	
-	// MARK: - Property
 	private let viewModel: NearMapViewModel
     
     private let kakaoMapTouchesEndedEvent = PublishSubject<Void>()
 	private let disposeBag = DisposeBag()
-	
-	// MARK: - UI Property
 	
 	private lazy var kakaoMapView: KMViewContainer = {
 		var view = KMViewContainer()
@@ -37,12 +33,6 @@ public final class NearMapViewController: UIViewController {
 		return view
 	}()
 	
-	// MARK: - View Cycle
-	
-	deinit {
-		print("\(Self.description()) 해제")
-	}
-	
 	init(
 		viewModel: NearMapViewModel
 	) {
@@ -56,11 +46,14 @@ public final class NearMapViewController: UIViewController {
 	required init?(coder: NSCoder) {
 		fatalError("init(coder:) has not been implemented")
 	}
-	
+    
+    deinit {
+        viewModel.removeMapController()
+    }
+    
 	public override func viewDidLoad() {
 		super.viewDidLoad()
 		viewModel.mapController = KMController(viewContainer: kakaoMapView)
-		viewModel.initKakaoMap()
 		configureUI()
 		bind()
 	}
@@ -91,8 +84,6 @@ public final class NearMapViewController: UIViewController {
 		}
 		
 		NSLayoutConstraint.activate([
-			
-			// separationView
 			separationView.topAnchor.constraint(
 				equalTo: view.safeAreaLayoutGuide.topAnchor,
 				constant: 0
@@ -109,7 +100,6 @@ public final class NearMapViewController: UIViewController {
 				equalToConstant: 0.2
 			),
 			
-			// NearBusStopLabel
 			busStopInformationView.bottomAnchor.constraint(
 				equalTo: view.safeAreaLayoutGuide.bottomAnchor,
 				constant: -10
@@ -126,7 +116,6 @@ public final class NearMapViewController: UIViewController {
 				equalToConstant: 130
 			),
 			
-			// kakaoMap
 			kakaoMapView.topAnchor.constraint(
 				equalTo: separationView.safeAreaLayoutGuide.topAnchor,
 				constant: 8
@@ -143,7 +132,6 @@ public final class NearMapViewController: UIViewController {
 				equalTo: view.safeAreaLayoutGuide.rightAnchor,
 				constant: -5
 			),
-			
 		])
 	}
 	
@@ -156,34 +144,26 @@ public final class NearMapViewController: UIViewController {
                 viewWillAppearEvent: rx.methodInvoked(
                     #selector(UIViewController.viewWillAppear)
                 ).map { _ in },
+                viewWillDisappearEvent: rx.methodInvoked(
+                    #selector(UIViewController.viewWillDisappear)
+                ).map { _ in },
                 kakaoMapTouchesEndedEvent: kakaoMapTouchesEndedEvent,
                 informationViewTapEvent: tapGesture.rx.event.map { _ in }
             )
 		)
         
-        output.selectedBusStop
+        output.selectedBusStopInfo
             .withUnretained(self)
             .subscribe(
-                onNext: { viewModel, response in
-                    
+                onNext: { viewModel, tuple in
+                    let (response, distance) = tuple
                     viewModel.busStopInformationView.updateUI(
                         response: response,
-                        distance: " "
-                    )
-                }
-            )
-            .disposed(by: disposeBag)
-        
-        output.distanceFromNearByStop
-            .withUnretained(self)
-            .subscribe(
-                onNext: { viewModel, distance in
-                    viewModel.busStopInformationView.updateUI(
                         distance: distance
                     )
                 }
             )
-			.disposed(by: disposeBag)
+            .disposed(by: disposeBag)
         
         output.navigationTitle
             .withUnretained(self)
