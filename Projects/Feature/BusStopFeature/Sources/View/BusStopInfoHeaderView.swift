@@ -95,7 +95,7 @@ public final class BusStopInfoHeaderView: UIView {
     ) {
             busStopNumLb.text = routeId
             busStopNameLb.text = busStopName
-            nextStopNameLb.text = nextStopName
+            nextStopNameLb.text = nextStopName + " 방면"
     }
 }
 
