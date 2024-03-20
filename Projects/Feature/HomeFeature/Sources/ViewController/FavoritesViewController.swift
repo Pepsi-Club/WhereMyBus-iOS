@@ -37,13 +37,13 @@ public final class FavoritesViewController: UIViewController {
         // Image
         let image = UIImage(systemName: "arrow.triangle.2.circlepath")
         let imgConfig = UIImage.SymbolConfiguration(
-            font: .systemFont(ofSize: 13)
+            font: .systemFont(ofSize: 11)
         )
         config.image = image
         config.preferredSymbolConfigurationForImage = imgConfig
         // Title
         var titleContainer = AttributeContainer()
-        titleContainer.font = .systemFont(ofSize: 12)
+        titleContainer.font = .systemFont(ofSize: 11)
         let timeStr = Date().toString(dateFormat: "HH:mm")
         config.attributedTitle = AttributedString(
             "\(timeStr) 업데이트",
@@ -142,7 +142,7 @@ public final class FavoritesViewController: UIViewController {
             ),
             refreshBtn.leadingAnchor.constraint(
                 equalTo: safeArea.leadingAnchor,
-                constant: 15
+                constant: 5
             ),
             
             editBtn.topAnchor.constraint(
