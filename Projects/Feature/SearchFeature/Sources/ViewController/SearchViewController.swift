@@ -336,6 +336,10 @@ public final class SearchViewController: UIViewController {
         navigationView.addSubview(searchTextFieldView)
         searchTextFieldView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
+            searchTextFieldView.topAnchor.constraint(
+                equalTo: navigationView.topAnchor,
+                constant: 2.5
+            ),
             searchTextFieldView.trailingAnchor.constraint(
                 equalTo: navigationView.trailingAnchor,
                 constant: -10
