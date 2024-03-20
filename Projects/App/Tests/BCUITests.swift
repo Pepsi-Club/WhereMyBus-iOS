@@ -139,14 +139,14 @@ final class BCUITests: XCTestCase {
             .tap()
         app.navigationBars["SearchFeature.SearchView"]
             .textFields["버스 정류장을 검색하세요"]
-            .typeText("종로2가")
+            .typeText("은곡마을")
         app.tables
             .cells
             .containing(
                 .staticText,
-                identifier: "01013 | 종로3가.탑골공원 방면"
+                identifier: "23412 | 세곡푸르지오.은곡삼거리 방면"
             )
-            .staticTexts["01013 | 종로3가.탑골공원 방면"]
+            .staticTexts["23412 | 세곡푸르지오.은곡삼거리 방면"]
             .tap()
         
         app.scrollViews
@@ -155,9 +155,9 @@ final class BCUITests: XCTestCase {
             .cells
             .containing(
                 .staticText,
-                identifier: "143"
+                identifier: "2412"
             )
-            .staticTexts["143"]
+            .staticTexts["2412"]
             .tap()
         
         let datePicker = app.datePickers.pickerWheels
