@@ -23,6 +23,8 @@ public final class ArrivalInfoView: UIStackView {
         label.font = DesignSystemFontFamily.NanumSquareNeoOTF.light.font(
             size: 12
         )
+        label.adjustsFontSizeToFitWidth = true
+        label.minimumScaleFactor = 0.8
         label.textColor = DesignSystemAsset.gray6.color
         return label
     }()
