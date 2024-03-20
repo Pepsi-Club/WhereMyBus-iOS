@@ -14,8 +14,6 @@ public final class DefaultNearMapCoordinator: NearMapCoordinator {
     public let busStopId: String?
     public var coordinatorType: CoordinatorType = .nearMap
     
-    private let disposeBag = DisposeBag()
-    
     public init(
         parent: Coordinator?,
         navigationController: UINavigationController,
@@ -57,5 +55,4 @@ extension DefaultNearMapCoordinator {
         childs.append(busStopCoordinator)
         busStopCoordinator.start()
     }
-	
 }

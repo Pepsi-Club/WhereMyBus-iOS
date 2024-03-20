@@ -21,7 +21,12 @@ final public class DefaultLocationService: NSObject, LocationService {
         value: locationManager.authorizationStatus
     )
     
-    public lazy var currentLocation = PublishSubject<CLLocation>()
+    public lazy var currentLocation = BehaviorSubject<CLLocation>(
+        value: .init(
+            latitude: 126.979620,
+            longitude: 37.570028
+        )
+    )
     
     private let disposeBag = DisposeBag()
     
@@ -80,5 +85,35 @@ extension DefaultLocationService: CLLocationManagerDelegate {
         didFailWithError error: Error
     ) {
         currentLocation.onError(error)
+    }
+    
+    public func getDistance(response: BusStopInfoResponse) -> String {
+        let errorMessage = ""
+        guard let latitude = Double(response.latitude),
+              let longitude = Double(response.longitude)
+        else { return errorMessage }
+        do {
+            let currentLocation = try currentLocation.value()
+            let distance = Int(
+                currentLocation.distance(
+                    from: .init(
+                        latitude: latitude,
+                        longitude: longitude
+                    )
+                )
+            )
+            let distanceStr: String
+            switch distance {
+            case ..<1000:
+                distanceStr = "\(distance)m"
+            case Int.max:
+                distanceStr = "측정거리 초과"
+            default:
+                distanceStr =  "\(distance / 1000)km"
+            }
+            return distanceStr
+        } catch {
+            return errorMessage
+        }
     }
 }

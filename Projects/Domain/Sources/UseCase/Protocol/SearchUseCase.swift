@@ -11,8 +11,7 @@ import Foundation
 import RxSwift
 
 public protocol SearchUseCase {
-    var nearByStop: PublishSubject<BusStopInfoResponse> { get }
-    var distanceFromNearByStop: PublishSubject<String> { get }
+    var nearByStopInfo: PublishSubject<(BusStopInfoResponse, String)> { get }
     var searchedStationList: PublishSubject<[BusStopInfoResponse]> { get }
     var recentSearchResult: BehaviorSubject<[BusStopInfoResponse]> { get }
     

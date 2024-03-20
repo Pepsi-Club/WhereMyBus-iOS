@@ -12,14 +12,14 @@ import Foundation
 import RxSwift
 
 public protocol NearMapUseCase {
-    var nearBusStopList: PublishSubject<[BusStopInfoResponse]> { get }
-    var selectedBusStop: PublishSubject<BusStopInfoResponse> { get }
-    var distanceFromNearByStop: PublishSubject<String> { get }
-    
-    func updateNearByBusStop()
-    func updateNearBusStopList(
+    func requestAuthorize()
+    func getNearByStopInfo(
+    ) -> Observable<(BusStopInfoResponse, String)>
+    func getSelectedBusStop(
+        busStopId: String
+    ) -> (BusStopInfoResponse, String)
+    func getNearBusStopList(
         longitudeRange: ClosedRange<Double>,
         latitudeRange: ClosedRange<Double>
-    )
-    func busStopSelected(busStopId: String)
+    ) -> [BusStopInfoResponse]
 }

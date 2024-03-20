@@ -18,8 +18,7 @@ public final class DefaultSearchUseCase: SearchUseCase {
 
     private let disposeBag = DisposeBag()
     
-    public let nearByStop = PublishSubject<BusStopInfoResponse>()
-    public let distanceFromNearByStop = PublishSubject<String>()
+    public let nearByStopInfo = PublishSubject<(BusStopInfoResponse, String)>()
     public let searchedStationList = PublishSubject<[BusStopInfoResponse]>()
     public var recentSearchResult = BehaviorSubject<[BusStopInfoResponse]>(
         value: []
@@ -32,7 +31,6 @@ public final class DefaultSearchUseCase: SearchUseCase {
         self.stationListRepository = stationListRepository
         self.locationService = locationService
         bindRecentSearchList()
-        bindDistance()
     }
     
     public func search(term: String) {
@@ -69,13 +67,14 @@ public final class DefaultSearchUseCase: SearchUseCase {
     
     public func updateNearByStop() {
         locationService.currentLocation
+            .skip(1)
             .take(1)
             .withUnretained(self)
             .subscribe(
                 onNext: { useCase, location in
                     let result = useCase.stationListRepository
                         .getNearByStopInfo(startPointLocation: location)
-                    useCase.nearByStop.onNext(result)
+                    useCase.nearByStopInfo.onNext(result)
                 }
             )
             .disposed(by: disposeBag)
@@ -96,7 +95,7 @@ public final class DefaultSearchUseCase: SearchUseCase {
                             longitude: "",
                             latitude: ""
                         )
-                        useCase.nearByStop.onNext(result)
+                        useCase.nearByStopInfo.onNext((result, ""))
                     case .denied:
                         let desciption = "주변 정류장을 확인하려면 위치 정보를 동의해주세요."
                         let result = BusStopInfoResponse(
@@ -106,7 +105,7 @@ public final class DefaultSearchUseCase: SearchUseCase {
                             longitude: "",
                             latitude: ""
                         )
-                        useCase.nearByStop.onNext(result)
+                        useCase.nearByStopInfo.onNext((result, ""))
                     case .authorizedAlways, .authorizedWhenInUse:
                         useCase.locationService.requestLocationOnce()
                     @unknown default:
@@ -120,42 +119,6 @@ public final class DefaultSearchUseCase: SearchUseCase {
     private func bindRecentSearchList() {
         stationListRepository.recentlySearchedStation
             .bind(to: recentSearchResult)
-            .disposed(by: disposeBag)
-    }
-    
-    private func bindDistance() {
-        nearByStop
-            .withLatestFrom(
-                locationService.currentLocation
-            ) { response, location in
-                (response, location)
-            }
-            .withUnretained(self)
-            .subscribe(
-                onNext: { useCase, tuple in
-                    let (response, startPoint) = tuple
-                    guard let endPointLatitude = Double(response.latitude),
-                          let endPointLongitude = Double(response.longitude)
-                    else { return }
-                    let distance = Int(
-                        CLLocation(
-                            latitude: endPointLatitude,
-                            longitude: endPointLongitude
-                        )
-                        .distance(from: startPoint)
-                    )
-                    let distanceStr: String
-                    switch distance {
-                    case ..<1000:
-                        distanceStr = "\(distance)m"
-                    case Int.max:
-                        distanceStr = "측정거리 초과"
-                    default:
-                        distanceStr =  "\(distance / 1000)km"
-                    }
-                    useCase.distanceFromNearByStop.onNext(distanceStr)
-                }
-            )
             .disposed(by: disposeBag)
     }
 }

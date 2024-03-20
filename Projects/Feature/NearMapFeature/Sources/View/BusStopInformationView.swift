@@ -175,9 +175,6 @@ public final class BusStopInformationView: UIView {
         !response.direction.isEmpty ?
         "\(response.busStopId) | \(response.direction) 방면" : ""
         busStopDescription.text = description
-    }
-    
-    func updateUI(distance: String) {
         distanceFromBusStopLabel.text = distance
     }
 }
