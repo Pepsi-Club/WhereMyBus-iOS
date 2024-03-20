@@ -131,10 +131,6 @@ public final class SearchViewController: UIViewController {
                 equalTo: safeArea.leadingAnchor,
                 constant: 15
             ),
-            recentSearchlabel.bottomAnchor.constraint(
-                equalTo: recentSearchTableView.topAnchor,
-                constant: -10
-            ),
             recentSearchlabel.heightAnchor.constraint(
                 equalToConstant: 15
             ),
@@ -157,10 +153,6 @@ public final class SearchViewController: UIViewController {
             ),
             seoulLabel.heightAnchor.constraint(
                 equalToConstant: 15
-            ),
-            nearByStopPaddingView.bottomAnchor.constraint(
-                equalTo: safeArea.bottomAnchor,
-                constant: -200
             ),
             
             nearByStopPaddingView.bottomAnchor.constraint(
@@ -195,7 +187,7 @@ public final class SearchViewController: UIViewController {
             
             recentSearchTableView.topAnchor.constraint(
                 equalTo: recentSearchlabel.bottomAnchor,
-                constant: 0
+                constant: 10
             ),
             recentSearchTableView.leadingAnchor.constraint(
                 equalTo: safeArea.leadingAnchor
