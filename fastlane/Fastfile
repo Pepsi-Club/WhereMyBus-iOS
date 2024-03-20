@@ -18,6 +18,7 @@ platform :ios do
       match(
         type: "development",
         git_url: ENV["MATCH_URL"],
+	keychain_password: ENV["MATCH_PASSWORD"],
         app_identifier:[
             "com.Pepsi-Club.WhereMyBus",
             "com.Pepsi-Club.WhereMyBus.NotificationExtension"
