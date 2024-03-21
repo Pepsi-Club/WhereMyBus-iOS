@@ -26,7 +26,7 @@ regenerate:
 	rm -rf *.xcworkspace
 	tuist generate
 
-BASE_URL = https://raw.githubusercontent.com/Pepsi-Club/BusComing-ignored/main
+BASE_URL = https://raw.githubusercontent.com/Pepsi-Club/WhereMyBus-ignored/main
 
 define download_file
 	@echo "Downloading $(3) to $(1) using token: $(2)"
