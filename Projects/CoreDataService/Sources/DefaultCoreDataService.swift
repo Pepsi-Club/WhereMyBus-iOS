@@ -63,7 +63,7 @@ public final class DefaultCoreDataService: CoreDataService {
         do {
             let fetchedMo = try fetchMO(type: type(of: data))
             let uniqueValue = data[keyPath: uniqueKeyPath]
-            var object = fetchedMo.first { object in
+            let object = fetchedMo.first { object in
                 guard let fetchedValue = object.value(
                     forKey: uniqueKeyPath.propertyName
                 ) as? U

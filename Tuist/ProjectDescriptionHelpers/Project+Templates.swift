@@ -71,12 +71,12 @@ extension Project {
                 dependencies: dependencies,
                 coreDataModel: coreDataModel
             )
-            let demoTarget = demoAppTarget(
-                name: name,
-                dependencies: [.target(targetModule)]
-            )
-            targets.append(demoTarget)
-            schemes.append(.moduleScheme(name: demoTarget.name))
+//            let demoTarget = demoAppTarget(
+//                name: name,
+//                dependencies: [.target(targetModule)]
+//            )
+//            targets.append(demoTarget)
+//            schemes.append(.moduleScheme(name: demoTarget.name))
         }
         targets.append(targetModule)
 //        if isTestable {
@@ -125,7 +125,7 @@ extension Project {
             name: "\(name)Demo",
             platform: .iOS,
             product: .app,
-            bundleId: .bundleID,
+            bundleId: "\(String.bundleID).\(name)Demo",
             deploymentTarget: .deploymentTarget,
             infoPlist: .demoAppInfoPlist(name: name),
             sources: [

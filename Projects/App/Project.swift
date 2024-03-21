@@ -8,16 +8,16 @@ let project = Project.makeProject(
     entitlementsPath: .relativeToManifest("App.entitlements"),
     hasResource: true,
     appExtensionTarget: [
-        Project.appExtensionTarget(
-            name: "NotificationExtension",
-            plist: .extendingDefault(
-                with: .notificationInfoPlist
-            ),
-            dependencies: [
-                .mainFeature,
-                .data,
-            ]
-        )
+//        Project.appExtensionTarget(
+//            name: "NotificationExtension",
+//            plist: .extendingDefault(
+//                with: .notificationInfoPlist
+//            ),
+//            dependencies: [
+//                .mainFeature,
+//                .data,
+//            ]
+//        )
     ],
     packages: [
         .remote(
@@ -26,6 +26,8 @@ let project = Project.makeProject(
         )
     ],
     dependencies: [
+        .mainFeature,
+        .data,
         .package(product: "FirebaseMessaging"),
         .package(product: "KakaoMapsSDK_SPM"),
     ]
