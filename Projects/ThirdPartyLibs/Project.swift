@@ -8,7 +8,7 @@ let project = Project.makeProject(
     packages: [
         .remote(
             url: "https://github.com/kakao-mapsSDK/KakaoMapsSDK-SPM",
-            requirement: .branch("master")
+            requirement: .exact("2.8.5")
         )
     ],
     dependencies: .ThirdPartyExternal.allCases.map {
