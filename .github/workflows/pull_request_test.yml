@@ -21,7 +21,14 @@ jobs:
           repository: Pepsi-Club/WhereMyBus-ignored
           path: XCConfig/
           token: ${{ secrets.ACTION_TOKEN }}
-
+          
+      - uses: swift-actions/setup-swift@65540b95f51493d65f5e59e97dcef9629ddf11bf
+        with:
+        swift-version: "5.8.0"
+        
+      - name: Get swift version
+        run: swift --version
+        
       - name: Install Tuist
         run: curl -Ls https://install.tuist.io|bash
 
