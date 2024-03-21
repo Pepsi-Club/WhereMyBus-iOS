@@ -6,7 +6,7 @@ on:
       - release
 jobs:
   build_test:
-    runs-on: macos-latest
+    runs-on: macos-14
     steps:
       - uses: actions/checkout@v2
 
@@ -16,10 +16,12 @@ jobs:
           repository: Pepsi-Club/WhereMyBus-ignored
           path: XCConfig/
           token: ${{ secrets.ACTION_TOKEN }}
+                    
+      - name: Setup Xcode version
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: "15.2.0"
           
-      - name: Get Xcode version
-        run: xcodebuild -version
-        
       - uses: swift-actions/setup-swift@65540b95f51493d65f5e59e97dcef9629ddf11bf
         with:
             swift-version: "5.8.0"
