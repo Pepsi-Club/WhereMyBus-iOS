@@ -63,7 +63,7 @@
 
 ##### Clean Architecture
 
-![CleanArchitecture](https://github.com/Pepsi-Club/WhereByBus/assets/133845468/27cfe7f5-04f3-40c9-954b-20a8494959f5)
+<공사중>
 
 ##### Coordinator
 // 추후 추가
