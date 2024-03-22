@@ -27,6 +27,15 @@ platform :ios do
                 ],
                 readonly: true
             )
+            match(
+                type: "appstore",
+                git_url: ENV["MATCH_URL"],
+                keychain_password: ENV["MATCH_PASSWORD"],
+                app_identifier:[
+                    "com.Pepsi-Club.WhereMyBus"
+                ],
+                readonly: true
+            )
         end
     end
     
