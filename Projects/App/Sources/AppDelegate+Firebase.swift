@@ -6,7 +6,6 @@
 //  Copyright © 2024 Pepsi-Club. All rights reserved.
 //
 
-
 import UIKit
 
 import Firebase
@@ -47,4 +46,3 @@ extension AppDelegate: MessagingDelegate {
         )
     }
 }
-
