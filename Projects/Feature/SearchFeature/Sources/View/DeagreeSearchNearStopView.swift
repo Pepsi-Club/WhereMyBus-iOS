@@ -52,7 +52,6 @@ final class DeagreeSearchNearStopView: UIButton {
         label.font =
         DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(size: 14)
         label.textColor = DesignSystemAsset.gray6.color
-        label.text = "아직 알 수 없어요"
         return label
     }()
     

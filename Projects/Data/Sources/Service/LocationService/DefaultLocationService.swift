@@ -66,10 +66,6 @@ extension DefaultLocationService: CLLocationManagerDelegate {
         if let location = locations.first {
             currentLocation.onNext(location)
         }
-        
-#if DEBUG
-        print("📍 현재 좌표 : \(locations[0])")
-#endif
     }
     
     /// 위치권한이 바뀔때마다 업데이트되는 메서드
