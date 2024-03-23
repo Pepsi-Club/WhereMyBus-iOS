@@ -46,7 +46,6 @@ public final class NearMapViewController: UIViewController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        
         configureUI()
         bind()
     }
@@ -85,11 +84,11 @@ public final class NearMapViewController: UIViewController {
                 equalTo: safeArea.topAnchor
             ),
             naverMapView.leadingAnchor.constraint(
-                equalTo: view.leadingAnchor,
+                equalTo: safeArea.leadingAnchor,
                 constant: 5
             ),
             naverMapView.trailingAnchor.constraint(
-                equalTo: view.trailingAnchor,
+                equalTo: safeArea.trailingAnchor,
                 constant: -5
             ),
             naverMapView.bottomAnchor.constraint(
@@ -105,13 +104,9 @@ public final class NearMapViewController: UIViewController {
         
         let output = viewModel.transform(
             input: .init(
-                viewWillAppearEvent: rx.methodInvoked(
-                    #selector(UIViewController.viewWillAppear)
-                ).map { _ in },
-                viewWillDisappearEvent: rx.methodInvoked(
-                    #selector(UIViewController.viewWillDisappear)
-                ).map { _ in },
-                kakaoMapTouchesEndedEvent: .empty(),
+                viewWillAppearEvent: rx
+                    .methodInvoked(#selector(UIViewController.viewWillAppear))
+                    .map { _ in },
                 informationViewTapEvent: tapGesture.rx.event.map { _ in },
                 selectedBusStopId: busStopTapEvent,
                 locationChangeEvent: cameraMoveEvent
