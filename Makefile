@@ -1,8 +1,22 @@
+setpj:
+	make clean
+	tuist clean
+	tuist fetch
+	tuist generate --no-open
+	pod install
+	open WhereMyBus.xcworkspace
+	fastlane setSigning
+
+open_plist:
+	open -a Xcode Plugins/EnvironmentPlugin/ProjectDescriptionHelpers/InfoPlist.swift
+
 generate:
 	tuist fetch
 	tuist generate
-
+	
 clean:
+	pod cache clean --all
+	tuist clean
 	rm -rf **/**/**/*.xcodeproj
 	rm -rf **/**/*.xcodeproj
 	rm -rf **/*.xcodeproj
@@ -11,6 +25,7 @@ clean:
 	rm -rf **/**/Derived/
 	rm -rf **/Derived/
 	rm -rf Derived/
+	rm -rf Pods/
 
 reset:
 	tuist clean

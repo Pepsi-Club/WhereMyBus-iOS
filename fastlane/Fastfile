@@ -12,12 +12,9 @@ platform :ios do
         end
     end
 
-    desc "Set Project"
-    lane :setpj do |options|
+    desc "Set Code Signing"
+    lane :setSigning do |options|
         Dir.chdir("../") do
-            sh("tuist clean")
-            sh("tuist fetch")
-            sh("tuist generate")
             match(
                 type: "development",
                 git_url: ENV["MATCH_URL"],
@@ -36,6 +33,16 @@ platform :ios do
                 ],
                 readonly: true
             )
+        end
+    end
+    
+    desc "Set Project"
+    lane :setpj do |options|
+        Dir.chdir("../") do
+            sh("tuist clean")
+            sh("tuist fetch")
+            sh("tuist generate")
+            sh("faslane setSigning")
         end
     end
     
