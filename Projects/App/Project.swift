@@ -29,6 +29,5 @@ let project = Project.makeProject(
         .mainFeature,
         .data,
         .package(product: "FirebaseMessaging"),
-        .package(product: "KakaoMapsSDK_SPM"),
     ]
 )
