@@ -4,7 +4,7 @@
 ## 프로젝트 소개
 >   서울 안 어디서나, **버스어디**로 간편하게 ! 버스 즐겨찾기와 정기알람으로 버스 사용을 더 간편하게 !
     쉬운 사용성과 편리함을 갖춘 버스어디를 지금 만나보세요.
-> > 앱 스토어 : 추후 업로드  
+> > [버스어디 앱 스토어 연결](https://apps.apple.com/kr/app/%EB%B2%84%EC%8A%A4%EC%96%B4%EB%94%94-%EC%8B%A4%EC%8B%9C%EA%B0%84-%EB%B2%84%EC%8A%A4-%EC%A0%95%EA%B8%B0-%EC%95%8C%EB%9E%8C-%EC%A6%90%EA%B2%A8%EC%B0%BE%EA%B8%B0/id6479689895)
 
 
 
@@ -81,7 +81,7 @@
 ### 팀원 소개
 <div align="center">
 
-|[ 원강묵 ]<br/> [@MUKER-WON](https://github.com/MUKER-WON)<br/> "건강한 코드는 <br> 건강한 몸에서 나온다." | [ 김건섭 ]<br/> [@gnksbm](https://github.com/gnksbm)<br/> "-" | [ 유하은 ]<br/> [@yuhaeun-la](https://github.com/yuhaeun-la)<br/> "난 애플을 믿지 않아" | [ 함지수 ]<br/> [@isakatty](https://github.com/isakatty)<br/> "애플 업데이트는 <br> 최대한 나중에"  |
+|[ 원강묵 ]<br/> [@MUKER-WON](https://github.com/MUKER-WON)<br/> "건강한 코드는 <br> 건강한 몸에서 나온다." | [ 김건섭 ]<br/> [@gnksbm](https://github.com/gnksbm)<br/> "-" | [ 유하은 ]<br/> [@yuhaeun-la](https://github.com/yuhaeun-la)<br/> "난 애플을 믿지 않아" | [ 함지수 ]<br/> [@isakatty](https://github.com/isakatty)<br/> "정보를 머리에 cmd+s"|
 | :----------------------------------------------------------: | :---------------------------------------------: | :------: | :-------------------------------------------------: |
 |<img src = "https://github.com/isakatty/TIL/assets/133845468/dd5a38e0-2f11-4489-862d-2ddfe81d3666" width="150"> | <img src = "https://github.com/isakatty/TIL/assets/133845468/defeff23-b698-4144-809a-d00ebeade221" width="150"> | <img src = "https://github.com/isakatty/TIL/assets/133845468/c69e30b9-be85-457c-a381-5129029fc878" width="150">  | <img src = "https://github.com/isakatty/TIL/assets/133845468/bb2f4bcd-df40-4ba4-96c4-bce8e2bcda76" width="150"> |
 
