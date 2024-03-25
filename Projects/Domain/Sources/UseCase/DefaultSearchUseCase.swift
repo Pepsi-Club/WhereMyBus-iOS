@@ -16,13 +16,12 @@ public final class DefaultSearchUseCase: SearchUseCase {
     private let stationListRepository: StationListRepository
     private let locationService: LocationService
 
-    private let disposeBag = DisposeBag()
-    
     public let nearByStopInfo = PublishSubject<(BusStopInfoResponse, String)>()
     public let searchedStationList = PublishSubject<[BusStopInfoResponse]>()
     public var recentSearchResult = BehaviorSubject<[BusStopInfoResponse]>(
         value: []
     )
+    private let disposeBag = DisposeBag()
     
     public init(
         stationListRepository: StationListRepository,

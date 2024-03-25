@@ -36,11 +36,9 @@ public final class BusStopViewController: UIViewController {
         table.sectionFooterHeight = 10
         return table
     }()
+    
     private var tableViewHeightConstraint = NSLayoutConstraint()
     
-    deinit {
-        print("\(Self.description()) 해제")
-    }
     public init(
         viewModel: BusStopViewModel,
         flow: FlowState

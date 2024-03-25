@@ -47,8 +47,7 @@ public extension InfoPlist {
 public extension [String: Plist.Value] {
     static let secrets: Self = [
         "DATA_GO_KR_API_KEY": "$(DATA_GO_KR_API_KEY)",
-        "KAKAO_APP_KEY": "$(KAKAO_APP_KEY)",
-        "KAKAO_PHASE": "alpha",
+        "NMFClientId": "$(NAVERMAP_CLIENT_ID)",
         "TERMS_OF_PRIVACY_URL": "$(TERMS_OF_PRIVACY_URL)",
         "LOCATION_PRIVACY_URL": "$(LOCATION_PRIVACY_URL)"
     ]

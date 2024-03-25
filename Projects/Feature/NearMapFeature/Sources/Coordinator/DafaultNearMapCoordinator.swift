@@ -3,7 +3,6 @@ import UIKit
 import FeatureDependency
 
 import RxSwift
-import KakaoMapsSDK
 
 public final class DefaultNearMapCoordinator: NearMapCoordinator {
     public var parent: Coordinator?
@@ -31,14 +30,14 @@ public final class DefaultNearMapCoordinator: NearMapCoordinator {
 	// MARK: - Function
     
     public func start() {
-        let nearmapViewController = NearMapViewController(
+        let nearMapViewController = NearMapViewController(
             viewModel: NearMapViewModel(
                 coordinator: self,
                 busStopId: busStopId
             )
         )
         navigationController.pushViewController(
-            nearmapViewController,
+            nearMapViewController,
             animated: true
         )
     }

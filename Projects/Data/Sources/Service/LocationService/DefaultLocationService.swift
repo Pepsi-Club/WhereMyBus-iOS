@@ -23,8 +23,8 @@ final public class DefaultLocationService: NSObject, LocationService {
     
     public lazy var currentLocation = BehaviorSubject<CLLocation>(
         value: .init(
-            latitude: 126.979620,
-            longitude: 37.570028
+            latitude: 37.570028,
+            longitude: 126.979620
         )
     )
     
@@ -53,38 +53,6 @@ final public class DefaultLocationService: NSObject, LocationService {
     /// 지속적인 현재 위치 업데이트 중지
     public func stopUpdatingLocation() {
         locationManager.stopUpdatingLocation()
-    }
-}
-
-extension DefaultLocationService: CLLocationManagerDelegate {
-    /// 현재위치가 바뀔때마다 업데이트되는 메서드
-    /// locations의 첫번째 인덱스는 최근 위치
-    public func locationManager(
-        _ manager: CLLocationManager,
-        didUpdateLocations locations: [CLLocation]
-    ) {
-        if let location = locations.first {
-            currentLocation.onNext(location)
-        }
-        
-#if DEBUG
-        print("📍 현재 좌표 : \(locations[0])")
-#endif
-    }
-    
-    /// 위치권한이 바뀔때마다 업데이트되는 메서드
-    public func locationManagerDidChangeAuthorization(
-        _ manager: CLLocationManager
-    ) {
-        authState.onNext(manager.authorizationStatus)
-    }
-    
-    /// 위치 정보 불러오는 도중 에러 처리 메서드
-    public func locationManager(
-        _ manager: CLLocationManager,
-        didFailWithError error: Error
-    ) {
-        currentLocation.onError(error)
     }
     
     public func getDistance(response: BusStopInfoResponse) -> String {
@@ -115,5 +83,33 @@ extension DefaultLocationService: CLLocationManagerDelegate {
         } catch {
             return errorMessage
         }
+    }
+}
+
+extension DefaultLocationService: CLLocationManagerDelegate {
+    /// 현재위치가 바뀔때마다 업데이트되는 메서드
+    /// locations의 첫번째 인덱스는 최근 위치
+    public func locationManager(
+        _ manager: CLLocationManager,
+        didUpdateLocations locations: [CLLocation]
+    ) {
+        if let location = locations.first {
+            currentLocation.onNext(location)
+        }
+    }
+    
+    /// 위치권한이 바뀔때마다 업데이트되는 메서드
+    public func locationManagerDidChangeAuthorization(
+        _ manager: CLLocationManager
+    ) {
+        authState.onNext(manager.authorizationStatus)
+    }
+    
+    /// 위치 정보 불러오는 도중 에러 처리 메서드
+    public func locationManager(
+        _ manager: CLLocationManager,
+        didFailWithError error: Error
+    ) {
+        currentLocation.onError(error)
     }
 }
