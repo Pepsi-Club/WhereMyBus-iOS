@@ -176,6 +176,10 @@ public final class FavoritesViewController: UIViewController {
     }
     
     private func bind() {
+        let refreshControl = favoritesTableView.enableRefreshControl(
+            refreshStr: ""
+        )
+        
         let output = viewModel.transform(
             input: .init(
                 viewWillAppearEvent: rx
@@ -184,7 +188,11 @@ public final class FavoritesViewController: UIViewController {
                     )
                     .map { _ in },
                 searchBtnTapEvent: searchBtn.rx.tap.asObservable(),
-                refreshBtnTapEvent: refreshBtn.rx.tap.asObservable(),
+                refreshBtnTapEvent: Observable.merge(
+                    refreshControl.rx.controlEvent(.valueChanged)
+                        .asObservable(),
+                    refreshBtn.rx.tap.asObservable()
+                ),
                 alarmBtnTapEvent: alarmBtnTapEvent.asObservable(),
                 busStopTapEvent: headerTapEvent
             )
@@ -260,12 +268,27 @@ public final class FavoritesViewController: UIViewController {
             .subscribe(
                 onNext: { viewController, state in
                     viewController.updateState(state: state)
-                    let timeStr = Date().toString(dateFormat: "HH:mm")
-                    viewController.refreshBtn.configuration?.attributedTitle =
-                        .init(
-                            "\(timeStr) 업데이트",
-                            attributes: viewController.refreshAttribute
+                    switch state {
+                    case .fetching:
+                        refreshControl.beginRefreshing()
+                    case .emptyFavorites, .fetchComplete:
+                        DispatchQueue.main.asyncAfter(
+                            deadline: .now() + 1,
+                            execute: .init(
+                                block: {
+                                    refreshControl.endRefreshing()
+                                    let timeStr = Date()
+                                        .toString(dateFormat: "HH:mm")
+                                    viewController.refreshBtn.configuration?
+                                        .attributedTitle = .init(
+                                            "\(timeStr) 업데이트",
+                                            attributes: viewController
+                                                .refreshAttribute
+                                        )
+                                }
+                            )
                         )
+                    }
                 }
             )
             .disposed(by: disposeBag)
@@ -391,7 +414,6 @@ public final class FavoritesViewController: UIViewController {
 }
 
 extension FavoritesViewController: UITableViewDelegate {
-    
     public func tableView(
         _ tableView: UITableView,
         viewForFooterInSection section: Int
