@@ -36,12 +36,6 @@ public final class TabBarCoordinator: Coordinator {
     
     private func setupTabBarController() {
         let tabBarController = TabBarViewController()
-        
-        let appearance = UITabBarAppearance()
-        appearance.configureWithOpaqueBackground()
-        tabBarController.tabBar.standardAppearance = appearance
-        tabBarController.tabBar.scrollEdgeAppearance = appearance
-        
         navigationController.setViewControllers(
             [tabBarController], animated: true
         )

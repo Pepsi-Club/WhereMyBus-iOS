@@ -13,5 +13,6 @@ import DesignSystem
 extension AppDelegate {
     func setupAppearance() {
         Appearance.setupAppearance()
+        Appearance.setupTabBarAppearance()
     }
 }
