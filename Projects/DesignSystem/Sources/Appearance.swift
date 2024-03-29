@@ -10,20 +10,25 @@ import UIKit
 
 public final class Appearance {
     public static func setupAppearance() {
-        let accentColor = DesignSystemAsset.accentColor.color
-        let mainColor = DesignSystemAsset.mainColor.color
         let backgroundColor = DesignSystemAsset.backgroundColor.color
-        let tabBackgroundColor = DesignSystemAsset.tabBackgroundColor.color
         UINavigationBar.appearance().backgroundColor = backgroundColor
         UINavigationBar.appearance().tintColor = .black
-        UITabBar.appearance().backgroundColor = tabBackgroundColor
-        UITabBar.appearance().tintColor = accentColor
-        UITabBar.appearance().unselectedItemTintColor = mainColor
-        UITabBar.appearance().isTranslucent = false
         // 모든 BackButton의 타이틀을 없애버림
         UIBarButtonItem.appearance().setBackButtonTitlePositionAdjustment(
             UIOffset(horizontal: -1000, vertical: 0),
             for: .default
         )
+    }
+    
+    public static func setupTabBarAppearance() {
+        let appearance = UITabBarAppearance()
+        let backgroundColor = DesignSystemAsset.tabBackgroundColor.color
+        let tintColor = DesignSystemAsset.tabBarTintColor.color
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = backgroundColor
+        appearance.inlineLayoutAppearance = .init(style: .compactInline)
+        UITabBar.appearance().tintColor = tintColor
+        UITabBar.appearance().standardAppearance = appearance
+        UITabBar.appearance().scrollEdgeAppearance = appearance
     }
 }
