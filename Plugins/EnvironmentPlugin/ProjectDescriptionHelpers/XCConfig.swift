@@ -12,7 +12,8 @@ public extension Settings {
         base: .allLoadSetting
             .setVersion()
             .setCodeSignManual()
-            .setProvisioning(),
+            .setProvisioning()
+            .setUserScriptSandboxing(),
         configurations: [
             .debug(
                 name: .debug,
@@ -27,7 +28,8 @@ public extension Settings {
     )
     
     static let frameworkDebug: Self = .settings(
-        base: .baseSetting,
+        base: .baseSetting
+            .setUserScriptSandboxing(),
         configurations: [
             .debug(
                 name: .debug,
@@ -109,6 +111,14 @@ public extension SettingsDictionary {
                 "CODE_SIGN_STYLE": .string("Manual"),
                 "DEVELOPMENT_TEAM": .string(.teamId),
                 "CODE_SIGN_IDENTITY": .string("$(CODE_SIGN_IDENTITY)")
+            ]
+        )
+    }
+    
+    func setUserScriptSandboxing() -> SettingsDictionary {
+        merging(
+            [
+                "ENABLE_USER_SCRIPT_SANDBOXING": .string("NO"),
             ]
         )
     }
