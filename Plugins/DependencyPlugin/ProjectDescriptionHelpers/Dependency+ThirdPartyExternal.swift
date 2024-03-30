@@ -8,6 +8,11 @@
 import ProjectDescription
 
 public extension Array<TargetDependency> {
+    static let thirdPartyExternal = ThirdPartyExternal.allCases
+        .map {
+            Element.external(name: $0.name)
+        }
+    
     enum ThirdPartyExternal: String, CaseIterable {
         case rxCocoa
         
