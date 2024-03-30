@@ -1,12 +1,3 @@
-setpj:
-	make clean
-	tuist clean
-	tuist fetch
-	tuist generate --no-open
-	pod install
-	open WhereMyBus.xcworkspace
-	fastlane setSigning
-
 open_plist:
 	open -a Xcode Plugins/EnvironmentPlugin/ProjectDescriptionHelpers/InfoPlist.swift
 
@@ -15,7 +6,6 @@ generate:
 	tuist generate
 	
 clean:
-	pod cache clean --all
 	tuist clean
 	rm -rf **/**/**/*.xcodeproj
 	rm -rf **/**/*.xcodeproj
@@ -27,20 +17,6 @@ clean:
 	rm -rf Derived/
 	rm -rf Pods/
 
-reset:
-	tuist clean
-	rm -rf **/**/**/*.xcodeproj
-	rm -rf **/**/*.xcodeproj
-	rm -rf **/*.xcodeproj
-	rm -rf *.xcworkspace
-
-regenerate:
-	rm -rf **/**/**/*.xcodeproj
-	rm -rf **/**/*.xcodeproj
-	rm -rf **/*.xcodeproj
-	rm -rf *.xcworkspace
-	tuist generate
-
 BASE_URL = https://raw.githubusercontent.com/Pepsi-Club/WhereMyBus-ignored/main
 
 define download_file
@@ -51,7 +27,7 @@ endef
 
 .PHONY: download-privates
 
-download-privates: download-xcconfigs download-env
+download-privates: download-xcconfigs download-env download-googleinfo
 
 download-xcconfigs:
 	$(call download_file, XCConfig, $(token),Debug.xcconfig)
@@ -61,3 +37,6 @@ download-xcconfigs:
 
 download-env:
 	$(call download_file, fastlane, $(token),.env)
+	
+download-googleinfo:
+	$(call download_file, Projects/App/Resources, $(token),GoogleService-Info.plist)
