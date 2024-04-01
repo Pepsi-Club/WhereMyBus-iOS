@@ -143,7 +143,7 @@ Derived/
 Tuist/Dependencies
 
 # PList
-**/*.plist
+Projects/**/*.plist
 
 # XCConfig
 XCConfig/
