@@ -95,7 +95,7 @@ public final class DefaultLocalNotificationService: LocalNotificationService {
             )
             let content = UNMutableNotificationContent()
             content.sound = .default
-            let remaining = "\(response.busStopName)에 \(response.busName)번 "
+            let remaining = "\(response.busStopName)에 \(response.busName) "
             let body = "\(remaining)버스가 곧 도착합니다."
             content.title = "버스어디"
             content.body = body

@@ -14,7 +14,32 @@ platform :ios do
 
     desc "Set Code Signing"
     lane :setSigning do |options|
+        match(
+            type: "development",
+            git_url: ENV["MATCH_URL"],
+            keychain_password: ENV["MATCH_PASSWORD"],
+            app_identifier:[
+                "com.Pepsi-Club.WhereMyBus"
+            ],
+            readonly: true
+        )
+        match(
+            type: "appstore",
+            git_url: ENV["MATCH_URL"],
+            keychain_password: ENV["MATCH_PASSWORD"],
+            app_identifier:[
+                "com.Pepsi-Club.WhereMyBus"
+            ],
+            readonly: true
+        )
+    end
+    
+    desc "Set Project"
+    lane :setpj do |options|
         Dir.chdir("../") do
+            sh("tuist clean")
+            sh("tuist fetch")
+            sh("tuist generate")
             match(
                 type: "development",
                 git_url: ENV["MATCH_URL"],
@@ -33,16 +58,6 @@ platform :ios do
                 ],
                 readonly: true
             )
-        end
-    end
-    
-    desc "Set Project"
-    lane :setpj do |options|
-        Dir.chdir("../") do
-            sh("tuist clean")
-            sh("tuist fetch")
-            sh("tuist generate")
-            sh("faslane setSigning")
         end
     end
     
