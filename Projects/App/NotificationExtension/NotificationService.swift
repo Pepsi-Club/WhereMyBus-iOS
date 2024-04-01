@@ -32,10 +32,10 @@ class NotificationService: UNNotificationServiceExtension {
         bestAttemptContent = (
             request.content.mutableCopy() as? UNMutableNotificationContent
         )
-        guard let bestAttemptContent,
-              let aps = bestAttemptContent.userInfo["aps"] as? [String: Any],
-              let busStopId = aps["busStopId"] as? String,
-              let busId = aps["busId"] as? String
+        guard let userInfo = bestAttemptContent?.userInfo,
+              let busStopId = userInfo["busStopId"] as? String,
+              let busId = userInfo["busId"] as? String,
+              let bestAttemptContent
         else { return }
         repository.fetchArrivalList(busStopId: busStopId)
             .subscribe(
@@ -48,29 +48,36 @@ class NotificationService: UNNotificationServiceExtension {
                     else { return }
                     let busStopName = response.busStopName
                     let firstArrivalTime = bus.firstArrivalState.toString
-                    let firstArrivalRemaining = bus.firstArrivalRemaining
                     let secondArrivalTime = bus.secondArrivalState.toString
                     let routeMessage: String
                     let remainingMessage: String
                     let firstLine: String
-                    let secondLine: String
+                    var secondLine: String
+                    switch secondArrivalTime {
+                    case "곧 도착":
+                        secondLine = "다음 버스는 곧 도착해요."
+                    case "운행종료":
+                        secondLine = "다음 버스는 운행이 종료되었어요."
+                    case "출발대기":
+                        secondLine = "다음 버스는 출발 대기 중이에요."
+                    default:
+                        secondLine = "다음 버스는 \(secondArrivalTime)에 도착해요."
+                    }
                     switch bus.firstArrivalState.toString {
                     case "곧 도착":
                         routeMessage = "\(bus.busName)번 버스가 \(busStopName)에"
                         remainingMessage = "곧 도착해요."
-                        secondLine = "다음 버스는 \(secondArrivalTime) 후에 도착해요."
                     case "운행종료":
                         routeMessage = "\(bus.busName)번 버스는"
-                        remainingMessage = "운행종료 되었어요."
-                        secondLine = "다음 버스는 \(secondArrivalTime) 후에 도착해요."
+                        remainingMessage = "운행이 종료 되었어요."
+                        secondLine = ""
                     case "출발대기":
                         routeMessage = "\(bus.busName)번 버스는"
                         remainingMessage = "출발 대기 중 이에요."
-                        secondLine = "다음 버스는 \(secondArrivalTime) 후에 도착해요."
+                        secondLine = ""
                     default:
                         routeMessage = "\(bus.busName)번 버스가 \(busStopName)에"
-                        remainingMessage = "\(firstArrivalTime) 후에 도착해요."
-                        secondLine = "\(firstArrivalRemaining) 정류장을 지났어요."
+                        remainingMessage = "\(firstArrivalTime)에 도착해요."
                     }
                     firstLine = "\(routeMessage) \(remainingMessage)"
                     let body = [firstLine, secondLine].joined(separator: " ")

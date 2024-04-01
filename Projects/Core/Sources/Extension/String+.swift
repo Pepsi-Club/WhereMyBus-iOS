@@ -32,8 +32,8 @@ public extension String {
     
     static var fcmKey: Self {
         guard let any = Bundle.main.object(forInfoDictionaryKey: "FCM_KEY"),
-              let serverKey = (any as? String)?.removingPercentEncoding
-        else { fatalError("Can't Not Find Server Key") }
+              let serverKey = any as? String
+        else { fatalError("Can't Not Find FCM Key") }
         return serverKey
     }
 }
