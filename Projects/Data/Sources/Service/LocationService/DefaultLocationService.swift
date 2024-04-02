@@ -17,17 +17,9 @@ import RxSwift
 final public class DefaultLocationService: NSObject, LocationService {
     private var locationManager = CLLocationManager()
     
-    public lazy var authState = BehaviorSubject<CLAuthorizationStatus>(
-        value: locationManager.authorizationStatus
+    public var locationStatus = BehaviorSubject<LocationStatus>(
+        value: .notDetermined
     )
-    
-    public lazy var currentLocation = BehaviorSubject<CLLocation>(
-        value: .init(
-            latitude: 37.570028,
-            longitude: 126.979620
-        )
-    )
-    
     private let disposeBag = DisposeBag()
     
     public override init() {
@@ -60,10 +52,9 @@ final public class DefaultLocationService: NSObject, LocationService {
         guard let latitude = Double(response.latitude),
               let longitude = Double(response.longitude)
         else { return errorMessage }
-        do {
-            let currentLocation = try currentLocation.value()
+        if let location = locationManager.location {
             let distance = Int(
-                currentLocation.distance(
+                location.distance(
                     from: .init(
                         latitude: latitude,
                         longitude: longitude
@@ -80,7 +71,7 @@ final public class DefaultLocationService: NSObject, LocationService {
                 distanceStr =  "\(distance / 1000)km"
             }
             return distanceStr
-        } catch {
+        } else {
             return errorMessage
         }
     }
@@ -89,27 +80,42 @@ final public class DefaultLocationService: NSObject, LocationService {
 extension DefaultLocationService: CLLocationManagerDelegate {
     /// 현재위치가 바뀔때마다 업데이트되는 메서드
     /// locations의 첫번째 인덱스는 최근 위치
-    public func locationManager(
-        _ manager: CLLocationManager,
-        didUpdateLocations locations: [CLLocation]
+    public func locationManagerDidChangeAuthorization(
+        _ manager: CLLocationManager
     ) {
-        if let location = locations.first {
-            currentLocation.onNext(location)
+        switch manager.authorizationStatus {
+        case .notDetermined:
+            locationStatus.onNext(.notDetermined)
+        case .restricted, .denied:
+            locationStatus.onNext(.denied)
+        case .authorizedAlways, .authorizedWhenInUse:
+            locationManager.requestLocation()
+        @unknown default:
+            locationStatus.onNext(.error)
         }
     }
     
     /// 위치권한이 바뀔때마다 업데이트되는 메서드
-    public func locationManagerDidChangeAuthorization(
-        _ manager: CLLocationManager
+    public func locationManager(
+        _ manager: CLLocationManager,
+        didUpdateLocations locations: [CLLocation]
     ) {
-        authState.onNext(manager.authorizationStatus)
+        guard let location = locations.first
+        else { return }
+        switch manager.authorizationStatus {
+        case .authorizedAlways:
+            locationStatus.onNext(.alwaysAllowed(location))
+        case .authorizedWhenInUse:
+            locationStatus.onNext(.authorized(location))
+        default:
+            break
+        }
     }
-    
     /// 위치 정보 불러오는 도중 에러 처리 메서드
     public func locationManager(
         _ manager: CLLocationManager,
         didFailWithError error: Error
     ) {
-        currentLocation.onError(error)
+        locationStatus.onNext(.error)
     }
 }

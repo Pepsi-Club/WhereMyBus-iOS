@@ -21,7 +21,13 @@ public final class SearchViewModel: ViewModel {
     deinit {
         coordinator.finish()
     }
-    
+    /*
+     Search
+     ViewWillAppear 시점에 항상허용일때만 정류장 표시
+     Search의 버튼 클릭
+     이전에 선택했을 때: NearMap으로 네비게이션
+     아직 선택 안했을 때: 권한요청창을 띄우기
+     */
     public func transform(input: Input) -> Output {
         let output = Output(
             searchedResponse: useCase.searchedStationList,

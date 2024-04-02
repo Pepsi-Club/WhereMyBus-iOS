@@ -32,48 +32,34 @@ public final class DefaultNearMapUseCase: NearMapUseCase {
     
     public func getNearByStopInfo(
     ) -> Observable<(BusStopInfoResponse, String)> {
-        locationService.authState
-            .withLatestFrom(
-                locationService.currentLocation
-            ) { status, location in
-                (status, location)
-            }
+        locationService.locationStatus
             .withUnretained(self)
-            .map { useCase, tuple in
-                let (status, location) = tuple
+            .map { useCase, status in
                 var response: BusStopInfoResponse
                 var distanceStr: String
                 let requestMessage = "주변 정류장을 확인하려면 위치 정보를 동의해주세요."
                 let errorMessage = "오류가 발생했습니다. 관리자에게 문의해주세요."
                 switch status {
-                case .authorizedAlways, .authorizedWhenInUse:
+                case .authorized(let location), .alwaysAllowed(let location):
+                    print(#function, location)
                     (response, distanceStr) = useCase.stationListRepository
-                            .getNearByStopInfo(startPointLocation: location)
+                        .getNearByStopInfo(startPointLocation: location)
                 case .notDetermined, .denied:
                     response = .init(
                         busStopName: requestMessage,
                         busStopId: "",
                         direction: "",
-                        longitude: "",
-                        latitude: ""
+                        longitude: "126.979620",
+                        latitude: "37.570028"
                     )
                     distanceStr = ""
-                case .restricted:
+                case .error:
                     response = .init(
                         busStopName: errorMessage,
                         busStopId: "",
                         direction: "",
-                        longitude: "",
-                        latitude: ""
-                    )
-                    distanceStr = ""
-                @unknown default:
-                    response = .init(
-                        busStopName: errorMessage,
-                        busStopId: "",
-                        direction: "",
-                        longitude: "",
-                        latitude: ""
+                        longitude: "126.979620",
+                        latitude: "37.570028"
                     )
                     distanceStr = ""
                 }

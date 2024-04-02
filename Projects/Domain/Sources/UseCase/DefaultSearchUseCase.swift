@@ -15,7 +15,10 @@ import RxCocoa
 public final class DefaultSearchUseCase: SearchUseCase {
     private let stationListRepository: StationListRepository
     private let locationService: LocationService
-
+    
+    public var locationStatus = BehaviorSubject<LocationStatus>(
+        value: .notDetermined
+    )
     public let nearByStopInfo = PublishSubject<(BusStopInfoResponse, String)>()
     public let searchedStationList = PublishSubject<[BusStopInfoResponse]>()
     public var recentSearchResult = BehaviorSubject<[BusStopInfoResponse]>(
@@ -29,6 +32,7 @@ public final class DefaultSearchUseCase: SearchUseCase {
     ) {
         self.stationListRepository = stationListRepository
         self.locationService = locationService
+        bindLocationStatus()
         bindRecentSearchList()
     }
     
@@ -65,53 +69,58 @@ public final class DefaultSearchUseCase: SearchUseCase {
     }
     
     public func updateNearByStop() {
-        locationService.currentLocation
-            .skip(1)
-            .take(1)
+        locationService.locationStatus
             .withUnretained(self)
             .subscribe(
-                onNext: { useCase, location in
-                    let result = useCase.stationListRepository
-                        .getNearByStopInfo(startPointLocation: location)
-                    useCase.nearByStopInfo.onNext(result)
+                onNext: { useCase, status in
+                    var response: BusStopInfoResponse
+                    var distanceStr: String
+                    let requestMessage = "주변 정류장을 확인하려면 위치 정보를 동의해주세요."
+                    let errorMessage = "오류가 발생했습니다. 관리자에게 문의해주세요."
+                    switch status {
+                    case .denied:
+                        response = .init(
+                            busStopName: requestMessage,
+                            busStopId: "",
+                            direction: "",
+                            longitude: "126.979620",
+                            latitude: "37.570028"
+                        )
+                        distanceStr = ""
+                    case .alwaysAllowed(let location):
+                        (response, distanceStr) = useCase.stationListRepository
+                            .getNearByStopInfo(startPointLocation: location)
+                    case .authorized(let location):
+                        (response, distanceStr) = useCase.stationListRepository
+                            .getNearByStopInfo(startPointLocation: location)
+                    case .notDetermined:
+                        response = .init(
+                            busStopName: requestMessage,
+                            busStopId: "",
+                            direction: "",
+                            longitude: "126.979620",
+                            latitude: "37.570028"
+                        )
+                        distanceStr = ""
+                    case .error:
+                        response = .init(
+                            busStopName: errorMessage,
+                            busStopId: "",
+                            direction: "",
+                            longitude: "126.979620",
+                            latitude: "37.570028"
+                        )
+                        distanceStr = ""
+                    }
+                    useCase.nearByStopInfo.onNext((response, distanceStr))
                 }
             )
             .disposed(by: disposeBag)
-        
-        locationService.authState
-            .withUnretained(self)
-            .subscribe(
-                onNext: { useCase, authState in
-                    switch authState {
-                    case .notDetermined:
-                        useCase.locationService.authorize()
-                    case .restricted:
-                        let desciption = "오류가 발생했습니다. 관리자에게 문의해주세요."
-                        let result = BusStopInfoResponse(
-                            busStopName: desciption,
-                            busStopId: "",
-                            direction: "",
-                            longitude: "",
-                            latitude: ""
-                        )
-                        useCase.nearByStopInfo.onNext((result, ""))
-                    case .denied:
-                        let desciption = "주변 정류장을 확인하려면 위치 정보를 동의해주세요."
-                        let result = BusStopInfoResponse(
-                            busStopName: desciption,
-                            busStopId: "",
-                            direction: "",
-                            longitude: "",
-                            latitude: ""
-                        )
-                        useCase.nearByStopInfo.onNext((result, ""))
-                    case .authorizedAlways, .authorizedWhenInUse:
-                        useCase.locationService.requestLocationOnce()
-                    @unknown default:
-                        break
-                    }
-                }
-            )
+    }
+    
+    private func bindLocationStatus() {
+        locationService.locationStatus
+            .bind(to: locationStatus)
             .disposed(by: disposeBag)
     }
     

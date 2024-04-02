@@ -29,7 +29,14 @@ public final class NearMapViewModel
             viewMode = .normal
         }
 	}
-	
+    /*
+     NearMap
+     ViewWillAppear 시점에 권한 여부에 따라 뷰 표시
+     허용: 현재위치
+     비허용: 네이버본사위치
+     앱 설정으로 딥링크
+     아직 선택 안했을 때: 권한요청창을 띄우기
+     */
 	deinit {
 		coordinator.finish()
 	}

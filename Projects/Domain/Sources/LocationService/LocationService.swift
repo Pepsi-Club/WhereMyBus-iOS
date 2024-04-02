@@ -13,8 +13,7 @@ import RxSwift
 import RxRelay
 
 public protocol LocationService {
-	var authState: BehaviorSubject<CLAuthorizationStatus> { get }
-	var currentLocation: BehaviorSubject<CLLocation> { get }
+    var locationStatus: BehaviorSubject<LocationStatus> { get }
 	
     func authorize()
 	func requestLocationOnce()

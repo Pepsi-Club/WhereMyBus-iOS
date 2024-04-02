@@ -11,6 +11,7 @@ import Foundation
 import RxSwift
 
 public protocol SearchUseCase {
+    var locationStatus: BehaviorSubject<LocationStatus> { get }
     var nearByStopInfo: PublishSubject<(BusStopInfoResponse, String)> { get }
     var searchedStationList: PublishSubject<[BusStopInfoResponse]> { get }
     var recentSearchResult: BehaviorSubject<[BusStopInfoResponse]> { get }
