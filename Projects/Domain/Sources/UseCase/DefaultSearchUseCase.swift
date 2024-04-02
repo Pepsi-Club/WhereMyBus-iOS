@@ -36,11 +36,17 @@ public final class DefaultSearchUseCase: SearchUseCase {
         do {
             let filteredList = try stationListRepository.stationList.value()
                 .filter { response in
-                    (
-                        term.count > 3 &&
-                        response.busStopId.prefix(term.count) == term
+                    let filteredTerm = term.replacingOccurrences(
+                        of: " ",
+                        with: ""
+                    )
+                    return (
+                        filteredTerm.count > 2 &&
+                        response.busStopId.prefix(
+                            filteredTerm.count
+                        ) == filteredTerm
                     ) ||
-                    response.busStopName.contains(term)
+                    response.busStopName.contains(filteredTerm)
                 }
             searchedStationList.onNext(filteredList)
         } catch {
