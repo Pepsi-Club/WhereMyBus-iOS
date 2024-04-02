@@ -88,6 +88,8 @@ public final class NearMapViewModel
                             )
                             else { return }
                             UIApplication.shared.open(url)
+                        case .notDetermined:
+                            viewModel.useCase.requestAuthorize()
                         default:
                             viewModel.coordinator.startBusStopFlow(
                                 busStopId: response.busStopId
