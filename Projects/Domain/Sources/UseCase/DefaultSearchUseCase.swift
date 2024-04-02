@@ -56,15 +56,20 @@ public final class DefaultSearchUseCase: SearchUseCase {
         stationListRepository.removeRecentSearch()
     }
     
-    public func saveRecentSearch(cell: BusStopInfoResponse) {
-        stationListRepository.saveRecentSearch(cell)
+    public func saveRecentSearch(response: BusStopInfoResponse) {
+        stationListRepository.saveRecentSearch(response)
     }
     
-    public func getBusStopInfo(for busStopId: String
+    public func requestAuthorize() {
+        locationService.authorize()
+    }
+    
+    public func getBusStopInfo(
+        for busStopId: String
     ) -> Observable<[BusStopInfoResponse]> {
-        return stationListRepository.stationList
+        stationListRepository.stationList
             .map { stationList in
-                return stationList.filter { $0.busStopId == busStopId }
+                stationList.filter { $0.busStopId == busStopId }
         }
     }
     
@@ -78,22 +83,11 @@ public final class DefaultSearchUseCase: SearchUseCase {
                     let requestMessage = "주변 정류장을 확인하려면 위치 정보를 동의해주세요."
                     let errorMessage = "오류가 발생했습니다. 관리자에게 문의해주세요."
                     switch status {
-                    case .denied:
-                        response = .init(
-                            busStopName: requestMessage,
-                            busStopId: "",
-                            direction: "",
-                            longitude: "126.979620",
-                            latitude: "37.570028"
-                        )
-                        distanceStr = ""
-                    case .alwaysAllowed(let location):
+                    case .authorized(let location), 
+                            .alwaysAllowed(let location):
                         (response, distanceStr) = useCase.stationListRepository
                             .getNearByStopInfo(startPointLocation: location)
-                    case .authorized(let location):
-                        (response, distanceStr) = useCase.stationListRepository
-                            .getNearByStopInfo(startPointLocation: location)
-                    case .notDetermined:
+                    case .notDetermined, .denied:
                         response = .init(
                             busStopName: requestMessage,
                             busStopId: "",

@@ -29,14 +29,7 @@ public final class NearMapViewModel
             viewMode = .normal
         }
 	}
-    /*
-     NearMap
-     ViewWillAppear 시점에 권한 여부에 따라 뷰 표시
-     허용: 현재위치
-     비허용: 네이버본사위치
-     앱 설정으로 딥링크
-     아직 선택 안했을 때: 권한요청창을 띄우기
-     */
+    
 	deinit {
 		coordinator.finish()
 	}
@@ -78,15 +71,28 @@ public final class NearMapViewModel
         
         input.informationViewTapEvent
             .withLatestFrom(output.selectedBusStopInfo)
+            .withLatestFrom(useCase.locationStatus) { tuple, status in
+                (tuple, status)
+            }
             .withUnretained(self)
             .subscribe(
                 onNext: { viewModel, tuple in
-                    let (response, _) = tuple
+                    let ((response, _), status) = tuple
                     switch viewModel.viewMode {
                     case .normal:
-                        viewModel.coordinator.startBusStopFlow(
-                            busStopId: response.busStopId
-                        )
+                        switch status {
+                        case .denied:
+                            guard let url = URL(
+                                string: UIApplication
+                                    .openSettingsURLString
+                            )
+                            else { return }
+                            UIApplication.shared.open(url)
+                        default:
+                            viewModel.coordinator.startBusStopFlow(
+                                busStopId: response.busStopId
+                            )
+                        }
                     case .focused:
                         break
                     }

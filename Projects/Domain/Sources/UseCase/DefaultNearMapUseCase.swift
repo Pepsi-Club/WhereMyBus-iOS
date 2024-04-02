@@ -16,6 +16,9 @@ public final class DefaultNearMapUseCase: NearMapUseCase {
     private let stationListRepository: StationListRepository
     private let locationService: LocationService
     
+    public let locationStatus = BehaviorSubject<LocationStatus>(
+        value: .notDetermined
+    )
     private let disposeBag = DisposeBag()
     
     public init(
@@ -24,6 +27,7 @@ public final class DefaultNearMapUseCase: NearMapUseCase {
     ) {
         self.stationListRepository = stationListRepository
         self.locationService = locationService
+        bindLocationStatus()
     }
     
     public func requestAuthorize() {
@@ -41,13 +45,12 @@ public final class DefaultNearMapUseCase: NearMapUseCase {
                 let errorMessage = "오류가 발생했습니다. 관리자에게 문의해주세요."
                 switch status {
                 case .authorized(let location), .alwaysAllowed(let location):
-                    print(#function, location)
                     (response, distanceStr) = useCase.stationListRepository
                         .getNearByStopInfo(startPointLocation: location)
                 case .notDetermined, .denied:
                     response = .init(
                         busStopName: requestMessage,
-                        busStopId: "",
+                        busStopId: "권한 설정하러 가기",
                         direction: "",
                         longitude: "126.979620",
                         latitude: "37.570028"
@@ -112,5 +115,11 @@ public final class DefaultNearMapUseCase: NearMapUseCase {
         } catch {
             return []
         }
+    }
+    
+    private func bindLocationStatus() {
+        locationService.locationStatus
+            .bind(to: locationStatus)
+            .disposed(by: disposeBag)
     }
 }

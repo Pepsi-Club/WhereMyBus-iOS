@@ -171,9 +171,15 @@ public final class BusStopInformationView: UIView {
         busStopNameLabel.text = response.busStopName
         if !response.busStopId.isEmpty && !response.direction.isEmpty {
         }
-        let description = !response.busStopId.isEmpty &&
-        !response.direction.isEmpty ?
-        "\(response.busStopId) | \(response.direction) 방면" : ""
+        var description = ""
+        if !response.busStopId.isEmpty {
+            if !response.direction.isEmpty {
+                description 
+                = "\(response.busStopId) | \(response.direction) 방면"
+            } else {
+                description = "권한 설정하러 가기"
+            }
+        }
         busStopDescription.text = description
         distanceFromBusStopLabel.text = distance
     }
