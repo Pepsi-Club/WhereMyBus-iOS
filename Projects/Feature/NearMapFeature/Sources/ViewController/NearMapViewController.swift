@@ -196,7 +196,7 @@ public final class NearMapViewController: UIViewController {
             lng: longitude
         )
         let marker = NMFMarker(position: location)
-        let busStopImg = DesignSystemAsset.busStop.image
+        let busStopImg = DesignSystemAsset.mapBusStop.image
         marker.iconImage = NMFOverlayImage(
             image: busStopImg,
             reuseIdentifier: "busStop"
