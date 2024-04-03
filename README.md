@@ -62,7 +62,7 @@
 - DI Container
 
 ##### Clean Architecture
-![Group 1597880429](https://github.com/Pepsi-Club/WhereMyBus-iOS/assets/65907001/fc346c21-92cf-49a3-9aed-b7430624cc4b)
+![Group 1597880429 (1)](https://github.com/Pepsi-Club/WhereMyBus-iOS/assets/65907001/d0b15929-86ec-4548-a17a-4f1d6de494cb)
 
 ##### Coordinator
 
