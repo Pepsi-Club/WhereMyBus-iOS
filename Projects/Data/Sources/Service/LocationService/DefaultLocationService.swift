@@ -78,8 +78,6 @@ final public class DefaultLocationService: NSObject, LocationService {
 }
 
 extension DefaultLocationService: CLLocationManagerDelegate {
-    /// 현재위치가 바뀔때마다 업데이트되는 메서드
-    /// locations의 첫번째 인덱스는 최근 위치
     public func locationManagerDidChangeAuthorization(
         _ manager: CLLocationManager
     ) {
@@ -91,11 +89,10 @@ extension DefaultLocationService: CLLocationManagerDelegate {
         case .authorizedAlways, .authorizedWhenInUse:
             locationManager.requestLocation()
         @unknown default:
-            locationStatus.onNext(.error)
+            locationStatus.onNext(.unknown)
         }
     }
     
-    /// 위치권한이 바뀔때마다 업데이트되는 메서드
     public func locationManager(
         _ manager: CLLocationManager,
         didUpdateLocations locations: [CLLocation]
@@ -111,11 +108,11 @@ extension DefaultLocationService: CLLocationManagerDelegate {
             break
         }
     }
-    /// 위치 정보 불러오는 도중 에러 처리 메서드
+    
     public func locationManager(
         _ manager: CLLocationManager,
         didFailWithError error: Error
     ) {
-        locationStatus.onNext(.error)
+        locationStatus.onError(error)
     }
 }

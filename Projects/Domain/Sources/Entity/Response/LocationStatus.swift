@@ -10,7 +10,7 @@ import Foundation
 import CoreLocation
 
 public enum LocationStatus {
-    case notDetermined, error
-    case denied
     case authorized(CLLocation), alwaysAllowed(CLLocation)
+    case notDetermined, denied
+    case unknown
 }

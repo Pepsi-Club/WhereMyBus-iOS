@@ -39,6 +39,8 @@ public final class BusStopInformationView: UIView {
 		label.font = DesignSystemFontFamily.NanumSquareNeoOTF.light.font(
 			size: 13
 		)
+        label.adjustsFontForContentSizeCategory = true
+        label.minimumScaleFactor = 0.8
         label.textColor = .black
 		return label
 	}()
@@ -177,7 +179,7 @@ public final class BusStopInformationView: UIView {
                 description 
                 = "\(response.busStopId) | \(response.direction) 방면"
             } else {
-                description = "권한 설정하러 가기"
+                description = "\(response.busStopId)"
             }
         }
         busStopDescription.text = description

@@ -80,8 +80,9 @@ public final class DefaultSearchUseCase: SearchUseCase {
                 onNext: { useCase, status in
                     var response: BusStopInfoResponse
                     var distanceStr: String
-                    let requestMessage = "주변 정류장을 확인하려면 위치 정보를 동의해주세요."
-                    let errorMessage = "오류가 발생했습니다. 관리자에게 문의해주세요."
+                    let requestMessage1 = "주변 정류장을 확인하려면\n"
+                    let requestMessage2 = "위치 사용을 허용해주세요"
+                    let errorMessage = "오류가 발생했습니다 관리자에게 문의해주세요"
                     switch status {
                     case .authorized(let location), 
                             .alwaysAllowed(let location):
@@ -89,14 +90,14 @@ public final class DefaultSearchUseCase: SearchUseCase {
                             .getNearByStopInfo(startPointLocation: location)
                     case .notDetermined, .denied:
                         response = .init(
-                            busStopName: requestMessage,
+                            busStopName: requestMessage1 + requestMessage2,
                             busStopId: "",
                             direction: "",
                             longitude: "126.979620",
                             latitude: "37.570028"
                         )
                         distanceStr = ""
-                    case .error:
+                    case .unknown:
                         response = .init(
                             busStopName: errorMessage,
                             busStopId: "",
