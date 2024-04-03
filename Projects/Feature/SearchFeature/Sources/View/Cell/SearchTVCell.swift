@@ -15,6 +15,7 @@ import Domain
 import RxSwift
 
 final class SearchTVCell: UITableViewCell {
+    let cellTapEvent = PublishSubject<BusStopInfoResponse>()
     var disposeBag = DisposeBag()
     
     private let busStopNameLabel: UILabel = {
@@ -59,7 +60,10 @@ final class SearchTVCell: UITableViewCell {
         disposeBag = .init()
     }
     
-    public func updateUI(response: BusStopInfoResponse, searchKeyword: String) {
+    public func updateUI(
+        response: BusStopInfoResponse,
+        searchKeyword: String
+    ) {
         let attributedBusStopName =
         NSMutableAttributedString(string: response.busStopName)
         if let range =
@@ -103,6 +107,18 @@ final class SearchTVCell: UITableViewCell {
             string: " | \(response.direction) 방면 ", attributes: nil)
         )
         descriptionLabel.attributedText = descriptionString
+        bindTapGesture(response: response)
+    }
+    
+    private func bindTapGesture(response: BusStopInfoResponse) {
+        let tapGesture = UITapGestureRecognizer()
+        contentView.addGestureRecognizer(tapGesture)
+        tapGesture.rx.event
+            .map { _ in
+                response
+            }
+            .bind(to: cellTapEvent)
+            .disposed(by: disposeBag)
     }
 
     private func configureUI() {

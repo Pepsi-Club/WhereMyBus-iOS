@@ -26,8 +26,7 @@ public final class SearchViewModel: ViewModel {
         let output = Output(
             searchedResponse: useCase.searchedStationList,
             recentSearchedResponse: .init(value: []),
-            nearByStopInfo: .init(),
-            tableViewSection: .init(value: .recentSearch)
+            nearByStopInfo: .init()
         )
         
         input.viewWillAppearEvent
@@ -49,23 +48,9 @@ public final class SearchViewModel: ViewModel {
             .disposed(by: disposeBag)
         
         input.textFieldChangeEvent
-            .withLatestFrom(output.tableViewSection) { text, section in
-                return (text, section)
-            }
             .withUnretained(self)
             .subscribe(
-                onNext: { viewModel, tuple in
-                    let (text, section) = tuple
-                    switch section {
-                    case .recentSearch:
-                        if !text.isEmpty {
-                            output.tableViewSection.accept(.searchedStop)
-                        }
-                    case .searchedStop:
-                        if text.isEmpty {
-                            output.tableViewSection.accept(.recentSearch)
-                        }
-                    }
+                onNext: { viewModel, text in
                     viewModel.useCase.search(term: text)
                 }
             )
@@ -120,9 +105,8 @@ extension SearchViewModel {
     }
     
     public struct Output {
-        var searchedResponse: PublishSubject<[BusStopInfoResponse]>
+        var searchedResponse: PublishSubject<[BusStopRegion]>
         var recentSearchedResponse: BehaviorSubject<[BusStopInfoResponse]>
         var nearByStopInfo: PublishSubject<(BusStopInfoResponse, String)>
-        var tableViewSection: BehaviorRelay<SearchSection>
     }
 }

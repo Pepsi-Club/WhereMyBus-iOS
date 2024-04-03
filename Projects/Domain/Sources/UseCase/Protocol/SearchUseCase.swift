@@ -13,7 +13,7 @@ import RxSwift
 public protocol SearchUseCase {
     var locationStatus: BehaviorSubject<LocationStatus> { get }
     var nearByStopInfo: PublishSubject<(BusStopInfoResponse, String)> { get }
-    var searchedStationList: PublishSubject<[BusStopInfoResponse]> { get }
+    var searchedStationList: PublishSubject<[BusStopRegion]> { get }
     var recentSearchResult: BehaviorSubject<[BusStopInfoResponse]> { get }
     
     func search(term: String)

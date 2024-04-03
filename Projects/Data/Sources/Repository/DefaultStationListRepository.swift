@@ -105,16 +105,19 @@ public final class DefaultStationListRepository: StationListRepository {
     }
     
     private func fetchStationList() {
-        guard let url = Bundle.main.url(
+        guard let seoulUrl = Bundle.main.url(
             forResource: "total_stationList",
             withExtension: "json"
         )
         else { return }
         do {
-            let responses = try Data(contentsOf: url)
+            let resion = try Data(contentsOf: seoulUrl)
                 .decode(type: BusStopListDTO.self)
                 .toDomain
-            stationList.onNext(responses)
+            switch resion {
+            case .seoul(responses: let responses):
+                stationList.onNext(responses)
+            }
         } catch {
             stationList.onError(error)
         }
