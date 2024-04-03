@@ -112,11 +112,23 @@ public final class BusStopViewController: UIViewController {
             .withUnretained(self)
             .subscribe(
                 onNext: { viewController, response in
-                    viewController.headerView.bindUI(
-                        routeId: response.busStopId,
-                        busStopName: response.busStopName,
-                        nextStopName: response.direction
-                    )
+                    if response.busStopName.count > 20 {
+                        viewController.headerView.busStopNameLb
+                            .widthAnchor.constraint(
+                                equalToConstant: .screenWidth - 20
+                            ).isActive = true
+                        viewController.headerView.bindUI(
+                            routeId: response.busStopId,
+                            busStopName: response.busStopName,
+                            nextStopName: response.direction
+                        )
+                    } else {
+                        viewController.headerView.bindUI(
+                            routeId: response.busStopId,
+                            busStopName: response.busStopName,
+                            nextStopName: response.direction
+                        )
+                    }
                     
                     viewController.updateSnapshot(busStopResponse: response)
                 }
@@ -265,6 +277,10 @@ public final class BusStopViewController: UIViewController {
 
 extension BusStopViewController {
     private func configureUI() {
+        [scrollView, contentView, headerView, busStopTableView]
+            .forEach { components in
+                components.translatesAutoresizingMaskIntoConstraints = false
+            }
         
         view.addSubview(scrollView)
         
@@ -274,11 +290,6 @@ extension BusStopViewController {
             }
         
         scrollView.addSubview(contentView)
-        
-        [scrollView, contentView, headerView, busStopTableView]
-            .forEach { components in
-                components.translatesAutoresizingMaskIntoConstraints = false
-            }
         
         tableViewHeightConstraint = busStopTableView.heightAnchor
             .constraint(equalToConstant: 0)
