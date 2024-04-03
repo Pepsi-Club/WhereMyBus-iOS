@@ -57,12 +57,56 @@ final class SearchTVCell: UITableViewCell {
         disposeBag = .init()
     }
     
-    public func updateUI(response: BusStopInfoResponse) {
+    public func updateUI(response: BusStopInfoResponse, searchKeyword: String) {
         busStopNameLabel.text = response.busStopName
-        let description = "\(response.busStopId) | \(response.direction) 방면"
-        descriptionLabel.text = description
+        let attributedBusStopName =
+        NSMutableAttributedString(string: response.busStopName)
+        if let range =
+            response.busStopName.range(
+                of: searchKeyword,
+                options: .caseInsensitive
+            ) {
+            attributedBusStopName.addAttribute(
+                .font,
+                value:
+                DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(size: 16),
+                range:
+                    NSRange(range, in: response.busStopName)
+            )
+        }
+        busStopNameLabel.attributedText = attributedBusStopName
+
+        let attributedId = NSMutableAttributedString(string: response.busStopId)
+        
+        if let range = response.busStopId.range(
+            of: searchKeyword,
+            options: .caseInsensitive
+        ) {
+            attributedId.addAttribute(
+                .font,
+                value:
+                   DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(size: 13),
+                range:
+                    NSRange(range, in: response.busStopId)
+            )
+            attributedId.addAttribute(
+                .foregroundColor,
+                value: UIColor.black,
+                range: NSRange(range, in: response.busStopId)
+            )
+        }
+
+        let descriptionString = NSMutableAttributedString()
+        descriptionString.append(NSAttributedString(
+            string: "\(response.busStopId) | ", attributes: nil)
+        )
+        descriptionString.append(attributedId)
+        descriptionString.append(NSAttributedString(
+            string: " 방면", attributes: nil)
+        )
+        descriptionLabel.attributedText = descriptionString
     }
-    
+
     private func configureUI() {
         [busStopNameLabel, descriptionLabel].forEach {
             addSubview($0)
