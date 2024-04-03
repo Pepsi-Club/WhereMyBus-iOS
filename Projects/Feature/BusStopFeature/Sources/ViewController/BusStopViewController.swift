@@ -55,6 +55,8 @@ public final class BusStopViewController: UIViewController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
+        self.navigationController?
+            .interactivePopGestureRecognizer?.delegate = nil
         
         view.backgroundColor = .white
         configureUI()
