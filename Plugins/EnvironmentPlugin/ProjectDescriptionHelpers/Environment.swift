@@ -17,7 +17,10 @@ public extension String {
     static let marketingVersion: Self = "1.0.3"
     /// 개발자가 내부적으로 확인하기 위한 용도 (날짜를 사용하기도 함 - 2023.12.8.1 )
     static var buildVersion: Self {
-        "1.0"
+        let date = Date()
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy.MM.dd.HH"
+        return formatter.string(from: date)
     }
 }
 

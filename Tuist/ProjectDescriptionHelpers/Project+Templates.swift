@@ -161,6 +161,7 @@ extension Project {
             entitlements: entitlements,
             scripts: scripts,
             dependencies: dependencies,
+            settings: .frameworkDebug,
             coreDataModels: coreDataModel
         )
     }

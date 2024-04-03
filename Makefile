@@ -1,6 +1,9 @@
 open_plist:
 	open -a Xcode Plugins/EnvironmentPlugin/ProjectDescriptionHelpers/InfoPlist.swift
 
+open_config:
+	open -a Xcode Plugins/EnvironmentPlugin/ProjectDescriptionHelpers/XCConfig.swift
+
 generate:
 	tuist fetch
 	tuist generate
@@ -18,7 +21,6 @@ clean:
 	rm -rf **/**/Derived/
 	rm -rf **/Derived/
 	rm -rf Derived/
-	rm -rf Pods/
 	
 clean_all:
 	make clean

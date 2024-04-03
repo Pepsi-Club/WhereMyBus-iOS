@@ -54,13 +54,12 @@ final class SearchTVCell: UITableViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         [busStopNameLabel, descriptionLabel].forEach {
-            $0.text = nil
+            $0.attributedText = nil
         }
         disposeBag = .init()
     }
     
     public func updateUI(response: BusStopInfoResponse, searchKeyword: String) {
-        busStopNameLabel.text = response.busStopName
         let attributedBusStopName =
         NSMutableAttributedString(string: response.busStopName)
         if let range =

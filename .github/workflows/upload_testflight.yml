@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - release
+      
 jobs:
   upload_testflight:
     runs-on: macos-13
@@ -14,26 +15,27 @@ jobs:
         with:
           key: ${{ secrets.SSH_KEY }}
           known_hosts: ${{ secrets.KNOWN_HOSTS }}
-            
+
       - name: Bring ignored files
         uses: actions/checkout@v3
         with:
           repository: Pepsi-Club/WhereMyBus-ignored
           path: XCConfig/
           token: ${{ secrets.ACTION_TOKEN }}
-                    
+
+      - name: Move GoogleService Plist
+        run: |
+          mv XCConfig/GoogleService-Info.plist Projects/App/Resources/
+
       - name: Setup Xcode version
         uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: "14.3"
-          
+
       - uses: swift-actions/setup-swift@65540b95f51493d65f5e59e97dcef9629ddf11bf
         with:
-            swift-version: "5.8.0"
-        
-      - name: Get swift version
-        run: swift --version
-        
+          swift-version: "5.8.0"
+
       - name: Install Tuist
         run: curl -Ls https://install.tuist.io|bash
 
@@ -48,9 +50,6 @@ jobs:
 
       - name: Tuist generate
         run: tuist generate
-
-      - name: Cocoapods Install
-        run: pod install
 
       - name: Fastlane Upload Testflight
         run: fastlane tf_remote
