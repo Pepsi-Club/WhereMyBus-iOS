@@ -361,7 +361,10 @@ public final class SearchViewController: UIViewController {
                         for: indexPath
                       ) as? SearchTVCell
                 else { return .init() }
-                cell.updateUI(response: response)
+                cell.updateUI(
+                    response: response,
+                    searchKeyword: self.searchTextFieldView.text ?? ""
+                )
                 let tapGesture = UITapGestureRecognizer()
                 cell.addGestureRecognizer(tapGesture)
                 tapGesture.rx.event
