@@ -98,7 +98,7 @@ public final class SearchViewController: UIViewController {
         configureUI()
         configureDataSource()
         bind()
-        hideKeyboard()
+        outKeyboard()
     }
     
     public override func viewWillAppear(_ animated: Bool) {
@@ -113,6 +113,16 @@ public final class SearchViewController: UIViewController {
             animated: true
         )
         searchTextFieldView.removeFromSuperview()
+    }
+    
+    private func outKeyboard() {
+        view.addGestureRecognizer(
+            UITapGestureRecognizer(
+                target: self,
+                action: #selector(dismissHideKeyboard)
+            )
+        )
+        tableView.keyboardDismissMode = .onDrag
     }
     
     private func configureUI() {
@@ -408,6 +418,10 @@ public final class SearchViewController: UIViewController {
         case false:
             tableView.backgroundView = nil
         }
+    }
+    
+    @objc func dismissHideKeyboard() {
+        searchTextFieldView.endEditing(true)
     }
 }
 
