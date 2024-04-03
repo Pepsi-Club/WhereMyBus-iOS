@@ -97,12 +97,9 @@ final class SearchTVCell: UITableViewCell {
         }
 
         let descriptionString = NSMutableAttributedString()
-        descriptionString.append(NSAttributedString(
-            string: "\(response.busStopId) | ", attributes: nil)
-        )
         descriptionString.append(attributedId)
         descriptionString.append(NSAttributedString(
-            string: " 방면", attributes: nil)
+            string: " | \(response.direction) 방면 ", attributes: nil)
         )
         descriptionLabel.attributedText = descriptionString
     }
