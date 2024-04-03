@@ -23,6 +23,8 @@ final class SearchTVCell: UITableViewCell {
         DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(size: 16)
         label.textAlignment = .left
         label.textColor = .black
+        label.adjustsFontSizeToFitWidth = true
+        label.minimumScaleFactor = 0.8
         
         return label
     }()
@@ -81,6 +83,10 @@ final class SearchTVCell: UITableViewCell {
             busStopNameLabel.bottomAnchor.constraint(
                 equalTo: centerYAnchor,
                 constant: -3
+            ),
+            busStopNameLabel.trailingAnchor.constraint(
+                equalTo: trailingAnchor,
+                constant: -15
             ),
             
             descriptionLabel.topAnchor.constraint(
