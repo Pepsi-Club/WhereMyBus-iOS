@@ -17,11 +17,12 @@ public final class NearMapViewController: UIViewController {
     
     private var drawedMarker = [NMFMarker]()
     
-    private lazy var naverMapView: NMFMapView = {
-        let mapView = NMFMapView()
+    private lazy var naverMap: NMFNaverMapView = {
+        let mapView = NMFNaverMapView()
         mapView.clipsToBounds = true
         mapView.layer.cornerRadius = 15
-        mapView.addCameraDelegate(delegate: self)
+        mapView.mapView.addCameraDelegate(delegate: self)
+        mapView.showLocationButton = true
         return mapView
     }()
     
@@ -70,7 +71,7 @@ public final class NearMapViewController: UIViewController {
     
     private func configureUI() {
         view.backgroundColor = .white
-        [busStopInformationView, naverMapView].forEach {
+        [busStopInformationView, naverMap].forEach {
             view.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
@@ -94,18 +95,18 @@ public final class NearMapViewController: UIViewController {
                 equalToConstant: 130
             ),
             
-            naverMapView.topAnchor.constraint(
+            naverMap.topAnchor.constraint(
                 equalTo: safeArea.topAnchor
             ),
-            naverMapView.leadingAnchor.constraint(
+            naverMap.leadingAnchor.constraint(
                 equalTo: safeArea.leadingAnchor,
                 constant: 5
             ),
-            naverMapView.trailingAnchor.constraint(
+            naverMap.trailingAnchor.constraint(
                 equalTo: safeArea.trailingAnchor,
                 constant: -5
             ),
-            naverMapView.bottomAnchor.constraint(
+            naverMap.bottomAnchor.constraint(
                 equalTo: busStopInformationView.topAnchor,
                 constant: -10
             ),
@@ -176,10 +177,12 @@ public final class NearMapViewController: UIViewController {
                 zoom: 17
             )
         )
-        let distance = location.distance(to: naverMapView.cameraPosition.target)
+        let distance = location.distance(
+            to: naverMap.mapView.cameraPosition.target
+        )
         cameraUpdate.animation = distance > 10000 ? .none : .easeOut
         cameraUpdate.animationDuration = 1
-        naverMapView.moveCamera(cameraUpdate)
+        naverMap.mapView.moveCamera(cameraUpdate)
     }
     
     private func drawMarker(response: BusStopInfoResponse) {
@@ -196,12 +199,12 @@ public final class NearMapViewController: UIViewController {
             lng: longitude
         )
         let marker = NMFMarker(position: location)
-        let busStopImg = DesignSystemAsset.busStop.image
+        let busStopImg = DesignSystemAsset.mapBusStop.image
         marker.iconImage = NMFOverlayImage(
             image: busStopImg,
             reuseIdentifier: "busStop"
         )
-        marker.mapView = naverMapView
+        marker.mapView = naverMap.mapView
         marker.userInfo = ["busStopId": response.busStopId]
         // YES일 경우 이벤트를 소비합니다. 그렇지 않을 경우 NMFMapView까지 이벤트가 전달되어
         // NMFMapViewTouchDelegate의 mapView:didTapMap:point:가 호출됩니다.
