@@ -1,5 +1,5 @@
 //
-//  SearchTVRecentSearchBGView.swift
+//  SearchTVBackgroundView.swift
 //  SearchFeature
 //
 //  Created by gnksbm on 3/15/24.
@@ -10,7 +10,7 @@ import UIKit
 
 import DesignSystem
 
-final class SearchTVRecentSearchBGView: UIView {
+final class SearchTVBackgroundView: UIView {
     let descriptionLabel: UILabel = {
         let label = UILabel()
         let font = DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(
@@ -19,9 +19,13 @@ final class SearchTVRecentSearchBGView: UIView {
         label.font = font
         label.textAlignment = .center
         label.textColor = DesignSystemAsset.gray5.color
-        label.text = "최근 검색된 정류장이 없습니다."
         return label
     }()
+    
+    convenience init(text: String) {
+        self.init()
+        descriptionLabel.text = text
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)

@@ -59,9 +59,9 @@ public final class SearchViewModel: ViewModel {
                     switch section {
                     case .recentSearch:
                         if !text.isEmpty {
-                            output.tableViewSection.accept(.searchedData)
+                            output.tableViewSection.accept(.searchedStop)
                         }
-                    case .searchedData:
+                    case .searchedStop:
                         if text.isEmpty {
                             output.tableViewSection.accept(.recentSearch)
                         }
