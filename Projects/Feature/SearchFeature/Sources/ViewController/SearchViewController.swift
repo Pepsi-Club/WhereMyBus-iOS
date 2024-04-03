@@ -98,16 +98,13 @@ public final class SearchViewController: UIViewController {
         configureUI()
         configureDataSource()
         bind()
-        setupTapGesture()
+        hideKeyboard() // 현재 동작하지 않음 
+        outKeyboard()
     }
     
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         configureNavigation()
-    }
-    
-    public override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        view.endEditing(true)
     }
     
     public override func viewWillDisappear(_ animated: Bool) {
@@ -119,12 +116,8 @@ public final class SearchViewController: UIViewController {
         searchTextFieldView.removeFromSuperview()
     }
     
-    private func setupTapGesture() {
-        let tapGesture = UITapGestureRecognizer(
-            target: self,
-            action: #selector(outKeyboard)
-        )
-        view.addGestureRecognizer(tapGesture)
+    private func outKeyboard() {
+        tableView.keyboardDismissMode = .onDrag
     }
     
     private func configureUI() {
@@ -417,10 +410,6 @@ public final class SearchViewController: UIViewController {
         case false:
             tableView.backgroundView = nil
         }
-    }
-    
-    @objc private func outKeyboard() {
-        self.view.endEditing(true)
     }
 }
 
