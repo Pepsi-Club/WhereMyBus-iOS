@@ -34,19 +34,23 @@ public final class DefaultSearchUseCase: SearchUseCase {
     
     public func search(term: String) {
         do {
+            let filteredTerm = term.replacingOccurrences(
+                of: " ",
+                with: ""
+            )
             let filteredList = try stationListRepository.stationList.value()
                 .filter { response in
-                    let filteredTerm = term.replacingOccurrences(
-                        of: " ",
-                        with: ""
-                    )
-                    return (
-                        filteredTerm.count > 2 &&
-                        response.busStopId.prefix(
-                            filteredTerm.count
-                        ) == filteredTerm
-                    ) ||
+                    let busStopIdPrefix = response.busStopId
+                        .prefix(filteredTerm.count)
+                    
+                    return filteredTerm.count > 2 &&
+                    busStopIdPrefix == filteredTerm ||
                     response.busStopName.contains(filteredTerm)
+                }
+                .sorted {
+                    $0.busStopName.hasPrefix(filteredTerm) &&
+                    !$1.busStopName.hasPrefix(filteredTerm) ||
+                    $0.busStopId < $1.busStopId
                 }
             searchedStationList.onNext(filteredList)
         } catch {
