@@ -15,15 +15,8 @@ import RxSwift
 
 #if DEBUG
 public final class MockLocationService: LocationService {
-    public let authState = BehaviorSubject<CLAuthorizationStatus>(
+    public var locationStatus = BehaviorSubject<LocationStatus>(
         value: .notDetermined
-    )
-    
-    public let currentLocation = BehaviorSubject<CLLocation>(
-        value: .init(
-            latitude: 126.979620,
-            longitude: 37.570028
-        )
     )
     
     public init() { }

@@ -29,7 +29,7 @@ public final class NearMapViewModel
             viewMode = .normal
         }
 	}
-	
+    
 	deinit {
 		coordinator.finish()
 	}
@@ -71,15 +71,30 @@ public final class NearMapViewModel
         
         input.informationViewTapEvent
             .withLatestFrom(output.selectedBusStopInfo)
+            .withLatestFrom(useCase.locationStatus) { tuple, status in
+                (tuple, status)
+            }
             .withUnretained(self)
             .subscribe(
                 onNext: { viewModel, tuple in
-                    let (response, _) = tuple
+                    let ((response, _), status) = tuple
                     switch viewModel.viewMode {
                     case .normal:
-                        viewModel.coordinator.startBusStopFlow(
-                            busStopId: response.busStopId
-                        )
+                        switch status {
+                        case .denied:
+                            guard let url = URL(
+                                string: UIApplication
+                                    .openSettingsURLString
+                            )
+                            else { return }
+                            UIApplication.shared.open(url)
+                        case .notDetermined:
+                            viewModel.useCase.requestAuthorize()
+                        default:
+                            viewModel.coordinator.startBusStopFlow(
+                                busStopId: response.busStopId
+                            )
+                        }
                     case .focused:
                         break
                     }

@@ -5,6 +5,9 @@ generate:
 	tuist fetch
 	tuist generate
 	
+clean_xcode:
+	rm -rf ~/Library/Developer/Xcode/DerivedData/*
+	
 clean:
 	tuist clean
 	rm -rf **/**/**/*.xcodeproj
@@ -16,6 +19,10 @@ clean:
 	rm -rf **/Derived/
 	rm -rf Derived/
 	rm -rf Pods/
+	
+clean_all:
+	make clean
+	make clean_xcode
 
 BASE_URL = https://raw.githubusercontent.com/Pepsi-Club/WhereMyBus-ignored/main
 

@@ -11,8 +11,6 @@ import UIKit
 import DesignSystem
 
 public final class SearchTextFieldView: UITextField {
-    private var titleContainer = AttributeContainer()
-
     public init(
         placeholder: String? = nil
     ) {
@@ -38,16 +36,16 @@ public final class SearchTextFieldView: UITextField {
         self.autocorrectionType = .no
         self.spellCheckingType = .no
         self.textColor = .black
-        
     }
     
     private func setPlaceholder(_ placeholder: String?) {
         self.placeholder = "버스 정류장을 검색하세요"
         self.attributedPlaceholder = NSAttributedString(
             string: self.placeholder ?? "",
-            attributes:
-                [NSAttributedString.Key.foregroundColor:
-                    DesignSystemAsset.gray4.color]
+            attributes: [
+                NSAttributedString.Key.foregroundColor:
+                    DesignSystemAsset.gray4.color
+            ]
         )
     }
 }

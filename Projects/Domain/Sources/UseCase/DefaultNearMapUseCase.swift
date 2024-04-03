@@ -16,6 +16,9 @@ public final class DefaultNearMapUseCase: NearMapUseCase {
     private let stationListRepository: StationListRepository
     private let locationService: LocationService
     
+    public let locationStatus = BehaviorSubject<LocationStatus>(
+        value: .notDetermined
+    )
     private let disposeBag = DisposeBag()
     
     public init(
@@ -24,6 +27,7 @@ public final class DefaultNearMapUseCase: NearMapUseCase {
     ) {
         self.stationListRepository = stationListRepository
         self.locationService = locationService
+        bindLocationStatus()
     }
     
     public func requestAuthorize() {
@@ -32,48 +36,33 @@ public final class DefaultNearMapUseCase: NearMapUseCase {
     
     public func getNearByStopInfo(
     ) -> Observable<(BusStopInfoResponse, String)> {
-        locationService.authState
-            .withLatestFrom(
-                locationService.currentLocation
-            ) { status, location in
-                (status, location)
-            }
+        locationService.locationStatus
             .withUnretained(self)
-            .map { useCase, tuple in
-                let (status, location) = tuple
+            .map { useCase, status in
                 var response: BusStopInfoResponse
                 var distanceStr: String
-                let requestMessage = "주변 정류장을 확인하려면 위치 정보를 동의해주세요."
+                let requestMessage = "위치 사용을 허용해주세요"
                 let errorMessage = "오류가 발생했습니다. 관리자에게 문의해주세요."
                 switch status {
-                case .authorizedAlways, .authorizedWhenInUse:
+                case .authorized(let location), .alwaysAllowed(let location):
                     (response, distanceStr) = useCase.stationListRepository
-                            .getNearByStopInfo(startPointLocation: location)
+                        .getNearByStopInfo(startPointLocation: location)
                 case .notDetermined, .denied:
                     response = .init(
                         busStopName: requestMessage,
-                        busStopId: "",
+                        busStopId: "주변 정류장을 확인하려면 위치 정보가 필요합니다",
                         direction: "",
-                        longitude: "",
-                        latitude: ""
+                        longitude: "126.979620",
+                        latitude: "37.570028"
                     )
-                    distanceStr = ""
-                case .restricted:
+                    distanceStr = "권한 설정하러 가기"
+                case .unknown:
                     response = .init(
                         busStopName: errorMessage,
                         busStopId: "",
                         direction: "",
-                        longitude: "",
-                        latitude: ""
-                    )
-                    distanceStr = ""
-                @unknown default:
-                    response = .init(
-                        busStopName: errorMessage,
-                        busStopId: "",
-                        direction: "",
-                        longitude: "",
-                        latitude: ""
+                        longitude: "126.979620",
+                        latitude: "37.570028"
                     )
                     distanceStr = ""
                 }
@@ -126,5 +115,11 @@ public final class DefaultNearMapUseCase: NearMapUseCase {
         } catch {
             return []
         }
+    }
+    
+    private func bindLocationStatus() {
+        locationService.locationStatus
+            .bind(to: locationStatus)
+            .disposed(by: disposeBag)
     }
 }

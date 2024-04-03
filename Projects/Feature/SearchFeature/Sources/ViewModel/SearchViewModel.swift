@@ -56,17 +56,17 @@ public final class SearchViewModel: ViewModel {
             .subscribe(
                 onNext: { viewModel, tuple in
                     let (text, section) = tuple
-                    viewModel.useCase.search(term: text)
                     switch section {
                     case .recentSearch:
                         if !text.isEmpty {
-                            output.tableViewSection.accept(.searchedData)
+                            output.tableViewSection.accept(.searchedStop)
                         }
-                    case .searchedData:
+                    case .searchedStop:
                         if text.isEmpty {
                             output.tableViewSection.accept(.recentSearch)
                         }
                     }
+                    viewModel.useCase.search(term: text)
                 }
             )
             .disposed(by: disposeBag)
@@ -75,7 +75,7 @@ public final class SearchViewModel: ViewModel {
             .withUnretained(self)
             .subscribe(
                 onNext: { viewModel, response in
-                    viewModel.useCase.saveRecentSearch(cell: response)
+                    viewModel.useCase.saveRecentSearch(response: response)
                     viewModel.coordinator.startBusStopFlow(
                         stationId: response.busStopId
                     )
@@ -84,10 +84,16 @@ public final class SearchViewModel: ViewModel {
             .disposed(by: disposeBag)
         
         input.nearByStopTapEvent
+            .withLatestFrom(useCase.locationStatus)
             .withUnretained(self)
             .subscribe(
-                onNext: { viewModel, _ in
-                    viewModel.coordinator.startNearMapFlow()
+                onNext: { viewModel, status in
+                    switch status {
+                    case .notDetermined:
+                        viewModel.useCase.requestAuthorize()
+                    default:
+                        viewModel.coordinator.startNearMapFlow()
+                    }
                 }
             )
             .disposed(by: disposeBag)

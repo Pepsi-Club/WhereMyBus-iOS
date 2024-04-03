@@ -49,9 +49,15 @@ public final class SearchViewController: UIViewController {
         return label
     }()
     
-    private let tvBackgroundView = SearchTVRecentSearchBGView()
+    private let recentSearchBGView = SearchTVBackgroundView(
+        text: "최근 검색된 정류장이 없습니다"
+    )
     
-    private lazy var recentSearchTableView: UITableView = {
+    private let searchedStopBGView = SearchTVBackgroundView(
+        text: "검색된 정류장이 없습니다"
+    )
+    
+    private lazy var tableView: UITableView = {
         let table = UITableView(
             frame: .zero,
             style: .insetGrouped
@@ -74,7 +80,7 @@ public final class SearchViewController: UIViewController {
         return view
     }()
     
-    private let nearByStopView = DeagreeSearchNearStopView()
+    private let nearByStopView = SearchNearStopInformationView()
     
     private var tableViewBtmConstraint: NSLayoutConstraint!
     
@@ -96,10 +102,16 @@ public final class SearchViewController: UIViewController {
     }
     
     public override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         configureNavigation()
     }
     
     public override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationController?.setNavigationBarHidden(
+            true,
+            animated: true
+        )
         searchTextFieldView.removeFromSuperview()
     }
     
@@ -112,14 +124,14 @@ public final class SearchViewController: UIViewController {
             seoulLabel,
             nearByStopPaddingView,
             nearByStopView,
-            recentSearchTableView,
+            tableView,
         ].forEach {
             view.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         
         let safeArea = view.safeAreaLayoutGuide
-        tableViewBtmConstraint = recentSearchTableView.bottomAnchor.constraint(
+        tableViewBtmConstraint = tableView.bottomAnchor.constraint(
             equalTo: nearByStopPaddingView.topAnchor
         )
         NSLayoutConstraint.activate([
@@ -177,26 +189,55 @@ public final class SearchViewController: UIViewController {
                 equalTo: view.widthAnchor,
                 multiplier: 0.95
             ),
-            nearByStopView.heightAnchor.constraint(
-                equalToConstant: 87
-            ),
             nearByStopView.bottomAnchor.constraint(
                 equalTo: nearByStopPaddingView.bottomAnchor,
                 constant: -25
             ),
             
-            recentSearchTableView.topAnchor.constraint(
+            tableView.topAnchor.constraint(
                 equalTo: recentSearchlabel.bottomAnchor,
                 constant: 10
             ),
-            recentSearchTableView.leadingAnchor.constraint(
+            tableView.leadingAnchor.constraint(
                 equalTo: safeArea.leadingAnchor
             ),
-            recentSearchTableView.trailingAnchor.constraint(
+            tableView.trailingAnchor.constraint(
                 equalTo: safeArea.trailingAnchor
             ),
             
             tableViewBtmConstraint,
+        ])
+    }
+    
+    private func configureNavigation() {
+        if navigationController?.isNavigationBarHidden == true {
+            navigationController?.setNavigationBarHidden(
+                false,
+                animated: true
+            )
+        }
+        
+        guard let navigationView = navigationController?.navigationBar
+        else { return }
+        navigationView.addSubview(searchTextFieldView)
+        searchTextFieldView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            searchTextFieldView.topAnchor.constraint(
+                equalTo: navigationView.topAnchor,
+                constant: 2.5
+            ),
+            searchTextFieldView.trailingAnchor.constraint(
+                equalTo: navigationView.trailingAnchor,
+                constant: -10
+            ),
+            searchTextFieldView.widthAnchor.constraint(
+                equalTo: navigationView.widthAnchor,
+                multiplier: 0.85
+            ),
+            searchTextFieldView.heightAnchor.constraint(
+                equalTo: navigationView.heightAnchor,
+                multiplier: 0.9
+            )
         ])
     }
     
@@ -250,13 +291,13 @@ public final class SearchViewController: UIViewController {
         
         output.searchedResponse
             .filter { _ in
-                output.tableViewSection.value == .searchedData
+                output.tableViewSection.value == .searchedStop
             }
             .withUnretained(self)
             .subscribe(
                 onNext: { viewController, responses in
                     viewController.updateSnapshot(
-                        section: .searchedData,
+                        section: .searchedStop,
                         responses: responses
                     )
                 }
@@ -271,76 +312,48 @@ public final class SearchViewController: UIViewController {
             }
             .withUnretained(self)
             .subscribe(
-                onNext: { viewController, tuple in
+                onNext: { vc, tuple in
                     let (section, recentSearch) = tuple
-                    viewController.tableViewBtmConstraint.isActive = false
-                    switch section {
-                    case .recentSearch:
-                        viewController.tableViewBtmConstraint
-                        = viewController.recentSearchTableView.bottomAnchor
-                            .constraint(
-                                equalTo: viewController.nearByStopPaddingView
-                                    .topAnchor
-                            )
-                        viewController.updateSnapshot(
+                    vc.updateUIWithSection(section: section)
+                    if section == .recentSearch {
+                        vc.updateSnapshot(
                             section: .recentSearch,
                             responses: recentSearch
                         )
-                    case .searchedData:
-                        viewController.tableViewBtmConstraint
-                        = viewController.recentSearchTableView.bottomAnchor
-                            .constraint(
-                                equalTo: viewController.view.safeAreaLayoutGuide
-                                    .bottomAnchor
-                            )
-                
                     }
-                    viewController.tableViewBtmConstraint.isActive = true
                 }
             )
             .disposed(by: disposeBag)
-        
-        searchTextFieldView.rx.text.orEmpty
-                .map { !$0.isEmpty }
-                .bind { [weak self] hasText in
-                    self?.recentSearchlabel.isHidden = hasText
-                    self?.removeBtn.isHidden = hasText
-                    self?.seoulLabel.isHidden = !hasText
-                }
-                .disposed(by: disposeBag)
     }
     
-    private func configureNavigation() {
-        navigationController?.isNavigationBarHidden = false
-        navigationController?.navigationBar.backItem?.title = ""
-        
-        guard let navigationView = navigationController?.navigationBar
-        else { return }
-        navigationView.addSubview(searchTextFieldView)
-        searchTextFieldView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            searchTextFieldView.topAnchor.constraint(
-                equalTo: navigationView.topAnchor,
-                constant: 2.5
-            ),
-            searchTextFieldView.trailingAnchor.constraint(
-                equalTo: navigationView.trailingAnchor,
-                constant: -10
-            ),
-            searchTextFieldView.widthAnchor.constraint(
-                equalTo: navigationView.widthAnchor,
-                multiplier: 0.85
-            ),
-            searchTextFieldView.heightAnchor.constraint(
-                equalTo: navigationView.heightAnchor,
-                multiplier: 0.9
-            )
-        ])
+    private func updateUIWithSection(section: SearchSection) {
+        tableViewBtmConstraint.isActive = false
+        switch section {
+        case .recentSearch:
+            tableViewBtmConstraint = tableView.bottomAnchor
+                .constraint(
+                    equalTo: nearByStopPaddingView
+                        .topAnchor
+                )
+            recentSearchlabel.isHidden = false
+            removeBtn.isHidden = false
+            seoulLabel.isHidden = true
+        case .searchedStop:
+            tableViewBtmConstraint = tableView.bottomAnchor
+                .constraint(
+                    equalTo: view.safeAreaLayoutGuide
+                        .bottomAnchor
+                )
+            recentSearchlabel.isHidden = true
+            removeBtn.isHidden = true
+            seoulLabel.isHidden = false
+        }
+        tableViewBtmConstraint.isActive = true
     }
     
     private func configureDataSource() {
         dataSource = .init(
-            tableView: recentSearchTableView,
+            tableView: tableView,
             cellProvider: { [weak self] tableView, indexPath, response in
                 guard let self,
                       let cell = tableView.dequeueReusableCell(
@@ -371,16 +384,6 @@ public final class SearchViewController: UIViewController {
         section: SearchSection,
         responses: [BusStopInfoResponse]
     ) {
-        switch section {
-        case .recentSearch:
-            if responses.isEmpty {
-                recentSearchTableView.backgroundView = tvBackgroundView
-            } else {
-                recentSearchTableView.backgroundView = nil
-            }
-        case .searchedData:
-            recentSearchTableView.backgroundView = nil
-        }
         var snapshot = SearchSnapshot()
         snapshot.appendSections([section])
         snapshot.appendItems(
@@ -391,6 +394,17 @@ public final class SearchViewController: UIViewController {
             snapshot,
             animatingDifferences: false
         )
+        switch responses.isEmpty {
+        case true:
+            switch section {
+            case .recentSearch:
+                tableView.backgroundView = recentSearchBGView
+            case .searchedStop:
+                tableView.backgroundView = searchedStopBGView
+            }
+        case false:
+            tableView.backgroundView = nil
+        }
     }
 }
 
@@ -402,5 +416,14 @@ extension SearchViewController {
 }
 
 enum SearchSection: CaseIterable {
-    case recentSearch, searchedData
+    case recentSearch, searchedStop
+    
+    var title: String {
+        switch self {
+        case .recentSearch:
+            return "최근 검색 정류장"
+        case .searchedStop:
+            return "정류장 이름으로 검색"
+        }
+    }
 }

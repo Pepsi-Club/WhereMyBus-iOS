@@ -39,6 +39,8 @@ public final class BusStopInformationView: UIView {
 		label.font = DesignSystemFontFamily.NanumSquareNeoOTF.light.font(
 			size: 13
 		)
+        label.adjustsFontForContentSizeCategory = true
+        label.minimumScaleFactor = 0.8
         label.textColor = .black
 		return label
 	}()
@@ -171,9 +173,15 @@ public final class BusStopInformationView: UIView {
         busStopNameLabel.text = response.busStopName
         if !response.busStopId.isEmpty && !response.direction.isEmpty {
         }
-        let description = !response.busStopId.isEmpty &&
-        !response.direction.isEmpty ?
-        "\(response.busStopId) | \(response.direction) 방면" : ""
+        var description = ""
+        if !response.busStopId.isEmpty {
+            if !response.direction.isEmpty {
+                description 
+                = "\(response.busStopId) | \(response.direction) 방면"
+            } else {
+                description = "\(response.busStopId)"
+            }
+        }
         busStopDescription.text = description
         distanceFromBusStopLabel.text = distance
     }

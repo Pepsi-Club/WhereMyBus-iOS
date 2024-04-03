@@ -11,14 +11,16 @@ import Foundation
 import RxSwift
 
 public protocol SearchUseCase {
+    var locationStatus: BehaviorSubject<LocationStatus> { get }
     var nearByStopInfo: PublishSubject<(BusStopInfoResponse, String)> { get }
     var searchedStationList: PublishSubject<[BusStopInfoResponse]> { get }
     var recentSearchResult: BehaviorSubject<[BusStopInfoResponse]> { get }
     
     func search(term: String)
     func removeRecentSearch()
-    func saveRecentSearch(cell: BusStopInfoResponse)
-    func updateNearByStop()
+    func saveRecentSearch(response: BusStopInfoResponse)
+    func requestAuthorize()
     func getBusStopInfo(for busStopId: String
     ) -> Observable<[BusStopInfoResponse]>
+    func updateNearByStop()
 }

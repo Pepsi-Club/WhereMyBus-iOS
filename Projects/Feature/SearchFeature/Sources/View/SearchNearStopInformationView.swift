@@ -1,5 +1,5 @@
 //
-//  DeagreeSearchNearStopView.swift
+//  SearchNearStopInformationView.swift
 //  SearchFeature
 //
 //  Created by 유하은 on 2024/03/07.
@@ -11,7 +11,7 @@ import UIKit
 import Core
 import DesignSystem
 
-final class DeagreeSearchNearStopView: UIButton {
+final class SearchNearStopInformationView: UIButton {
     private let busStopImageView: UIImageView = {
         let symbolName = "pin.fill"
 
@@ -51,6 +51,10 @@ final class DeagreeSearchNearStopView: UIButton {
         let label = UILabel()
         label.font =
         DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(size: 14)
+        label.numberOfLines = 2
+        label.adjustsFontForContentSizeCategory = true
+        label.minimumScaleFactor = 0.7
+        label.sizeToFit()
         label.textColor = DesignSystemAsset.gray6.color
         return label
     }()
@@ -121,29 +125,28 @@ final class DeagreeSearchNearStopView: UIButton {
                 equalTo: topAnchor,
                 constant: 20
             ),
-            nearStopLabel.bottomAnchor.constraint(
-                equalTo: centerYAnchor,
-                constant: -3
+            nearStopNameLabel.topAnchor.constraint(
+                equalTo: nearStopLabel.bottomAnchor,
+                constant: 6
             ),
-            
             nearStopNameLabel.leadingAnchor.constraint(
                 equalTo: nearStopLabel.leadingAnchor
             ),
-            nearStopNameLabel.topAnchor.constraint(
-                equalTo: centerYAnchor,
-                constant: 3
+            nearStopNameLabel.trailingAnchor.constraint(
+                equalTo: trailingAnchor,
+                constant: -15
             ),
             nearStopNameLabel.bottomAnchor.constraint(
                 equalTo: bottomAnchor,
                 constant: -20
             ),
             
-            distanceLabel.bottomAnchor.constraint(
-                equalTo: nearStopNameLabel.bottomAnchor
-            ),
             distanceLabel.trailingAnchor.constraint(
                 equalTo: trailingAnchor,
                 constant: -20
+            ),
+            distanceLabel.bottomAnchor.constraint(
+                equalTo: nearStopNameLabel.bottomAnchor
             ),
         ])
     }

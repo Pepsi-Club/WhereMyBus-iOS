@@ -57,15 +57,18 @@ public final class BusStopViewController: UIViewController {
         super.viewDidLoad()
         
         view.backgroundColor = .white
-        navigationController?.isNavigationBarHidden = true
-        
         configureUI()
         bind()
         configureDataSource()
     }
     
     public override func viewWillAppear(_ animated: Bool) {
-        navigationController?.isNavigationBarHidden = true
+        if navigationController?.isNavigationBarHidden == false {
+            navigationController?.setNavigationBarHidden(
+                true,
+                animated: true
+            )
+        }
     }
     
     private func bind() {

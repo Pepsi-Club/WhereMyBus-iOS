@@ -112,6 +112,24 @@ final class AddRegularAlarmViewController: UIViewController {
         bind()
     }
     
+    public override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if navigationController?.isNavigationBarHidden == true {
+            navigationController?.setNavigationBarHidden(
+                false,
+                animated: true
+            )
+        }
+    }
+    
+    public override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationController?.setNavigationBarHidden(
+            true,
+            animated: true
+        )
+    }
+    
     private func configureUI() {
         view.backgroundColor = .white
         [

@@ -99,13 +99,15 @@ public final class FavoritesViewController: UIViewController {
     }
     
     public override func viewWillAppear(_ animated: Bool) {
-        navigationController?.isNavigationBarHidden = true
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(
+            true,
+            animated: true
+        )
     }
     
     private func configureUI() {
         view.backgroundColor = .white
-        navigationController?.isNavigationBarHidden = true
-        
         [
             busIconView,
             searchBtn,

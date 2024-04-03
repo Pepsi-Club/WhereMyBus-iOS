@@ -12,6 +12,8 @@ import Foundation
 import RxSwift
 
 public protocol NearMapUseCase {
+    var locationStatus: BehaviorSubject<LocationStatus> { get }
+    
     func requestAuthorize()
     func getNearByStopInfo(
     ) -> Observable<(BusStopInfoResponse, String)>

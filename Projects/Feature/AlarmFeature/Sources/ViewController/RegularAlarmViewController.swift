@@ -53,6 +53,14 @@ public final class RegularAlarmViewController: UIViewController {
         configureDataSource()
     }
     
+    public override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(
+            true,
+            animated: true
+        )
+    }
+    
     private func configureUI() {
         view.backgroundColor = .white
         
