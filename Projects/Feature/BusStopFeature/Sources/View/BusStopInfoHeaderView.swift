@@ -39,6 +39,7 @@ public final class BusStopInfoHeaderView: UIView {
         label.font = DesignSystemFontFamily.NanumSquareNeoOTF
             .extraBold.font(size: 18)
         label.textColor = .white
+        label.textAlignment = .center
         return label
     }()
     
@@ -136,7 +137,14 @@ extension BusStopInfoHeaderView {
                 constant: 10
             ),
             busStopNameLb.heightAnchor.constraint(equalToConstant: 18),
-            busStopNameLb.centerXAnchor.constraint(equalTo: centerXAnchor),
+            busStopNameLb.leadingAnchor.constraint(
+                equalTo: leadingAnchor,
+                constant: 15
+            ),
+            busStopNameLb.trailingAnchor.constraint(
+                equalTo: trailingAnchor,
+                constant: -15
+            ),
             nextStopNameLb.topAnchor.constraint(
                 equalTo: busStopNameLb.bottomAnchor,
                 constant: 10

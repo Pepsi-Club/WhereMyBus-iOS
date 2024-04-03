@@ -112,23 +112,12 @@ public final class BusStopViewController: UIViewController {
             .withUnretained(self)
             .subscribe(
                 onNext: { viewController, response in
-                    if response.busStopName.count > 20 {
-                        viewController.headerView.busStopNameLb
-                            .widthAnchor.constraint(
-                                equalToConstant: .screenWidth - 20
-                            ).isActive = true
-                        viewController.headerView.bindUI(
-                            routeId: response.busStopId,
-                            busStopName: response.busStopName,
-                            nextStopName: response.direction
-                        )
-                    } else {
-                        viewController.headerView.bindUI(
-                            routeId: response.busStopId,
-                            busStopName: response.busStopName,
-                            nextStopName: response.direction
-                        )
-                    }
+                    
+                    viewController.headerView.bindUI(
+                        routeId: response.busStopId,
+                        busStopName: response.busStopName,
+                        nextStopName: response.direction
+                    )
                     
                     viewController.updateSnapshot(busStopResponse: response)
                 }
