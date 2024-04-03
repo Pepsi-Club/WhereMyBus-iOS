@@ -37,7 +37,7 @@ public final class DefaultBusStopCoordinator: BusStopCoordinator {
         )
         navigationController.pushViewController(
             busStopViewController,
-            animated: false
+            animated: true
         )
     }
 }
