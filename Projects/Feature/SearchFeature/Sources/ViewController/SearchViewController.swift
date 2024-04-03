@@ -98,7 +98,6 @@ public final class SearchViewController: UIViewController {
         configureUI()
         configureDataSource()
         bind()
-        hideKeyboard() // 현재 동작하지 않음 
         outKeyboard()
     }
     
@@ -117,6 +116,12 @@ public final class SearchViewController: UIViewController {
     }
     
     private func outKeyboard() {
+        view.addGestureRecognizer(
+            UITapGestureRecognizer(
+                target: self,
+                action: #selector(dismissHideKeyboard)
+            )
+        )
         tableView.keyboardDismissMode = .onDrag
     }
     
@@ -410,6 +415,10 @@ public final class SearchViewController: UIViewController {
         case false:
             tableView.backgroundView = nil
         }
+    }
+    
+    @objc func dismissHideKeyboard() {
+        searchTextFieldView.endEditing(true)
     }
 }
 
