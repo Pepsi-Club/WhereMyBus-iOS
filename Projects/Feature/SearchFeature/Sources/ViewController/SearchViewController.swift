@@ -380,10 +380,6 @@ public final class SearchViewController: UIViewController {
             searchedStopTableView.backgroundView = nil
         }
     }
-    
-    @objc func dismissHideKeyboard() {
-        searchTextFieldView.endEditing(true)
-    }
 }
 
 extension SearchViewController: UITableViewDelegate {
