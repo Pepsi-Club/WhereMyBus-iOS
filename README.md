@@ -62,10 +62,10 @@
 - DI Container
 
 ##### Clean Architecture
-
-<공사중>
+![Group 1597880428 (1)](https://github.com/Pepsi-Club/WhereMyBus-iOS/assets/65907001/86490d53-d7a6-46a3-bc92-5ac60299cbe3)
 
 ##### Coordinator
+
 // 추후 추가
 
 ##### Modular Architecture
@@ -81,7 +81,7 @@
 ### 팀원 소개
 <div align="center">
 
-|[ 원강묵 ]<br/> [@MUKER-WON](https://github.com/MUKER-WON)<br/> "건강한 코드는 <br> 건강한 몸에서 나온다." | [ 김건섭 ]<br/> [@gnksbm](https://github.com/gnksbm)<br/> "-" | [ 유하은 ]<br/> [@yuhaeun-la](https://github.com/yuhaeun-la)<br/> "난 애플을 믿지 않아" | [ 함지수 ]<br/> [@isakatty](https://github.com/isakatty)<br/> "정보를 머리에 cmd+s"|
+|[ 원강묵 ]<br/> [@MUKER-WON](https://github.com/MUKER-WON)<br/> "건강한 코드는 <br> 건강한 몸에서 나온다." | [ 김건섭 ]<br/> [@gnksbm](https://github.com/gnksbm)<br/> "-" | [ 유하은 ]<br/> [@yuhaeun-la](https://github.com/yuhaeun-la)<br/> "건강한 정신은 <br> 건강한 몸에서 나온다. " | [ 함지수 ]<br/> [@isakatty](https://github.com/isakatty)<br/> "정보를 머리에 cmd+s"|
 | :----------------------------------------------------------: | :---------------------------------------------: | :------: | :-------------------------------------------------: |
 |<img src = "https://github.com/isakatty/TIL/assets/133845468/dd5a38e0-2f11-4489-862d-2ddfe81d3666" width="150"> | <img src = "https://github.com/isakatty/TIL/assets/133845468/defeff23-b698-4144-809a-d00ebeade221" width="150"> | <img src = "https://github.com/isakatty/TIL/assets/133845468/c69e30b9-be85-457c-a381-5129029fc878" width="150">  | <img src = "https://github.com/isakatty/TIL/assets/133845468/bb2f4bcd-df40-4ba4-96c4-bce8e2bcda76" width="150"> |
 

@@ -114,6 +114,7 @@ public final class BusStopViewController: UIViewController {
             .withUnretained(self)
             .subscribe(
                 onNext: { viewController, response in
+                    
                     viewController.headerView.bindUI(
                         routeId: response.busStopId,
                         busStopName: response.busStopName,
@@ -267,6 +268,10 @@ public final class BusStopViewController: UIViewController {
 
 extension BusStopViewController {
     private func configureUI() {
+        [scrollView, contentView, headerView, busStopTableView]
+            .forEach { components in
+                components.translatesAutoresizingMaskIntoConstraints = false
+            }
         
         view.addSubview(scrollView)
         
@@ -276,11 +281,6 @@ extension BusStopViewController {
             }
         
         scrollView.addSubview(contentView)
-        
-        [scrollView, contentView, headerView, busStopTableView]
-            .forEach { components in
-                components.translatesAutoresizingMaskIntoConstraints = false
-            }
         
         tableViewHeightConstraint = busStopTableView.heightAnchor
             .constraint(equalToConstant: 0)
