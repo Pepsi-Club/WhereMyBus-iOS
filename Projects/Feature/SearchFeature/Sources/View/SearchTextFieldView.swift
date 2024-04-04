@@ -8,6 +8,7 @@
 
 import UIKit
 
+import Core
 import DesignSystem
 
 public final class SearchTextFieldView: UITextField {
@@ -32,7 +33,7 @@ public final class SearchTextFieldView: UITextField {
         self.contentVerticalAlignment = .center
         self.leftViewMode = .always
         self.clearButtonMode = .always
-        self.addLeftPadding()
+        self.addLeftPadding(width: 15)
         self.autocorrectionType = .no
         self.spellCheckingType = .no
         self.textColor = .black
@@ -47,18 +48,5 @@ public final class SearchTextFieldView: UITextField {
                     DesignSystemAsset.gray4.color
             ]
         )
-    }
-}
-
-extension UITextField {
-    func addLeftPadding() {
-        let paddingView = UIView(frame: CGRect(
-            x: 0,
-            y: 0,
-            width: 10,
-            height: self.frame.height)
-        )
-        self.leftView = paddingView
-        self.leftViewMode = ViewMode.always
     }
 }
