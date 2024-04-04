@@ -28,6 +28,11 @@ public final class SearchViewController: UIViewController {
         text: "검색된 정류장이 없습니다"
     )
     
+    private let recentSearchHeaderView = SearchTVHeaderView(
+        title: "최근 검색 정류장",
+        btnTitle: "삭제"
+    )
+    
     private lazy var recentSearchTableView: UITableView = {
         let table = UITableView(
             frame: .zero,
@@ -116,6 +121,7 @@ public final class SearchViewController: UIViewController {
         view.backgroundColor = .white
         
         [
+            recentSearchHeaderView,
             nearByStopPaddingView,
             nearByStopView,
             recentSearchTableView,
@@ -155,9 +161,21 @@ public final class SearchViewController: UIViewController {
                 constant: -25
             ),
             
-            recentSearchTableView.topAnchor.constraint(
+            recentSearchHeaderView.topAnchor.constraint(
                 equalTo: safeArea.topAnchor,
                 constant: 10
+            ),
+            recentSearchHeaderView.leadingAnchor.constraint(
+                equalTo: safeArea.leadingAnchor,
+                constant: 5
+            ),
+            recentSearchHeaderView.trailingAnchor.constraint(
+                equalTo: safeArea.trailingAnchor,
+                constant: -5
+            ),
+            
+            recentSearchTableView.topAnchor.constraint(
+                equalTo: recentSearchHeaderView.bottomAnchor
             ),
             recentSearchTableView.leadingAnchor.constraint(
                 equalTo: safeArea.leadingAnchor
@@ -282,6 +300,10 @@ public final class SearchViewController: UIViewController {
                 }
             )
             .disposed(by: disposeBag)
+        
+        recentSearchHeaderView.actionBtnTapEvent
+            .bind(to: removeBtnTapEvent)
+            .disposed(by: recentSearchHeaderView.disposeBag)
     }
     
     private func configureDataSource() {
@@ -388,16 +410,6 @@ extension SearchViewController: UITableViewDelegate {
         viewForHeaderInSection section: Int
     ) -> UIView? {
         var headerView: UIView?
-        if tableView === recentSearchTableView {
-            let recentSearchHeaderView = SearchTVHeaderView(
-                title: "최근 검색 정류장",
-                btnTitle: "삭제"
-            )
-            recentSearchHeaderView.actionBtnTapEvent
-                .bind(to: removeBtnTapEvent)
-                .disposed(by: recentSearchHeaderView.disposeBag)
-            headerView = recentSearchHeaderView
-        }
         if tableView === searchedStopTableView {
             switch section {
             case 0:
