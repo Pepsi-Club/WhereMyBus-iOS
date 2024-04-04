@@ -47,7 +47,14 @@ public final class DefaultSearchUseCase: SearchUseCase {
                 of: " ",
                 with: ""
             )
-            let filteredList = try stationListRepository.stationList.value()
+            let filteredList = try stationListRepository.busStopRegions
+                .value()
+                .flatMap { region in
+                    switch region {
+                    case .seoul(let responses):
+                        return responses
+                    }
+                }
                 .filter { response in
                     let busStopIdPrefix = response.busStopId
                         .prefix(filteredTerm.count)
@@ -82,12 +89,19 @@ public final class DefaultSearchUseCase: SearchUseCase {
     public func getBusStopInfo(
         for busStopId: String
     ) -> Observable<[BusStopInfoResponse]> {
-        stationListRepository.stationList
-            .map { stationList in
-                stationList.filter { $0.busStopId == busStopId }
-        }
+        stationListRepository.busStopRegions
+            .map { regions in
+                regions.flatMap { region in
+                    var busStopList = [BusStopInfoResponse]()
+                    switch region {
+                    case .seoul(let responses):
+                        busStopList = responses
+                    }
+                    return busStopList.filter { $0.busStopId == busStopId }
+                }
+            }
     }
-    
+
     public func updateNearByStop() {
         locationService.locationStatus
             .withUnretained(self)

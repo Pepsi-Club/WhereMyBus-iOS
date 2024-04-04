@@ -270,6 +270,11 @@ public final class SearchViewController: UIViewController {
     }
     
     private func configureDataSource() {
+        configureRecentSearchDataSource()
+        configureSearchedDataSource()
+    }
+    
+    private func configureRecentSearchDataSource() {
         recentSearchDataSource = .init(
             tableView: recentSearchTableView
         ) { [weak self] tableView, indexPath, response in
@@ -288,6 +293,9 @@ public final class SearchViewController: UIViewController {
                 .disposed(by: cell.disposeBag)
             return cell
         }
+    }
+    
+    private func configureSearchedDataSource() {
         searchedDataSource = .init(
             tableView: searchedStopTableView
         ) { [weak self] tableView, indexPath, response in

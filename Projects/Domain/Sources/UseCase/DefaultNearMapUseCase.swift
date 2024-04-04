@@ -82,10 +82,16 @@ public final class DefaultNearMapUseCase: NearMapUseCase {
         )
         let errorDistance = ""
         do {
-            let stationList = try stationListRepository.stationList.value()
-            let selectedBusStop = stationList.first { response in
-                response.busStopId == busStopId
-            }
+            let regions = try stationListRepository.busStopRegions.value()
+            let selectedBusStop = regions
+                .compactMap { region in
+                    switch region {
+                    case .seoul(let responses):
+                        responses.first { response in
+                            response.busStopId == busStopId
+                        }
+                    }
+                }.first
             if let selectedBusStop {
                 let distance = locationService.getDistance(
                     response: selectedBusStop
@@ -104,14 +110,21 @@ public final class DefaultNearMapUseCase: NearMapUseCase {
         latitudeRange: ClosedRange<Double>
     ) -> [BusStopInfoResponse] {
         do {
-            let stationList = try stationListRepository.stationList.value()
-            return stationList.filter { response in
-                guard let longitude = Double(response.longitude),
-                      let latitude = Double(response.latitude)
-                else { return false }
-                return longitudeRange ~= longitude &&
-                latitudeRange ~= latitude
-            }
+            let regions = try stationListRepository.busStopRegions.value()
+            return regions
+                .flatMap { region in
+                    switch region {
+                    case .seoul(let responses):
+                        return responses
+                    }
+                }
+                .filter { response in
+                    guard let longitude = Double(response.longitude),
+                          let latitude = Double(response.latitude)
+                    else { return false }
+                    return longitudeRange ~= longitude &&
+                    latitudeRange ~= latitude
+                }
         } catch {
             return []
         }

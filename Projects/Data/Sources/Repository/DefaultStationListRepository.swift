@@ -15,7 +15,7 @@ import RxSwift
 import RxRelay
 
 public final class DefaultStationListRepository: StationListRepository {
-    public let stationList = BehaviorSubject<[BusStopInfoResponse]>(value: [])
+    public let busStopRegions = BehaviorSubject<[BusStopRegion]>(value: [])
     public let recentlySearchedStation = BehaviorRelay<[BusStopInfoResponse]>(
         value: []
     )
@@ -71,9 +71,15 @@ public final class DefaultStationListRepository: StationListRepository {
         )
         let errorDistance = ""
         do {
-            let stationList = try stationList.value()
+            let stationList = try busStopRegions.value()
+                .flatMap { region in
+                    switch region {
+                    case .seoul(let responses):
+                        return responses
+                    }
+                }
             var nearByStopDistance = Int.max
-            var nearByStop = stationList.first ?? errorResponse
+            var nearByStop = errorResponse
             stationList.forEach { busStop in
                 guard let endPointLatitude = Double(busStop.latitude),
                       let endPointLongitude = Double(busStop.longitude)
@@ -111,15 +117,14 @@ public final class DefaultStationListRepository: StationListRepository {
         )
         else { return }
         do {
-            let resion = try Data(contentsOf: seoulUrl)
+            var regions = [BusStopRegion]()
+            let seoul = try Data(contentsOf: seoulUrl)
                 .decode(type: BusStopListDTO.self)
                 .toDomain
-            switch resion {
-            case .seoul(responses: let responses):
-                stationList.onNext(responses)
-            }
+            regions.append(seoul)
+            busStopRegions.onNext(regions)
         } catch {
-            stationList.onError(error)
+            busStopRegions.onError(error)
         }
     }
     
