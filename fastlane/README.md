@@ -23,14 +23,6 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 Download Ignored
 
-### ios setSigning
-
-```sh
-[bundle exec] fastlane ios setSigning
-```
-
-Set Code Signing
-
 ### ios setpj
 
 ```sh

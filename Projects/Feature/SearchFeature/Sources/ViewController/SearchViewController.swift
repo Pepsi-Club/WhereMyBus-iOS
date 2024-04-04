@@ -10,44 +10,15 @@ import RxCocoa
 public final class SearchViewController: UIViewController {
     private let viewModel: SearchViewModel
     
+    private let removeBtnTapEvent = PublishSubject<Void>()
     private let cellTapEvent = PublishSubject<BusStopInfoResponse>()
+    private let mapBtnTapEvent = PublishSubject<String>()
     private let disposeBag = DisposeBag()
     
-    private var dataSource: SearchDataSource!
+    private var recentSearchDataSource: RecentSearchDataSource!
+    private var searchedDataSource: SearchedDataSource!
     
     private let searchTextFieldView = SearchTextFieldView()
-    
-    private let recentSearchlabel: UILabel = {
-        let label = UILabel()
-        label.font =
-        DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(size: 15)
-        label.textColor = .black
-        label.text = "최근 검색 정류장"
-        return label
-    }()
-    
-    private let removeBtn: UIButton = {
-        var config = UIButton.Configuration.plain()
-        config.baseForegroundColor = DesignSystemAsset.gray5.color
-        var titleContainer = AttributeContainer()
-        titleContainer.font =
-        DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(size: 15)
-        config.attributedTitle = AttributedString(
-            "삭제",
-            attributes: titleContainer
-        )
-        let button = UIButton(configuration: config)
-        return button
-    }()
-    
-    private let seoulLabel: UILabel = {
-        let label = UILabel()
-        label.font =
-        DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(size: 15)
-        label.textColor = DesignSystemAsset.gray5.color
-        label.text = "서울"
-        return label
-    }()
     
     private let recentSearchBGView = SearchTVBackgroundView(
         text: "최근 검색된 정류장이 없습니다"
@@ -57,15 +28,33 @@ public final class SearchViewController: UIViewController {
         text: "검색된 정류장이 없습니다"
     )
     
-    private lazy var tableView: UITableView = {
+    private let recentSearchHeaderView = SearchTVHeaderView(
+        title: "최근 검색 정류장",
+        btnTitle: "삭제"
+    )
+    
+    private lazy var recentSearchTableView: UITableView = {
         let table = UITableView(
             frame: .zero,
             style: .insetGrouped
         )
         table.register(SearchTVCell.self)
         table.backgroundColor = DesignSystemAsset.tableViewColor.color
-        table.dataSource = dataSource
-        table.contentInset.top = -20
+        table.dataSource = recentSearchDataSource
+        table.delegate = self
+        return table
+    }()
+    
+    private lazy var searchedStopTableView: UITableView = {
+        let table = UITableView(
+            frame: .zero,
+            style: .insetGrouped
+        )
+        table.register(SearchTVMapCell.self)
+        table.backgroundColor = DesignSystemAsset.tableViewColor.color
+        table.isHidden = true
+        table.dataSource = searchedDataSource
+        table.delegate = self
         return table
     }()
     
@@ -82,8 +71,6 @@ public final class SearchViewController: UIViewController {
     
     private let nearByStopView = SearchNearStopInformationView()
     
-    private var tableViewBtmConstraint: NSLayoutConstraint!
-    
     public init(viewModel: SearchViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -98,7 +85,7 @@ public final class SearchViewController: UIViewController {
         configureUI()
         configureDataSource()
         bind()
-        outKeyboard()
+        hideKeyboardOnTapOrDrag()
     }
     
     public override func viewWillAppear(_ animated: Bool) {
@@ -115,68 +102,38 @@ public final class SearchViewController: UIViewController {
         searchTextFieldView.removeFromSuperview()
     }
     
-    private func outKeyboard() {
-        view.addGestureRecognizer(
-            UITapGestureRecognizer(
-                target: self,
-                action: #selector(dismissHideKeyboard)
+    private func hideKeyboardOnTapOrDrag() {
+        let tapGesture = UITapGestureRecognizer()
+        view.addGestureRecognizer(tapGesture)
+        tapGesture.rx.event
+            .withUnretained(self)
+            .subscribe(
+                onNext: { vc, _ in
+                    vc.searchTextFieldView.endEditing(true)
+                }
             )
-        )
-        tableView.keyboardDismissMode = .onDrag
+            .disposed(by: disposeBag)
+        recentSearchTableView.keyboardDismissMode = .onDrag
+        searchedStopTableView.keyboardDismissMode = .onDrag
     }
     
     private func configureUI() {
         view.backgroundColor = .white
         
         [
-            recentSearchlabel,
-            removeBtn,
-            seoulLabel,
+            recentSearchHeaderView,
             nearByStopPaddingView,
             nearByStopView,
-            tableView,
+            recentSearchTableView,
+            searchedStopTableView,
         ].forEach {
             view.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         
         let safeArea = view.safeAreaLayoutGuide
-        tableViewBtmConstraint = tableView.bottomAnchor.constraint(
-            equalTo: nearByStopPaddingView.topAnchor
-        )
+        
         NSLayoutConstraint.activate([
-            recentSearchlabel.topAnchor.constraint(
-                equalTo: safeArea.topAnchor,
-                constant: 20
-            ),
-            recentSearchlabel.leadingAnchor.constraint(
-                equalTo: safeArea.leadingAnchor,
-                constant: 15
-            ),
-            recentSearchlabel.heightAnchor.constraint(
-                equalToConstant: 15
-            ),
-            
-            removeBtn.centerYAnchor.constraint(
-                equalTo: recentSearchlabel.centerYAnchor
-            ),
-            removeBtn.trailingAnchor.constraint(
-                equalTo: safeArea.trailingAnchor,
-                constant: -10
-            ),
-            
-            seoulLabel.topAnchor.constraint(
-                equalTo: safeArea.topAnchor,
-                constant: 15
-            ),
-            seoulLabel.leadingAnchor.constraint(
-                equalTo: safeArea.leadingAnchor,
-                constant: 15
-            ),
-            seoulLabel.heightAnchor.constraint(
-                equalToConstant: 15
-            ),
-            
             nearByStopPaddingView.bottomAnchor.constraint(
                 equalTo: safeArea.bottomAnchor,
                 constant: -200
@@ -204,18 +161,45 @@ public final class SearchViewController: UIViewController {
                 constant: -25
             ),
             
-            tableView.topAnchor.constraint(
-                equalTo: recentSearchlabel.bottomAnchor,
+            recentSearchHeaderView.topAnchor.constraint(
+                equalTo: safeArea.topAnchor,
                 constant: 10
             ),
-            tableView.leadingAnchor.constraint(
-                equalTo: safeArea.leadingAnchor
+            recentSearchHeaderView.leadingAnchor.constraint(
+                equalTo: safeArea.leadingAnchor,
+                constant: 5
             ),
-            tableView.trailingAnchor.constraint(
-                equalTo: safeArea.trailingAnchor
+            recentSearchHeaderView.trailingAnchor.constraint(
+                equalTo: safeArea.trailingAnchor,
+                constant: -5
             ),
             
-            tableViewBtmConstraint,
+            recentSearchTableView.topAnchor.constraint(
+                equalTo: recentSearchHeaderView.bottomAnchor
+            ),
+            recentSearchTableView.leadingAnchor.constraint(
+                equalTo: safeArea.leadingAnchor
+            ),
+            recentSearchTableView.trailingAnchor.constraint(
+                equalTo: safeArea.trailingAnchor
+            ),
+            recentSearchTableView.bottomAnchor.constraint(
+                equalTo: nearByStopPaddingView.topAnchor
+            ),
+            
+            searchedStopTableView.topAnchor.constraint(
+                equalTo: safeArea.topAnchor,
+                constant: 10
+            ),
+            searchedStopTableView.leadingAnchor.constraint(
+                equalTo: safeArea.leadingAnchor
+            ),
+            searchedStopTableView.trailingAnchor.constraint(
+                equalTo: safeArea.trailingAnchor
+            ),
+            searchedStopTableView.bottomAnchor.constraint(
+                equalTo: safeArea.bottomAnchor
+            ),
         ])
     }
     
@@ -257,29 +241,26 @@ public final class SearchViewController: UIViewController {
         
         let input = SearchViewModel.Input(
             viewWillAppearEvent: rx.methodInvoked(
-                           #selector(UIViewController.viewWillAppear)
-                       ).map { _ in },
+                #selector(UIViewController.viewWillAppear)
+            ).map { _ in },
             textFieldChangeEvent: searchTextFieldView.rx.text
                 .orEmpty
                 .skip(1)
                 .asObservable(),
-            removeBtnTapEvent: removeBtn.rx.tap.asObservable(),
+            removeBtnTapEvent: removeBtnTapEvent,
             nearByStopTapEvent: nearByStopTapGesture.rx.event.map { _ in },
-            cellTapEvent: cellTapEvent
+            cellTapEvent: cellTapEvent,
+            mapBtnTapEvent: mapBtnTapEvent
         )
         
         let output = viewModel.transform(input: input)
         
         output.recentSearchedResponse
-            .filter { _ in
-                output.tableViewSection.value == .recentSearch
-            }
             .observe(on: MainScheduler.asyncInstance)
             .withUnretained(self)
             .subscribe(
                 onNext: { viewController, responses in
-                    viewController.updateSnapshot(
-                        section: .recentSearch,
+                    viewController.updateRecentSearchSnapshot(
                         responses: responses
                     )
                 }
@@ -300,147 +281,156 @@ public final class SearchViewController: UIViewController {
             .disposed(by: disposeBag)
         
         output.searchedResponse
-            .filter { _ in
-                output.tableViewSection.value == .searchedStop
-            }
             .withUnretained(self)
             .subscribe(
-                onNext: { viewController, responses in
-                    viewController.updateSnapshot(
-                        section: .searchedStop,
-                        responses: responses
-                    )
+                onNext: { vc, regions in
+                    vc.updateSearchedSnapshot(regions: regions)
                 }
             )
             .disposed(by: disposeBag)
         
-        output.tableViewSection
-            .withLatestFrom(
-                output.recentSearchedResponse
-            ) { section, recentSearch in
-                (section, recentSearch)
-            }
+        searchTextFieldView.rx
+            .controlEvent(.editingChanged)
             .withUnretained(self)
             .subscribe(
-                onNext: { vc, tuple in
-                    let (section, recentSearch) = tuple
-                    vc.updateUIWithSection(section: section)
-                    if section == .recentSearch {
-                        vc.updateSnapshot(
-                            section: .recentSearch,
-                            responses: recentSearch
-                        )
-                    }
+                onNext: { vc, _ in
+                    guard let text = vc.searchTextFieldView.text
+                    else { return }
+                    vc.searchedStopTableView.isHidden = text.isEmpty
                 }
             )
             .disposed(by: disposeBag)
-    }
-    
-    private func updateUIWithSection(section: SearchSection) {
-        tableViewBtmConstraint.isActive = false
-        switch section {
-        case .recentSearch:
-            tableViewBtmConstraint = tableView.bottomAnchor
-                .constraint(
-                    equalTo: nearByStopPaddingView
-                        .topAnchor
-                )
-            recentSearchlabel.isHidden = false
-            removeBtn.isHidden = false
-            seoulLabel.isHidden = true
-        case .searchedStop:
-            tableViewBtmConstraint = tableView.bottomAnchor
-                .constraint(
-                    equalTo: view.safeAreaLayoutGuide
-                        .bottomAnchor
-                )
-            recentSearchlabel.isHidden = true
-            removeBtn.isHidden = true
-            seoulLabel.isHidden = false
-        }
-        tableViewBtmConstraint.isActive = true
+        
+        recentSearchHeaderView.actionBtnTapEvent
+            .bind(to: removeBtnTapEvent)
+            .disposed(by: recentSearchHeaderView.disposeBag)
     }
     
     private func configureDataSource() {
-        dataSource = .init(
-            tableView: tableView,
-            cellProvider: { [weak self] tableView, indexPath, response in
-                guard let self,
-                      let cell = tableView.dequeueReusableCell(
-                        withIdentifier: SearchTVCell.identifier,
-                        for: indexPath
-                      ) as? SearchTVCell
-                else { return .init() }
-                cell.updateUI(
-                    response: response,
-                    searchKeyword: self.searchTextFieldView.text ?? ""
-                )
-                let tapGesture = UITapGestureRecognizer()
-                cell.addGestureRecognizer(tapGesture)
-                tapGesture.rx.event
-                    .map { _ in
-                        response
-                    }
-                    .withUnretained(self)
-                    .subscribe(
-                        onNext: { viewController, response in
-                            viewController.cellTapEvent.onNext(response)
-                        }
-                    )
-                    .disposed(by: cell.disposeBag)
-                return cell
-            }
-        )
+        configureRecentSearchDataSource()
+        configureSearchedDataSource()
     }
     
-    private func updateSnapshot(
-        section: SearchSection,
+    private func configureRecentSearchDataSource() {
+        recentSearchDataSource = .init(
+            tableView: recentSearchTableView
+        ) { [weak self] tableView, indexPath, response in
+            guard let self,
+                  let cell = tableView.dequeueReusableCell(
+                    withIdentifier: SearchTVCell.identifier,
+                    for: indexPath
+                  ) as? SearchTVCell
+            else { return .init() }
+            cell.updateUI(
+                response: response,
+                searchKeyword: self.searchTextFieldView.text ?? ""
+            )
+            cell.cellTapEvent
+                .bind(to: self.cellTapEvent)
+                .disposed(by: cell.disposeBag)
+            return cell
+        }
+    }
+    
+    private func configureSearchedDataSource() {
+        searchedDataSource = .init(
+            tableView: searchedStopTableView
+        ) { [weak self] tableView, indexPath, response in
+            guard let self,
+                  let cell = tableView.dequeueReusableCell(
+                    withIdentifier: SearchTVMapCell.identifier,
+                    for: indexPath
+                  ) as? SearchTVMapCell
+            else { return .init() }
+            cell.updateUI(
+                response: response,
+                searchKeyword: self.searchTextFieldView.text ?? ""
+            )
+            cell.cellTapEvent
+                .bind(to: self.cellTapEvent)
+                .disposed(by: cell.disposeBag)
+            cell.mapBtnTapEvent
+                .bind(to: self.mapBtnTapEvent)
+                .disposed(by: cell.disposeBag)
+            return cell
+        }
+    }
+    
+    private func updateRecentSearchSnapshot(
         responses: [BusStopInfoResponse]
     ) {
-        var snapshot = SearchSnapshot()
-        snapshot.appendSections([section])
+        var snapshot = RecentSearchSnapshot()
+        snapshot.appendSections([0])
         snapshot.appendItems(
             responses,
-            toSection: section
+            toSection: 0
         )
-        dataSource.apply(
+        recentSearchDataSource.apply(
             snapshot,
             animatingDifferences: false
         )
         switch responses.isEmpty {
         case true:
-            switch section {
-            case .recentSearch:
-                tableView.backgroundView = recentSearchBGView
-            case .searchedStop:
-                tableView.backgroundView = searchedStopBGView
-            }
+            recentSearchTableView.backgroundView = recentSearchBGView
         case false:
-            tableView.backgroundView = nil
+            recentSearchTableView.backgroundView = nil
         }
     }
     
-    @objc func dismissHideKeyboard() {
-        searchTextFieldView.endEditing(true)
+    private func updateSearchedSnapshot(
+        regions: [BusStopRegion]
+    ) {
+        var snapshot = SearchedSnapshot()
+        snapshot.appendSections(regions)
+        regions.forEach { region in
+            switch region {
+            case .seoul(let responses):
+                snapshot.appendItems(
+                    responses,
+                    toSection: region
+                )
+            }
+        }
+        searchedDataSource.apply(
+            snapshot,
+            animatingDifferences: false
+        )
+        switch snapshot.numberOfItems == 0 {
+        case true:
+            searchedStopTableView.backgroundView = searchedStopBGView
+        case false:
+            searchedStopTableView.backgroundView = nil
+        }
+    }
+}
+
+extension SearchViewController: UITableViewDelegate {
+    public func tableView(
+        _ tableView: UITableView,
+        viewForHeaderInSection section: Int
+    ) -> UIView? {
+        var headerView: UIView?
+        if tableView === searchedStopTableView {
+            switch section {
+            case 0:
+                headerView = SearchTVHeaderView(
+                    title: "서울"
+                )
+            default:
+                break
+            }
+        }
+        return headerView
     }
 }
 
 extension SearchViewController {
-    typealias SearchDataSource =
-    UITableViewDiffableDataSource<SearchSection, BusStopInfoResponse>
-    typealias SearchSnapshot =
-    NSDiffableDataSourceSnapshot<SearchSection, BusStopInfoResponse>
-}
-
-enum SearchSection: CaseIterable {
-    case recentSearch, searchedStop
-    
-    var title: String {
-        switch self {
-        case .recentSearch:
-            return "최근 검색 정류장"
-        case .searchedStop:
-            return "정류장 이름으로 검색"
-        }
-    }
+    typealias RecentSearchDataSource =
+    UITableViewDiffableDataSource<Int, BusStopInfoResponse>
+    typealias RecentSearchSnapshot =
+    NSDiffableDataSourceSnapshot<Int, BusStopInfoResponse>
+    typealias SearchedDataSource =
+    UITableViewDiffableDataSource<BusStopRegion, BusStopInfoResponse>
+    typealias SearchedSnapshot =
+    NSDiffableDataSourceSnapshot<BusStopRegion, BusStopInfoResponse>
 }

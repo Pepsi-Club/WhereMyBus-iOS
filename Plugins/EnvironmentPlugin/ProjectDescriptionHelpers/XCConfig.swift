@@ -28,7 +28,7 @@ public extension Settings {
     )
     
     static let frameworkDebug: Self = .settings(
-        base: .baseSetting
+        base: .allLoadSetting
             .setUserScriptSandboxing(),
         configurations: [
             .debug(

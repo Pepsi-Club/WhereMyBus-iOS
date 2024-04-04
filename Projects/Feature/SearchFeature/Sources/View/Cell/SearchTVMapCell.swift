@@ -1,8 +1,8 @@
 //
-//  RecentSearchCell.swift
+//  SearchTVMapCell.swift
 //  SearchFeature
 //
-//  Created by 유하은 on 2024/02/27.
+//  Created by gnksbm on 4/4/24.
 //  Copyright © 2024 Pepsi-Club. All rights reserved.
 //
 
@@ -14,11 +14,24 @@ import Domain
 
 import RxSwift
 
-final class SearchTVCell: UITableViewCell {
+final class SearchTVMapCell: UITableViewCell {
     let cellTapEvent = PublishSubject<BusStopInfoResponse>()
+    let mapBtnTapEvent = PublishSubject<String>()
     var disposeBag = DisposeBag()
     
     private let busStopInfoView = BusStopInfoView()
+    private let mapBtn: UIButton = {
+        var config = UIButton.Configuration.plain()
+        config.image = UIImage(systemName: "map")?
+            .withConfiguration(
+                UIImage.SymbolConfiguration(
+                    font: .systemFont(ofSize: 18)
+                )
+            )
+        let button = UIButton(configuration: config)
+        button.tintColor = DesignSystemAsset.accentColor.color
+        return button
+    }()
     
     override init(
         style: UITableViewCell.CellStyle,
@@ -61,17 +74,32 @@ final class SearchTVCell: UITableViewCell {
             }
             .bind(to: cellTapEvent)
             .disposed(by: disposeBag)
+        
+        mapBtn.rx.tap
+            .map { _ in
+                response.busStopId
+            }
+            .bind(to: mapBtnTapEvent)
+            .disposed(by: disposeBag)
     }
 
     private func configureUI() {
         backgroundColor = .white
         
-        [busStopInfoView].forEach {
+        [busStopInfoView, mapBtn].forEach {
             contentView.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         
         NSLayoutConstraint.activate([
+            mapBtn.centerYAnchor.constraint(
+                equalTo: contentView.centerYAnchor
+            ),
+            mapBtn.trailingAnchor.constraint(
+                equalTo: contentView.trailingAnchor,
+                constant: -15
+            ),
+            
             busStopInfoView.topAnchor.constraint(
                 equalTo: contentView.topAnchor
             ),
@@ -79,7 +107,8 @@ final class SearchTVCell: UITableViewCell {
                 equalTo: contentView.leadingAnchor
             ),
             busStopInfoView.trailingAnchor.constraint(
-                equalTo: contentView.trailingAnchor
+                equalTo: mapBtn.leadingAnchor,
+                constant: -15
             ),
             busStopInfoView.bottomAnchor.constraint(
                 equalTo: contentView.bottomAnchor

@@ -12,27 +12,34 @@ import Domain
 
 struct BusStopListDTO: Codable {
     let description: Description
+    let region: WMBRegion
     let data: [BusStopInfo]
 
     enum CodingKeys: String, CodingKey {
         case description = "DESCRIPTION"
+        case region = "REGION"
         case data = "DATA"
     }
 }
 
 extension BusStopListDTO {
-    var toDomain: [BusStopInfoResponse] {
-        data.map {
-            .init(
-                busStopName: $0.stopNm,
-                busStopId: $0.stopNo,
-                direction: $0.nxtStn,
-                longitude: $0.xcode,
-                latitude: $0.ycode
+    var toDomain: BusStopRegion {
+        switch region {
+        case .seoul:
+            return .seoul(
+                responses: data.map {
+                    .init(
+                        busStopName: $0.stopNm,
+                        busStopId: $0.stopNo,
+                        direction: $0.nxtStn,
+                        longitude: $0.xcode,
+                        latitude: $0.ycode
+                    )
+                }
             )
         }
     }
-    // MARK: - Datum
+    
     struct BusStopInfo: Codable {
         let stopNm, ycode, stopNo, xcode, nxtStn: String
         // stopType
@@ -51,7 +58,10 @@ extension BusStopListDTO {
         }
     }
     
-    // MARK: - Description
+    enum WMBRegion: String, Codable {
+        case seoul = "서울"
+    }
+    
     struct Description: Codable {
         let stopType, ycode, stopNm, nodeID: String
         let stopNo, xcode, nxtStn: String

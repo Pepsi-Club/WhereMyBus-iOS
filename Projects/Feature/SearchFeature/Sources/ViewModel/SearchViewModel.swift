@@ -25,9 +25,8 @@ public final class SearchViewModel: ViewModel {
     public func transform(input: Input) -> Output {
         let output = Output(
             searchedResponse: useCase.searchedStationList,
-            recentSearchedResponse: .init(value: []),
-            nearByStopInfo: .init(),
-            tableViewSection: .init(value: .recentSearch)
+            recentSearchedResponse: useCase.recentSearchResult,
+            nearByStopInfo: useCase.nearByStopInfo
         )
         
         input.viewWillAppearEvent
@@ -49,23 +48,9 @@ public final class SearchViewModel: ViewModel {
             .disposed(by: disposeBag)
         
         input.textFieldChangeEvent
-            .withLatestFrom(output.tableViewSection) { text, section in
-                return (text, section)
-            }
             .withUnretained(self)
             .subscribe(
-                onNext: { viewModel, tuple in
-                    let (text, section) = tuple
-                    switch section {
-                    case .recentSearch:
-                        if !text.isEmpty {
-                            output.tableViewSection.accept(.searchedStop)
-                        }
-                    case .searchedStop:
-                        if text.isEmpty {
-                            output.tableViewSection.accept(.recentSearch)
-                        }
-                    }
+                onNext: { viewModel, text in
                     viewModel.useCase.search(term: text)
                 }
             )
@@ -98,14 +83,14 @@ public final class SearchViewModel: ViewModel {
             )
             .disposed(by: disposeBag)
         
-        useCase.recentSearchResult
-            .bind(to: output.recentSearchedResponse)
+        input.mapBtnTapEvent
+            .withUnretained(self)
+            .subscribe(
+                onNext: { vm, busStopId in
+                    vm.coordinator.startNearMapFlow(busStopId: busStopId)
+                }
+            )
             .disposed(by: disposeBag)
-        
-        useCase.nearByStopInfo
-            .bind(to: output.nearByStopInfo)
-            .disposed(by: disposeBag)
-        
         return output
     }
 }
@@ -117,12 +102,12 @@ extension SearchViewModel {
         let removeBtnTapEvent: Observable<Void>
         let nearByStopTapEvent: Observable<Void>
         let cellTapEvent: Observable<BusStopInfoResponse>
+        let mapBtnTapEvent: PublishSubject<String>
     }
     
     public struct Output {
-        var searchedResponse: PublishSubject<[BusStopInfoResponse]>
-        var recentSearchedResponse: BehaviorSubject<[BusStopInfoResponse]>
-        var nearByStopInfo: PublishSubject<(BusStopInfoResponse, String)>
-        var tableViewSection: BehaviorRelay<SearchSection>
+        let searchedResponse: PublishSubject<[BusStopRegion]>
+        let recentSearchedResponse: BehaviorSubject<[BusStopInfoResponse]>
+        let nearByStopInfo: PublishSubject<(BusStopInfoResponse, String)>
     }
 }

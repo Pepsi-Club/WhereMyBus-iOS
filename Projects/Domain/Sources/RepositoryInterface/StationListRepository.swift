@@ -13,7 +13,7 @@ import RxSwift
 import RxRelay
 
 public protocol StationListRepository {
-    var stationList: BehaviorSubject<[BusStopInfoResponse]> { get }
+    var busStopRegions: BehaviorSubject<[BusStopRegion]> { get }
     var recentlySearchedStation: BehaviorRelay<[BusStopInfoResponse]> { get }
     
     func saveRecentSearch(_ searchCell: BusStopInfoResponse)

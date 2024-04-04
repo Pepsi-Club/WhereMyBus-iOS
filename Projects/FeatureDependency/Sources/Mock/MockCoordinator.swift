@@ -67,8 +67,22 @@ extension MockCoordinator: HomeCoordinator {
 }
 
 extension MockCoordinator: SearchCoordinator {
+    public func startNearMapFlow(busStopId: String) {
+        let coordinator = MockCoordinator(
+            testMessage: "\(#function)",
+            navigationController: navigationController
+        )
+        coordinator.start()
+        childs.append(coordinator)
+    }
+    
     public func startNearMapFlow() {
-        
+        let coordinator = MockCoordinator(
+            testMessage: "\(#function)",
+            navigationController: navigationController
+        )
+        coordinator.start()
+        childs.append(coordinator)
     }
     
     public func finishFlow() {

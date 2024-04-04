@@ -16,6 +16,7 @@ identifier_name:
     excluded: # 제외할 문자열 목록
         - f
         - vc
+        - vm
 function_body_length:
     warning: 150
     error: 300
@@ -33,8 +34,5 @@ disabled_rules: # 제외하고 싶은 룰
     - type_name # 타입명에 _가 들어가면 경고
     - trailing_comma # 배열 마지막 아이템에 ,가 붙으면 경고
     - nesting # 중첩타입
-    - cyclomatic_complexity #
-    - function_parameter_count #
-    - todo #
 opt_in_rules:
     - empty_string

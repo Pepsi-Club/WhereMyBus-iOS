@@ -8,6 +8,7 @@
     "XCODE": "X좌표",
     "NXT_STN": "다음 정류장 방면"
   },
+  "REGION": "서울",
   "DATA": [
     {
       "stop_nm": "종로2가사거리",

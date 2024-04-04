@@ -21,7 +21,6 @@ extension AppDelegate {
         else { return }
         FirebaseApp.configure(options: options)
         application.registerForRemoteNotifications()
-        Messaging.messaging().delegate = self
     }
 }
 
@@ -30,6 +29,7 @@ extension AppDelegate {
         _ application: UIApplication,
         didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
     ) {
+        Messaging.messaging().delegate = self
         Messaging.messaging().apnsToken = deviceToken
     }
 }
