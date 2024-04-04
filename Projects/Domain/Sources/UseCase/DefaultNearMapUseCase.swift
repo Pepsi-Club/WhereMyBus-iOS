@@ -87,7 +87,7 @@ public final class DefaultNearMapUseCase: NearMapUseCase {
                 .compactMap { region in
                     switch region {
                     case .seoul(let responses):
-                        responses.first { response in
+                        return responses.first { response in
                             response.busStopId == busStopId
                         }
                     }
