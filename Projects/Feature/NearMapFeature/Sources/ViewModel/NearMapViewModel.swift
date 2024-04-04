@@ -42,12 +42,12 @@ public final class NearMapViewModel
 		)
         
         input.viewWillAppearEvent
+            .take(1)
             .withUnretained(self)
             .bind(
                 onNext: { viewModel, _ in
                     viewModel.useCase.requestAuthorize()
-                    switch viewModel.viewMode {
-                    case .normal:
+                    if case .normal = viewModel.viewMode {
                         viewModel.useCase.getNearByStopInfo()
                             .subscribe(
                                 onNext: { selectedBusStopInfo in
@@ -57,7 +57,17 @@ public final class NearMapViewModel
                                 }
                             )
                             .disposed(by: viewModel.disposeBag)
-                    case .focused(let busStopId):
+                    }
+                }
+            )
+            .disposed(by: disposeBag)
+        
+        input.viewWillAppearEvent
+            .withUnretained(self)
+            .bind(
+                onNext: { viewModel, _ in
+                    viewModel.useCase.requestAuthorize()
+                    if case .focused(let busStopId) = viewModel.viewMode {
                         let selectedBusStopInfo = viewModel.useCase
                             .getSelectedBusStop(busStopId: busStopId)
                         output.selectedBusStopInfo.onNext(selectedBusStopInfo)
