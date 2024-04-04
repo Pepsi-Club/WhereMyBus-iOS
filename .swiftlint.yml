@@ -16,6 +16,7 @@ identifier_name:
     excluded: # 제외할 문자열 목록
         - f
         - vc
+        - vm
 function_body_length:
     warning: 150
     error: 300

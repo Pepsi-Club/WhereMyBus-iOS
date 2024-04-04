@@ -12,6 +12,7 @@ public final class SearchViewController: UIViewController {
     
     private let removeBtnTapEvent = PublishSubject<Void>()
     private let cellTapEvent = PublishSubject<BusStopInfoResponse>()
+    private let mapBtnTapEvent = PublishSubject<String>()
     private let disposeBag = DisposeBag()
     
     private var recentSearchDataSource: RecentSearchDataSource!
@@ -44,7 +45,7 @@ public final class SearchViewController: UIViewController {
             frame: .zero,
             style: .insetGrouped
         )
-        table.register(SearchTVCell.self)
+        table.register(SearchTVMapCell.self)
         table.backgroundColor = DesignSystemAsset.tableViewColor.color
         table.isHidden = true
         table.dataSource = searchedDataSource
@@ -215,7 +216,8 @@ public final class SearchViewController: UIViewController {
                 .asObservable(),
             removeBtnTapEvent: removeBtnTapEvent,
             nearByStopTapEvent: nearByStopTapGesture.rx.event.map { _ in },
-            cellTapEvent: cellTapEvent
+            cellTapEvent: cellTapEvent,
+            mapBtnTapEvent: mapBtnTapEvent
         )
         
         let output = viewModel.transform(input: input)
@@ -282,12 +284,7 @@ public final class SearchViewController: UIViewController {
                 searchKeyword: self.searchTextFieldView.text ?? ""
             )
             cell.cellTapEvent
-                .withUnretained(self)
-                .subscribe(
-                    onNext: { vc, response in
-                        vc.cellTapEvent.onNext(response)
-                    }
-                )
+                .bind(to: self.cellTapEvent)
                 .disposed(by: cell.disposeBag)
             return cell
         }
@@ -296,21 +293,19 @@ public final class SearchViewController: UIViewController {
         ) { [weak self] tableView, indexPath, response in
             guard let self,
                   let cell = tableView.dequeueReusableCell(
-                    withIdentifier: SearchTVCell.identifier,
+                    withIdentifier: SearchTVMapCell.identifier,
                     for: indexPath
-                  ) as? SearchTVCell
+                  ) as? SearchTVMapCell
             else { return .init() }
             cell.updateUI(
                 response: response,
                 searchKeyword: self.searchTextFieldView.text ?? ""
             )
             cell.cellTapEvent
-                .withUnretained(self)
-                .subscribe(
-                    onNext: { vc, response in
-                        vc.cellTapEvent.onNext(response)
-                    }
-                )
+                .bind(to: self.cellTapEvent)
+                .disposed(by: cell.disposeBag)
+            cell.mapBtnTapEvent
+                .bind(to: self.mapBtnTapEvent)
                 .disposed(by: cell.disposeBag)
             return cell
         }

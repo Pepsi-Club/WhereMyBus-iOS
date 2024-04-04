@@ -99,13 +99,16 @@ public final class BusStopInfoView: UIView {
         
         NSLayoutConstraint.activate([
             busStopNameLabel.topAnchor.constraint(
-                equalTo: topAnchor
+                equalTo: topAnchor,
+                constant: 15
             ),
             busStopNameLabel.leadingAnchor.constraint(
-                equalTo: leadingAnchor
+                equalTo: leadingAnchor,
+                constant: 15
             ),
             busStopNameLabel.trailingAnchor.constraint(
-                equalTo: trailingAnchor
+                equalTo: trailingAnchor,
+                constant: -15
             ),
             
             descriptionLabel.topAnchor.constraint(
@@ -116,7 +119,8 @@ public final class BusStopInfoView: UIView {
                 equalTo: busStopNameLabel.leadingAnchor
             ),
             descriptionLabel.bottomAnchor.constraint(
-                equalTo: bottomAnchor
+                equalTo: bottomAnchor,
+                constant: -15
             ),
         ])
     }

@@ -57,8 +57,14 @@ extension DefaultSearchCoordinator {
         nearMapCoordinator.start()
     }
     
-//    public func finishFlow() {
-//        navigationController.popViewController(animated: true)
-//        finish()
-//    }
+    public func startNearMapFlow(busStopId: String) {
+        let nearMapCoordinator = coordinatorProvider.makeNearMapCoordinator(
+            parent: self,
+            navigationController: navigationController,
+            flow: flow, 
+            busStopId: busStopId
+        )
+        childs.append(nearMapCoordinator)
+        nearMapCoordinator.start()
+    }
 }
