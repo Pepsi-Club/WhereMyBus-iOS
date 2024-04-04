@@ -41,6 +41,7 @@ download-privates: download-xcconfigs download-env download-googleinfo
 download-xcconfigs:
 	$(call download_file, XCConfig, $(token),Debug.xcconfig)
 	$(call download_file, XCConfig, $(token),Release.xcconfig)
+	$(call download_file, XCConfig, $(token),Common.xcconfig)
 	$(call download_file, XCConfig, $(token),NotificationExtension_Debug.xcconfig)
 	$(call download_file, XCConfig, $(token),NotificationExtension_Release.xcconfig)
 
