@@ -19,13 +19,14 @@ final class SearchTVMapCell: UITableViewCell {
     let mapBtnTapEvent = PublishSubject<String>()
     var disposeBag = DisposeBag()
     
+    private let imgFontSize = 16
     private let busStopInfoView = BusStopInfoView()
-    private let mapBtn: UIButton = {
+    private lazy var mapBtn: UIButton = {
         var config = UIButton.Configuration.plain()
         config.image = UIImage(systemName: "map")?
             .withConfiguration(
                 UIImage.SymbolConfiguration(
-                    font: .systemFont(ofSize: 18)
+                    font: .systemFont(ofSize: imgFontSize.f)
                 )
             )
         let button = UIButton(configuration: config)
@@ -97,7 +98,10 @@ final class SearchTVMapCell: UITableViewCell {
             ),
             mapBtn.trailingAnchor.constraint(
                 equalTo: contentView.trailingAnchor,
-                constant: -15
+                constant: -30
+            ),
+            mapBtn.widthAnchor.constraint(
+                equalToConstant: imgFontSize.f
             ),
             
             busStopInfoView.topAnchor.constraint(
