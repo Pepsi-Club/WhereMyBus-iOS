@@ -103,6 +103,7 @@ public final class DefaultSearchUseCase: SearchUseCase {
     }
 
     public func updateNearByStop() {
+        requestAuthorize()
         locationService.locationStatus
             .withUnretained(self)
             .subscribe(
