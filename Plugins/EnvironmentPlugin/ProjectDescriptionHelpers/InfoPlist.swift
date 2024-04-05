@@ -111,6 +111,25 @@ public extension [String: Plist.Value] {
         ],
     ]
     
+    static let widgetInfoPlist: Self = [
+        "DATA_GO_KR_API_KEY": "$(DATA_GO_KR_API_KEY)",
+        "CFBundleShortVersionString": .bundleShortVersionString,
+        "CFBundleVersion": .bundleVersion,
+        "CFBundleDisplayName": "$(PRODUCT_NAME)",
+        "CFBundlePackageType": "$(PRODUCT_BUNDLE_PACKAGE_TYPE)",
+        "NSExtension": [
+            "NSExtensionPointIdentifier": "com.apple.widgetkit-extension",
+        ],
+        "NSAppTransportSecurity": [
+            "NSExceptionDomains": [
+                "ws.bus.go.kr": [
+                    "NSIncludesSubdomains": true,
+                    "NSExceptionAllowsInsecureHTTPLoads": true,
+                ]
+            ]
+        ],
+    ]
+    
     static let framework: Self = [
         "CFBundleDevelopmentRegion": "$(DEVELOPMENT_LANGUAGE)",
         "CFBundleExecutable": "$(EXECUTABLE_NAME)",

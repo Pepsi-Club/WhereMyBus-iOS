@@ -39,11 +39,13 @@ endef
 download-privates: download-xcconfigs download-env download-googleinfo
 
 download-xcconfigs:
-	$(call download_file, XCConfig, $(token),Debug.xcconfig)
-	$(call download_file, XCConfig, $(token),Release.xcconfig)
-	$(call download_file, XCConfig, $(token),Common.xcconfig)
-	$(call download_file, XCConfig, $(token),NotificationExtension_Debug.xcconfig)
-	$(call download_file, XCConfig, $(token),NotificationExtension_Release.xcconfig)
+	$(call download_file, XCConfig, $(token),Secrets_Debug.xcconfig)
+	$(call download_file, XCConfig, $(token),Secrets_Release.xcconfig)
+	$(call download_file, XCConfig, $(token),App_Debug.xcconfig)
+	$(call download_file, XCConfig, $(token),App_Release.xcconfig)
+	$(call download_file, XCConfig, $(token),App_Common.xcconfig)
+	$(call download_file, XCConfig, $(token),WidgetExtension_Debug.xcconfig)
+	$(call download_file, XCConfig, $(token),WidgetExtension_Release.xcconfig)
 
 download-env:
 	$(call download_file, fastlane, $(token),.env)

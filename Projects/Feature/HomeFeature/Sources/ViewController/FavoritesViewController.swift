@@ -209,6 +209,15 @@ public final class FavoritesViewController: UIViewController {
         .subscribe(
             onNext: { viewController, arg1 in
                 let (timerTime, responses) = arg1
+                let datas: [Data] = responses.compactMap { response in
+                    guard let data = response.encode()
+                    else { return nil }
+                    return data
+                }
+                UserDefaults.appGroup?.set(
+                    datas,
+                    forKey: "arrivalResponse"
+                )
                 let newResponses = responses.map {
                     return BusStopArrivalInfoResponse(
                         busStopId: $0.busStopId,
@@ -359,16 +368,7 @@ public final class FavoritesViewController: UIViewController {
                 corners: [.bottomLeft, .bottomRight]
             )
         }
-        let firstArrivalTime = response.firstArrivalState.toString
-        let secondArrivalTime = response.secondArrivalState.toString
-        cell?.updateUI(
-            busName: response.busName, 
-            busType: response.busType,
-            firstArrivalTime: firstArrivalTime,
-            firstArrivalRemaining: response.firstArrivalRemaining,
-            secondArrivalTime: secondArrivalTime,
-            secondArrivalRemaining: response.secondArrivalRemaining
-        )
+        cell?.updateUI(response: response)
         return cell
     }
     
