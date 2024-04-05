@@ -6,7 +6,7 @@
     쉬운 사용성과 편리함을 갖춘 버스어디를 지금 만나보세요.
 > > [버스어디 앱 스토어 연결](https://apps.apple.com/kr/app/%EB%B2%84%EC%8A%A4%EC%96%B4%EB%94%94-%EC%8B%A4%EC%8B%9C%EA%B0%84-%EB%B2%84%EC%8A%A4-%EC%A0%95%EA%B8%B0-%EC%95%8C%EB%9E%8C-%EC%A6%90%EA%B2%A8%EC%B0%BE%EA%B8%B0/id6479689895)
 
-
+ 펩시클럽 팀이 버스어디를 만든 과정이 궁금하다면 ? [펩시클럽 위키 보기](https://github.com/Pepsi-Club/WhereMyBus-iOS/wiki)
 
 ### 💫주요 기능
 - **`홈`**
