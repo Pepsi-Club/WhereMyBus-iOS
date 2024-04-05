@@ -103,7 +103,6 @@ public final class DefaultSearchUseCase: SearchUseCase {
     }
 
     public func updateNearByStop() {
-        requestAuthorize()
         locationService.locationStatus
             .withUnretained(self)
             .subscribe(
@@ -115,6 +114,7 @@ public final class DefaultSearchUseCase: SearchUseCase {
                     switch status {
                     case .authorized(let location), 
                             .alwaysAllowed(let location):
+                        useCase.locationService.requestLocationOnce()
                         (response, distanceStr) = useCase.stationListRepository
                             .getNearByStopInfo(startPointLocation: location)
                     case .notDetermined, .denied:
