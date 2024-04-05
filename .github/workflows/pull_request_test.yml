@@ -3,7 +3,8 @@ name: PullRequestTest
 on:
   pull_request:
     branches:
-      - release
+      - release/**
+      
 jobs:
   build_test:
     runs-on: macos-13
