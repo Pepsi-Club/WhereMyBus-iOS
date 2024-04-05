@@ -26,14 +26,17 @@ public final class SearchViewModel: ViewModel {
         let output = Output(
             searchedResponse: useCase.searchedStationList,
             recentSearchedResponse: useCase.recentSearchResult,
-            nearByStopInfo: useCase.nearByStopInfo
+            nearByStopInfo: .init()
         )
         
         input.viewWillAppearEvent
+            .take(1)
             .withUnretained(self)
             .subscribe(
-                onNext: { viewModel, _ in
-                    viewModel.useCase.updateNearByStop()
+                onNext: { vm, _ in
+                    vm.useCase.updateNearByStop()
+                        .bind(to: output.nearByStopInfo)
+                        .disposed(by: vm.disposeBag)
                 }
             )
             .disposed(by: disposeBag)

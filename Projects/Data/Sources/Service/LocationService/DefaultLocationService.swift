@@ -15,9 +15,9 @@ import RxCocoa
 import RxSwift
 
 final public class DefaultLocationService: NSObject, LocationService {
-    private var locationManager = CLLocationManager()
+    private let locationManager = CLLocationManager()
     
-    public var locationStatus = BehaviorSubject<LocationStatus>(
+    public let locationStatus = BehaviorSubject<LocationStatus>(
         value: .notDetermined
     )
     private let disposeBag = DisposeBag()
@@ -25,7 +25,7 @@ final public class DefaultLocationService: NSObject, LocationService {
     public override init() {
         super.init()
         locationManager.delegate = self
-        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
     }
     
     public func authorize() {
@@ -76,7 +76,8 @@ final public class DefaultLocationService: NSObject, LocationService {
         }
     }
 }
-
+// 앱 오픈 delegate = self
+// locationManagerDidChangeAuthorization
 extension DefaultLocationService: CLLocationManagerDelegate {
     public func locationManagerDidChangeAuthorization(
         _ manager: CLLocationManager

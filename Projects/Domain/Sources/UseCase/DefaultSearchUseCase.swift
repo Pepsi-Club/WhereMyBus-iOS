@@ -101,45 +101,42 @@ public final class DefaultSearchUseCase: SearchUseCase {
                 }
             }
     }
-
-    public func updateNearByStop() {
+    
+    public func updateNearByStop(
+    ) -> Observable<(BusStopInfoResponse, String)> {
         locationService.locationStatus
             .withUnretained(self)
-            .subscribe(
-                onNext: { useCase, status in
-                    var response: BusStopInfoResponse
-                    var distanceStr: String
-                    let requestMessage = "확인하려면 위치사용을 허용해주세요"
-                    let errorMessage = "오류가 발생했습니다 관리자에게 문의해주세요"
-                    switch status {
-                    case .authorized(let location), 
-                            .alwaysAllowed(let location):
-                        useCase.locationService.requestLocationOnce()
-                        (response, distanceStr) = useCase.stationListRepository
-                            .getNearByStopInfo(startPointLocation: location)
-                    case .notDetermined, .denied:
-                        response = .init(
-                            busStopName: requestMessage,
-                            busStopId: "",
-                            direction: "",
-                            longitude: "126.979620",
-                            latitude: "37.570028"
-                        )
-                        distanceStr = ""
-                    case .unknown:
-                        response = .init(
-                            busStopName: errorMessage,
-                            busStopId: "",
-                            direction: "",
-                            longitude: "126.979620",
-                            latitude: "37.570028"
-                        )
-                        distanceStr = ""
-                    }
-                    useCase.nearByStopInfo.onNext((response, distanceStr))
+            .map { useCase, status in
+                var response: BusStopInfoResponse
+                var distanceStr: String
+                let requestMessage = "확인하려면 위치사용을 허용해주세요"
+                let errorMessage = "오류가 발생했습니다 관리자에게 문의해주세요"
+                switch status {
+                case .authorized(let location),
+                        .alwaysAllowed(let location):
+                    (response, distanceStr) = useCase.stationListRepository
+                        .getNearByStopInfo(startPointLocation: location)
+                case .notDetermined, .denied:
+                    response = .init(
+                        busStopName: requestMessage,
+                        busStopId: "",
+                        direction: "",
+                        longitude: "126.979620",
+                        latitude: "37.570028"
+                    )
+                    distanceStr = ""
+                case .unknown:
+                    response = .init(
+                        busStopName: errorMessage,
+                        busStopId: "",
+                        direction: "",
+                        longitude: "126.979620",
+                        latitude: "37.570028"
+                    )
+                    distanceStr = ""
                 }
-            )
-            .disposed(by: disposeBag)
+                return (response, distanceStr)
+            }
     }
     
     private func bindLocationStatus() {

@@ -22,5 +22,5 @@ public protocol SearchUseCase {
     func requestAuthorize()
     func getBusStopInfo(for busStopId: String
     ) -> Observable<[BusStopInfoResponse]>
-    func updateNearByStop()
+    func updateNearByStop() -> Observable<(BusStopInfoResponse, String)>
 }

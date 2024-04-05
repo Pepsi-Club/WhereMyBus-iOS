@@ -19,7 +19,7 @@ public extension String {
     static var buildVersion: Self {
         let date = Date()
         let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy.MM.dd.HH"
+        formatter.dateFormat = "yyyy.MM.dd.HH.mm"
         return formatter.string(from: date)
     }
 }
