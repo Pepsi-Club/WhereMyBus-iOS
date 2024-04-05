@@ -8,7 +8,6 @@ clean_xcode:
 	rm -rf ~/Library/Developer/Xcode/DerivedData/*
 	
 clean:
-	tuist clean
 	rm -rf **/**/**/*.xcodeproj
 	rm -rf **/**/*.xcodeproj
 	rm -rf **/*.xcodeproj
