@@ -17,7 +17,26 @@ let project = Project.makeProject(
 //                .mainFeature,
 //                .data,
 //            ]
-//        )
+//        ),
+        Project.appExtensionTarget(
+            name: "WidgetExtension",
+            plist: .extendingDefault(
+                with: .widgetInfoPlist
+            ),
+            resources: [
+                "Resources/**",
+                "WidgetExtension/Resources/**",
+            ],
+            entitlements: .file(
+                path: .relativeToRoot(
+                    "Projects/App/WidgetExtension.entitlements"
+                )
+            ),
+            dependencies: [
+                .mainFeature,
+                .data,
+            ]
+        )
     ],
     packages: [
         .remote(

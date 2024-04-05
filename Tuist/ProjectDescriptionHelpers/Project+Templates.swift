@@ -169,6 +169,7 @@ extension Project {
     public static func appExtensionTarget(
         name: String,
         plist: InfoPlist?,
+        resources: ResourceFileElements? = nil,
         entitlements: Entitlements? = nil,
         dependencies: [TargetDependency]
     ) -> Target {
@@ -180,6 +181,7 @@ extension Project {
             deploymentTarget: .deploymentTarget,
             infoPlist: plist,
             sources: ["\(name)/**"],
+            resources: resources,
             entitlements: entitlements,
             scripts: [.swiftLint],
             dependencies: dependencies,

@@ -17,11 +17,11 @@ public extension Settings {
         configurations: [
             .debug(
                 name: .debug,
-                xcconfig: .relativeToRoot("XCConfig/Debug.xcconfig")
+                xcconfig: .relativeToRoot("XCConfig/App_Debug.xcconfig")
             ),
             .release(
                 name: .release,
-                xcconfig: .relativeToRoot("XCConfig/Release.xcconfig")
+                xcconfig: .relativeToRoot("XCConfig/App_Release.xcconfig")
             ),
         ],
         defaultSettings: .recommended
@@ -33,11 +33,11 @@ public extension Settings {
         configurations: [
             .debug(
                 name: .debug,
-                xcconfig: .relativeToRoot("XCConfig/Debug.xcconfig")
+                xcconfig: .relativeToRoot("XCConfig/App_Debug.xcconfig")
             ),
             .release(
                 name: .release,
-                xcconfig: .relativeToRoot("XCConfig/Release.xcconfig")
+                xcconfig: .relativeToRoot("XCConfig/App_Release.xcconfig")
             ),
         ],
         defaultSettings: .recommended
@@ -52,11 +52,11 @@ public extension Settings {
         configurations: [
             .debug(
                 name: .debug,
-                xcconfig: .relativeToRoot("XCConfig/Debug.xcconfig")
+                xcconfig: .relativeToRoot("XCConfig/App_Debug.xcconfig")
             ),
             .release(
                 name: .release,
-                xcconfig: .relativeToRoot("XCConfig/Release.xcconfig")
+                xcconfig: .relativeToRoot("XCConfig/App_Release.xcconfig")
             ),
         ],
         defaultSettings: .recommended
