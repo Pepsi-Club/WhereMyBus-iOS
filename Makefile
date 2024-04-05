@@ -4,10 +4,6 @@ open_plist:
 open_config:
 	open -a Xcode Plugins/EnvironmentPlugin/ProjectDescriptionHelpers/XCConfig.swift
 
-generate:
-	tuist fetch
-	tuist generate
-	
 clean_xcode:
 	rm -rf ~/Library/Developer/Xcode/DerivedData/*
 	

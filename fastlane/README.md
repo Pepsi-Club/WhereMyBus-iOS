@@ -15,6 +15,14 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 ## iOS
 
+### ios regenerate
+
+```sh
+[bundle exec] fastlane ios regenerate
+```
+
+Regenerate
+
 ### ios getig
 
 ```sh
