@@ -63,22 +63,17 @@ class FavoritesTVCell: UITableViewCell {
     }
     
     func updateUI(
-        busName: String,
-        busType: BusType,
-        firstArrivalTime: String,
-        firstArrivalRemaining: String,
-        secondArrivalTime: String,
-        secondArrivalRemaining: String
+        response: BusArrivalInfoResponse
     ) {
-        routeLabel.text = busName
-        routeLabel.textColor = busType.toColor
+        routeLabel.text = response.busName
+        routeLabel.textColor = response.busType.toColor
         firstArrivalInfoView.updateUI(
-            time: firstArrivalTime,
-            remainingStops: firstArrivalRemaining
+            time: response.firstArrivalState.toString,
+            remainingStops: response.firstArrivalRemaining
         )
         secondArrivalInfoView.updateUI(
-            time: secondArrivalTime,
-            remainingStops: secondArrivalRemaining
+            time: response.secondArrivalState.toString,
+            remainingStops: response.secondArrivalRemaining
         )
     }
     
