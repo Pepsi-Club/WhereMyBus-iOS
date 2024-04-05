@@ -45,7 +45,7 @@ public final class SettingsViewController: UIViewController {
         configureUI()
         bind()
         // TODO: 서버 테스트용, 추후 함수와 호출 제거
-        configureFCMTokenView()
+//        configureFCMTokenView()
     }
     
     private func configureUI() {
