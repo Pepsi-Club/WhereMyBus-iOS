@@ -1,4 +1,4 @@
-# 버스어디
+# 버스어디 v 1.1.0
 ![제목을-입력해주세요_-003 (5)](https://github.com/Pepsi-Club/BusComing/assets/65907001/bcb7300f-3f11-4dda-a7b7-3cfb111dc9c7)
 
 ## 프로젝트 소개
@@ -26,7 +26,7 @@
 
 | 즐겨찾기 | 검색 | 버스정류장 | 가까운 정류장 지도 |
 | --- | --- | --- | --- |
-|![Search](https://github.com/Pepsi-Club/BusComing/raw/dev/Document/ko/iPhone_15_Pro-1_Favorites.png)|![Search](https://github.com/Pepsi-Club/BusComing/raw/dev/Document/ko/iPhone_15_Pro-3_Search.png) | ![BusStop](https://github.com/Pepsi-Club/BusComing/raw/dev/Document/ko/iPhone_15_Pro-4_BusStop.png) |![NearMap](https://github.com/Pepsi-Club/BusComing/raw/dev/Document/ko/iPhone_15_Pro-5_NearMap.png) |
+|![Search](https://github.com/Pepsi-Club/BusComing/raw/dev/Document/ko/iPhone_15_Pro-1_Favorites.png)|![Search](https://github.com/Pepsi-Club/WhereMyBus-iOS/assets/65907001/db977cc0-42b9-48c5-b088-0802c3cf979e)|![BusStop](https://github.com/Pepsi-Club/BusComing/raw/dev/Document/ko/iPhone_15_Pro-4_BusStop.png)|![NearMap](https://github.com/Pepsi-Club/WhereMyBus-iOS/assets/65907001/781ca995-b5c6-4e5d-8556-d293359e3a7f)|
 
 | 즐겨찾기X | 최근검색어 | 정규알람 추가 | 정규알람 | 
 | --- | --- | --- | --- |
