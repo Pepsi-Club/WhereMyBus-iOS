@@ -46,6 +46,10 @@ public class DefaultRegularAlarmUseCase: RegularAlarmUseCase {
         localNotificationService.fetchRegularAlarm()
             .filter { !$0.isEmpty }
             .withUnretained(self)
+            .map { useCase, responses in
+                useCase.replaceWeekday(responses: responses)
+            }
+            .withUnretained(self)
             .subscribe(
                 onNext: { useCase, responses in
                     responses.forEach { response in
@@ -72,6 +76,25 @@ public class DefaultRegularAlarmUseCase: RegularAlarmUseCase {
             let weekDayResult = firstValue < secondValue
             return firstValue == secondValue ?
             dateResult : weekDayResult
+        }
+    }
+    
+    private func replaceWeekday(
+        responses: [RegularAlarmResponse]
+    ) -> [RegularAlarmResponse] {
+        responses.map { response in
+            let newWeekdy = response.weekday.map { rawValue in
+                rawValue - 1
+            }
+            return RegularAlarmResponse(
+                requestId: response.requestId,
+                busStopId: response.busStopId,
+                busStopName: response.busStopName,
+                busId: response.busId,
+                busName: response.busName,
+                time: response.time,
+                weekday: newWeekdy
+            )
         }
     }
     
