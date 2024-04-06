@@ -55,7 +55,8 @@ extension AppDelegate {
         DIContainer.register(
             type: AddRegularAlarmUseCase.self,
             DefaultAddRegularAlarmUseCase(
-                localNotificationService: localNotificationService
+                localNotificationService: localNotificationService, 
+                regularAlarmRepository: regularAlarmRepository
             )
         )
         

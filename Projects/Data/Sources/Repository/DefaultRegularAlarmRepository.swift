@@ -68,14 +68,15 @@ public final class DefaultRegularAlarmRepository: RegularAlarmRepository {
     }
     
     public func updateRegularAlarm(
-        response: RegularAlarmResponse
+        response: RegularAlarmResponse,
+        completion: @escaping () -> Void
     ) {
         deleteRegularAlarm(
             response: response
         ) { [weak self] in
             self?.createRegularAlarm(
                 response: response,
-                completion: { }
+                completion: completion
             )
         }
     }

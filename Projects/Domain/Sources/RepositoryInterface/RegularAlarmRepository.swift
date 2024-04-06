@@ -17,7 +17,10 @@ public protocol RegularAlarmRepository {
         response: RegularAlarmResponse,
         completion: @escaping () -> Void
     )
-    func updateRegularAlarm(response: RegularAlarmResponse)
+    func updateRegularAlarm(
+        response: RegularAlarmResponse,
+        completion: @escaping () -> Void
+    )
     func deleteRegularAlarm(
         response: RegularAlarmResponse,
         completion: @escaping () -> Void

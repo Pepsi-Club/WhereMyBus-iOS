@@ -12,11 +12,14 @@ import RxSwift
 
 public final class DefaultAddRegularAlarmUseCase: AddRegularAlarmUseCase {
     private let localNotificationService: LocalNotificationService
+    private let regularAlarmRepository: RegularAlarmRepository
     
     public init(
-        localNotificationService: LocalNotificationService
+        localNotificationService: LocalNotificationService,
+        regularAlarmRepository: RegularAlarmRepository
     ) {
         self.localNotificationService = localNotificationService
+        self.regularAlarmRepository = regularAlarmRepository
     }
     
     public func checkNotificationAuth() {
@@ -24,20 +27,14 @@ public final class DefaultAddRegularAlarmUseCase: AddRegularAlarmUseCase {
     }
     
     public func addNewAlarm(response: RegularAlarmResponse) {
-        do {
-            try localNotificationService.registNewRegularAlarm(
-                response: response
-            )
-        } catch {
-            print(error.localizedDescription)
+        regularAlarmRepository.createRegularAlarm(response: response) {
+            print("Create Completed")
         }
     }
     
     public func editAlarm(response: RegularAlarmResponse) {
-        do {
-            try localNotificationService.editRegularAlarm(response: response)
-        } catch {
-            print(error.localizedDescription)
+        regularAlarmRepository.updateRegularAlarm(response: response) {
+            print("Update Completed")
         }
     }
 }
