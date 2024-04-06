@@ -113,6 +113,7 @@ public final class NearMapViewModel
             .disposed(by: disposeBag)
         
         input.selectedBusStopId
+            .distinctUntilChanged()
             .withUnretained(self)
             .subscribe(
                 onNext: { viewModel, busStopId in

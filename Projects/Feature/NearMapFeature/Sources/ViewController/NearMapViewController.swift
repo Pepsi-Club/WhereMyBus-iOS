@@ -10,12 +10,23 @@ import NMapsMap
 public final class NearMapViewController: UIViewController {
     private let viewModel: NearMapViewModel
     
-    private let busStopTapEvent = PublishSubject<String>()
     private let cameraMoveEvent =
     PublishSubject<(ClosedRange<Double>, ClosedRange<Double>)>()
     private let disposeBag = DisposeBag()
     
-    private var drawedMarker = [NMFMarker]()
+    private let leafMarkerUpdater = LeafMarkerUpdater()
+    
+    private lazy var builder: NMCBuilder<BusStopClusteringKey> = {
+        let builder = NMCBuilder<BusStopClusteringKey>()
+        builder.leafMarkerUpdater = leafMarkerUpdater
+        return builder
+    }()
+    
+    private lazy var clusterer: NMCClusterer<BusStopClusteringKey> = {
+        let clusterer = builder.build()
+        clusterer.mapView = naverMap.mapView
+        return clusterer
+    }()
     
     private lazy var naverMap: NMFNaverMapView = {
         let mapView = NMFNaverMapView()
@@ -23,6 +34,7 @@ public final class NearMapViewController: UIViewController {
         mapView.layer.cornerRadius = 15
         mapView.mapView.addCameraDelegate(delegate: self)
         mapView.showLocationButton = true
+        mapView.mapView.zoomLevel = 18
         return mapView
     }()
     
@@ -43,6 +55,10 @@ public final class NearMapViewController: UIViewController {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    deinit {
+        clusterer.clear()
     }
     
     public override func viewDidLoad() {
@@ -123,7 +139,7 @@ public final class NearMapViewController: UIViewController {
                     .methodInvoked(#selector(UIViewController.viewWillAppear))
                     .map { _ in },
                 informationViewTapEvent: tapGesture.rx.event.map { _ in },
-                selectedBusStopId: busStopTapEvent,
+                selectedBusStopId: leafMarkerUpdater.selectedBusStopId,
                 locationChangeEvent: cameraMoveEvent
             )
         )
@@ -131,13 +147,13 @@ public final class NearMapViewController: UIViewController {
         output.selectedBusStopInfo
             .withUnretained(self)
             .subscribe(
-                onNext: { viewModel, tuple in
+                onNext: { vc, tuple in
                     let (response, distance) = tuple
-                    viewModel.busStopInformationView.updateUI(
+                    vc.busStopInformationView.updateUI(
                         response: response,
                         distance: distance
                     )
-                    viewModel.moveCamera(response: response)
+                    vc.moveCamera(response: response)
                 }
             )
             .disposed(by: disposeBag)
@@ -145,10 +161,8 @@ public final class NearMapViewController: UIViewController {
         output.nearStopList
             .withUnretained(self)
             .subscribe(
-                onNext: { viewModel, responses in
-                    responses.forEach { response in
-                        viewModel.drawMarker(response: response)
-                    }
+                onNext: { vc, responses in
+                    vc.drawMarker(responses: responses)
                 }
             )
             .disposed(by: disposeBag)
@@ -174,7 +188,7 @@ public final class NearMapViewController: UIViewController {
         let cameraUpdate = NMFCameraUpdate(
             position: .init(
                 location,
-                zoom: 17
+                zoom: naverMap.mapView.zoomLevel
             )
         )
         let distance = location.distance(
@@ -185,38 +199,26 @@ public final class NearMapViewController: UIViewController {
         naverMap.mapView.moveCamera(cameraUpdate)
     }
     
-    private func drawMarker(response: BusStopInfoResponse) {
-        guard let latitude = Double(response.latitude),
-              let longitude = Double(response.longitude)
-        else { return }
-        guard !drawedMarker.contains(where: { marker in
-            marker.position.lat == latitude &&
-            marker.position.lng == longitude
-        })
-        else { return }
-        let location = NMGLatLng(
-            lat: latitude,
-            lng: longitude
-        )
-        let marker = NMFMarker(position: location)
-        let busStopImg = DesignSystemAsset.mapBusStop.image
-        marker.iconImage = NMFOverlayImage(
-            image: busStopImg,
-            reuseIdentifier: "busStop"
-        )
-        marker.mapView = naverMap.mapView
-        marker.userInfo = ["busStopId": response.busStopId]
-        // YES일 경우 이벤트를 소비합니다. 그렇지 않을 경우 NMFMapView까지 이벤트가 전달되어
-        // NMFMapViewTouchDelegate의 mapView:didTapMap:point:가 호출됩니다.
-        marker.touchHandler = { [weak self] overlay in
-            if let busStopId = overlay.userInfo["busStopId"] as? String {
-                self?.busStopTapEvent.onNext(busStopId)
-                return true
-            } else {
-                return false
-            }
+    private func drawMarker(responses: [BusStopInfoResponse]) {
+        var keyTagMap = [AnyHashable: NSObject]()
+        responses.forEach { response in
+            guard let latitude = Double(response.latitude),
+                  let longitude = Double(response.longitude),
+                  let busStopIdInt = Int(response.busStopId)
+            else { return }
+            let location = NMGLatLng(
+                lat: latitude,
+                lng: longitude
+            )
+            let itemKey = BusStopClusteringKey(
+                identifier: busStopIdInt,
+                position: location
+            )
+            guard !clusterer.contains(itemKey)
+            else { return }
+            keyTagMap[itemKey] = NSNull()
         }
-        drawedMarker.append(marker)
+        clusterer.addAll(keyTagMap)
     }
 }
 
