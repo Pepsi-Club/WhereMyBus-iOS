@@ -21,7 +21,7 @@ public final class DefaultRegularAlarmEditingService
             busId: "",
             busName: "",
             time: .now,
-            weekDay: []
+            weekday: []
         )
     )
     
@@ -45,7 +45,7 @@ public final class DefaultRegularAlarmEditingService
                 busId: busId,
                 busName: busName,
                 time: currentAlarm.time,
-                weekDay: currentAlarm.weekday
+                weekday: currentAlarm.weekday
             )
         )
     }
@@ -59,7 +59,7 @@ public final class DefaultRegularAlarmEditingService
                 busId: currentAlarm.busId,
                 busName: currentAlarm.busName,
                 time: time,
-                weekDay: currentAlarm.weekday
+                weekday: currentAlarm.weekday
             )
         )
     }
@@ -73,7 +73,7 @@ public final class DefaultRegularAlarmEditingService
                 busId: currentAlarm.busId,
                 busName: currentAlarm.busName,
                 time: currentAlarm.time,
-                weekDay: weekday
+                weekday: weekday
             )
         )
     }
@@ -90,7 +90,7 @@ public final class DefaultRegularAlarmEditingService
                 busId: "",
                 busName: "",
                 time: .now,
-                weekDay: []
+                weekday: []
             )
         )
     }

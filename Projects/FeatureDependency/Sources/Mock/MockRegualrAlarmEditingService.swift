@@ -21,7 +21,7 @@ public final class MockRegualrAlarmEditingService: RegularAlarmEditingService {
             busId: "",
             busName: "",
             time: .now,
-            weekDay: []
+            weekday: []
         )
     )
     public init() { }
