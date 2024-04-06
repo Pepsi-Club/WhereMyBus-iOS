@@ -17,6 +17,7 @@ identifier_name:
         - f
         - vc
         - vm
+        - o
 function_body_length:
     warning: 150
     error: 300
