@@ -36,4 +36,8 @@ public extension String {
         else { fatalError("Can't Not Find FCM Key") }
         return serverKey
     }
+    
+    static var fcmToken: Self? {
+        UserDefaults.standard.string(forKey: "fcmToken")
+    }
 }
