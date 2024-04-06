@@ -15,4 +15,5 @@ public protocol RegularAlarmUseCase {
     
     func fetchAlarm()
     func removeAlarm(response: RegularAlarmResponse) throws
+    func migrateRegularAlarm()
 }
