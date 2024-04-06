@@ -24,6 +24,7 @@ struct WMBWidget: Widget {
     }
 }
 
+#if DEBUG
 struct WidgetExtension_Preview: PreviewProvider {
     static var previews: some View {
         WMBWidgetView(
@@ -37,3 +38,4 @@ struct WidgetExtension_Preview: PreviewProvider {
         )
     }
 }
+#endif

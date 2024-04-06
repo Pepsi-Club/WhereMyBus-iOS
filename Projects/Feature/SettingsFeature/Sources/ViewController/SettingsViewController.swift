@@ -1,5 +1,6 @@
 import UIKit
 
+import Core
 import DesignSystem
 
 import RxSwift
@@ -44,8 +45,9 @@ public final class SettingsViewController: UIViewController {
         
         configureUI()
         bind()
-        // TODO: 서버 테스트용, 추후 함수와 호출 제거
-//        configureFCMTokenView()
+        #if DEBUG
+        configureFCMTokenView()
+        #endif
     }
     
     private func configureUI() {
@@ -117,7 +119,7 @@ public final class SettingsViewController: UIViewController {
                 }
             )
             .disposed(by: disposeBag)
-        textView.text = UserDefaults.standard.string(forKey: "fcmToken")
+        textView.text = .fcmToken
         textView.sizeToFit()
         textView.backgroundColor = .lightGray
         textView.isEditable = false
