@@ -4,4 +4,13 @@
         <attribute name="busIds" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[String]"/>
         <attribute name="busStopId" optional="YES" attributeType="String"/>
     </entity>
+    <entity name="RegularAlarmResponseMO" representedClassName="RegularAlarmResponseMO" syncable="YES">
+        <attribute name="busId" optional="YES" attributeType="String"/>
+        <attribute name="busName" optional="YES" attributeType="String"/>
+        <attribute name="busStopId" optional="YES" attributeType="String"/>
+        <attribute name="busStopName" optional="YES" attributeType="String"/>
+        <attribute name="requestId" optional="YES" attributeType="String"/>
+        <attribute name="time" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="weekday" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[Int]"/>
+    </entity>
 </model>
