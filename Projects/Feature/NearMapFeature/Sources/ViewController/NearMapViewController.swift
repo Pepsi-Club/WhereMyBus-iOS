@@ -19,6 +19,7 @@ public final class NearMapViewController: UIViewController {
     private lazy var builder: NMCBuilder<BusStopClusteringKey> = {
         let builder = NMCBuilder<BusStopClusteringKey>()
         builder.leafMarkerUpdater = leafMarkerUpdater
+        builder.maxZoom = 16
         return builder
     }()
     

@@ -1,5 +1,4 @@
 import Foundation
-import CoreLocation
 
 import Core
 import DesignSystem
@@ -10,8 +9,7 @@ import RxSwift
 import RxRelay
 import NMapsMap
 
-public final class NearMapViewModel
-: NSObject, CLLocationManagerDelegate, ViewModel {
+public final class NearMapViewModel: ViewModel {
     @Injected(NearMapUseCase.self) var useCase: NearMapUseCase
     private let coordinator: NearMapCoordinator
     private let viewMode: NearMapMode

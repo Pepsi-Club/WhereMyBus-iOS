@@ -15,7 +15,27 @@ import RxSwift
 
 final class LeafMarkerUpdater: NMCDefaultLeafMarkerUpdater {
     let selectedBusStopId = BehaviorSubject<String>(value: "")
-    private let disposeBag = DisposeBag()
+    
+    private var selectedMarker: NMFMarker? {
+        didSet {
+            oldValue?.iconImage = unselectedImg
+            selectedMarker?.iconImage = selectedImg
+        }
+    }
+    
+    private var selectedImg: NMFOverlayImage {
+        .init(
+            image: DesignSystemAsset.mapBusStop.image,
+            reuseIdentifier: "selectedbusStop"
+        )
+    }
+    
+    private var unselectedImg: NMFOverlayImage {
+        .init(
+            image: DesignSystemAsset.mapBusStopGray.image,
+            reuseIdentifier: "unselectedbusStop"
+        )
+    }
     
     override func updateLeafMarker(
         _ info: NMCLeafMarkerInfo,
@@ -23,29 +43,25 @@ final class LeafMarkerUpdater: NMCDefaultLeafMarkerUpdater {
     ) {
         super.updateLeafMarker(info, marker)
         if let key = info.key as? BusStopClusteringKey {
-            selectedBusStopId
-                .distinctUntilChanged()
-                .subscribe(
-                    onNext: { identifier in
-                        if String(key.identifier) == identifier {
-                            marker.captionText = identifier
-                        } else {
-                            marker.captionText = ""
-                        }
-                    },
-                    onDisposed: {
-                        print("disposed")
-                    }
-                )
-                .disposed(by: disposeBag)
-            marker.iconImage = NMFOverlayImage(
-                image: DesignSystemAsset.mapBusStop.image,
-                reuseIdentifier: "busStop"
-            )
+            var busStopId = String(key.identifier)
+            while busStopId.count < 5 {
+                busStopId = "0" + busStopId
+            }
+            if let selectedBusStopId = try? selectedBusStopId.value() {
+                if busStopId == selectedBusStopId {
+                    marker.iconImage = selectedImg
+                    selectedMarker = marker
+                } else {
+                    marker.iconImage = unselectedImg
+                }
+            } else {
+                marker.iconImage = unselectedImg
+            }
             // YES일 경우 이벤트를 소비합니다. 그렇지 않을 경우 NMFMapView까지 이벤트가 전달되어
             // NMFMapViewTouchDelegate의 mapView:didTapMap:point:가 호출됩니다.
             marker.touchHandler = { [weak self] _ in
-                self?.selectedBusStopId.onNext(String(key.identifier))
+                self?.selectedBusStopId.onNext(busStopId)
+                self?.selectedMarker = marker
                 return true
             }
         }
