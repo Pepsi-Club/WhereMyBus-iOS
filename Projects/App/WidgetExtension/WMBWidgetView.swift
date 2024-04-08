@@ -23,7 +23,8 @@ struct WMBWidgetView: View {
                 arrivalInfoView
             }
         }
-        .widgetBackground(Color.white)
+        // 버전 이슈로 일단 주석처리하겠습니다 
+        //.widgetBackground(Color.white)
     }
     
     var emptyView: some View {
@@ -75,18 +76,18 @@ struct WMBWidgetView: View {
         }
     }
 }
-
-extension View {
-    func widgetBackground(_ backgroundView: some View) -> some View {
-        if #available(iOSApplicationExtension 17.0, *) {
-            return containerBackground(for: .widget) {
-                backgroundView
-            }
-        } else {
-            return background(backgroundView)
-        }
-    }
-}
+// 버젼 이슈로 일단 주석 처리 하겠습니다
+//extension View {
+//    func widgetBackground(_ backgroundView: some View) -> some View {
+//        if #available(iOSApplicationExtension 17.0, *) {
+//            return containerBackground(for: .widget) {
+//                backgroundView
+//            }
+//        } else {
+//            return background(backgroundView)
+//        }
+//    }
+//}
 
 struct WMBWidgetView_Preview: PreviewProvider {
     static var previews: some View {
