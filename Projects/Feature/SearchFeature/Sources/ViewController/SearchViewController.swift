@@ -18,7 +18,11 @@ public final class SearchViewController: UIViewController {
     private var recentSearchDataSource: RecentSearchDataSource!
     private var searchedDataSource: SearchedDataSource!
     
-    private let searchTextFieldView = SearchTextFieldView()
+    private let searchTextFieldView: SearchTextFieldView = {
+        let textFieldView = SearchTextFieldView()
+        textFieldView.accessibilityIdentifier = "정류장 검색"
+        return textFieldView
+    }()
     
     private let recentSearchBGView = SearchTVBackgroundView(
         text: "최근 검색된 정류장이 없습니다"
