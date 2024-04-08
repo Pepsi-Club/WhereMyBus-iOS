@@ -90,6 +90,14 @@ public final class SettingsViewModel
         
         return output
     }
+    
+    public func mailComposeController(
+        _ controller: MFMailComposeViewController,
+        didFinishWith result: MFMailComposeResult,
+        error: Error?
+    ) {
+        self.coordinator.dismissMail()
+    }
 }
 
 extension SettingsViewModel {

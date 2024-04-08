@@ -48,4 +48,8 @@ extension DefaultSettingsCoordinator: SettingsCoordinator {
             completion: nil
         )
     }
+    
+    public func dismissMail() {
+        navigationController.dismiss(animated: true)
+    }
 }

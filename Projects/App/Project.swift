@@ -19,17 +19,17 @@ let project = Project.makeProject(
 //            ]
 //        ),
         Project.appExtensionTarget(
-            name: "WidgetExtension",
+            name: "Widget",
             plist: .extendingDefault(
                 with: .widgetInfoPlist
             ),
             resources: [
                 "Resources/**",
-                "WidgetExtension/Resources/**",
+                "Widget/Resources/**",
             ],
             entitlements: .file(
                 path: .relativeToRoot(
-                    "Projects/App/WidgetExtension.entitlements"
+                    "Projects/App/Widget.entitlements"
                 )
             ),
             dependencies: [

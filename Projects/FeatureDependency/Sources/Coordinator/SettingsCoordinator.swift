@@ -4,4 +4,5 @@ public protocol SettingsCoordinator: Coordinator {
     func setDefaultAlarm()
     func presentPrivacy(url: String)
     func presentMail(vc: UIViewController)
+    func dismissMail()
 }
