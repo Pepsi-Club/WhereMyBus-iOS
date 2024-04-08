@@ -30,10 +30,14 @@ public final class FavoritesViewController: UIViewController {
         return imageView
     }()
     
-    private let searchBtn = SearchBusStopBtn(
-        title: "버스 정류장을 검색하세요",
-        image: UIImage(systemName: "magnifyingglass")
-    )
+    private let searchBtn: SearchBusStopBtn = {
+        let searchBtn = SearchBusStopBtn(
+            title: "버스 정류장을 검색하세요",
+            image: UIImage(systemName: "magnifyingglass")
+        )
+        searchBtn.accessibilityIdentifier = "홈에서 검색뷰로 네비게이션"
+        return searchBtn
+    }()
     
     private lazy var refreshBtn: UIButton = {
         var config = UIButton.Configuration.plain()
