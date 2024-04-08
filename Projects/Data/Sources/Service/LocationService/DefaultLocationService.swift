@@ -76,8 +76,7 @@ final public class DefaultLocationService: NSObject, LocationService {
         }
     }
 }
-// 앱 오픈 delegate = self
-// locationManagerDidChangeAuthorization
+
 extension DefaultLocationService: CLLocationManagerDelegate {
     public func locationManagerDidChangeAuthorization(
         _ manager: CLLocationManager
@@ -98,6 +97,7 @@ extension DefaultLocationService: CLLocationManagerDelegate {
         _ manager: CLLocationManager,
         didUpdateLocations locations: [CLLocation]
     ) {
+        // TODO: 위치정보가 비어있을 때 보여질 UI와 행동을 정의해야함
         guard let location = locations.first
         else { return }
         switch manager.authorizationStatus {
@@ -114,6 +114,7 @@ extension DefaultLocationService: CLLocationManagerDelegate {
         _ manager: CLLocationManager,
         didFailWithError error: Error
     ) {
+        // TODO: 에러발생시 보여질 UI와 행동을 정의해야함
         locationStatus.onError(error)
     }
 }
