@@ -26,21 +26,21 @@ final class RegularAlarmTVCell: UITableViewCell {
         )
         config.image = image
         config.preferredSymbolConfigurationForImage = imgConfig
-        config.baseForegroundColor = DesignSystemAsset.redBusColor.color
+        config.baseForegroundColor = DesignSystemAsset.lightRed.color
         let button = UIButton(configuration: config)
         return button
     }()
     
     private let busInfoLabel: UILabel = {
         let label = UILabel()
-        label.numberOfLines = 2
+        label.numberOfLines = 3
         label.textAlignment = .center
         return label
     }()
     
     private let alarmInfoLabel: UILabel = {
         let label = UILabel()
-        label.numberOfLines = 2
+        label.numberOfLines = 3
         label.textAlignment = .center
         return label
     }()
@@ -53,11 +53,11 @@ final class RegularAlarmTVCell: UITableViewCell {
         stackView.distribution = .equalCentering
         stackView.alignment = .center
         stackView.addDivider(
-            color: DesignSystemAsset.gray4.color,
+            color: DesignSystemAsset.gray2.color,
             hasPadding: true,
-            dividerRatio: 1
+            dividerRatio: 0.8
         )
-        stackView.backgroundColor = DesignSystemAsset.regularAlarmSky.color
+        stackView.backgroundColor = DesignSystemAsset.bottonBtnColor.color
         stackView.layer.cornerRadius = 10
         return stackView
     }()
@@ -105,23 +105,33 @@ final class RegularAlarmTVCell: UITableViewCell {
         let weekDayString = NSAttributedString(
             string: "매주 \(weekDay)요일\n",
             attributes: [
-                .font: DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(
+                .font: DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(
                     size: 15
                 ),
                 .foregroundColor: DesignSystemAsset.lightRed.color
             ]
         )
+        let divider = NSAttributedString(
+            string: " \n",
+            attributes: [
+                .font: DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(
+                    size: 3
+                ),
+                .foregroundColor: DesignSystemAsset.gray1.color
+            ]
+        )
         let timeString = NSAttributedString(
             string: time,
             attributes: [
-                .font: DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(
-                    size: 15
+                .font: DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(
+                    size: 14
                 ),
-                .foregroundColor: UIColor.black
+                .foregroundColor: DesignSystemAsset.gray1.color
             ]
         )
         let attrString = NSMutableAttributedString()
         attrString.append(weekDayString)
+        attrString.append(divider)
         attrString.append(timeString)
         alarmInfoLabel.attributedText = attrString
     }
@@ -136,20 +146,30 @@ final class RegularAlarmTVCell: UITableViewCell {
                 .font: DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(
                     size: 23
                 ),
-                .foregroundColor: DesignSystemAsset.regularAlarmBlue.color
+                .foregroundColor: DesignSystemAsset.settingSkyBlue.color
+            ]
+        )
+        let divider = NSAttributedString(
+            string: " \n",
+            attributes: [
+                .font: DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(
+                    size: 3
+                ),
+                .foregroundColor: UIColor.white
             ]
         )
         let busStopString = NSAttributedString(
             string: busStop,
             attributes: [
-                .font: DesignSystemFontFamily.NanumSquareNeoOTF.light.font(
-                    size: 15
+                .font: DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(
+                    size: 14
                 ),
-                .foregroundColor: UIColor.black
+                .foregroundColor: DesignSystemAsset.gray1.color
             ]
         )
         let attrString = NSMutableAttributedString()
         attrString.append(busString)
+        attrString.append(divider)
         attrString.append(busStopString)
         busInfoLabel.attributedText = attrString
     }
