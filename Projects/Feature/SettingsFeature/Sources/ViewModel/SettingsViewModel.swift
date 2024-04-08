@@ -31,7 +31,6 @@ public final class SettingsViewModel
         input.termsTapEvent
             .withUnretained(self)
             .subscribe(onNext: { viewModel, _ in
-                print("개인정보 tap")
                 guard let termsPrivacyURL
                         = Bundle.main.object(
                             forInfoDictionaryKey: "TERMS_OF_PRIVACY_URL"
@@ -44,7 +43,6 @@ public final class SettingsViewModel
         input.locationTapEvent
             .withUnretained(self)
             .subscribe(onNext: { viewModel, _ in
-                print("위치정보 탭")
                 guard let locationURL = Bundle.main.object(
                     forInfoDictionaryKey: "LOCATION_PRIVACY_URL"
                 ) as? String
@@ -58,7 +56,6 @@ public final class SettingsViewModel
             .withUnretained(self)
             .subscribe(onNext: { viewModel, _ in
                 if MFMailComposeViewController.canSendMail() {
-                    print("여기 ?")
                     let mailViewController = MFMailComposeViewController()
                     mailViewController.mailComposeDelegate = self
                     
@@ -82,7 +79,6 @@ public final class SettingsViewModel
                     
                     viewModel.coordinator.presentMail(vc: mailViewController)
                 } else {
-                    print("여기 ?????")
                     guard let inquryURL = Bundle.main.object(
                         forInfoDictionaryKey: "INQURY_URL"
                     ) as? String
