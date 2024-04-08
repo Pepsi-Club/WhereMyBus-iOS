@@ -42,6 +42,7 @@ public final class SearchViewController: UIViewController {
         table.backgroundColor = DesignSystemAsset.tableViewColor.color
         table.dataSource = recentSearchDataSource
         table.delegate = self
+        table.accessibilityIdentifier = "최근검색"
         return table
     }()
     
@@ -55,6 +56,7 @@ public final class SearchViewController: UIViewController {
         table.isHidden = true
         table.dataSource = searchedDataSource
         table.delegate = self
+        table.accessibilityIdentifier = "검색결과"
         return table
     }()
     
