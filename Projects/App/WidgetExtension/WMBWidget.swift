@@ -21,10 +21,12 @@ struct WMBWidget: Widget {
                 entry: entry
             )
         }
+        .supportedFamilies([.systemMedium])
     }
 }
 
-struct WidgetExtension_Preview: PreviewProvider {
+#if DEBUG
+struct WMBWidget_Preview: PreviewProvider {
     static var previews: some View {
         WMBWidgetView(
             entry: WMBEntry(
@@ -37,3 +39,4 @@ struct WidgetExtension_Preview: PreviewProvider {
         )
     }
 }
+#endif
