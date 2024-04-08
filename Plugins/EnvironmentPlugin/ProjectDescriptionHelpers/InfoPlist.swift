@@ -49,7 +49,8 @@ public extension [String: Plist.Value] {
         "DATA_GO_KR_API_KEY": "$(DATA_GO_KR_API_KEY)",
         "NMFClientId": "$(NAVERMAP_CLIENT_ID)",
         "TERMS_OF_PRIVACY_URL": "$(TERMS_OF_PRIVACY_URL)",
-        "LOCATION_PRIVACY_URL": "$(LOCATION_PRIVACY_URL)"
+        "LOCATION_PRIVACY_URL": "$(LOCATION_PRIVACY_URL)",
+        "INQURY_URL": "$(INQURY_URL)"
     ]
     
     static let additionalInfoPlist: Self = [

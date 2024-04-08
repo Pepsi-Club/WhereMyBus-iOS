@@ -89,7 +89,8 @@ public final class SettingsViewController: UIViewController {
                     termsTapEvent
                     : buttonsView.termsPrivacyBtn.rx.tap.asObservable(),
                     locationTapEvent
-                    : buttonsView.locationPrivacyBtn.rx.tap.asObservable()
+                    : buttonsView.locationPrivacyBtn.rx.tap.asObservable(),
+                    inquryTapEvent: buttonsView.inquryBtn.rx.tap.asObservable()
                 )
         )
     }
