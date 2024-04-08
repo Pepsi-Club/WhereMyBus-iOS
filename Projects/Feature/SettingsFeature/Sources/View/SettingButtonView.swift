@@ -23,7 +23,7 @@ class SettingButtonView: UIView {
         let view = SettingButton(
             iconName: "exclamationmark.circle",
             title: "프로그램 정보",
-            rightTitle: "v \(appVersion ?? "")",
+            rightTitle: "v \(String.getCurrentVersion())",
             isHiddenArrowRight: true
         )
         return view
@@ -55,13 +55,6 @@ class SettingButtonView: UIView {
         )
         return btn
     }()
-    
-    private var appVersion: String? {
-        guard let dictionary = Bundle.main.infoDictionary,
-              let version = dictionary["CFBundleShortVersionString"] as? String
-        else { return nil }
-        return version
-    }
     
     override init(frame: CGRect) {
         super.init(frame: .zero)
