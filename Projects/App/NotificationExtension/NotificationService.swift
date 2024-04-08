@@ -81,8 +81,11 @@ class NotificationService: UNNotificationServiceExtension {
                     }
                     firstLine = "\(routeMessage) \(remainingMessage)"
                     let body = [firstLine, secondLine].joined(separator: " ")
-                    // TODO: 앱 이름 변경되면 수정해야함
-                    bestAttemptContent.title = "버스어디"
+                    if let appName = Bundle.main.object(
+                        forInfoDictionaryKey: "CFBundleDisplayName"
+                    ) as? String {
+                        bestAttemptContent.title = appName
+                    }
                     bestAttemptContent.subtitle = ""
                     bestAttemptContent.body = body
                     contentHandler(bestAttemptContent)

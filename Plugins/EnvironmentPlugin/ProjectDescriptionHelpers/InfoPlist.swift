@@ -96,7 +96,7 @@ public extension [String: Plist.Value] {
         "DATA_GO_KR_API_KEY": "$(DATA_GO_KR_API_KEY)",
         "CFBundleShortVersionString": .bundleShortVersionString,
         "CFBundleVersion": .bundleVersion,
-        "CFBundleDisplayName": "$(PRODUCT_NAME)",
+        "CFBundleDisplayName": .bundleDisplayName,
         "NSExtension": [
             "NSExtensionPointIdentifier": "com.apple.usernotifications.service",
             "NSExtensionPrincipalClass": "$(PRODUCT_MODULE_NAME).NotificationService"
@@ -115,7 +115,7 @@ public extension [String: Plist.Value] {
         "DATA_GO_KR_API_KEY": "$(DATA_GO_KR_API_KEY)",
         "CFBundleShortVersionString": .bundleShortVersionString,
         "CFBundleVersion": .bundleVersion,
-        "CFBundleDisplayName": "$(PRODUCT_NAME)",
+        "CFBundleDisplayName": .bundleDisplayName,
         "CFBundlePackageType": "$(PRODUCT_BUNDLE_PACKAGE_TYPE)",
         "NSExtension": [
             "NSExtensionPointIdentifier": "com.apple.widgetkit-extension",
