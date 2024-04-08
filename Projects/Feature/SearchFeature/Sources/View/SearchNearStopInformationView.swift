@@ -12,9 +12,11 @@ import Core
 import DesignSystem
 
 final class SearchNearStopInformationView: UIButton {
+    
     private let busStopImage: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "pin.fill")
+        imageView.tintColor = .black
         return imageView
     }()
     
@@ -77,6 +79,7 @@ final class SearchNearStopInformationView: UIButton {
     
     private func configureUI() {
         backgroundColor = UIColor.white
+        let symbolSize = 35
         
         [
             busStopImage,
@@ -90,12 +93,19 @@ final class SearchNearStopInformationView: UIButton {
             }
         
         NSLayoutConstraint.activate([
+            
             busStopImage.centerYAnchor.constraint(
                 equalTo: centerYAnchor
             ),
             busStopImage.leadingAnchor.constraint(
                 equalTo: leadingAnchor,
-                constant: 15
+                constant: 20
+            ),
+            busStopImage.heightAnchor.constraint(
+                equalToConstant: CGFloat(symbolSize)
+            ),
+            busStopImage.widthAnchor.constraint(
+                equalToConstant: CGFloat(symbolSize)
             ),
             
             nearStopLabel.leadingAnchor.constraint(
