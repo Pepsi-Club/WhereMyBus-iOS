@@ -21,8 +21,8 @@ final class AddRegularAlarmViewController: UIViewController {
     
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(
-            size: 22
+        label.font = DesignSystemFontFamily.NanumSquareNeoOTF.extraBold.font(
+            size: 23
         )
         label.textAlignment = .left
         label.textColor = .black
