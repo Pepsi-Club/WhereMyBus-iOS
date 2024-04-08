@@ -105,7 +105,7 @@ final class RegularAlarmTVCell: UITableViewCell {
         let weekDayString = NSAttributedString(
             string: "매주 \(weekDay)요일\n",
             attributes: [
-                .font: DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(
+                .font: DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(
                     size: 15
                 ),
                 .foregroundColor: DesignSystemAsset.lightRed.color
@@ -115,7 +115,7 @@ final class RegularAlarmTVCell: UITableViewCell {
             string: " \n",
             attributes: [
                 .font: DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(
-                    size: 3
+                    size: 5
                 ),
                 .foregroundColor: DesignSystemAsset.gray1.color
             ]
@@ -123,8 +123,8 @@ final class RegularAlarmTVCell: UITableViewCell {
         let timeString = NSAttributedString(
             string: time,
             attributes: [
-                .font: DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(
-                    size: 14
+                .font: DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(
+                    size: 17
                 ),
                 .foregroundColor: DesignSystemAsset.gray1.color
             ]
@@ -143,10 +143,10 @@ final class RegularAlarmTVCell: UITableViewCell {
         let busString = NSAttributedString(
             string: bus + "\n",
             attributes: [
-                .font: DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(
+                .font: DesignSystemFontFamily.NanumSquareNeoOTF.extraBold.font(
                     size: 23
                 ),
-                .foregroundColor: DesignSystemAsset.settingSkyBlue.color
+                .foregroundColor: DesignSystemAsset.gray1.color
             ]
         )
         let divider = NSAttributedString(

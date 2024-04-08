@@ -56,7 +56,7 @@ public final class BusStopInformationView: UIView {
 	
     private let separationView: UIView = {
 		let view = UIView()
-		view.backgroundColor = DesignSystemAsset.gray5.color
+		view.backgroundColor = DesignSystemAsset.gray1.color
 		return view
 	}()
 	
