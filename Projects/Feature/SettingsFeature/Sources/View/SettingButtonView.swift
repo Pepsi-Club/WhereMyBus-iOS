@@ -46,6 +46,16 @@ class SettingButtonView: UIView {
         )
         return btn
     }()
+    public lazy var inquryBtn: SettingButton = {
+        let btn = SettingButton(
+            iconName: "questionmark.circle",
+            title: "문의하기",
+            rightTitle: "",
+            isHiddenArrowRight: false
+        )
+        return btn
+    }()
+    
     private var appVersion: String? {
         guard let dictionary = Bundle.main.infoDictionary,
               let version = dictionary["CFBundleShortVersionString"] as? String
@@ -64,8 +74,8 @@ class SettingButtonView: UIView {
     }
     
     private func configureUI() {
-        [developVersion,
-         termsPrivacyBtn, locationPrivacyBtn]
+        [developVersion, termsPrivacyBtn,
+         locationPrivacyBtn, inquryBtn]
             .forEach { components in
                 components.translatesAutoresizingMaskIntoConstraints = false
                 components.heightAnchor.constraint(
@@ -91,8 +101,21 @@ class SettingButtonView: UIView {
 //                equalTo: basicAlarmSetting.bottomAnchor,
 //                constant: 20
 //            ),
-            termsPrivacyBtn.topAnchor.constraint(
+            inquryBtn.topAnchor.constraint(
                 equalTo: topAnchor
+            ),
+            inquryBtn.leadingAnchor.constraint(
+                equalTo: leadingAnchor
+            ),
+            inquryBtn.trailingAnchor.constraint(
+                equalTo: trailingAnchor
+            ),
+            inquryBtn.widthAnchor.constraint(
+                equalTo: widthAnchor
+            ),
+            termsPrivacyBtn.topAnchor.constraint(
+                equalTo: inquryBtn.bottomAnchor,
+                constant: 20
             ),
             termsPrivacyBtn.leadingAnchor.constraint(
                 equalTo: leadingAnchor
@@ -129,7 +152,6 @@ class SettingButtonView: UIView {
             developVersion.widthAnchor.constraint(
                 equalTo: widthAnchor
             ),
-            
         ])
     }
     

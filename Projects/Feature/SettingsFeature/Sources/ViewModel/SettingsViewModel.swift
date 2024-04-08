@@ -5,7 +5,10 @@ import FeatureDependency
 
 import RxSwift
 
-public final class SettingsViewModel: ViewModel {
+import MessageUI
+
+public final class SettingsViewModel
+: NSObject, ViewModel, MFMailComposeViewControllerDelegate {
     private let coordinator: SettingsCoordinator
     private let disposeBag = DisposeBag()
     
@@ -51,7 +54,71 @@ public final class SettingsViewModel: ViewModel {
             })
             .disposed(by: disposeBag)
         
+        input.inquryTapEvent
+            .withUnretained(self)
+            .subscribe(onNext: { viewModel, _ in
+                if MFMailComposeViewController.canSendMail() {
+                    print("여기 ?")
+                    let mailViewController = MFMailComposeViewController()
+                    mailViewController.mailComposeDelegate = self
+                    
+                    let bodyString = 
+                             """
+                             이곳에 문의 내용을 작성해주세요.
+                             ex) 버스 정류장 데이터 이상, 버스 데이터 이상 등
+                             
+                             ------------
+                             
+                             Device Model : \(self.getDeviceIdentifier())
+                             Device OS : \(UIDevice.current.systemVersion)
+                             App Version : \(self.getCurrentVersion())
+                             
+                             ------------
+                             """
+                    
+                    mailViewController.setToRecipients(["modynic12@gmail.com"])
+                    mailViewController.setSubject("[버스어디] 문의하기")
+                    mailViewController.setMessageBody(bodyString, isHTML: false)
+                    
+                    viewModel.coordinator.presentMail(vc: mailViewController)
+                } else {
+                    print("여기 ?????")
+                    guard let inquryURL = Bundle.main.object(
+                        forInfoDictionaryKey: "INQURY_URL"
+                    ) as? String
+                    else { return }
+                    viewModel.coordinator.presentPrivacy(url: inquryURL)
+                }
+            })
+            .disposed(by: disposeBag)
+        
         return output
+    }
+    
+    // Device Identifier 찾기
+    private func getDeviceIdentifier() -> String {
+        var systemInfo = utsname()
+        uname(&systemInfo)
+        let machineMirror = Mirror(reflecting: systemInfo.machine)
+        let identifier 
+        = machineMirror.children.reduce("") { identifier, element in
+            guard let value = element.value as? Int8,
+                  value != 0
+            else { return identifier }
+            
+            return identifier + String(UnicodeScalar(UInt8(value)))
+        }
+        print("🆕 : \(identifier)")
+        return identifier
+    }
+
+    // 현재 버전 가져오기
+    private func getCurrentVersion() -> String {
+        guard let dictionary = Bundle.main.infoDictionary,
+              let version = dictionary["CFBundleShortVersionString"] as? String
+        else { return "" }
+        
+        return version
     }
 }
 
@@ -60,6 +127,7 @@ extension SettingsViewModel {
 //        let defaultAlarmTapEvent: Observable<Void>
         let termsTapEvent: Observable<Void>
         let locationTapEvent: Observable<Void>
+        let inquryTapEvent: Observable<Void>
     }
     
     public struct Output {

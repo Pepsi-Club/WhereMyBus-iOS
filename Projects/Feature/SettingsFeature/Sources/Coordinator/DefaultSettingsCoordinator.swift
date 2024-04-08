@@ -40,4 +40,12 @@ extension DefaultSettingsCoordinator: SettingsCoordinator {
         )
         navigationController.pushViewController(privacyVC, animated: true)
     }
+    
+    public func presentMail(vc: UIViewController) {
+        navigationController.present(
+            vc,
+            animated: true,
+            completion: nil
+        )
+    }
 }
