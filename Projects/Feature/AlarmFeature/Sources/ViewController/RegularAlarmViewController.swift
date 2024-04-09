@@ -35,7 +35,11 @@ public final class RegularAlarmViewController: UIViewController {
         return tableView
     }()
     
-    private let addBtn = BottomButton(title: "추가하기")
+    private let addBtn: BottomButton = {
+        let addBtn = BottomButton(title: "추가하기")
+        addBtn.accessibilityIdentifier = "정규알람 추가하기"
+        return addBtn
+    }()
     
     public init(viewModel: RegularAlarmViewModel) {
         self.viewModel = viewModel

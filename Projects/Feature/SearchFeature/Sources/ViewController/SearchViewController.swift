@@ -18,7 +18,11 @@ public final class SearchViewController: UIViewController {
     private var recentSearchDataSource: RecentSearchDataSource!
     private var searchedDataSource: SearchedDataSource!
     
-    private let searchTextFieldView = SearchTextFieldView()
+    private let searchTextFieldView: SearchTextFieldView = {
+        let textFieldView = SearchTextFieldView()
+        textFieldView.accessibilityIdentifier = "정류장 검색"
+        return textFieldView
+    }()
     
     private let recentSearchBGView = SearchTVBackgroundView(
         text: "최근 검색된 정류장이 없습니다"
@@ -42,6 +46,7 @@ public final class SearchViewController: UIViewController {
         table.backgroundColor = DesignSystemAsset.tableViewColor.color
         table.dataSource = recentSearchDataSource
         table.delegate = self
+        table.accessibilityIdentifier = "최근검색"
         return table
     }()
     
@@ -55,6 +60,7 @@ public final class SearchViewController: UIViewController {
         table.isHidden = true
         table.dataSource = searchedDataSource
         table.delegate = self
+        table.accessibilityIdentifier = "검색결과"
         return table
     }()
     

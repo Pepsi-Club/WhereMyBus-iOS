@@ -5,4 +5,7 @@ storage_mode("git")
 
 type("appstore")
 
-app_identifier(["com.Pepsi-Club.WhereMyBus"])
+app_identifier([
+    "com.Pepsi-Club.WhereMyBus",
+    "com.Pepsi-Club.WhereMyBus.Widget"
+])
