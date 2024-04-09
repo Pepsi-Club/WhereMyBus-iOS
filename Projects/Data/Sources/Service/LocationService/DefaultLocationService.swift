@@ -87,9 +87,10 @@ extension DefaultLocationService: CLLocationManagerDelegate {
         case .restricted, .denied:
             locationStatus.onNext(.denied)
         case .authorizedAlways, .authorizedWhenInUse:
+            locationStatus.onNext(.waitingForLocation)
             locationManager.requestLocation()
         @unknown default:
-            locationStatus.onNext(.unknown)
+            locationStatus.onNext(.error)
         }
     }
     
@@ -97,9 +98,11 @@ extension DefaultLocationService: CLLocationManagerDelegate {
         _ manager: CLLocationManager,
         didUpdateLocations locations: [CLLocation]
     ) {
-        // TODO: 위치정보가 비어있을 때 보여질 UI와 행동을 정의해야함
         guard let location = locations.first
-        else { return }
+        else {
+            locationStatus.onNext(.error)
+            return
+        }
         switch manager.authorizationStatus {
         case .authorizedAlways:
             locationStatus.onNext(.alwaysAllowed(location))
@@ -114,7 +117,6 @@ extension DefaultLocationService: CLLocationManagerDelegate {
         _ manager: CLLocationManager,
         didFailWithError error: Error
     ) {
-        // TODO: 에러발생시 보여질 UI와 행동을 정의해야함
-        locationStatus.onError(error)
+        locationStatus.onNext(.error)
     }
 }
