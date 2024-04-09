@@ -42,6 +42,7 @@ public final class DefaultNearMapUseCase: NearMapUseCase {
                 var response: BusStopInfoResponse
                 var distanceStr: String
                 let requestMessage = "위치 사용을 허용해주세요"
+                let waitingMessage = "위치 정보 가져오는 중..."
                 let errorMessage = "위치 정보를 가져올 수 없습니다"
                 switch status {
                 case .authorized(let location), .alwaysAllowed(let location):
@@ -49,13 +50,13 @@ public final class DefaultNearMapUseCase: NearMapUseCase {
                         .getNearByStopInfo(startPointLocation: location)
                 case .waitingForLocation:
                     response = .init(
-                        busStopName: requestMessage,
+                        busStopName: waitingMessage,
                         busStopId: "",
                         direction: "",
                         longitude: "126.979620",
                         latitude: "37.570028"
                     )
-                    distanceStr = "위치 정보를 가져오는 중..."
+                    distanceStr = ""
                 case .notDetermined, .denied:
                     response = .init(
                         busStopName: requestMessage,
