@@ -15,8 +15,7 @@ final class SearchNearStopInformationView: UIButton {
     
     private let busStopImage: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(systemName: "pin.fill")
-        imageView.tintColor = .black
+        imageView.image = DesignSystemAsset.busStopImage1.image
         return imageView
     }()
     
@@ -24,28 +23,27 @@ final class SearchNearStopInformationView: UIButton {
         let label = UILabel()
         label.textColor = .black
         label.font =
-        DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(size: 16)
-        label.textColor = .black
-        label.text = "주변 정류장"
+        DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(size: 14)
+        label.textColor = DesignSystemAsset.settingColor.color
+        label.text = "내 주변 가장 가까운 정류장은?"
         return label
     }()
     
     private let nearStopNameLabel: UILabel = {
         let label = UILabel()
         label.font =
-        DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(size: 14)
+        DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(size: 15)
         label.numberOfLines = 2
         label.adjustsFontForContentSizeCategory = true
         label.minimumScaleFactor = 0.7
         label.sizeToFit()
-        label.textColor = DesignSystemAsset.gray6.color
+        label.textColor = DesignSystemAsset.gray5.color
         return label
     }()
     
     private let distanceLabel: UILabel = {
         let label = UILabel()
-        label.font =
-        DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(size: 15)
+        label.font = .nanumBold(size: 15)
         label.textColor = DesignSystemAsset.lightRed.color
         return label
     }()
@@ -78,8 +76,8 @@ final class SearchNearStopInformationView: UIButton {
     }
     
     private func configureUI() {
-        backgroundColor = UIColor.white
-        let symbolSize = 35
+        backgroundColor = DesignSystemAsset.gray2.color
+        let symbolSize = 45
         
         [
             busStopImage,

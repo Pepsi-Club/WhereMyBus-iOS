@@ -146,7 +146,7 @@ public final class SearchViewController: UIViewController {
         
         [
             recentSearchHeaderView,
-            nearByStopPaddingView,
+           // nearByStopPaddingView,
             nearByStopView,
             recentSearchTableView,
             searchedStopTableView,
