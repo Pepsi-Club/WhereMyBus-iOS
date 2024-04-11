@@ -72,9 +72,9 @@ final class SearchNearStopInformationView: UIButton {
         layer.masksToBounds = false
         layer.cornerRadius = 10
         layer.shadowColor = UIColor.black.cgColor
-        layer.shadowOffset = CGSize(width: 0, height: 4)
+        layer.shadowOffset = CGSize(width: 0, height: 2)
         layer.shadowOpacity = 0.4
-        layer.shadowRadius = 4
+        layer.shadowRadius = 2
     }
     
     private func configureUI() {
