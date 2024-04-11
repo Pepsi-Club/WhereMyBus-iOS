@@ -14,7 +14,7 @@ final class SearchTVBackgroundView: UIView {
     let descriptionLabel: UILabel = {
         let label = UILabel()
         let font = DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(
-            size: 14
+            size: 13
         )
         label.font = font
         label.textAlignment = .center

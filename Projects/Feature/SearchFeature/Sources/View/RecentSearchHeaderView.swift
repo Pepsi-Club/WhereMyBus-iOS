@@ -19,7 +19,7 @@ public final class SearchTVHeaderView: UIView {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.font =
-        DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(size: 15)
+        DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(size: 16)
         label.textColor = DesignSystemAsset.settingColor.color
         return label
     }()
@@ -27,7 +27,7 @@ public final class SearchTVHeaderView: UIView {
     private let actionBtn: UIButton = {
         let button = UIButton()
         button.titleLabel?.font
-        = DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(size: 15)
+        = DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(size: 16)
         button.setTitleColor(
             DesignSystemAsset.gray5.color,
             for: .normal

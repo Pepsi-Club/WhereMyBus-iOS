@@ -29,7 +29,7 @@ public final class SettingButton: UIButton {
         let label = UILabel()
         label.numberOfLines = 1
         label.font
-        = DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(size: 15)
+        = DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(size: 16)
         label.textColor = DesignSystemAsset.settingColor.color
         label.text = title
         return label
