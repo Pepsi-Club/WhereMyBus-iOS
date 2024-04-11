@@ -15,9 +15,7 @@ import Domain
 class FavoritesTVCell: UITableViewCell {
     private let routeLabel: UILabel = {
         let label = UILabel()
-        label.font = DesignSystemFontFamily.NanumSquareNeoOTF.extraBold.font(
-            size: 18
-        )
+        label.font = .nanumHeavy(size: 18)
         label.textColor = DesignSystemAsset.limeGreen.color
         label.adjustsFontSizeToFitWidth = true
         label.minimumScaleFactor = 0.6

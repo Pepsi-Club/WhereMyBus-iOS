@@ -24,7 +24,7 @@ final class EmptyRegularAlarmView: UIView {
         )
         label.textColor = DesignSystemAsset.gray6.color
         label.textAlignment = .center
-        label.numberOfLines = 2
+        label.numberOfLines = 3
         let message1 = NSAttributedString(
             string: "특정 시간대에 자주 타는 버스가 있다면?\n",
             attributes: [
@@ -42,8 +42,18 @@ final class EmptyRegularAlarmView: UIView {
                 .foregroundColor: DesignSystemAsset.bottonBtnColor.color
             ]
         )
+        let padding = NSAttributedString(
+            string: "\n",
+            attributes: [
+                .font: DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(
+                    size: 4
+                ),
+                .foregroundColor: DesignSystemAsset.bottonBtnColor.color
+            ]
+        )
         let attributedString = NSMutableAttributedString()
         attributedString.append(message1)
+        attributedString.append(padding)
         attributedString.append(message2)
         label.attributedText = attributedString
         return label
