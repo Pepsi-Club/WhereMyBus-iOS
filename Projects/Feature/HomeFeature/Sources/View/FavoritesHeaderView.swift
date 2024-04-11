@@ -67,6 +67,10 @@ internal final class FavoritesHeaderView: UITableViewHeaderFooterView {
                 equalTo: directionLabel.topAnchor,
                 constant: -5
             ),
+            busStopNameLabel.trailingAnchor.constraint(
+                equalTo: contentView.trailingAnchor,
+                constant: -20
+            ),
             
             directionLabel.leadingAnchor.constraint(
                 equalTo: contentView.leadingAnchor,
