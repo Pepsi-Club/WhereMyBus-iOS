@@ -57,11 +57,15 @@ public final class DefaultRegularAlarmRepository: RegularAlarmRepository {
                     repository.fetchRegularAlarm()
                     completion()
                 } catch {
+                    #if DEBUG
                     print(error.localizedDescription)
+                    #endif
                 }
             },
             onError: { error in
+                #if DEBUG
                 print(error.localizedDescription)
+                #endif
             }
         )
         .disposed(by: disposeBag)
@@ -109,11 +113,15 @@ public final class DefaultRegularAlarmRepository: RegularAlarmRepository {
                     repository.fetchRegularAlarm()
                     completion()
                 } catch {
+                    #if DEBUG
                     print(error.localizedDescription)
+                    #endif
                 }
             },
             onError: { error in
+                #if DEBUG
                 print(error.localizedDescription)
+                #endif
             }
         )
         .disposed(by: disposeBag)

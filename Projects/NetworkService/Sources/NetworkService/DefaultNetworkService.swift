@@ -38,6 +38,7 @@ public final class DefaultNetworkService: NetworkService {
                             httpURLResponse.statusCode
                         )
                     )
+                    #if DEBUG
                     if let url = urlRequest.url,
                        let httpMethod = urlRequest.httpMethod,
                        let data = urlRequest.httpBody,
@@ -61,6 +62,7 @@ public final class DefaultNetworkService: NetworkService {
                             json
                         )
                     }
+                    #endif
                     return
                 }
                 

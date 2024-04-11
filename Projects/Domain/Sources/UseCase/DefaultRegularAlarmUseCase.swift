@@ -38,7 +38,9 @@ public class DefaultRegularAlarmUseCase: RegularAlarmUseCase {
     
     public func removeAlarm(response: RegularAlarmResponse) throws {
         regularAlarmRepository.deleteRegularAlarm(response: response) {
+            #if DEBUG
             print("Remove completed")
+            #endif
         }
     }
     
@@ -102,7 +104,9 @@ public class DefaultRegularAlarmUseCase: RegularAlarmUseCase {
         do {
             try localNotificationService.removeRegularAlarm(response: response)
         } catch {
+            #if DEBUG
             print(error.localizedDescription)
+            #endif
         }
     }
 }

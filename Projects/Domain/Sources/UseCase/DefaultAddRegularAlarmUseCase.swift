@@ -28,13 +28,17 @@ public final class DefaultAddRegularAlarmUseCase: AddRegularAlarmUseCase {
     
     public func addNewAlarm(response: RegularAlarmResponse) {
         regularAlarmRepository.createRegularAlarm(response: response) {
+            #if DEBUG
             print("Create Completed")
+            #endif
         }
     }
     
     public func editAlarm(response: RegularAlarmResponse) {
         regularAlarmRepository.updateRegularAlarm(response: response) {
+            #if DEBUG
             print("Update Completed")
+            #endif
         }
     }
 }

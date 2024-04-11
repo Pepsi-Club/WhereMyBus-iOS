@@ -22,9 +22,11 @@ public final class DefaultCoreDataService: CoreDataService {
             forKey: NSPersistentHistoryTrackingKey
         )
         container.loadPersistentStores { _, error in
+            #if DEBUG
             if let error {
                 print(error.localizedDescription)
             }
+            #endif
         }
     }
     

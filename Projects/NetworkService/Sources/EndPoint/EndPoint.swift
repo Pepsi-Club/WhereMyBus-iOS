@@ -47,7 +47,9 @@ extension EndPoint {
                 let httpBody = try JSONSerialization.data(withJSONObject: body)
                 urlRequest.httpBody = httpBody
             } catch {
+                #if DEBUG
                 print(error.localizedDescription)
+                #endif
             }
         }
         return urlRequest

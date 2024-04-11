@@ -61,7 +61,9 @@ public final class RegularAlarmViewModel: ViewModel {
                     do {
                         try viewModel.useCase.removeAlarm(response: response)
                     } catch {
+                        #if DEBUG
                         print(error.localizedDescription)
+                        #endif
                     }
                 }
             )
