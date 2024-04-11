@@ -20,8 +20,8 @@ public final class RegularAlarmViewController: UIViewController {
         label.font = DesignSystemFontFamily.NanumSquareNeoOTF.extraBold.font(
             size: 25
         )
-        label.text = "정기 알람"
-        label.textColor = .black
+        label.text = "정기알람"
+        label.textColor = DesignSystemAsset.settingColor.color
         return label
     }()
     
@@ -76,7 +76,10 @@ public final class RegularAlarmViewController: UIViewController {
         let safeArea = view.safeAreaLayoutGuide
         
         NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: safeArea.topAnchor),
+            titleLabel.topAnchor.constraint(
+                equalTo: safeArea.topAnchor,
+                constant: 15
+            ),
             titleLabel.leadingAnchor.constraint(
                 equalTo: safeArea.leadingAnchor,
                 constant: 20

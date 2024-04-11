@@ -55,7 +55,8 @@ public final class SettingsViewController: UIViewController {
         
         NSLayoutConstraint.activate([
             titleLabel.topAnchor.constraint(
-                equalTo: view.safeAreaLayoutGuide.topAnchor
+                equalTo: view.safeAreaLayoutGuide.topAnchor,
+                constant: 15
             ),
             titleLabel.leadingAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.leadingAnchor,

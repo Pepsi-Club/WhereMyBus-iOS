@@ -71,7 +71,7 @@ final class EmptyRegularAlarmView: UIView {
     private func configureUI() {
         backgroundColor = .white
         
-        [imageView, messageLabel].forEach {
+        [messageLabel].forEach {
             addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
@@ -82,9 +82,6 @@ final class EmptyRegularAlarmView: UIView {
                 equalTo: centerYAnchor,
                 constant: -50
             ),
-            
-            imageView.centerXAnchor.constraint(equalTo: centerXAnchor),
-            imageView.bottomAnchor.constraint(equalTo: messageLabel.topAnchor),
         ])
     }
 }

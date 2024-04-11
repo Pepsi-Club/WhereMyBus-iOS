@@ -26,21 +26,21 @@ final class RegularAlarmTVCell: UITableViewCell {
         )
         config.image = image
         config.preferredSymbolConfigurationForImage = imgConfig
-        config.baseForegroundColor = DesignSystemAsset.redBusColor.color
+        config.baseForegroundColor = DesignSystemAsset.gray5.color
         let button = UIButton(configuration: config)
         return button
     }()
     
     private let busInfoLabel: UILabel = {
         let label = UILabel()
-        label.numberOfLines = 2
+        label.numberOfLines = 3
         label.textAlignment = .center
         return label
     }()
     
     private let alarmInfoLabel: UILabel = {
         let label = UILabel()
-        label.numberOfLines = 2
+        label.numberOfLines = 3
         label.textAlignment = .center
         return label
     }()
@@ -53,11 +53,12 @@ final class RegularAlarmTVCell: UITableViewCell {
         stackView.distribution = .equalCentering
         stackView.alignment = .center
         stackView.addDivider(
-            color: DesignSystemAsset.gray4.color,
+            color: .white,
             hasPadding: true,
-            dividerRatio: 1
+            dividerRatio: 1.0
         )
-        stackView.backgroundColor = DesignSystemAsset.regularAlarmSky.color
+        stackView.backgroundColor =
+            DesignSystemAsset.weekDayBlue.color.withAlphaComponent(0.3)
         stackView.layer.cornerRadius = 10
         return stackView
     }()
@@ -111,17 +112,28 @@ final class RegularAlarmTVCell: UITableViewCell {
                 .foregroundColor: DesignSystemAsset.lightRed.color
             ]
         )
+        let paddingString = NSAttributedString(
+            string: " \n",
+            attributes: [
+                .font: DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(
+                    size: 4
+                ),
+                .foregroundColor: DesignSystemAsset.lightRed.color
+            ]
+        )
         let timeString = NSAttributedString(
             string: time,
             attributes: [
                 .font: DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(
                     size: 15
                 ),
-                .foregroundColor: UIColor.black
+                .foregroundColor: DesignSystemAsset.settingColor.color
             ]
         )
+        
         let attrString = NSMutableAttributedString()
         attrString.append(weekDayString)
+        attrString.append(paddingString)
         attrString.append(timeString)
         alarmInfoLabel.attributedText = attrString
     }
@@ -134,9 +146,18 @@ final class RegularAlarmTVCell: UITableViewCell {
             string: bus + "\n",
             attributes: [
                 .font: DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(
-                    size: 23
+                    size: 19
                 ),
                 .foregroundColor: DesignSystemAsset.regularAlarmBlue.color
+            ]
+        )
+        let paddingString = NSAttributedString(
+            string: " \n",
+            attributes: [
+                .font: DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(
+                    size: 4
+                ),
+                .foregroundColor: DesignSystemAsset.lightRed.color
             ]
         )
         let busStopString = NSAttributedString(
@@ -148,8 +169,10 @@ final class RegularAlarmTVCell: UITableViewCell {
                 .foregroundColor: UIColor.black
             ]
         )
+        
         let attrString = NSMutableAttributedString()
         attrString.append(busString)
+        attrString.append(paddingString)
         attrString.append(busStopString)
         busInfoLabel.attributedText = attrString
     }
