@@ -31,7 +31,7 @@ struct WMBWidgetView: View {
                 arrivalInfoView
             }
         }
-        .widgetBackground(Color.white)
+        //.widgetBackground(Color.white)
         .widgetURL(url)
     }
     
@@ -71,17 +71,17 @@ struct WMBWidgetView: View {
     }
 }
 
-extension View {
-    func widgetBackground(_ backgroundView: some View) -> some View {
-        if #available(iOSApplicationExtension 17.0, *) {
-            return containerBackground(for: .widget) {
-                backgroundView
-            }
-        } else {
-            return background(backgroundView)
-        }
-    }
-}
+//extension View {
+//    func widgetBackground(_ backgroundView: some View) -> some View {
+//        if #available(iOSApplicationExtension 17.0, *) {
+//            return containerBackground(for: .widget) {
+//                backgroundView
+//            }
+//        } else {
+//            return background(backgroundView)
+//        }
+//    }
+//}
 
 #if DEBUG
 struct WMBWidgetView_Preview: PreviewProvider {
