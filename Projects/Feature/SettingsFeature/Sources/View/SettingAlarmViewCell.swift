@@ -12,7 +12,6 @@ import DesignSystem
 
 import RxSwift
 
-// MARK: 걱정,, 이렇게 짜면 rx 연결할때 개고생할거같아서 눈물남
 final class SettingAlarmViewCell: UITableViewCell {
     private var disposeBag = DisposeBag()
 

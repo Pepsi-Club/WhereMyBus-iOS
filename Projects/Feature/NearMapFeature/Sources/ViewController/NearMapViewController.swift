@@ -102,11 +102,11 @@ public final class NearMapViewController: UIViewController {
             ),
             busStopInformationView.leadingAnchor.constraint(
                 equalTo: safeArea.leadingAnchor,
-                constant: 10
+                constant: 7
             ),
             busStopInformationView.trailingAnchor.constraint(
                 equalTo: safeArea.trailingAnchor,
-                constant: -10
+                constant: -7
             ),
             busStopInformationView.heightAnchor.constraint(
                 equalToConstant: 130
@@ -117,11 +117,11 @@ public final class NearMapViewController: UIViewController {
             ),
             naverMap.leadingAnchor.constraint(
                 equalTo: safeArea.leadingAnchor,
-                constant: 5
+                constant: 7
             ),
             naverMap.trailingAnchor.constraint(
                 equalTo: safeArea.trailingAnchor,
-                constant: -5
+                constant: -7
             ),
             naverMap.bottomAnchor.constraint(
                 equalTo: busStopInformationView.topAnchor,

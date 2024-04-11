@@ -17,11 +17,11 @@ internal final class FavoritesHeaderView: UITableViewHeaderFooterView {
     var disposeBag = DisposeBag()
     private let busStopNameLabel: UILabel = {
         let label = UILabel()
-        label.font = DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(
-            size: 18
+        label.font = DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(
+            size: 16
         )
         label.textAlignment = .left
-        label.textColor = .black
+        label.textColor = DesignSystemAsset.settingColor.color
         return label
     }()
     
@@ -60,6 +60,14 @@ internal final class FavoritesHeaderView: UITableViewHeaderFooterView {
         }
         
         NSLayoutConstraint.activate([
+            busStopNameLabel.leadingAnchor.constraint(
+                equalTo: directionLabel.leadingAnchor
+            ),
+            busStopNameLabel.bottomAnchor.constraint(
+                equalTo: directionLabel.topAnchor,
+                constant: -5
+            ),
+            
             directionLabel.leadingAnchor.constraint(
                 equalTo: contentView.leadingAnchor,
                 constant: 20
@@ -67,13 +75,6 @@ internal final class FavoritesHeaderView: UITableViewHeaderFooterView {
             directionLabel.bottomAnchor.constraint(
                 equalTo: contentView.bottomAnchor,
                 constant: -10
-            ),
-            
-            busStopNameLabel.leadingAnchor.constraint(
-                equalTo: directionLabel.leadingAnchor
-            ),
-            busStopNameLabel.bottomAnchor.constraint(
-                equalTo: directionLabel.topAnchor
             ),
         ])
     }

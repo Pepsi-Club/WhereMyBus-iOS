@@ -12,38 +12,21 @@ import Core
 import DesignSystem
 
 final class SearchNearStopInformationView: UIButton {
-    private let busStopImageView: UIImageView = {
-        let symbolName = "pin.fill"
-
-        var configuration = UIImage.SymbolConfiguration(
-            pointSize: 35,
-            weight: .bold
-        )
-        configuration = configuration.applying(
-            UIImage.SymbolConfiguration(
-                font: UIFont.systemFont(ofSize: 25, weight: .bold),
-                scale: .default
-            )
-        )
-        
-        let pinImage = UIImage(
-            systemName: symbolName,
-            withConfiguration: configuration
-        )?.withTintColor(.black)
-
-        let pinImageView = UIImageView(image: pinImage)
-        pinImageView.tintColor = .black
-
-        return pinImageView
+    
+    private let busStopImage: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(systemName: "pin.fill")
+        imageView.tintColor = .black
+        return imageView
     }()
-
+    
     private let nearStopLabel: UILabel = {
         let label = UILabel()
         label.textColor = .black
         label.font =
         DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(size: 16)
         label.textColor = .black
-        label.text = "주변정류장"
+        label.text = "주변 정류장"
         return label
     }()
     
@@ -96,9 +79,10 @@ final class SearchNearStopInformationView: UIButton {
     
     private func configureUI() {
         backgroundColor = UIColor.white
+        let symbolSize = 35
         
         [
-            busStopImageView,
+            busStopImage,
             nearStopLabel,
             nearStopNameLabel,
             distanceLabel,
@@ -109,16 +93,23 @@ final class SearchNearStopInformationView: UIButton {
             }
         
         NSLayoutConstraint.activate([
-            busStopImageView.centerYAnchor.constraint(
+            
+            busStopImage.centerYAnchor.constraint(
                 equalTo: centerYAnchor
             ),
-            busStopImageView.leadingAnchor.constraint(
+            busStopImage.leadingAnchor.constraint(
                 equalTo: leadingAnchor,
-                constant: 15
+                constant: 20
+            ),
+            busStopImage.heightAnchor.constraint(
+                equalToConstant: CGFloat(symbolSize)
+            ),
+            busStopImage.widthAnchor.constraint(
+                equalToConstant: CGFloat(symbolSize)
             ),
             
             nearStopLabel.leadingAnchor.constraint(
-                equalTo: busStopImageView.trailingAnchor,
+                equalTo: busStopImage.trailingAnchor,
                 constant: 20
             ),
             nearStopLabel.topAnchor.constraint(

@@ -21,8 +21,8 @@ final class AddRegularAlarmViewController: UIViewController {
     
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(
-            size: 22
+        label.font = DesignSystemFontFamily.NanumSquareNeoOTF.extraBold.font(
+            size: 23
         )
         label.textAlignment = .left
         label.textColor = .black
@@ -32,11 +32,11 @@ final class AddRegularAlarmViewController: UIViewController {
     private let firstDescriptionLabel: UILabel = {
         let label = UILabel()
         label.text = "1. 정류장 및 버스 등록하기"
-        label.font = DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(
+        label.font = DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(
             size: 16
         )
         label.textAlignment = .left
-        label.textColor = .black
+        label.textColor = DesignSystemAsset.settingColor.color
         return label
     }()
     
@@ -55,11 +55,11 @@ final class AddRegularAlarmViewController: UIViewController {
     private let secondDescriptionLabel: UILabel = {
         let label = UILabel()
         label.text = "2. 시간 등록하기"
-        label.font = DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(
+        label.font = DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(
             size: 16
         )
         label.textAlignment = .left
-        label.textColor = .black
+        label.textColor = DesignSystemAsset.settingColor.color
         return label
     }()
     
@@ -74,11 +74,11 @@ final class AddRegularAlarmViewController: UIViewController {
     private let thirdDescriptionLabel: UILabel = {
         let label = UILabel()
         label.text = "3. 요일 등록하기"
-        label.font = DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(
+        label.font = DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(
             size: 16
         )
         label.textAlignment = .left
-        label.textColor = .black
+        label.textColor = DesignSystemAsset.settingColor.color
         return label
     }()
     
@@ -298,8 +298,10 @@ final class AddRegularAlarmViewController: UIViewController {
                             var color: UIColor
                             if response.weekday.contains(btn.tag) {
                                 color = DesignSystemAsset.weekDayBlue.color
+                                btn.setTitleColor(.white, for: .normal)
                             } else {
                                 color = DesignSystemAsset.weekDayGray.color
+                                btn.setTitleColor(.black, for: .normal)
                             }
                             btn.backgroundColor = color
                         }
