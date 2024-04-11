@@ -160,20 +160,20 @@ public final class SearchViewController: UIViewController {
                 constant: -15
             ),
             
-            nearByStopPaddingView.topAnchor.constraint(
-                equalTo: nearBusStopHeaderLabel.bottomAnchor,
-                constant: 8
-            ),
-            nearByStopPaddingView.leadingAnchor.constraint(
-                equalTo: safeArea.leadingAnchor
-            ),
-            nearByStopPaddingView.trailingAnchor.constraint(
-                equalTo: safeArea.trailingAnchor
-            ),
+//            nearByStopPaddingView.topAnchor.constraint(
+//                equalTo: nearBusStopHeaderLabel.bottomAnchor,
+//                constant: 8
+//            ),
+//            nearByStopPaddingView.leadingAnchor.constraint(
+//                equalTo: safeArea.leadingAnchor
+//            ),
+//            nearByStopPaddingView.trailingAnchor.constraint(
+//                equalTo: safeArea.trailingAnchor
+//            ),
             
             nearByStopView.topAnchor.constraint(
-                equalTo: nearByStopPaddingView.topAnchor,
-                constant: 17
+                equalTo: nearBusStopHeaderLabel.bottomAnchor,
+                constant: 15
             ),
             nearByStopView.centerXAnchor.constraint(
                 equalTo: safeArea.centerXAnchor
@@ -181,10 +181,6 @@ public final class SearchViewController: UIViewController {
             nearByStopView.widthAnchor.constraint(
                 equalTo: view.widthAnchor,
                 multiplier: 0.95
-            ),
-            nearByStopView.bottomAnchor.constraint(
-                equalTo: nearByStopPaddingView.bottomAnchor,
-                constant: -17
             ),
             
             recentSearchHeaderView.topAnchor.constraint(
