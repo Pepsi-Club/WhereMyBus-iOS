@@ -31,8 +31,9 @@ platform :ios do
                 type: "development",
                 git_url: ENV["MATCH_URL"],
                 keychain_password: ENV["MATCH_PASSWORD"],
-                app_identifier:[
-                    "com.Pepsi-Club.WhereMyBus"
+                app_identifier: [
+                    "com.Pepsi-Club.WhereMyBus",
+                    "com.Pepsi-Club.WhereMyBus.Widget"
                 ],
                 readonly: true
             )
@@ -40,8 +41,9 @@ platform :ios do
                 type: "appstore",
                 git_url: ENV["MATCH_URL"],
                 keychain_password: ENV["MATCH_PASSWORD"],
-                app_identifier:[
-                    "com.Pepsi-Club.WhereMyBus"
+                app_identifier: [
+                    "com.Pepsi-Club.WhereMyBus",
+                    "com.Pepsi-Club.WhereMyBus.Widget"
                 ],
                 readonly: true
             )
@@ -52,6 +54,10 @@ platform :ios do
     lane :tf_local do |options|
         match(
             type: "appstore",
+            app_identifier: [
+                "com.Pepsi-Club.WhereMyBus",
+                "com.Pepsi-Club.WhereMyBus.Widget"
+            ],
             readonly: true
         )
         
@@ -94,6 +100,10 @@ platform :ios do
             type: "development",
             keychain_name: ENV["KEYCHAIN_NAME"],
             keychain_password: ENV["KEYCHAIN_PASSWORD"],
+            app_identifier: [
+                "com.Pepsi-Club.WhereMyBus",
+                "com.Pepsi-Club.WhereMyBus.Widget"
+            ],
             readonly: true
         )
         
@@ -101,6 +111,10 @@ platform :ios do
             type: "appstore",
             keychain_name: ENV["KEYCHAIN_NAME"],
             keychain_password: ENV["KEYCHAIN_PASSWORD"],
+            app_identifier: [
+                "com.Pepsi-Club.WhereMyBus",
+                "com.Pepsi-Club.WhereMyBus.Widget"
+            ],
             readonly: true
         )
         

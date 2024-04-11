@@ -34,6 +34,7 @@ public final class BusStopViewController: UIViewController {
         table.rowHeight = 60
         table.sectionHeaderHeight = 46
         table.sectionFooterHeight = 10
+        table.accessibilityIdentifier = "정류장"
         return table
     }()
     

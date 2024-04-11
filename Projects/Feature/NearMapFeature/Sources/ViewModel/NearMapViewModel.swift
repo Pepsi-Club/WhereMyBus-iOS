@@ -99,6 +99,8 @@ public final class NearMapViewModel: ViewModel {
                         case .notDetermined:
                             viewModel.useCase.requestAuthorize()
                         default:
+                            guard !response.busStopId.isEmpty
+                            else { return }
                             viewModel.coordinator.startBusStopFlow(
                                 busStopId: response.busStopId
                             )

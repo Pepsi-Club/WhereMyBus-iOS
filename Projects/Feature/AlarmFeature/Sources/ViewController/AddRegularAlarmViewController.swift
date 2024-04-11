@@ -48,6 +48,7 @@ final class AddRegularAlarmViewController: UIViewController {
             ),
             color: .black
         )
+        btn.accessibilityIdentifier = "알람에서 검색뷰로 네비게이션"
         return btn
     }()
     

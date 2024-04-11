@@ -14,6 +14,14 @@ import Domain
 struct WMBWidgetView: View {
     var entry: Provider.Entry
     
+    var url: URL? {
+        var url: URL?
+        if let busStopId = entry.responses.first?.busStopId {
+            url = .init(string: "widget://deeplink?busStop=\(busStopId)")
+        }
+        return url
+    }
+    
     var body: some View {
         VStack {
             switch entry.responses.isEmpty {
@@ -23,8 +31,8 @@ struct WMBWidgetView: View {
                 arrivalInfoView
             }
         }
-        // 버전 이슈로 일단 주석처리하겠습니다 
-        //.widgetBackground(Color.white)
+        .widgetBackground(Color.white)
+        .widgetURL(url)
     }
     
     var emptyView: some View {
@@ -40,70 +48,48 @@ struct WMBWidgetView: View {
                 entry.responses.prefix(1),
                 id: \.busStopId
             ) { busStopResponse in
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text(busStopResponse.busStopName)
-                    }
-                    Spacer()
-//                    HStack {
-//                        Text("XX:XX 업데이트")
-//                        if #available(iOSApplicationExtension 17.0, *) {
-//                            Button(intent: ConfigurationAppIntent()) {
-//                                Image(systemName: "arrow.left")
-//                            }
-//                            Button(intent: ConfigurationAppIntent()) {
-//                                Image(systemName: "arrow.right")
-//                            }
-//                        } else {
-//                            EmptyView()
-//                        }
-//                    }
+                VStack(alignment: .leading) {
+                    Text(busStopResponse.busStopName)
+                        .font(.subheadline)
+                        .lineLimit(2)
                 }
-                Spacer()
                 ForEach(
-                    busStopResponse.buses,
+                    busStopResponse.buses.prefix(1),
                     id: \.hashValue
                 ) { bus in
-                    HStack {
+                    VStack(alignment: .leading) {
                         Text(bus.busName)
-                            .lineLimit(1)
-                        Spacer()
+                            .font(.subheadline)
                         Text(bus.firstArrivalState.toString)
+                            .font(.subheadline)
                             .lineLimit(1)
                     }
+                    .padding(1)
                 }
             }
         }
     }
 }
-// 버젼 이슈로 일단 주석 처리 하겠습니다
-//extension View {
-//    func widgetBackground(_ backgroundView: some View) -> some View {
-//        if #available(iOSApplicationExtension 17.0, *) {
-//            return containerBackground(for: .widget) {
-//                backgroundView
-//            }
-//        } else {
-//            return background(backgroundView)
-//        }
-//    }
-//}
 
+extension View {
+    func widgetBackground(_ backgroundView: some View) -> some View {
+        if #available(iOSApplicationExtension 17.0, *) {
+            return containerBackground(for: .widget) {
+                backgroundView
+            }
+        } else {
+            return background(backgroundView)
+        }
+    }
+}
+
+#if DEBUG
 struct WMBWidgetView_Preview: PreviewProvider {
     static var previews: some View {
         WMBWidgetView(
             entry: WMBEntry(
                 date: .now,
-                responses: []
-            )
-        )
-        .previewContext(
-            WidgetPreviewContext(family: .systemSmall)
-        )
-        WMBWidgetView(
-            entry: WMBEntry(
-                date: .now,
-                responses: []
+                responses: .mock
             )
         )
         .previewContext(
@@ -111,3 +97,4 @@ struct WMBWidgetView_Preview: PreviewProvider {
         )
     }
 }
+#endif

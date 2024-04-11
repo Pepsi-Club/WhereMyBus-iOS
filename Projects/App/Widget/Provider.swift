@@ -12,16 +12,15 @@ import WidgetKit
 import Core
 import Domain
 
-import RxSwift
-
 struct Provider: TimelineProvider {
+    private let useCase = WidgetUseCase()
     // 초기 화면
     func placeholder(
         in context: Context
     ) -> WMBEntry {
         WMBEntry(
             date: Date(),
-            responses: []
+            responses: useCase.responses
         )
     }
     // 미리보기 화면
@@ -32,7 +31,7 @@ struct Provider: TimelineProvider {
         completion(
             WMBEntry(
                 date: Date(),
-                responses: []
+                responses: useCase.responses
             )
         )
     }
@@ -46,36 +45,15 @@ struct Provider: TimelineProvider {
             value: 1,
             to: Date()
         )!
-        guard let datas = UserDefaults.appGroup?.array(
-            forKey: "arrivalResponse"
-        ) as? [Data]
-        else {
-            completion(
-                Timeline(
-                    entries: [
-                        WMBEntry(
-                            date: nextRefresh,
-                            responses: []
-                        )
-                    ],
-                    policy: .after(nextRefresh)
-                )
-            )
-            return
-        }
-        let responses = datas.compactMap {
-            return try? $0.decode(type: BusStopArrivalInfoResponse.self)
-        }
-        completion(
-            Timeline(
-                entries: [
-                    WMBEntry(
-                        date: nextRefresh,
-                        responses: responses
-                    )
-                ],
-                policy: .after(nextRefresh)
-            )
+        useCase.fetchUserDefaultValue()
+        let entry = WMBEntry(
+            date: nextRefresh,
+            responses: useCase.responses
         )
+        let timeline = Timeline(
+            entries: [entry],
+            policy: .after(nextRefresh)
+        )
+        completion(timeline)
     }
 }

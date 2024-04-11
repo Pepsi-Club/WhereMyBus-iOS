@@ -67,7 +67,7 @@ public final class BusStopInfoView: UIView {
         }
         
         let attributedDescription = NSMutableAttributedString(
-            string: "\(response.busStopId) | \(response.direction) 방면 "
+            string: "\(response.busStopId) | \(response.direction) 방면"
         )
         
         if let boldDescriptionRange = response.busStopId.range(
