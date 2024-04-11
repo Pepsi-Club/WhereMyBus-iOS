@@ -19,8 +19,8 @@ public final class SearchTVHeaderView: UIView {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.font =
-        DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(size: 16)
-        label.textColor = .black
+        DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(size: 15)
+        label.textColor = DesignSystemAsset.settingColor.color
         return label
     }()
     
