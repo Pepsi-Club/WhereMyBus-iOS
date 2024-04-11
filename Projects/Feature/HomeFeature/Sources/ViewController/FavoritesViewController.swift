@@ -24,12 +24,6 @@ public final class FavoritesViewController: UIViewController {
         return titleContainer
     }()
     
-    private let busIconView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = DesignSystemAsset.bus.image
-        return imageView
-    }()
-    
     private let searchBtn: SearchBusStopBtn = {
         let searchBtn = SearchBusStopBtn(
             title: "버스 정류장을 검색하세요",
@@ -113,7 +107,6 @@ public final class FavoritesViewController: UIViewController {
     private func configureUI() {
         view.backgroundColor = .white
         [
-            busIconView,
             searchBtn,
             editBtn,
             refreshBtn,
@@ -126,18 +119,9 @@ public final class FavoritesViewController: UIViewController {
         let safeArea = view.safeAreaLayoutGuide
         
         NSLayoutConstraint.activate([
-            busIconView.topAnchor.constraint(
+            searchBtn.topAnchor.constraint(
                 equalTo: safeArea.topAnchor,
                 constant: 10
-            ),
-            busIconView.leadingAnchor.constraint(
-                equalTo: safeArea.leadingAnchor,
-                constant: .screenWidth * 0.07
-            ),
-            
-            searchBtn.topAnchor.constraint(
-                equalTo: busIconView.bottomAnchor,
-                constant: -10
             ),
             searchBtn.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
             searchBtn.widthAnchor.constraint(
