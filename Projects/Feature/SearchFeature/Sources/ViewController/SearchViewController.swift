@@ -76,11 +76,11 @@ public final class SearchViewController: UIViewController {
         return table
     }()
     
-    private let nearByStopPaddingView: UIView = {
-        let view = UIView()
-        view.backgroundColor = DesignSystemAsset.tableViewColor.color
-        return view
-    }()
+//    private let nearByStopPaddingView: UIView = {
+//        let view = UIView()
+//        view.backgroundColor = DesignSystemAsset.tableViewColor.color
+//        return view
+//    }()
     
     private let nearBusStopHeaderLabel: UILabel = {
         let label = UILabel()
