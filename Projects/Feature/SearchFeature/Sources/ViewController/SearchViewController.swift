@@ -161,7 +161,7 @@ public final class SearchViewController: UIViewController {
             
             nearByStopPaddingView.topAnchor.constraint(
                 equalTo: nearBusStopHeaderLabel.bottomAnchor,
-                constant: 10
+                constant: 8
             ),
             nearByStopPaddingView.leadingAnchor.constraint(
                 equalTo: safeArea.leadingAnchor
@@ -183,7 +183,7 @@ public final class SearchViewController: UIViewController {
             ),
             nearByStopView.bottomAnchor.constraint(
                 equalTo: nearByStopPaddingView.bottomAnchor,
-                constant: -25
+                constant: -17
             ),
             
             recentSearchHeaderView.topAnchor.constraint(
