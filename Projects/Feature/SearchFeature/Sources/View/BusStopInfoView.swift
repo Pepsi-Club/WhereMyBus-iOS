@@ -14,7 +14,7 @@ import Domain
 public final class BusStopInfoView: UIView {
     private let busStopNameLabel: UILabel = {
         let label = UILabel()
-        label.font = .nanumRegular(size: 15)
+        label.font = .nanumBold(size: 15)
         label.textAlignment = .left
         label.textColor = DesignSystemAsset.settingColor.color
         label.adjustsFontSizeToFitWidth = true
@@ -58,7 +58,7 @@ public final class BusStopInfoView: UIView {
         ) {
             attributedBusStopName.addAttribute(
                 .font,
-                value: UIFont.nanumBold(size: 15),
+                value: UIFont.nanumExtraBold(size: 15),
                 range: NSRange(
                     boldNameRange,
                     in: response.busStopName
@@ -76,7 +76,7 @@ public final class BusStopInfoView: UIView {
         ) {
             attributedDescription.addAttributes(
                 [
-                    .font: UIFont.nanumBold(size: 13),
+                    .font: UIFont.nanumExtraBold(size: 13),
                     .foregroundColor: UIColor.black
                 ],
                 range: NSRange(

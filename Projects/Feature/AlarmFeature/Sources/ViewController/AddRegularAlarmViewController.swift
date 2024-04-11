@@ -297,8 +297,10 @@ final class AddRegularAlarmViewController: UIViewController {
                             var color: UIColor
                             if response.weekday.contains(btn.tag) {
                                 color = DesignSystemAsset.weekDayBlue.color
+                                btn.setTitleColor(.white, for: .normal)
                             } else {
                                 color = DesignSystemAsset.weekDayGray.color
+                                btn.setTitleColor(.black, for: .normal)
                             }
                             btn.backgroundColor = color
                         }

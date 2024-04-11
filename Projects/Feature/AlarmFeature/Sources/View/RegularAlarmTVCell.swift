@@ -26,21 +26,21 @@ final class RegularAlarmTVCell: UITableViewCell {
         )
         config.image = image
         config.preferredSymbolConfigurationForImage = imgConfig
-        config.baseForegroundColor = DesignSystemAsset.lightRed.color
+        config.baseForegroundColor = DesignSystemAsset.redBusColor.color
         let button = UIButton(configuration: config)
         return button
     }()
     
     private let busInfoLabel: UILabel = {
         let label = UILabel()
-        label.numberOfLines = 3
+        label.numberOfLines = 2
         label.textAlignment = .center
         return label
     }()
     
     private let alarmInfoLabel: UILabel = {
         let label = UILabel()
-        label.numberOfLines = 3
+        label.numberOfLines = 2
         label.textAlignment = .center
         return label
     }()
@@ -53,11 +53,11 @@ final class RegularAlarmTVCell: UITableViewCell {
         stackView.distribution = .equalCentering
         stackView.alignment = .center
         stackView.addDivider(
-            color: DesignSystemAsset.gray2.color,
+            color: DesignSystemAsset.gray4.color,
             hasPadding: true,
-            dividerRatio: 0.8
+            dividerRatio: 1
         )
-        stackView.backgroundColor = DesignSystemAsset.bottonBtnColor.color
+        stackView.backgroundColor = DesignSystemAsset.regularAlarmSky.color
         stackView.layer.cornerRadius = 10
         return stackView
     }()
@@ -111,27 +111,17 @@ final class RegularAlarmTVCell: UITableViewCell {
                 .foregroundColor: DesignSystemAsset.lightRed.color
             ]
         )
-        let divider = NSAttributedString(
-            string: " \n",
-            attributes: [
-                .font: DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(
-                    size: 5
-                ),
-                .foregroundColor: DesignSystemAsset.gray1.color
-            ]
-        )
         let timeString = NSAttributedString(
             string: time,
             attributes: [
                 .font: DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(
-                    size: 17
+                    size: 15
                 ),
-                .foregroundColor: DesignSystemAsset.gray1.color
+                .foregroundColor: UIColor.black
             ]
         )
         let attrString = NSMutableAttributedString()
         attrString.append(weekDayString)
-        attrString.append(divider)
         attrString.append(timeString)
         alarmInfoLabel.attributedText = attrString
     }
@@ -143,33 +133,23 @@ final class RegularAlarmTVCell: UITableViewCell {
         let busString = NSAttributedString(
             string: bus + "\n",
             attributes: [
-                .font: DesignSystemFontFamily.NanumSquareNeoOTF.extraBold.font(
+                .font: DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(
                     size: 23
                 ),
-                .foregroundColor: DesignSystemAsset.gray1.color
-            ]
-        )
-        let divider = NSAttributedString(
-            string: " \n",
-            attributes: [
-                .font: DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(
-                    size: 3
-                ),
-                .foregroundColor: UIColor.white
+                .foregroundColor: DesignSystemAsset.regularAlarmBlue.color
             ]
         )
         let busStopString = NSAttributedString(
             string: busStop,
             attributes: [
-                .font: DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(
-                    size: 14
+                .font: DesignSystemFontFamily.NanumSquareNeoOTF.light.font(
+                    size: 15
                 ),
-                .foregroundColor: DesignSystemAsset.gray1.color
+                .foregroundColor: UIColor.black
             ]
         )
         let attrString = NSMutableAttributedString()
         attrString.append(busString)
-        attrString.append(divider)
         attrString.append(busStopString)
         busInfoLabel.attributedText = attrString
     }

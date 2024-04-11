@@ -46,7 +46,7 @@ final class EmptyRegularAlarmView: UIView {
             string: "\n",
             attributes: [
                 .font: DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(
-                    size: 4
+                    size: 6
                 ),
                 .foregroundColor: DesignSystemAsset.bottonBtnColor.color
             ]
