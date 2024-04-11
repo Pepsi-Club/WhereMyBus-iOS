@@ -47,6 +47,12 @@ public final class SearchViewController: UIViewController {
         table.dataSource = recentSearchDataSource
         table.delegate = self
         table.accessibilityIdentifier = "최근검색"
+        table.separatorInset = UIEdgeInsets(
+            top: 0,
+            left: 13,
+            bottom: 0,
+            right: 13
+        )
         return table
     }()
     
@@ -61,6 +67,12 @@ public final class SearchViewController: UIViewController {
         table.dataSource = searchedDataSource
         table.delegate = self
         table.accessibilityIdentifier = "검색결과"
+        table.separatorInset = UIEdgeInsets(
+            top: 0,
+            left: 13,
+            bottom: 0,
+            right: 13
+        )
         return table
     }()
     
