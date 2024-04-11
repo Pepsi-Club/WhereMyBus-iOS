@@ -23,14 +23,16 @@ public struct AddRegularAlarmEndPoint: RegularAlarmEndPoint {
     }
     
     public var header: [String: String] {
-        [:]
+        [
+            "content-type": "application/json",
+        ]
     }
     
     public var body: [String: Any] {
         [
             "deviceToken": String.fcmToken ?? "",
             "time": request.time,
-            "activeDay": request.activeDay,
+            "day": request.weekday,
             "busRouteId": request.busRouteId,
             "arsId": request.arsId,
         ]

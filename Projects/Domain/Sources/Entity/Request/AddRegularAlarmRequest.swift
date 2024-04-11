@@ -15,7 +15,7 @@ public struct AddRegularAlarmRequest {
     /// 알람받을시간 ex) "1830"
     public let time: String
     /// 0 ~ 6 : 일, 월, 화, 수, 목, 금, 토 순서
-    public let activeDay: [Int]
+    public let weekday: [Int]
     /// 버스코드
     public let busRouteId: String
     /// 정류장코드
@@ -26,14 +26,14 @@ public struct AddRegularAlarmRequest {
     
     public init(
         date: Date,
-        activeDay: [Int],
+        weekday: [Int],
         busRouteId: String,
         arsId: String,
         busStopName: String,
         busName: String
     ) {
         self.time = date.toString(dateFormat: "HHmm")
-        self.activeDay = activeDay
+        self.weekday = weekday
         self.busRouteId = busRouteId
         self.arsId = arsId
         self.busStopName = busStopName

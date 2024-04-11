@@ -25,6 +25,13 @@ struct AddRegularAlarmDTO: Decodable {
     public init(alarmId: String) {
         self.alarmId = alarmId
     }
+    
+}
+
+extension AddRegularAlarmDTO {
+    enum CodingKeys: String, CodingKey {
+        case alarmId = "id"
+    }
 }
 
 extension AddRegularAlarmDTO {
@@ -36,7 +43,7 @@ extension AddRegularAlarmDTO {
             busId: String(request.busRouteId),
             busName: request.busName,
             time: request.time.toDate(dateFormat: "HHmm"),
-            weekday: request.activeDay
+            weekday: request.weekday
         )
     }
 }

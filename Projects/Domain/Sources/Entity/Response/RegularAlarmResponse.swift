@@ -42,7 +42,7 @@ public extension RegularAlarmResponse {
     var toAddRequest: AddRegularAlarmRequest {
         .init(
             date: time,
-            activeDay: weekday,
+            weekday: weekday,
             busRouteId: busId,
             arsId: busStopId,
             busStopName: busStopName,
