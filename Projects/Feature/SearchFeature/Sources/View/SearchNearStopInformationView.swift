@@ -15,7 +15,7 @@ final class SearchNearStopInformationView: UIButton {
     
     private let busStopImage: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = DesignSystemAsset.busStopImage1.image
+        imageView.image = DesignSystemAsset.busStopImage2.image
         return imageView
     }()
     

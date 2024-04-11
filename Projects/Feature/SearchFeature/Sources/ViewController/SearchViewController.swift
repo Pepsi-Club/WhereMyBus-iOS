@@ -76,12 +76,6 @@ public final class SearchViewController: UIViewController {
         return table
     }()
     
-//    private let nearByStopPaddingView: UIView = {
-//        let view = UIView()
-//        view.backgroundColor = DesignSystemAsset.tableViewColor.color
-//        return view
-//    }()
-    
     private let nearBusStopHeaderLabel: UILabel = {
         let label = UILabel()
         label.font = .nanumBold(size: 16)
@@ -146,7 +140,6 @@ public final class SearchViewController: UIViewController {
         
         [
             recentSearchHeaderView,
-           // nearByStopPaddingView,
             nearByStopView,
             recentSearchTableView,
             searchedStopTableView,
@@ -171,17 +164,6 @@ public final class SearchViewController: UIViewController {
                 equalTo: safeArea.trailingAnchor,
                 constant: -15
             ),
-            
-//            nearByStopPaddingView.topAnchor.constraint(
-//                equalTo: nearBusStopHeaderLabel.bottomAnchor,
-//                constant: 8
-//            ),
-//            nearByStopPaddingView.leadingAnchor.constraint(
-//                equalTo: safeArea.leadingAnchor
-//            ),
-//            nearByStopPaddingView.trailingAnchor.constraint(
-//                equalTo: safeArea.trailingAnchor
-//            ),
             
             nearByStopView.topAnchor.constraint(
                 equalTo: nearBusStopHeaderLabel.bottomAnchor,
