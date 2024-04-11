@@ -18,7 +18,11 @@ public final class SearchViewController: UIViewController {
     private var recentSearchDataSource: RecentSearchDataSource!
     private var searchedDataSource: SearchedDataSource!
     
-    private let searchTextFieldView = SearchTextFieldView()
+    private let searchTextFieldView: SearchTextFieldView = {
+        let textFieldView = SearchTextFieldView()
+        textFieldView.accessibilityIdentifier = "정류장 검색"
+        return textFieldView
+    }()
     
     private let recentSearchBGView = SearchTVBackgroundView(
         text: "최근 검색된 정류장이 없습니다"
@@ -42,6 +46,7 @@ public final class SearchViewController: UIViewController {
         table.backgroundColor = DesignSystemAsset.tableViewColor.color
         table.dataSource = recentSearchDataSource
         table.delegate = self
+        table.accessibilityIdentifier = "최근검색"
         return table
     }()
     
@@ -55,6 +60,7 @@ public final class SearchViewController: UIViewController {
         table.isHidden = true
         table.dataSource = searchedDataSource
         table.delegate = self
+        table.accessibilityIdentifier = "검색결과"
         return table
     }()
     
@@ -67,6 +73,17 @@ public final class SearchViewController: UIViewController {
             alpha: 1.0
         )
         return view
+    }()
+    
+    private let nearBusStopHeaderLabel: UILabel = {
+        let label = UILabel()
+        label.font = .nanumBold(size: 16)
+        label.textAlignment = .left
+        label.textColor = DesignSystemAsset.settingColor.color
+        label.adjustsFontSizeToFitWidth = true
+        label.minimumScaleFactor = 0.8
+        label.text = "주변 정류장"
+        return label
     }()
     
     private let nearByStopView = SearchNearStopInformationView()
@@ -126,6 +143,7 @@ public final class SearchViewController: UIViewController {
             nearByStopView,
             recentSearchTableView,
             searchedStopTableView,
+            nearBusStopHeaderLabel,
         ].forEach {
             view.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
@@ -134,9 +152,22 @@ public final class SearchViewController: UIViewController {
         let safeArea = view.safeAreaLayoutGuide
         
         NSLayoutConstraint.activate([
-            nearByStopPaddingView.bottomAnchor.constraint(
+            nearBusStopHeaderLabel.bottomAnchor.constraint(
                 equalTo: safeArea.bottomAnchor,
                 constant: -200
+            ),
+            nearBusStopHeaderLabel.leadingAnchor.constraint(
+                equalTo: safeArea.leadingAnchor,
+                constant: 15
+            ),
+            nearBusStopHeaderLabel.trailingAnchor.constraint(
+                equalTo: safeArea.trailingAnchor,
+                constant: -15
+            ),
+            
+            nearByStopPaddingView.topAnchor.constraint(
+                equalTo: nearBusStopHeaderLabel.bottomAnchor,
+                constant: 8
             ),
             nearByStopPaddingView.leadingAnchor.constraint(
                 equalTo: safeArea.leadingAnchor
@@ -158,7 +189,7 @@ public final class SearchViewController: UIViewController {
             ),
             nearByStopView.bottomAnchor.constraint(
                 equalTo: nearByStopPaddingView.bottomAnchor,
-                constant: -25
+                constant: -17
             ),
             
             recentSearchHeaderView.topAnchor.constraint(
@@ -184,7 +215,8 @@ public final class SearchViewController: UIViewController {
                 equalTo: safeArea.trailingAnchor
             ),
             recentSearchTableView.bottomAnchor.constraint(
-                equalTo: nearByStopPaddingView.topAnchor
+                equalTo: nearByStopPaddingView.topAnchor,
+                constant: 10
             ),
             
             searchedStopTableView.topAnchor.constraint(
@@ -297,6 +329,7 @@ public final class SearchViewController: UIViewController {
                     guard let text = vc.searchTextFieldView.text
                     else { return }
                     vc.searchedStopTableView.isHidden = text.isEmpty
+                    vc.nearBusStopHeaderLabel.isHidden = true
                 }
             )
             .disposed(by: disposeBag)

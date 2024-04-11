@@ -76,8 +76,7 @@ final public class DefaultLocationService: NSObject, LocationService {
         }
     }
 }
-// 앱 오픈 delegate = self
-// locationManagerDidChangeAuthorization
+
 extension DefaultLocationService: CLLocationManagerDelegate {
     public func locationManagerDidChangeAuthorization(
         _ manager: CLLocationManager
@@ -88,9 +87,10 @@ extension DefaultLocationService: CLLocationManagerDelegate {
         case .restricted, .denied:
             locationStatus.onNext(.denied)
         case .authorizedAlways, .authorizedWhenInUse:
+            locationStatus.onNext(.waitingForLocation)
             locationManager.requestLocation()
         @unknown default:
-            locationStatus.onNext(.unknown)
+            locationStatus.onNext(.error)
         }
     }
     
@@ -99,7 +99,10 @@ extension DefaultLocationService: CLLocationManagerDelegate {
         didUpdateLocations locations: [CLLocation]
     ) {
         guard let location = locations.first
-        else { return }
+        else {
+            locationStatus.onNext(.error)
+            return
+        }
         switch manager.authorizationStatus {
         case .authorizedAlways:
             locationStatus.onNext(.alwaysAllowed(location))
@@ -114,6 +117,6 @@ extension DefaultLocationService: CLLocationManagerDelegate {
         _ manager: CLLocationManager,
         didFailWithError error: Error
     ) {
-        locationStatus.onError(error)
+        locationStatus.onNext(.error)
     }
 }

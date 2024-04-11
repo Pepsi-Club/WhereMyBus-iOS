@@ -20,14 +20,14 @@ public final class SearchTVHeaderView: UIView {
         let label = UILabel()
         label.font =
         DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(size: 16)
-        label.textColor = .black
+        label.textColor = DesignSystemAsset.settingColor.color
         return label
     }()
     
     private let actionBtn: UIButton = {
         let button = UIButton()
         button.titleLabel?.font
-        = DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(size: 15)
+        = DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(size: 16)
         button.setTitleColor(
             DesignSystemAsset.gray5.color,
             for: .normal

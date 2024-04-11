@@ -14,7 +14,7 @@ public final class BottomButton: UIButton {
     ) {
         super.init(frame: .zero)
         var config = UIButton.Configuration.filled()
-        let font = DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(
+        let font = DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(
             size: 18
         )
         config.cornerStyle = .capsule
@@ -36,13 +36,13 @@ public final class BottomButton: UIButton {
                 string: title,
                 attributes: [
                     .font: font,
-                    .foregroundColor: DesignSystemAsset.gray4.color
+                    .foregroundColor: DesignSystemAsset.gray1.color
                 ]
             ),
             for: .disabled
         )
         configuration = config
-        tintColor = DesignSystemAsset.bottonBtnColor.color
+        tintColor = DesignSystemAsset.weekDayBlue.color
     }
     
     required init?(coder: NSCoder) {

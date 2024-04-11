@@ -1,5 +1,4 @@
 import Foundation
-import CoreLocation
 
 import Core
 import DesignSystem
@@ -10,8 +9,7 @@ import RxSwift
 import RxRelay
 import NMapsMap
 
-public final class NearMapViewModel
-: NSObject, CLLocationManagerDelegate, ViewModel {
+public final class NearMapViewModel: ViewModel {
     @Injected(NearMapUseCase.self) var useCase: NearMapUseCase
     private let coordinator: NearMapCoordinator
     private let viewMode: NearMapMode
@@ -101,6 +99,8 @@ public final class NearMapViewModel
                         case .notDetermined:
                             viewModel.useCase.requestAuthorize()
                         default:
+                            guard !response.busStopId.isEmpty
+                            else { return }
                             viewModel.coordinator.startBusStopFlow(
                                 busStopId: response.busStopId
                             )
@@ -113,6 +113,7 @@ public final class NearMapViewModel
             .disposed(by: disposeBag)
         
         input.selectedBusStopId
+            .distinctUntilChanged()
             .withUnretained(self)
             .subscribe(
                 onNext: { viewModel, busStopId in

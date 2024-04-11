@@ -2,6 +2,7 @@ excluded: # 린트 과정에서 무시할 파일 경로. `included`보다 우선
     - Projects/App/Sources/AppDelegate.swift
     - Projects/App/Sources/SceneDelegate.swift
     - Projects/App/Tests/**
+    - Projects/Core/Sources/Extension/String+.swift
     - Projects/Feature/**/AppDelegate.swift
     - Projects/Feature/**/SceneDelegate.swift
     - Projects/FeatureDependency/Sources/Mock/**
@@ -17,6 +18,7 @@ identifier_name:
         - f
         - vc
         - vm
+        - o
 function_body_length:
     warning: 150
     error: 300

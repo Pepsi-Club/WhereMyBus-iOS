@@ -1,34 +1,21 @@
 //
-//  WMBEntry.swift
-//  AppUITests
+//  MockData.swift
+//  WidgetExtension
 //
-//  Created by gnksbm on 4/4/24.
+//  Created by gnksbm on 4/7/24.
 //  Copyright © 2024 Pepsi-Club. All rights reserved.
 //
 
-import WidgetKit
-import Domain
+import Foundation
 
-struct WMBEntry: TimelineEntry {
-    let date: Date
-    let responses: [BusStopArrivalInfoResponse]
-    
-    init(
-        date: Date,
-        responses: [BusStopArrivalInfoResponse] = []
-    ) {
-        self.date = date
-        self.responses = responses
-    }
-}
+import Domain
 
 #if DEBUG
 extension [BusStopArrivalInfoResponse] {
-    static let mock =
-    [
+    static let mock = [
         BusStopArrivalInfoResponse(
             busStopId: "03192",
-            busStopName: "이태원119안전센터",
+            busStopName: "서울특별시어린이병원.강동송파과학화예비군훈련장",
             direction: "이태원역1번출구.해밀턴호텔",
             buses: [
                 BusArrivalInfoResponse(
@@ -44,7 +31,7 @@ extension [BusStopArrivalInfoResponse] {
                     isAlarmOn: false
                 ),
                 BusArrivalInfoResponse(
-                    busId: "111900011", 
+                    busId: "111900011",
                     busName: "은평08-1",
                     busType: BusType.village.rawValue,
                     nextStation: "힐스테이트116동앞",
@@ -56,7 +43,7 @@ extension [BusStopArrivalInfoResponse] {
                     isAlarmOn: false
                 ),
                 BusArrivalInfoResponse(
-                    busId: "111900012", 
+                    busId: "111900012",
                     busName: "은평08-2",
                     busType: BusType.village.rawValue,
                     nextStation: "힐스테이트116동앞",
@@ -87,7 +74,7 @@ extension [BusStopArrivalInfoResponse] {
                     isAlarmOn: false
                 ),
                 BusArrivalInfoResponse(
-                    busId: "100100596", 
+                    busId: "100100596",
                     busName: "400",
                     busType: BusType.trunkLine.rawValue,
                     nextStation: "이태원역.보광동입구",
@@ -99,7 +86,7 @@ extension [BusStopArrivalInfoResponse] {
                     isAlarmOn: false
                 ),
                 BusArrivalInfoResponse(
-                    busId: "100100597", 
+                    busId: "100100597",
                     busName: "405",
                     busType: BusType.trunkLine.rawValue,
                     nextStation: "이태원역.보광동입구",
@@ -111,7 +98,7 @@ extension [BusStopArrivalInfoResponse] {
                     isAlarmOn: false
                 ),
                 BusArrivalInfoResponse(
-                    busId: "104000011", 
+                    busId: "104000011",
                     busName: "N31",
                     busType: BusType.trunkLine.rawValue,
                     nextStation: "이태원역1번출구.해밀턴호텔",
@@ -123,7 +110,7 @@ extension [BusStopArrivalInfoResponse] {
                     isAlarmOn: false
                 ),
                 BusArrivalInfoResponse(
-                    busId: "111000017", 
+                    busId: "111000017",
                     busName: "N72",
                     busType: BusType.trunkLine.rawValue,
                     nextStation: "이태원역1번출구.해밀턴호텔",
@@ -155,7 +142,7 @@ extension [BusStopArrivalInfoResponse] {
                 ),
                 BusArrivalInfoResponse(
                     busId: "116900012",
-                    busName: "구로06", 
+                    busName: "구로06",
                     busType: BusType.village.rawValue,
                     nextStation: "고척공구상가",
                     firstArrivalState: ArrivalState.pending,

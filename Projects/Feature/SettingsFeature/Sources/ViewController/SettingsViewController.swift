@@ -45,9 +45,6 @@ public final class SettingsViewController: UIViewController {
         
         configureUI()
         bind()
-        #if DEBUG
-        configureFCMTokenView()
-        #endif
     }
     
     private func configureUI() {
@@ -84,7 +81,6 @@ public final class SettingsViewController: UIViewController {
     }
     
     private func bind() {
-        
         _ = viewModel.transform(
             input:
                 .init(
@@ -93,61 +89,9 @@ public final class SettingsViewController: UIViewController {
                     termsTapEvent
                     : buttonsView.termsPrivacyBtn.rx.tap.asObservable(),
                     locationTapEvent
-                    : buttonsView.locationPrivacyBtn.rx.tap.asObservable()
+                    : buttonsView.locationPrivacyBtn.rx.tap.asObservable(),
+                    inquryTapEvent: buttonsView.inquryBtn.rx.tap.asObservable()
                 )
         )
-    }
-    
-    private func configureFCMTokenView() {
-        let label = UILabel()
-        let copyBtn = UIButton()
-        let textView = UITextView()
-        label.text = "FCM 토큰"
-        copyBtn.setImage(
-            .init(systemName: "doc.on.doc")?
-                .withConfiguration(
-                    UIImage.SymbolConfiguration(
-                        font: .systemFont(ofSize: 24)
-                    )
-                ),
-            for: .normal
-        )
-        copyBtn.rx.tap
-            .subscribe(
-                onNext: { _ in
-                    UIPasteboard.general.string = textView.text
-                }
-            )
-            .disposed(by: disposeBag)
-        textView.text = .fcmToken
-        textView.sizeToFit()
-        textView.backgroundColor = .lightGray
-        textView.isEditable = false
-        [label, copyBtn, textView].forEach {
-            view.addSubview($0)
-            $0.translatesAutoresizingMaskIntoConstraints = false
-        }
-        let safeArea = view.safeAreaLayoutGuide
-        NSLayoutConstraint.activate([
-            label.topAnchor.constraint(equalTo: buttonsView.bottomAnchor),
-            label.leadingAnchor.constraint(
-                equalTo: safeArea.leadingAnchor,
-                constant: 10
-            ),
-            copyBtn.topAnchor.constraint(equalTo: buttonsView.bottomAnchor),
-            copyBtn.trailingAnchor.constraint(
-                equalTo: safeArea.trailingAnchor,
-                constant: -10
-            ),
-            textView.topAnchor.constraint(equalTo: copyBtn.bottomAnchor),
-            textView.leadingAnchor.constraint(equalTo: label.leadingAnchor),
-            textView.trailingAnchor.constraint(
-                equalTo: copyBtn.trailingAnchor
-            ),
-            textView.bottomAnchor.constraint(
-                equalTo: safeArea.bottomAnchor,
-                constant: -10
-            ),
-        ])
     }
 }

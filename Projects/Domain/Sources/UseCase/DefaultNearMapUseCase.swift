@@ -42,11 +42,21 @@ public final class DefaultNearMapUseCase: NearMapUseCase {
                 var response: BusStopInfoResponse
                 var distanceStr: String
                 let requestMessage = "위치 사용을 허용해주세요"
-                let errorMessage = "오류가 발생했습니다. 관리자에게 문의해주세요."
+                let waitingMessage = "위치 정보 가져오는 중..."
+                let errorMessage = "위치 정보를 가져올 수 없습니다"
                 switch status {
                 case .authorized(let location), .alwaysAllowed(let location):
                     (response, distanceStr) = useCase.stationListRepository
                         .getNearByStopInfo(startPointLocation: location)
+                case .waitingForLocation:
+                    response = .init(
+                        busStopName: waitingMessage,
+                        busStopId: "",
+                        direction: "",
+                        longitude: "126.979620",
+                        latitude: "37.570028"
+                    )
+                    distanceStr = ""
                 case .notDetermined, .denied:
                     response = .init(
                         busStopName: requestMessage,
@@ -56,7 +66,7 @@ public final class DefaultNearMapUseCase: NearMapUseCase {
                         latitude: "37.570028"
                     )
                     distanceStr = "권한 설정하러 가기"
-                case .unknown:
+                case .error:
                     response = .init(
                         busStopName: errorMessage,
                         busStopId: "",

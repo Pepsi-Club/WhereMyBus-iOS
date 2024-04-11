@@ -17,8 +17,8 @@ public final class RegularAlarmViewController: UIViewController {
     
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(
-            size: 22
+        label.font = DesignSystemFontFamily.NanumSquareNeoOTF.extraBold.font(
+            size: 25
         )
         label.text = "정기 알람"
         label.textColor = .black
@@ -35,7 +35,11 @@ public final class RegularAlarmViewController: UIViewController {
         return tableView
     }()
     
-    private let addBtn = BottomButton(title: "추가하기")
+    private let addBtn: BottomButton = {
+        let addBtn = BottomButton(title: "추가하기")
+        addBtn.accessibilityIdentifier = "정규알람 추가하기"
+        return addBtn
+    }()
     
     public init(viewModel: RegularAlarmViewModel) {
         self.viewModel = viewModel

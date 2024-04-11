@@ -18,11 +18,9 @@ public final class BusStopInformationView: UIView {
 	private let symbolSize = 50
 	
 	private let busStopSymbol: UIImageView = {
-		let image = UIImageView(
-			image: UIImage(systemName: "mappin.and.ellipse")!
-		)
-		image.tintColor = DesignSystemAsset.gray5.color
-		return image
+        let imageView = UIImageView()
+        imageView.image = DesignSystemAsset.bigBusStop.image
+        return imageView
 	}()
 	
     private let busStopNameLabel: UILabel = {
@@ -37,26 +35,46 @@ public final class BusStopInformationView: UIView {
     private let busStopDescription: UILabel = {
 		let label = UILabel()
 		label.font = DesignSystemFontFamily.NanumSquareNeoOTF.light.font(
-			size: 13
-		)
+            size: 13
+        )
         label.adjustsFontForContentSizeCategory = true
         label.minimumScaleFactor = 0.8
         label.textColor = .black
 		return label
 	}()
 	
+    private let distanceStringLabel: UILabel = {
+        let label = UILabel()
+        label.font = DesignSystemFontFamily.NanumSquareNeoOTF.light.font(
+            size: 13
+        )
+        label.text = "현재 위치에서 약 "
+        label.textColor = .black
+        return label
+    }()
+    
     private let distanceFromBusStopLabel: UILabel = {
 		let label = UILabel()
-		label.font = DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(
+		label.font = DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(
 			size: 13
 		)
-        label.textColor = .black
+        label.textColor = DesignSystemAsset.lightRed.color
 		return label
 	}()
+    
+    private let distanceStringLabel2: UILabel = {
+        let label = UILabel()
+        label.font = DesignSystemFontFamily.NanumSquareNeoOTF.light.font(
+            size: 13
+        )
+        label.text = " 떨어져 있어요"
+        label.textColor = .black
+        return label
+    }()
 	
     private let separationView: UIView = {
 		let view = UIView()
-		view.backgroundColor = DesignSystemAsset.gray5.color
+        view.backgroundColor = .black
 		return view
 	}()
 	
@@ -64,7 +82,7 @@ public final class BusStopInformationView: UIView {
 		let stackView = UIStackView(
 			arrangedSubviews: [
                 busStopNameLabel,
-                busStopDescription
+                busStopDescription,
             ]
 		)
 		stackView.axis = .vertical
@@ -73,6 +91,20 @@ public final class BusStopInformationView: UIView {
 		stackView.spacing = 3
 		return stackView
 	}()
+    
+    private lazy var distancStackView: UIStackView = {
+        let stackView = UIStackView(
+            arrangedSubviews: [
+                distanceStringLabel,
+                distanceFromBusStopLabel,
+                distanceStringLabel2
+            ]
+        )
+        stackView.axis = .horizontal
+        stackView.alignment = .leading
+        stackView.spacing = 1
+        return stackView
+    }()
 	
 	// MARK: - Life Cycle
 	
@@ -93,7 +125,7 @@ public final class BusStopInformationView: UIView {
 		[
 			busStopSymbol,
 			busStopNameStackView,
-			distanceFromBusStopLabel,
+			distancStackView,
 			separationView,
 		].forEach {
 			self.addSubview($0)
@@ -117,6 +149,10 @@ public final class BusStopInformationView: UIView {
 			busStopSymbol.widthAnchor.constraint(
 				equalToConstant: CGFloat(symbolSize)
 			),
+            busStopSymbol.bottomAnchor.constraint(
+                equalTo: separationView.topAnchor,
+                constant: 0
+            ),
 			
 			// busStopNameStackView
 			busStopNameStackView.topAnchor.constraint(
@@ -142,29 +178,25 @@ public final class BusStopInformationView: UIView {
 			),
 			separationView.leftAnchor.constraint(
 				equalTo: self.leftAnchor,
-				constant: 20
+				constant: 15
 			),
 			separationView.rightAnchor.constraint(
 				equalTo: self.rightAnchor,
 				constant: -10
 			),
 			separationView.heightAnchor.constraint(
-				equalToConstant: 1
+                equalToConstant: 1
 			),
 			
 			// distanceFromBusStopLabel
-			distanceFromBusStopLabel.topAnchor.constraint(
+            distancStackView.topAnchor.constraint(
 				equalTo: separationView.bottomAnchor,
 				constant: 10
 			),
-			distanceFromBusStopLabel.leftAnchor.constraint(
+            distancStackView.leftAnchor.constraint(
 				equalTo: self.leftAnchor,
 				constant: 20 + CGFloat(symbolSize) + 15
-			),
-			distanceFromBusStopLabel.rightAnchor.constraint(
-				equalTo: self.rightAnchor,
-				constant: -10
-			),
+			)
 		])
 		
 	}
