@@ -246,12 +246,6 @@ extension BusTableViewCell {
             firstArrivalInfoView.widthAnchor.constraint(
                 equalToConstant: contentView.frame.width * 0.17
             ),
-            firstArrivalInfoView.remainingLabel.heightAnchor.constraint(
-                equalToConstant: 12
-            ),
-            firstArrivalInfoView.timeLabel.heightAnchor.constraint(
-                equalToConstant: 14
-            ),
             
             secondArrivalInfoView.centerYAnchor.constraint(
                 equalTo: contentView.centerYAnchor
@@ -262,12 +256,6 @@ extension BusTableViewCell {
             ),
             secondArrivalInfoView.widthAnchor.constraint(
                 equalToConstant: contentView.frame.width * 0.17
-            ),
-            secondArrivalInfoView.remainingLabel.heightAnchor.constraint(
-                equalToConstant: 12
-            ),
-            secondArrivalInfoView.timeLabel.heightAnchor.constraint(
-                equalToConstant: 14
             ),
             
             alarmBtn.topAnchor.constraint(
