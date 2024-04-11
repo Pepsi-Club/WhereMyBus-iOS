@@ -47,6 +47,12 @@ public final class SearchViewController: UIViewController {
         table.dataSource = recentSearchDataSource
         table.delegate = self
         table.accessibilityIdentifier = "최근검색"
+        table.separatorInset = UIEdgeInsets(
+            top: 0,
+            left: 13,
+            bottom: 0,
+            right: 13
+        )
         return table
     }()
     
@@ -61,13 +67,13 @@ public final class SearchViewController: UIViewController {
         table.dataSource = searchedDataSource
         table.delegate = self
         table.accessibilityIdentifier = "검색결과"
+        table.separatorInset = UIEdgeInsets(
+            top: 0,
+            left: 13,
+            bottom: 0,
+            right: 13
+        )
         return table
-    }()
-    
-    private let nearByStopPaddingView: UIView = {
-        let view = UIView()
-        view.backgroundColor = DesignSystemAsset.tableViewColor.color
-        return view
     }()
     
     private let nearBusStopHeaderLabel: UILabel = {
@@ -134,7 +140,6 @@ public final class SearchViewController: UIViewController {
         
         [
             recentSearchHeaderView,
-            nearByStopPaddingView,
             nearByStopView,
             recentSearchTableView,
             searchedStopTableView,
@@ -160,20 +165,9 @@ public final class SearchViewController: UIViewController {
                 constant: -15
             ),
             
-            nearByStopPaddingView.topAnchor.constraint(
-                equalTo: nearBusStopHeaderLabel.bottomAnchor,
-                constant: 8
-            ),
-            nearByStopPaddingView.leadingAnchor.constraint(
-                equalTo: safeArea.leadingAnchor
-            ),
-            nearByStopPaddingView.trailingAnchor.constraint(
-                equalTo: safeArea.trailingAnchor
-            ),
-            
             nearByStopView.topAnchor.constraint(
-                equalTo: nearByStopPaddingView.topAnchor,
-                constant: 17
+                equalTo: nearBusStopHeaderLabel.bottomAnchor,
+                constant: 15
             ),
             nearByStopView.centerXAnchor.constraint(
                 equalTo: safeArea.centerXAnchor
@@ -181,10 +175,6 @@ public final class SearchViewController: UIViewController {
             nearByStopView.widthAnchor.constraint(
                 equalTo: view.widthAnchor,
                 multiplier: 0.95
-            ),
-            nearByStopView.bottomAnchor.constraint(
-                equalTo: nearByStopPaddingView.bottomAnchor,
-                constant: -17
             ),
             
             recentSearchHeaderView.topAnchor.constraint(

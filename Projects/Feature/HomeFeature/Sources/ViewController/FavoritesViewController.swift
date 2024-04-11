@@ -79,9 +79,9 @@ public final class FavoritesViewController: UIViewController {
         tableView.sectionHeaderTopPadding = 0
         tableView.separatorInset = UIEdgeInsets(
             top: 0,
-            left: 18,
+            left: 15,
             bottom: 0,
-            right: 18
+            right: 15
         )
         return tableView
     }()
