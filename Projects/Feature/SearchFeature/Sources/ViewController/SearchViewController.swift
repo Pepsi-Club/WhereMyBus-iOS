@@ -66,12 +66,7 @@ public final class SearchViewController: UIViewController {
     
     private let nearByStopPaddingView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor(
-            red: 230/255,
-            green: 237/255,
-            blue: 255/255,
-            alpha: 1.0
-        )
+        view.backgroundColor = DesignSystemAsset.tableViewColor.color
         return view
     }()
     
@@ -178,7 +173,7 @@ public final class SearchViewController: UIViewController {
             
             nearByStopView.topAnchor.constraint(
                 equalTo: nearByStopPaddingView.topAnchor,
-                constant: 25
+                constant: 17
             ),
             nearByStopView.centerXAnchor.constraint(
                 equalTo: safeArea.centerXAnchor
@@ -215,8 +210,8 @@ public final class SearchViewController: UIViewController {
                 equalTo: safeArea.trailingAnchor
             ),
             recentSearchTableView.bottomAnchor.constraint(
-                equalTo: nearByStopPaddingView.topAnchor,
-                constant: 10
+                equalTo: nearBusStopHeaderLabel.topAnchor,
+                constant: -20
             ),
             
             searchedStopTableView.topAnchor.constraint(
