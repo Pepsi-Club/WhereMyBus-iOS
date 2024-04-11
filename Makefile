@@ -40,8 +40,8 @@ download-xcconfigs:
 	$(call download_file, XCConfig, $(token),App_Debug.xcconfig)
 	$(call download_file, XCConfig, $(token),App_Release.xcconfig)
 	$(call download_file, XCConfig, $(token),App_Common.xcconfig)
-	$(call download_file, XCConfig, $(token),WidgetExtension_Debug.xcconfig)
-	$(call download_file, XCConfig, $(token),WidgetExtension_Release.xcconfig)
+	$(call download_file, XCConfig, $(token),Widget_Debug.xcconfig)
+	$(call download_file, XCConfig, $(token),Widget_Release.xcconfig)
 
 download-env:
 	$(call download_file, fastlane, $(token),.env)

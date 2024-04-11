@@ -11,6 +11,7 @@ import CoreLocation
 
 public enum LocationStatus {
     case authorized(CLLocation), alwaysAllowed(CLLocation)
+    case waitingForLocation
     case notDetermined, denied
-    case unknown
+    case error
 }
