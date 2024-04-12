@@ -1,8 +1,8 @@
 //
-//  WMBWidgetView.swift
-//  AppUITests
+//  ArrivalInfoMediumView.swift
+//  Widget
 //
-//  Created by gnksbm on 4/4/24.
+//  Created by gnksbm on 4/12/24.
 //  Copyright © 2024 Pepsi-Club. All rights reserved.
 //
 
@@ -11,8 +11,9 @@ import WidgetKit
 
 import Domain
 
-struct WMBWidgetView: View {
-    var entry: Provider.Entry
+@available(iOS 17.0, *)
+struct ArrivalInfoMediumView: View {
+    var entry: ArrivalInfoProvider.Entry
     
     var url: URL? {
         var url: URL?
@@ -31,7 +32,7 @@ struct WMBWidgetView: View {
                 arrivalInfoView
             }
         }
-        //.widgetBackground(Color.white)
+        .widgetBackground(Color.white)
         .widgetURL(url)
     }
     
@@ -48,47 +49,44 @@ struct WMBWidgetView: View {
                 entry.responses.prefix(1),
                 id: \.busStopId
             ) { busStopResponse in
-                VStack(alignment: .leading) {
-                    Text(busStopResponse.busStopName)
-                        .font(.subheadline)
-                        .lineLimit(2)
+                HStack(alignment: .top) {
+                    VStack(alignment: .leading) {
+                        Text(busStopResponse.busStopName)
+                            .font(.headline)
+                            .lineLimit(1)
+                        Text(busStopResponse.direction)
+                            .font(.subheadline)
+                            .lineLimit(1)
+                    }
+                    RefreshView(entry: entry)
                 }
+                Spacer()
                 ForEach(
                     busStopResponse.buses.prefix(1),
                     id: \.hashValue
                 ) { bus in
-                    VStack(alignment: .leading) {
+                    HStack {
                         Text(bus.busName)
                             .font(.subheadline)
+                        Spacer()
                         Text(bus.firstArrivalState.toString)
                             .font(.subheadline)
                             .lineLimit(1)
                     }
-                    .padding(1)
                 }
             }
         }
     }
 }
 
-//extension View {
-//    func widgetBackground(_ backgroundView: some View) -> some View {
-//        if #available(iOSApplicationExtension 17.0, *) {
-//            return containerBackground(for: .widget) {
-//                backgroundView
-//            }
-//        } else {
-//            return background(backgroundView)
-//        }
-//    }
-//}
-
 #if DEBUG
-struct WMBWidgetView_Preview: PreviewProvider {
+@available(iOS 17.0, *)
+struct ArrivalInfoMediumView_Preview: PreviewProvider {
     static var previews: some View {
-        WMBWidgetView(
-            entry: WMBEntry(
+        ArrivalInfoMediumView(
+            entry: ArrivalInfoEntry(
                 date: .now,
+                configuration: .init(),
                 responses: .mock
             )
         )

@@ -8,23 +8,14 @@ let project = Project.makeProject(
     entitlementsPath: .relativeToManifest("App.entitlements"),
     hasResource: true,
     appExtensionTarget: [
-//        Project.appExtensionTarget(
-//            name: "NotificationExtension",
-//            plist: .extendingDefault(
-//                with: .notificationInfoPlist
-//            ),
-//            dependencies: [
-//                .mainFeature,
-//                .data,
-//            ]
-//        ),
         Project.appExtensionTarget(
             name: "Widget",
             plist: .extendingDefault(
                 with: .widgetInfoPlist
             ),
             resources: [
-                "Resources/**",
+                "Resources/Model.xcdatamodeld",
+                "Resources/total_stationList.json",
                 "Widget/Resources/**",
             ],
             entitlements: .file(
