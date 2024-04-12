@@ -102,7 +102,7 @@ platform :ios do
             keychain_password: ENV["KEYCHAIN_PASSWORD"],
             app_identifier: [
                 "com.Pepsi-Club.WhereMyBus",
-                "com.Pepsi-Club.WhereMyBus.Widget"
+                # "com.Pepsi-Club.WhereMyBus.Widget"
             ],
             readonly: true
         )
@@ -113,7 +113,7 @@ platform :ios do
             keychain_password: ENV["KEYCHAIN_PASSWORD"],
             app_identifier: [
                 "com.Pepsi-Club.WhereMyBus",
-                "com.Pepsi-Club.WhereMyBus.Widget"
+                # "com.Pepsi-Club.WhereMyBus.Widget"
             ],
             readonly: true
         )
