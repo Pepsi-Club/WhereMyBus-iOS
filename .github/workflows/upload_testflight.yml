@@ -1,12 +1,9 @@
 name: UploadTestflight
 
 on:
-  create:
+  pull_request:
     branches:
-      - release/**
-  push:
-    branches:
-      - release/**
+      - main
       
 jobs:
   upload_testflight:
