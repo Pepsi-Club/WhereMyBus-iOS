@@ -9,7 +9,7 @@
 import UIKit
 
 public final class ArrivalInfoView: UIStackView {
-    public let timeLabel: UILabel = {
+    private let timeLabel: UILabel = {
         let label = UILabel()
         label.font = DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(
             size: 14
@@ -18,7 +18,7 @@ public final class ArrivalInfoView: UIStackView {
         return label
     }()
     
-    public let remainingLabel: UILabel = {
+    private let remainingLabel: UILabel = {
         let label = UILabel()
         label.font = DesignSystemFontFamily.NanumSquareNeoOTF.light.font(
             size: 12
