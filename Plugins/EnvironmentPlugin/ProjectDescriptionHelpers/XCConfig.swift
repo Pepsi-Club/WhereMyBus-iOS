@@ -29,8 +29,8 @@ public extension Settings {
     
     static let frameworkDebug: Self = .settings(
         base: .allLoadSetting
-            .setUserScriptSandboxing()
-            .setClangModuleDebugging(),
+            .setUserScriptSandboxing(),
+//            .setClangModuleDebugging(),
         configurations: [
             .debug(
                 name: .debug,
