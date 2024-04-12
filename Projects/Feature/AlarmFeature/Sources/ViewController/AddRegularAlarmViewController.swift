@@ -339,13 +339,13 @@ final class AddRegularAlarmViewController: UIViewController {
 
 extension AddRegularAlarmViewController {
     enum WeekDay: Int, CaseIterable {
-        case monday = 2,
+        case monday = 1,
              tuesday,
              wednesday,
              thursday,
              friday,
              saturday,
-             sunday = 1
+             sunday = 0
         
         var toString: String {
             switch self {

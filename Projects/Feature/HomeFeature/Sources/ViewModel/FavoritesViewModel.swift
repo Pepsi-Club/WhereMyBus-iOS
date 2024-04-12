@@ -78,7 +78,9 @@ public final class FavoritesViewModel: ViewModel {
                             stationId: selectedBusStop.busStopId
                         )
                     } catch {
+                        #if DEBUG
                         print(error.localizedDescription)
+                        #endif
                     }
                 }
             )

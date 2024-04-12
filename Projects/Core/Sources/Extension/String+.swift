@@ -117,4 +117,8 @@ public extension String {
             return identifier
         }
     }
+    
+    static var fcmToken: Self? {
+        UserDefaults.standard.string(forKey: "fcmToken")
+    }
 }

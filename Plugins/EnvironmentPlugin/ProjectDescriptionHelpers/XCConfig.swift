@@ -29,7 +29,8 @@ public extension Settings {
     
     static let frameworkDebug: Self = .settings(
         base: .allLoadSetting
-            .setUserScriptSandboxing(),
+            .setUserScriptSandboxing()
+            .setClangModuleDebugging(),
         configurations: [
             .debug(
                 name: .debug,
@@ -119,6 +120,14 @@ public extension SettingsDictionary {
         merging(
             [
                 "ENABLE_USER_SCRIPT_SANDBOXING": .string("NO"),
+            ]
+        )
+    }
+    
+    func setClangModuleDebugging() -> SettingsDictionary {
+        merging(
+            [
+                "CLANG_ENABLE_MODULE_DEBUGGING": .string("YES"),
             ]
         )
     }

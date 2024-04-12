@@ -1,5 +1,6 @@
 import UIKit
 
+import Core
 import DesignSystem
 
 import RxSwift
@@ -81,7 +82,6 @@ public final class SettingsViewController: UIViewController {
     }
     
     private func bind() {
-        
         _ = viewModel.transform(
             input:
                 .init(

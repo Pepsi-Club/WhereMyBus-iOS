@@ -26,7 +26,7 @@ public struct RegularAlarmResponse: Hashable, CoreDataStorable {
         busId: String, 
         busName: String,
         time: Date,
-        weekDay: [Int]
+        weekday: [Int]
     ) {
         self.requestId = requestId
         self.busStopId = busStopId
@@ -34,6 +34,23 @@ public struct RegularAlarmResponse: Hashable, CoreDataStorable {
         self.busId = busId
         self.busName = busName
         self.time = time
-        self.weekday = weekDay as [Int]
+        self.weekday = weekday as [Int]
+    }
+}
+
+public extension RegularAlarmResponse {
+    var toAddRequest: AddRegularAlarmRequest {
+        .init(
+            date: time,
+            weekday: weekday,
+            busRouteId: busId,
+            arsId: busStopId,
+            busStopName: busStopName,
+            busName: busName
+        )
+    }
+    
+    var toRemoveRequest: RemoveRegularAlarmRequest {
+        .init(alarmId: requestId)
     }
 }

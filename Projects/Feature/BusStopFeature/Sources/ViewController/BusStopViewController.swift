@@ -207,10 +207,9 @@ public final class BusStopViewController: UIViewController {
         cell?.busNumberLb.textColor = response.busType.toColor
         
         cell?.clearBtn.rx.tap
-            .map({ _ in
-                print("\(response)")
-                return response
-            })
+            .map { _ in
+                response
+            }
             .bind(to: tableCellTapEvent)
             .disposed(by: cell!.disposeBag)
         

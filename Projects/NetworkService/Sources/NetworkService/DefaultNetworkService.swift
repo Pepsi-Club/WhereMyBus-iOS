@@ -38,6 +38,31 @@ public final class DefaultNetworkService: NetworkService {
                             httpURLResponse.statusCode
                         )
                     )
+                    #if DEBUG
+                    if let url = urlRequest.url,
+                       let httpMethod = urlRequest.httpMethod,
+                       let data = urlRequest.httpBody,
+                       let httpBody = String(
+                        data: data,
+                        encoding: .utf8
+                       ) {
+                        print(
+                            url,
+                            httpMethod,
+                            httpBody,
+                            separator: "\n"
+                        )
+                    }
+                    if let data,
+                    let json = String(
+                        data: data,
+                        encoding: .utf8
+                    ) {
+                        print(
+                            json
+                        )
+                    }
+                    #endif
                     return
                 }
                 

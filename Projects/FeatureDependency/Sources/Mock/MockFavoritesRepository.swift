@@ -136,7 +136,9 @@ public final class MockFavoritesRepository: FavoritesRepository {
             )
             favorites.onNext(oldFavorites)
         } catch {
+            #if DEBUG
             print(error, "즐겨찾기 업데이트 실패")
+            #endif
         }
     }
     public func removeRoute(
@@ -156,7 +158,9 @@ public final class MockFavoritesRepository: FavoritesRepository {
                 favorites.onNext(oldFavorites)
             }
         } catch {
+            #if DEBUG
             print(error, "즐겨찾기 업데이트 실패")
+            #endif
         }
     }
 }

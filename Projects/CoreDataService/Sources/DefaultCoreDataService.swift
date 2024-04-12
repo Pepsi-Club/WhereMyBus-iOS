@@ -17,10 +17,16 @@ public final class DefaultCoreDataService: CoreDataService {
     
     public init() {
         container = NSPersistentContainer(name: "Model")
+        container.persistentStoreDescriptions.first?.setOption(
+            true as NSNumber,
+            forKey: NSPersistentHistoryTrackingKey
+        )
         container.loadPersistentStores { _, error in
+            #if DEBUG
             if let error {
                 print(error.localizedDescription)
             }
+            #endif
         }
     }
     

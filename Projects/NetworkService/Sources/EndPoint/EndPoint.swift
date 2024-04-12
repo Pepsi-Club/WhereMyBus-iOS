@@ -44,10 +44,12 @@ extension EndPoint {
         urlRequest.allHTTPHeaderFields = header
         if !body.isEmpty {
             do {
-                let body = try JSONSerialization.data(withJSONObject: body)
-                urlRequest.httpBody = body
+                let httpBody = try JSONSerialization.data(withJSONObject: body)
+                urlRequest.httpBody = httpBody
             } catch {
+                #if DEBUG
                 print(error.localizedDescription)
+                #endif
             }
         }
         return urlRequest
