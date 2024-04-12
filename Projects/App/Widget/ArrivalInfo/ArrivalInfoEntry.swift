@@ -1,5 +1,5 @@
 //
-//  WMBEntry.swift
+//  ArrivalInfoEntry.swift
 //  AppUITests
 //
 //  Created by gnksbm on 4/4/24.
@@ -9,15 +9,19 @@
 import WidgetKit
 import Domain
 
-struct WMBEntry: TimelineEntry {
+@available(iOS 17.0, *)
+struct ArrivalInfoEntry: TimelineEntry {
     let date: Date
+    let configuration: ArrivalInfoIntent
     let responses: [BusStopArrivalInfoResponse]
     
     init(
         date: Date,
+        configuration: ArrivalInfoIntent,
         responses: [BusStopArrivalInfoResponse] = []
     ) {
         self.date = date
+        self.configuration = configuration
         self.responses = responses
     }
 }

@@ -1,5 +1,5 @@
 //
-//  WidgetUseCase.swift
+//  ArrivalInfoUseCase.swift
 //  App
 //
 //  Created by gnksbm on 4/8/24.
@@ -10,7 +10,8 @@ import Foundation
 
 import Domain
 
-final class WidgetUseCase {
+@available(iOS 17.0, *)
+final class ArrivalInfoUseCase {
     var responses = [BusStopArrivalInfoResponse]()
     
     func fetchUserDefaultValue() {

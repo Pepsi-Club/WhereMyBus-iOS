@@ -10,7 +10,6 @@ import UIKit
 import AVFoundation
 
 public extension UIImage {
-
     func resize(_ width: Int, _ height: Int) -> UIImage {
         let maxSize = CGSize(
             width: width,
