@@ -314,7 +314,11 @@ public final class SearchViewController: UIViewController {
                     guard let text = vc.searchTextFieldView.text
                     else { return }
                     vc.searchedStopTableView.isHidden = text.isEmpty
-                    vc.nearBusStopHeaderLabel.isHidden = true
+                    if text.isEmpty { 
+                        vc.nearBusStopHeaderLabel.isHidden = false
+                    } else {
+                        vc.nearBusStopHeaderLabel.isHidden = true
+                    }
                 }
             )
             .disposed(by: disposeBag)
