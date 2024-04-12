@@ -201,13 +201,15 @@ extension BusTableViewCell {
         
         NSLayoutConstraint.activate([
             starBtn.topAnchor.constraint(
-                equalTo: topAnchor,
+                equalTo: contentView.topAnchor,
                 constant: 15
             ),
-            starBtn.leadingAnchor.constraint(equalTo: leadingAnchor),
+            starBtn.leadingAnchor.constraint(
+                equalTo: contentView.leadingAnchor
+            ),
             
             busNumber.topAnchor.constraint(
-                equalTo: topAnchor,
+                equalTo: contentView.topAnchor,
                 constant: 12
             ),
             busNumber.leadingAnchor.constraint(
@@ -223,7 +225,7 @@ extension BusTableViewCell {
                 constant: 8
             ),
             nextStopName.bottomAnchor.constraint(
-                equalTo: bottomAnchor,
+                equalTo: contentView.bottomAnchor,
                 constant: -8
             ),
             nextStopName.leadingAnchor.constraint(
@@ -234,13 +236,8 @@ extension BusTableViewCell {
                 equalToConstant: contentView.frame.width * 0.38
             ),
             
-            firstArrivalInfoView.topAnchor.constraint(
-                equalTo: topAnchor,
-                constant: 10
-            ),
-            firstArrivalInfoView.bottomAnchor.constraint(
-                equalTo: bottomAnchor,
-                constant: -8
+            firstArrivalInfoView.centerYAnchor.constraint(
+                equalTo: contentView.centerYAnchor
             ),
             firstArrivalInfoView.leadingAnchor.constraint(
                 equalTo: nextStopName.trailingAnchor,
@@ -250,28 +247,23 @@ extension BusTableViewCell {
                 equalToConstant: contentView.frame.width * 0.17
             ),
             
-            secondArrivalInfoView.topAnchor.constraint(
-                equalTo: topAnchor,
-                constant: 10
+            secondArrivalInfoView.centerYAnchor.constraint(
+                equalTo: contentView.centerYAnchor
             ),
             secondArrivalInfoView.leadingAnchor.constraint(
                 equalTo: firstArrivalInfoView.trailingAnchor,
                 constant: 10
-            ),
-            secondArrivalInfoView.bottomAnchor.constraint(
-                equalTo: bottomAnchor,
-                constant: -8
             ),
             secondArrivalInfoView.widthAnchor.constraint(
                 equalToConstant: contentView.frame.width * 0.17
             ),
             
             alarmBtn.topAnchor.constraint(
-                equalTo: topAnchor,
+                equalTo: contentView.topAnchor,
                 constant: 15
             ),
             alarmBtn.trailingAnchor.constraint(
-                equalTo: trailingAnchor,
+                equalTo: contentView.trailingAnchor,
                 constant: -10
             ),
             
