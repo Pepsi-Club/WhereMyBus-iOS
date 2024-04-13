@@ -44,7 +44,7 @@ public class DefaultRegularAlarmUseCase: RegularAlarmUseCase {
         }
     }
     
-    public func migrateRegularAlarm() {
+    private func migrateRegularAlarm() {
         localNotificationService.fetchRegularAlarm()
             .filter { !$0.isEmpty }
             .withUnretained(self)
