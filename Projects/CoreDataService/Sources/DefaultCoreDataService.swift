@@ -13,23 +13,118 @@ import Core
 import CoreData
 
 public final class DefaultCoreDataService: CoreDataService {
-    private var container: NSPersistentContainer
+    private let container: NSPersistentContainer
+    
+    private let fileName = "Model"
+    private let appGroupName = "group.Pepsi-Club.WhereMyBus"
     
     public init() {
-        container = NSPersistentCloudKitContainer(name: "Model")
-        container.persistentStoreDescriptions.first?.setOption(
-            true as NSNumber,
-            forKey: NSPersistentHistoryTrackingKey
-        )
-        container.loadPersistentStores { _, error in
+        container = NSPersistentCloudKitContainer(name: fileName)
+        configureContainer()
+        migrateStore()
+        container.loadPersistentStores { desc, error in
             if let error {
                 #if DEBUG
                 print(error.localizedDescription)
                 #endif
             }
+            if let storeUrl = desc.url {
+                #if DEBUG
+                print(
+                    "💾 Load된 SQLite URL: \(storeUrl)"
+                )
+                #endif
+            }
         }
     }
     
+    private func configureContainer() {
+        container.viewContext.automaticallyMergesChangesFromParent = true
+    }
+    
+    private func migrateStore() {
+        let fileManager = FileManager.default
+        let coordinator = container.persistentStoreCoordinator
+        guard let legacyStoreUrl = fileManager
+            .urls(
+                for: .applicationSupportDirectory,
+                in: .userDomainMask
+            )
+            .first?
+            .appendingPathComponent(
+                "\(fileName).sqlite"
+            )
+        else {
+            #if DEBUG
+            print("💾 레거시 디렉토리 URL 찾기 실패")
+            #endif
+            return
+        }
+        guard let appGroupStoreUrl = fileManager
+            .containerURL(
+                forSecurityApplicationGroupIdentifier: appGroupName
+            )?
+            .appendingPathComponent(
+                "\(fileName).sqlite"
+            )
+        else {
+            #if DEBUG
+            print("💾 AppGroup 디렉토리 URL 찾기 실패")
+            #endif
+            return
+        }
+        guard let legacyStore = coordinator.persistentStore(for: legacyStoreUrl)
+        else {
+            #if DEBUG
+            print(
+                "💾 레거시 SQLite 파일 없음",
+                "💾 레거시 SQLite URL: \(legacyStoreUrl)",
+                "💾 AppGroup SQLite URL: \(appGroupStoreUrl)",
+                separator: "\n"
+            )
+            #endif
+            container.persistentStoreDescriptions = [
+                .init(url: appGroupStoreUrl)
+            ]
+            return
+        }
+        do {
+            let newStore = try coordinator.migratePersistentStore(
+                legacyStore,
+                to: appGroupStoreUrl,
+                type: .sqlite
+            )
+            if let newStoreUrl = newStore.url {
+                container.persistentStoreDescriptions = [
+                    .init(url: newStoreUrl)
+                ]
+                print("💾 AppGroup SQLite Url: \(newStoreUrl)")
+            }
+            do {
+                try coordinator.destroyPersistentStore(
+                    at: legacyStoreUrl,
+                    type: .sqlite
+                )
+            } catch {
+                #if DEBUG
+                print(
+                    "💾 레거시 제거 실패",
+                    "💾 \(error.localizedDescription)",
+                    separator: "\n"
+                )
+                #endif
+            }
+        } catch {
+            #if DEBUG
+            print(
+                "💾 마이그레이션 실패",
+                "💾 \(error.localizedDescription)",
+                separator: "\n"
+            )
+            #endif
+        }
+    }
+
     public func fetch<T: CoreDataStorable>(type: T.Type) throws -> [T] {
         do {
             return try fetchMO(type: type)
