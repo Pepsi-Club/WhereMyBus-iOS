@@ -42,7 +42,7 @@ struct RefreshView_Preview: PreviewProvider {
                 responses: .mock
             )
         )
-        .widgetBackground(Color.white)
+        .widgetBackground()
         .previewContext(WidgetPreviewContext(family: .systemSmall))
         RefreshView(
             entry: .init(
@@ -51,7 +51,7 @@ struct RefreshView_Preview: PreviewProvider {
                 responses: .mock
             )
         )
-        .widgetBackground(Color.white)
+        .widgetBackground()
         .previewContext(WidgetPreviewContext(family: .systemMedium))
     }
 }

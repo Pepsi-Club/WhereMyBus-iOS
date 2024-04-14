@@ -9,7 +9,9 @@
 import SwiftUI
 
 extension View {
-    func widgetBackground(_ backgroundView: some View) -> some View {
+    func widgetBackground(
+        _ backgroundView: some View = Color.white
+    ) -> some View {
         if #available(iOSApplicationExtension 17.0, *) {
             return containerBackground(for: .widget) {
                 backgroundView

@@ -12,9 +12,14 @@ import WidgetKit
 @available (iOS 17.0, *)
 struct ArrivalInfoView: View {
     var entry: ArrivalInfoProvider.Entry
-    
     @Environment(\.widgetFamily) var widgetFamily
+    
     var body: some View {
+        view.widgetBackground(Color.white)
+    }
+    
+    @ViewBuilder
+    var view: some View {
         switch widgetFamily {
         case .systemSmall:
             ArrivalInfoSmallView(entry: entry)
