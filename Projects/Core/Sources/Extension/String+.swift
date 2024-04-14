@@ -30,13 +30,6 @@ public extension String {
         return serverKey
     }
     
-    static var fcmKey: Self {
-        guard let any = Bundle.main.object(forInfoDictionaryKey: "FCM_KEY"),
-              let serverKey = any as? String
-        else { fatalError("Can't Not Find FCM Key") }
-        return serverKey
-    }
-    
     static func getCurrentVersion() -> String {
         guard let dictionary = Bundle.main.infoDictionary,
               let version = dictionary["CFBundleShortVersionString"] as? String
