@@ -14,7 +14,8 @@ let project = Project.makeProject(
                 with: .widgetInfoPlist
             ),
             resources: [
-                "Resources/**",
+                "Resources/Model.xcdatamodeld",
+                "Resources/total_stationList.json",
                 "Widget/Resources/**",
             ],
             entitlements: .file(
