@@ -37,7 +37,8 @@ public final class MockFavoritesRepository: FavoritesRepository {
                                 firstArrivalRemaining: "3번째 전",
                                 secondArrivalState: ArrivalState
                                     .arrivalTime(time: 913),
-                                secondArrivalRemaining: "6번째 전",
+                                secondArrivalRemaining: "6번째 전", 
+                                adirection: "",
                                 isFavorites: false,
                                 isAlarmOn: false
                             ),
@@ -51,7 +52,8 @@ public final class MockFavoritesRepository: FavoritesRepository {
                                 firstArrivalRemaining: "1번째 전",
                                 secondArrivalState: ArrivalState
                                     .arrivalTime(time: 566),
-                                secondArrivalRemaining: "5번째 전",
+                                secondArrivalRemaining: "5번째 전", 
+                                adirection: "",
                                 isFavorites: false,
                                 isAlarmOn: false
                             ),
@@ -65,6 +67,7 @@ public final class MockFavoritesRepository: FavoritesRepository {
                                 secondArrivalState: ArrivalState
                                     .arrivalTime(time: 1086),
                                 secondArrivalRemaining: "9번째 전",
+                                adirection: "",
                                 isFavorites: false,
                                 isAlarmOn: false
                             ),
@@ -78,6 +81,7 @@ public final class MockFavoritesRepository: FavoritesRepository {
                                 secondArrivalState: ArrivalState
                                     .arrivalTime(time: 689),
                                 secondArrivalRemaining: "6번째 전",
+                                adirection: "",
                                 isFavorites: false,
                                 isAlarmOn: false
                             ),
@@ -92,6 +96,7 @@ public final class MockFavoritesRepository: FavoritesRepository {
                                 secondArrivalState: ArrivalState
                                     .arrivalTime(time: 916),
                                 secondArrivalRemaining: "9번째 전",
+                                adirection: "",
                                 isFavorites: false,
                                 isAlarmOn: false
                             )

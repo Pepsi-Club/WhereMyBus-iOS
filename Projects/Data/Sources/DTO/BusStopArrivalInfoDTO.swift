@@ -127,7 +127,8 @@ public extension BusStopArrivalInfoDTO {
                     firstArrivalState: firstArrivalState,
                     firstArrivalRemaining: firstArrivalRemaining,
                     secondArrivalState: secondArrivalState,
-                    secondArrivalRemaining: secondArrivalRemaining,
+                    secondArrivalRemaining: secondArrivalRemaining, 
+                    adirection: item.adirection ?? "방면 정보 없음",
                     isFavorites: false,
                     isAlarmOn: false
                 )

@@ -36,6 +36,7 @@ public struct BusArrivalInfoResponse: Codable, Hashable {
     public let firstArrivalRemaining: String
     public let secondArrivalState: ArrivalState
     public let secondArrivalRemaining: String
+    public let adirection: String
     public var isFavorites: Bool
     public var isAlarmOn: Bool
     
@@ -48,6 +49,7 @@ public struct BusArrivalInfoResponse: Codable, Hashable {
         firstArrivalRemaining: String,
         secondArrivalState: ArrivalState,
         secondArrivalRemaining: String,
+        adirection: String,
         isFavorites: Bool,
         isAlarmOn: Bool
     ) {
@@ -59,6 +61,7 @@ public struct BusArrivalInfoResponse: Codable, Hashable {
         self.firstArrivalRemaining = firstArrivalRemaining
         self.secondArrivalState = secondArrivalState
         self.secondArrivalRemaining = secondArrivalRemaining
+        self.adirection = adirection
         self.isFavorites = isFavorites
         self.isAlarmOn = isAlarmOn
     }

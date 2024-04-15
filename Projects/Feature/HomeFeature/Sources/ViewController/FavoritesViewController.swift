@@ -248,6 +248,7 @@ public final class FavoritesViewController: UIViewController {
                                 firstArrivalRemaining: firstReaining,
                                 secondArrivalState: newSecondArrivalState,
                                 secondArrivalRemaining: secondReaining,
+                                adirection: busInfo.adirection,
                                 isFavorites: busInfo.isFavorites,
                                 isAlarmOn: busInfo.isAlarmOn
                             )
