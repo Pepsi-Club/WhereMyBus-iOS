@@ -20,6 +20,7 @@ public extension String {
         let date = Date()
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy.MM.dd.HH.mm"
+        formatter.locale = Locale(identifier: "ko_KR")
         return formatter.string(from: date)
     }
 }
