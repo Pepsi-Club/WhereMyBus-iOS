@@ -157,6 +157,38 @@ public final class DefaultCoreDataService: CoreDataService {
         }
     }
     
+    public func saveUniqueData<T: CoreDataStorable, U: Equatable>(
+        data: T,
+        uniqueKeyPath: KeyPath<T, U>
+    ) throws {
+        let isUnique = try isValueDuplicated(
+            type: type(of: data),
+            uniqueKeyPath: uniqueKeyPath,
+            uniqueValue: data[keyPath: uniqueKeyPath]
+        )
+        if isUnique {
+            let object = NSEntityDescription.insertNewObject(
+                forEntityName: "\(type(of: data))MO",
+                into: container.viewContext
+            )
+            let mirror = Mirror(reflecting: data)
+            mirror.children.forEach { key, value in
+                guard let key,
+                      let propertyName = String(describing: key)
+                    .split(separator: ".")
+                    .last
+                else { return }
+                object.setValue(value, forKey: String(propertyName))
+            }
+            do {
+                try container.viewContext.save()
+            } catch {
+                container.viewContext.rollback()
+                throw error
+            }
+        }
+    }
+    
     public func update<T: CoreDataStorable, U: Equatable>(
         data: T,
         uniqueKeyPath: KeyPath<T, U>
@@ -218,7 +250,7 @@ public final class DefaultCoreDataService: CoreDataService {
         }
     }
     
-    public func duplicationCheck<T: CoreDataStorable, U: Equatable>(
+    public func isValueDuplicated<T: CoreDataStorable, U: Equatable>(
         type: T.Type,
         uniqueKeyPath: KeyPath<T, U>,
         uniqueValue: U

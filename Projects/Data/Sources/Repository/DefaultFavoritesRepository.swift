@@ -10,6 +10,7 @@ import Foundation
 
 import CoreDataService
 import Domain
+import NetworkService
 
 import RxSwift
 
@@ -34,7 +35,7 @@ public final class DefaultFavoritesRepository: FavoritesRepository {
     ) throws {
         do {
             let oldFavorites = try favorites.value()
-            let hasBusStopId = try coreDataService.duplicationCheck(
+            let hasBusStopId = try coreDataService.isValueDuplicated(
                 type: FavoritesBusStopResponse.self,
                 uniqueKeyPath: \.busStopId,
                 uniqueValue: arsId
