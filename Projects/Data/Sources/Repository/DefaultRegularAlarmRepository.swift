@@ -54,7 +54,11 @@ public final class DefaultRegularAlarmRepository: RegularAlarmRepository {
             onNext: { repository, response in
                 do {
                     try repository.coreDataService.save(data: response)
-                    repository.fetchRegularAlarm()
+                    let currentAlarms = try repository.currentRegularAlarm
+                        .value()
+                    repository.currentRegularAlarm.onNext(
+                        currentAlarms + [response]
+                    )
                     completion()
                 } catch {
                     #if DEBUG
@@ -110,7 +114,11 @@ public final class DefaultRegularAlarmRepository: RegularAlarmRepository {
                         data: response,
                         uniqueKeyPath: \.requestId
                     )
-                    repository.fetchRegularAlarm()
+                    let currentAlarms = try repository.currentRegularAlarm
+                        .value()
+                    repository.currentRegularAlarm.onNext(
+                        currentAlarms.filter { $0 != response }
+                    )
                     completion()
                 } catch {
                     #if DEBUG
@@ -133,8 +141,124 @@ public final class DefaultRegularAlarmRepository: RegularAlarmRepository {
                 type: RegularAlarmResponse.self
             )
             currentRegularAlarm.onNext(responses)
+            syncRegularAlarms(responses: responses)
         } catch {
             currentRegularAlarm.onError(error)
+        }
+    }
+    
+    private func syncRegularAlarms(responses: [RegularAlarmResponse]) {
+        networkService.request(endPoint: FetchRegularAlarmEndPoint())
+            .decode(
+                type: [FetchRegularAlarmDTO].self,
+                decoder: JSONDecoder()
+            )
+            .withUnretained(self)
+            .subscribe(
+                onNext: { repository, dtoArr in
+                    switch dtoArr.validateSync(localResponses: responses) {
+                    case .synced:
+                        break
+                    case .localMissing(alarmIds: let alarmIds):
+                        repository.removeUnsyncedServerAlarm(alarmIds: alarmIds)
+                    case .serverMissing(responses: let responses):
+                        repository.createUnsyncedServerAlarm(
+                            responses: responses
+                        )
+                    case .bothMissing(
+                        localMissingAlarmIds: let localMissingAlarmIds,
+                        serverMissingResponses: let serverMissingResponses
+                    ):
+                        repository.removeUnsyncedServerAlarm(
+                            alarmIds: localMissingAlarmIds
+                        )
+                        repository.createUnsyncedServerAlarm(
+                            responses: serverMissingResponses
+                        )
+                    }
+                }
+            )
+            .disposed(by: disposeBag)
+    }
+    
+    private func createUnsyncedServerAlarm(responses: [RegularAlarmResponse]) {
+        responses.forEach { response in
+            networkService.request(
+                endPoint: AddRegularAlarmEndPoint(
+                    request: response.toAddRequest
+                )
+            )
+            .decode(
+                type: AddRegularAlarmDTO.self,
+                decoder: JSONDecoder()
+            )
+            .withUnretained(self)
+            .subscribe(
+                onNext: { repository, dto in
+                    let newResponse = RegularAlarmResponse(
+                        requestId: dto.alarmId,
+                        busStopId: response.busStopId,
+                        busStopName: response.busStopName,
+                        busId: response.busId,
+                        busName: response.busName,
+                        time: response.time,
+                        weekday: response.weekday
+                    )
+                    do {
+                        try repository.coreDataService.delete(
+                            data: response,
+                            uniqueKeyPath: \.requestId
+                        )
+                        try repository.coreDataService.save(data: newResponse)
+                        let currentResponse = try repository.currentRegularAlarm
+                            .value()
+                        let updatedResponse = currentResponse
+                            .filter { $0 != response } + [ newResponse ]
+                        repository.currentRegularAlarm.onNext(updatedResponse)
+                        #if DEBUG
+                        print("로컬 싱크 성공")
+                        #endif
+                    } catch {
+                        #if DEBUG
+                        print(error.localizedDescription)
+                        #endif
+                    }
+                },
+                onError: { error in
+                    #if DEBUG
+                    print(error.localizedDescription)
+                    #endif
+                }
+            ) // 성공, Error에 따라 추가 작업을 해줘야할지 고민입니다
+            .disposed(by: disposeBag)
+        }
+    }
+    
+    private func removeUnsyncedServerAlarm(alarmIds: [String]) {
+        alarmIds.forEach { alarmId in
+            networkService.request(
+                endPoint: RemoveRegularAlarmEndPoint(
+                    request: .init(alarmId: alarmId)
+                )
+            )
+            .decode(
+                type: RemoveRegularAlarmDTO.self,
+                decoder: JSONDecoder()
+            )
+            .subscribe(
+                onNext: { dto in
+                    #if DEBUG
+                    print(dto)
+                    print("id: \(alarmId)")
+                    #endif
+                },
+                onError: { error in
+                    #if DEBUG
+                    print(error.localizedDescription)
+                    #endif
+                }
+            ) // 성공, Error에 따라 추가 작업을 해줘야할지 고민입니다
+            .disposed(by: disposeBag)
         }
     }
 }
