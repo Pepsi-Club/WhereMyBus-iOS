@@ -13,7 +13,8 @@ public extension Settings {
             .setVersion()
             .setCodeSignManual()
             .setProvisioning()
-            .setUserScriptSandboxing(),
+            .setUserScriptSandboxing()
+            .setClangModuleDebugging(),
         configurations: [
             .debug(
                 name: .debug,
@@ -29,8 +30,8 @@ public extension Settings {
     
     static let frameworkDebug: Self = .settings(
         base: .baseSetting
-            .setUserScriptSandboxing(),
-//            .setClangModuleDebugging(),
+            .setUserScriptSandboxing()
+            .setClangModuleDebugging(),
         configurations: [
             .debug(
                 name: .debug,
