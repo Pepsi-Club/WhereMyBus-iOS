@@ -9,6 +9,7 @@
 import SwiftUI
 
 import Core
+import WidgetKit
 
 @available(iOS 17.0, *)
 struct RefreshView: View {
@@ -16,9 +17,12 @@ struct RefreshView: View {
     
     var body: some View {
         HStack {
-            Spacer()
-            Text(entry.date.toString(dateFormat: "HH:mm 업데이트"))
-                .font(.caption)
+            Text(
+                entry.date.toString(
+                    dateFormat: "HH:mm 업데이트"
+                )
+            )
+            .font(.caption)
             Button(intent: entry.configuration) {
                 Image(systemName: "arrow.clockwise")
             }
@@ -26,3 +30,29 @@ struct RefreshView: View {
         }
     }
 }
+
+#if DEBUG
+@available(iOS 17.0, *)
+struct RefreshView_Preview: PreviewProvider {
+    static var previews: some View {
+        RefreshView(
+            entry: .init(
+                date: .now,
+                configuration: .init(),
+                responses: .mock
+            )
+        )
+        .widgetBackground()
+        .previewContext(WidgetPreviewContext(family: .systemSmall))
+        RefreshView(
+            entry: .init(
+                date: .now,
+                configuration: .init(),
+                responses: .mock
+            )
+        )
+        .widgetBackground()
+        .previewContext(WidgetPreviewContext(family: .systemMedium))
+    }
+}
+#endif

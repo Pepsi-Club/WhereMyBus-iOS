@@ -14,8 +14,7 @@ struct WMBWidgetBundle: WidgetBundle {
     var body: some Widget {
         NearByStopWidget()
         if #available(iOS 17, *) {
-            ArrivalInfoSmallWidget()
-            ArrivalInfoMediumWidget()
+            ArrivalInfoWidget()
         }
     }
 }

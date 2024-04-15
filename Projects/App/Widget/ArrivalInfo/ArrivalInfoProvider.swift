@@ -23,6 +23,7 @@ struct ArrivalInfoProvider: AppIntentTimelineProvider {
             responses: useCase.responses
         )
     }
+    
     func snapshot(
         for configuration: ArrivalInfoIntent,
         in context: Context
@@ -33,6 +34,7 @@ struct ArrivalInfoProvider: AppIntentTimelineProvider {
             responses: useCase.responses
         )
     }
+    
     func timeline(
         for configuration: ArrivalInfoIntent,
         in context: Context

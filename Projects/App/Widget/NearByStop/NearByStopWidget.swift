@@ -19,5 +19,7 @@ struct NearByStopWidget: Widget {
             NearByStopView(entry: entry)
         }
         .supportedFamilies([.systemSmall])
+        .configurationDisplayName("주변정류장")
+        .description("근처에 있는 정류장을 빠르게 확인하세요")
     }
 }

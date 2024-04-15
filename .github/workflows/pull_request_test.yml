@@ -7,7 +7,7 @@ on:
       
 jobs:
   build_test:
-    runs-on: macos-13
+    runs-on: macos-14
     steps:
       - uses: actions/checkout@v2
 
@@ -21,11 +21,12 @@ jobs:
       - name: Setup Xcode version
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: "14.3"
+          xcode-version: "15.3"
           
-      - uses: swift-actions/setup-swift@65540b95f51493d65f5e59e97dcef9629ddf11bf
+      - name: Setup Swift Version
+        uses: swift-actions/setup-swift@v2
         with:
-            swift-version: "5.8.0"
+            swift-version: "5.10"
         
       - name: Get swift version
         run: swift --version
@@ -43,4 +44,4 @@ jobs:
         run: tuist fetch
 
       - name: Tuist Build Test
-        run: tuist build
+        run: tuist build App
