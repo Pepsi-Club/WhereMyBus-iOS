@@ -192,12 +192,37 @@ public final class DefaultRegularAlarmRepository: RegularAlarmRepository {
                 type: AddRegularAlarmDTO.self,
                 decoder: JSONDecoder()
             )
+            .withUnretained(self)
             .subscribe(
-                onNext: { dto in
-                    #if DEBUG
-                    print(dto)
-                    print("id: \(response.requestId)")
-                    #endif
+                onNext: { repository, dto in
+                    let newResponse = RegularAlarmResponse(
+                        requestId: dto.alarmId,
+                        busStopId: response.busStopId,
+                        busStopName: response.busStopName,
+                        busId: response.busId,
+                        busName: response.busName,
+                        time: response.time,
+                        weekday: response.weekday
+                    )
+                    do {
+                        try repository.coreDataService.delete(
+                            data: response,
+                            uniqueKeyPath: \.requestId
+                        )
+                        try repository.coreDataService.save(data: newResponse)
+                        let currentResponse = try repository.currentRegularAlarm
+                            .value()
+                        let updatedResponse = currentResponse
+                            .filter { $0 != response } + [ newResponse ]
+                        repository.currentRegularAlarm.onNext(updatedResponse)
+                        #if DEBUG
+                        print("로컬 싱크 성공")
+                        #endif
+                    } catch {
+                        #if DEBUG
+                        print(error.localizedDescription)
+                        #endif
+                    }
                 },
                 onError: { error in
                     #if DEBUG
