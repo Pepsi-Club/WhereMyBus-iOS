@@ -120,7 +120,7 @@ public final class BusStopInformationView: UIView {
 	// MARK: - Function
 	
 	private func configureUI() {
-        self.backgroundColor = DesignSystemAsset.gray1.color
+        self.backgroundColor = .white
 		
 		[
 			busStopSymbol,
