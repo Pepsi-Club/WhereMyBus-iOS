@@ -14,7 +14,20 @@ public final class NearMapViewController: UIViewController {
     PublishSubject<(ClosedRange<Double>, ClosedRange<Double>)>()
     private let disposeBag = DisposeBag()
     
-    private let leafMarkerUpdater = LeafMarkerUpdater()
+    private lazy var leafMarkerUpdater: LeafMarkerUpdater = {
+        let updater = LeafMarkerUpdater()
+        
+        viewModel.setSelectClusterMaker()
+            .take(1)
+            .subscribe(
+                onNext: { busStopId in
+                    updater.selectedBusStopId.onNext(busStopId)
+                }
+            )
+            .disposed(by: disposeBag)
+        
+        return updater
+    }()
     
     private lazy var builder: NMCBuilder<BusStopClusteringKey> = {
         let builder = NMCBuilder<BusStopClusteringKey>()

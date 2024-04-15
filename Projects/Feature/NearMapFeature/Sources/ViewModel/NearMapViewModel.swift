@@ -138,6 +138,17 @@ public final class NearMapViewModel: ViewModel {
         
         return output
 	}
+    
+    func setSelectClusterMaker() -> Observable<String> {
+        switch viewMode {
+        case .normal:
+            return useCase.getNearByStopInfo().map { response, _ in
+                return response.busStopId
+            }
+        case .focused(let busStopId):
+            return Observable.just(busStopId)
+        }
+    }
 }
 
 extension NearMapViewModel {
