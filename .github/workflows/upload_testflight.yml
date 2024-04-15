@@ -1,12 +1,13 @@
 name: UploadTestflight
 
 on:
-  push:
+  pull_request:
     branches:
-      - release
+      - main
+      
 jobs:
   upload_testflight:
-    runs-on: macos-latest
+    runs-on: macos-13
     steps:
       - uses: actions/checkout@v2
 
@@ -15,17 +16,25 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           known_hosts: ${{ secrets.KNOWN_HOSTS }}
 
-      - name: Setup Xcode version
-        uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: "14.2.0"
-
       - name: Bring ignored files
         uses: actions/checkout@v3
         with:
-          repository: Pepsi-Club/BusComing-ignored
+          repository: Pepsi-Club/WhereMyBus-ignored
           path: XCConfig/
           token: ${{ secrets.ACTION_TOKEN }}
+
+      - name: Move GoogleService Plist
+        run: |
+          mv XCConfig/GoogleService-Info.plist Projects/App/Resources/
+
+      - name: Setup Xcode version
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: "14.3"
+
+      - uses: swift-actions/setup-swift@65540b95f51493d65f5e59e97dcef9629ddf11bf
+        with:
+          swift-version: "5.8.0"
 
       - name: Install Tuist
         run: curl -Ls https://install.tuist.io|bash
@@ -47,7 +56,8 @@ jobs:
         env:
           KEYCHAIN_NAME: ${{ secrets.KEYCHAIN_NAME }}
           KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
-          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           APP_STORE_KEY_ID: ${{ secrets.APP_STORE_KEY_ID }}
           APP_STORE_ISSUER_ID: ${{ secrets.APP_STORE_ISSUER_ID }}
           APP_STORE_PRIVATE_KEY: ${{ secrets.APP_STORE_PRIVATE_KEY }}
+          MATCH_URL: ${{ secrets.MATCH_URL }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}

@@ -18,6 +18,24 @@ public extension InfoPlist {
                 newValue
             }
     )
+    
+    static func demoAppInfoPlist(name: String) -> Self {
+        .extendingDefault(
+            with: .baseInfoPlist
+                .merging(.additionalInfoPlist) { oldValue, newValue in
+                    newValue
+                }
+                .merging(.secrets) { oldValue, newValue in
+                    newValue
+                }
+                .merging([
+                    "CFBundleDisplayName": "\(name)"
+                ]) { oldValue, newValue in
+                    newValue
+                }
+        )
+    }
+    
     static let frameworkInfoPlist: Self = .extendingDefault(
         with: .framework
             .merging(.secrets) { oldValue, newValue in
@@ -26,12 +44,17 @@ public extension InfoPlist {
     )
 }
 
-public extension [String: InfoPlist.Value] {
+public extension [String: Plist.Value] {
     static let secrets: Self = [
-        "SERVER_KEY": "$(SERVER_KEY)"
+        "DATA_GO_KR_API_KEY": "$(DATA_GO_KR_API_KEY)",
+        "NMFClientId": "$(NAVERMAP_CLIENT_ID)",
+        "TERMS_OF_PRIVACY_URL": "$(TERMS_OF_PRIVACY_URL)",
+        "LOCATION_PRIVACY_URL": "$(LOCATION_PRIVACY_URL)",
+        "INQURY_URL": "$(INQURY_URL)"
     ]
     
     static let additionalInfoPlist: Self = [
+        "FirebaseAppDelegateProxyEnabled": false,
         "ITSAppUsesNonExemptEncryption": "NO",
         "NSAppTransportSecurity": [
             "NSExceptionDomains": [
@@ -40,7 +63,15 @@ public extension [String: InfoPlist.Value] {
                     "NSExceptionAllowsInsecureHTTPLoads": true,
                 ]
             ]
-        ]
+        ],
+        "UIBackgroundModes": [
+            "fetch",
+            "processing",
+            "remote-notification"
+        ],
+        "BGTaskSchedulerPermittedIdentifiers" : [.string(.bundleID)],
+        "NSLocationWhenInUseUsageDescription" : "주변 정류장을 찾기 위해 권한이 필요합니다.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription" : "주변 정류장을 찾기 위해 권한이 필요합니다."
     ]
     
     static let baseInfoPlist: Self = [
@@ -59,6 +90,45 @@ public extension [String: InfoPlist.Value] {
                 ]
             ]
         ],
+        "UISupportedInterfaceOrientations": ["UIInterfaceOrientationPortrait"],
+    ]
+    
+    static let notificationInfoPlist: Self = [
+        "DATA_GO_KR_API_KEY": "$(DATA_GO_KR_API_KEY)",
+        "CFBundleShortVersionString": .bundleShortVersionString,
+        "CFBundleVersion": .bundleVersion,
+        "CFBundleDisplayName": .bundleDisplayName,
+        "NSExtension": [
+            "NSExtensionPointIdentifier": "com.apple.usernotifications.service",
+            "NSExtensionPrincipalClass": "$(PRODUCT_MODULE_NAME).NotificationService"
+        ],
+        "NSAppTransportSecurity": [
+            "NSExceptionDomains": [
+                "ws.bus.go.kr": [
+                    "NSIncludesSubdomains": true,
+                    "NSExceptionAllowsInsecureHTTPLoads": true,
+                ]
+            ]
+        ],
+    ]
+    
+    static let widgetInfoPlist: Self = [
+        "DATA_GO_KR_API_KEY": "$(DATA_GO_KR_API_KEY)",
+        "CFBundleShortVersionString": .bundleShortVersionString,
+        "CFBundleVersion": .bundleVersion,
+        "CFBundleDisplayName": .bundleDisplayName,
+        "CFBundlePackageType": "$(PRODUCT_BUNDLE_PACKAGE_TYPE)",
+        "NSExtension": [
+            "NSExtensionPointIdentifier": "com.apple.widgetkit-extension",
+        ],
+        "NSAppTransportSecurity": [
+            "NSExceptionDomains": [
+                "ws.bus.go.kr": [
+                    "NSIncludesSubdomains": true,
+                    "NSExceptionAllowsInsecureHTTPLoads": true,
+                ]
+            ]
+        ],
     ]
     
     static let framework: Self = [
@@ -68,7 +138,7 @@ public extension [String: InfoPlist.Value] {
         "CFBundleInfoDictionaryVersion": "6.0",
         "CFBundleName": "$(PRODUCT_NAME)",
         "CFBundlePackageType": "FMWK",
-        "CFBundleShortVersionString": "1.0",
-        "CFBundleVersion": "1",
+        "CFBundleShortVersionString": .bundleShortVersionString,
+        "CFBundleVersion": .bundleVersion,
     ]
 }

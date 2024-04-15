@@ -15,6 +15,14 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 ## iOS
 
+### ios regenerate
+
+```sh
+[bundle exec] fastlane ios regenerate
+```
+
+Regenerate
+
 ### ios getig
 
 ```sh
@@ -30,6 +38,22 @@ Download Ignored
 ```
 
 Set Project
+
+### ios tf_local
+
+```sh
+[bundle exec] fastlane ios tf_local
+```
+
+local Push to TestFlight
+
+### ios tf_remote
+
+```sh
+[bundle exec] fastlane ios tf_remote
+```
+
+Remote Push to TestFlight
 
 ----
 

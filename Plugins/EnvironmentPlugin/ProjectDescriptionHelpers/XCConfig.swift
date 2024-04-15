@@ -9,33 +9,37 @@ import ProjectDescription
 
 public extension Settings {
     static let appDebug: Self = .settings(
-        base: .allLoadSetting
+        base: .baseSetting
             .setVersion()
             .setCodeSignManual()
-            .setProvisioning(),
+            .setProvisioning()
+            .setUserScriptSandboxing()
+            .setClangModuleDebugging(),
         configurations: [
             .debug(
                 name: .debug,
-                xcconfig: .relativeToRoot("XCConfig/Debug.xcconfig")
+                xcconfig: .relativeToRoot("XCConfig/App_Debug.xcconfig")
             ),
             .release(
                 name: .release,
-                xcconfig: .relativeToRoot("XCConfig/Release.xcconfig")
+                xcconfig: .relativeToRoot("XCConfig/App_Release.xcconfig")
             ),
         ],
         defaultSettings: .recommended
     )
     
     static let frameworkDebug: Self = .settings(
-        base: .baseSetting,
+        base: .baseSetting
+            .setUserScriptSandboxing()
+            .setClangModuleDebugging(),
         configurations: [
             .debug(
                 name: .debug,
-                xcconfig: .relativeToRoot("XCConfig/Debug.xcconfig")
+                xcconfig: .relativeToRoot("XCConfig/App_Debug.xcconfig")
             ),
             .release(
                 name: .release,
-                xcconfig: .relativeToRoot("XCConfig/Release.xcconfig")
+                xcconfig: .relativeToRoot("XCConfig/App_Release.xcconfig")
             ),
         ],
         defaultSettings: .recommended
@@ -50,11 +54,11 @@ public extension Settings {
         configurations: [
             .debug(
                 name: .debug,
-                xcconfig: .relativeToRoot("XCConfig/Debug.xcconfig")
+                xcconfig: .relativeToRoot("XCConfig/App_Debug.xcconfig")
             ),
             .release(
                 name: .release,
-                xcconfig: .relativeToRoot("XCConfig/Release.xcconfig")
+                xcconfig: .relativeToRoot("XCConfig/App_Release.xcconfig")
             ),
         ],
         defaultSettings: .recommended
@@ -64,15 +68,7 @@ public extension Settings {
 public extension SettingsDictionary {
     static let baseSetting: Self = [
         "OTHER_LDFLAGS" : [
-            "$(inherited)",
-            "-ObjC"
-        ]
-    ]
-    
-    static let allLoadSetting: Self = [
-        "OTHER_LDFLAGS" : [
-            "$(inherited) -all_load",
-            "-Xlinker -interposable"
+            "$(inherited) -ObjC",
         ]
     ]
     
@@ -107,8 +103,24 @@ public extension SettingsDictionary {
         merging(
             [
                 "CODE_SIGN_STYLE": .string("Manual"),
-                "DEVELOPMENT_TEAM": .string("ASU4PNB5MG"),
+                "DEVELOPMENT_TEAM": .string(.teamId),
                 "CODE_SIGN_IDENTITY": .string("$(CODE_SIGN_IDENTITY)")
+            ]
+        )
+    }
+    
+    func setUserScriptSandboxing() -> SettingsDictionary {
+        merging(
+            [
+                "ENABLE_USER_SCRIPT_SANDBOXING": .string("NO"),
+            ]
+        )
+    }
+    
+    func setClangModuleDebugging() -> SettingsDictionary {
+        merging(
+            [
+                "CLANG_ENABLE_MODULE_DEBUGGING": .string("YES"),
             ]
         )
     }

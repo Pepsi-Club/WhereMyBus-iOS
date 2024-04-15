@@ -15,16 +15,32 @@ public extension Scheme {
             buildAction: .buildAction(targets: ["\(name)"]),
             testAction: .targets(
                 ["\(name)Tests"],
-                configuration: "Debug",
+                configuration: .debug,
                 options: .options(
                     coverage: true,
                     codeCoverageTargets: ["\(name)"]
                 )
             ),
-            runAction: .runAction(configuration: "Debug"),
-            archiveAction: .archiveAction(configuration: "Debug"),
-            profileAction: .profileAction(configuration: "Debug"),
-            analyzeAction: .analyzeAction(configuration: "Debug")
+            runAction: .runAction(configuration: .debug),
+            archiveAction: .archiveAction(configuration: .release)
+        )
+    }
+    
+    static func uiTestsScheme(name: String) -> Self {
+        Scheme(
+            name: "\(name)UITests",
+            shared: true,
+            buildAction: .buildAction(targets: ["\(name)"]),
+            testAction: .targets(
+                ["\(name)UITests"],
+                configuration: .debug,
+                options: .options(
+                    coverage: true,
+                    codeCoverageTargets: ["\(name)UITests"]
+                )
+            ),
+            runAction: .runAction(configuration: .debug),
+            archiveAction: .archiveAction(configuration: .release)
         )
     }
 }

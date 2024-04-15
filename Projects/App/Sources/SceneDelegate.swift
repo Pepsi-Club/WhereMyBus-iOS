@@ -8,7 +8,7 @@
 
 import UIKit
 
-import Networks
+import NetworkService
 import Domain
 import Data
 
@@ -16,9 +16,14 @@ import RxSwift
 
 final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
-    var appFlowCoordinator: AppCoordinator?
+    var appCoordinator: AppCoordinator?
+    var deeplinkHandler: DeeplinkHandler?
 
-    func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+    func scene(
+        _ scene: UIScene, 
+        willConnectTo session: UISceneSession,
+        options connectionOptions: UIScene.ConnectionOptions
+    ) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
         
@@ -27,11 +32,15 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         navigationController.view.backgroundColor = .systemBackground
 
         window?.rootViewController = navigationController
-        appFlowCoordinator = AppCoordinator(
+        appCoordinator = AppCoordinator(
             navigationController: navigationController
         )
-        appFlowCoordinator?.start()
+        appCoordinator?.start()
         window?.makeKeyAndVisible()
+        deeplinkHandler = .init(appCoordinator: appCoordinator)
+        if let url = connectionOptions.urlContexts.first?.url {
+            deeplinkHandler?.handleUrl(url: url)
+        }
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
@@ -48,4 +57,14 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func sceneDidEnterBackground(_ scene: UIScene) {
     }
+    
+    func scene(
+        _ scene: UIScene,
+        openURLContexts URLContexts: Set<UIOpenURLContext>
+    ) {
+        if let url = URLContexts.first?.url {
+            deeplinkHandler?.handleUrl(url: url)
+        }
+    }
 }
+
