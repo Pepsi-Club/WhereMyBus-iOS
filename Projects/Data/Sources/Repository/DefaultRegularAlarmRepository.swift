@@ -192,8 +192,20 @@ public final class DefaultRegularAlarmRepository: RegularAlarmRepository {
                 type: AddRegularAlarmDTO.self,
                 decoder: JSONDecoder()
             )
-            .subscribe() // 성공, Error에 따라 추가 작업을 해줘야할지 고민입니다
-            .dispose()
+            .subscribe(
+                onNext: { dto in
+                    #if DEBUG
+                    print(dto)
+                    print("id: \(response.requestId)")
+                    #endif
+                },
+                onError: { error in
+                    #if DEBUG
+                    print(error.localizedDescription)
+                    #endif
+                }
+            ) // 성공, Error에 따라 추가 작업을 해줘야할지 고민입니다
+            .disposed(by: disposeBag)
         }
     }
     
@@ -208,8 +220,20 @@ public final class DefaultRegularAlarmRepository: RegularAlarmRepository {
                 type: RemoveRegularAlarmDTO.self,
                 decoder: JSONDecoder()
             )
-            .subscribe() // 성공, Error에 따라 추가 작업을 해줘야할지 고민입니다
-            .dispose()
+            .subscribe(
+                onNext: { dto in
+                    #if DEBUG
+                    print(dto)
+                    print("id: \(alarmId)")
+                    #endif
+                },
+                onError: { error in
+                    #if DEBUG
+                    print(error.localizedDescription)
+                    #endif
+                }
+            ) // 성공, Error에 따라 추가 작업을 해줘야할지 고민입니다
+            .disposed(by: disposeBag)
         }
     }
 }
