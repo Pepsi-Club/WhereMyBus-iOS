@@ -31,7 +31,6 @@ public final class DefaultFavoritesRepository: FavoritesRepository {
         self.coreDataService = coreDataService
         self.networkService = networkService
         migrateFavorites()
-        fetchFavorites()
     }
     
     public func addFavorites(favorites: FavoritesBusResponse) throws {
@@ -67,7 +66,10 @@ public final class DefaultFavoritesRepository: FavoritesRepository {
                 type: FavoritesBusStopResponse.self
             )
             guard !legacyFavoritesList.isEmpty
-            else { return }
+            else {
+                fetchFavorites()
+                return
+            }
             legacyFavoritesList.forEach { legacyFavorites in
                 networkService.request(
                     endPoint: BusStopArrivalInfoEndPoint(
@@ -75,9 +77,10 @@ public final class DefaultFavoritesRepository: FavoritesRepository {
                     )
                 )
                 .decode(
-                    type: BusStopArrivalInfoResponse.self,
+                    type: BusStopArrivalInfoDTO.self,
                     decoder: JSONDecoder()
                 )
+                .map { $0.toDomain }
                 .withUnretained(self)
                 .subscribe(
                     onNext: { repository, response in
@@ -104,6 +107,7 @@ public final class DefaultFavoritesRepository: FavoritesRepository {
                                 data: legacyFavorites,
                                 uniqueKeyPath: \.busStopId
                             )
+                            repository.fetchFavorites()
                         } catch {
                             #if DEBUG
                             print(error.localizedDescription)
