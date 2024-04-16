@@ -29,7 +29,6 @@ public final class DefaultRegularAlarmRepository: RegularAlarmRepository {
     ) {
         self.coreDataService = coreDataService
         self.networkService = networkService
-        fetchRegularAlarm()
     }
     
     public func createRegularAlarm(
@@ -132,6 +131,19 @@ public final class DefaultRegularAlarmRepository: RegularAlarmRepository {
             }
         )
         .disposed(by: disposeBag)
+    }
+    
+    private func bindStoreStatus() {
+        coreDataService.storeStatus
+            .withUnretained(self)
+            .subscribe(
+                onNext: { repository, storeStatus in
+                    if storeStatus == .loaded {
+                        repository.fetchRegularAlarm()
+                    }
+                }
+            )
+            .disposed(by: disposeBag)
     }
     
     private func fetchRegularAlarm() {

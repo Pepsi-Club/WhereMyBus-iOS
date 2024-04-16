@@ -30,7 +30,7 @@ public final class DefaultFavoritesRepository: FavoritesRepository {
     ) {
         self.coreDataService = coreDataService
         self.networkService = networkService
-        migrateFavorites()
+        bindStoreStatus()
     }
     
     public func addFavorites(favorites: FavoritesBusResponse) throws {
@@ -47,6 +47,19 @@ public final class DefaultFavoritesRepository: FavoritesRepository {
             uniqueKeyPath: \.identifier
         )
         fetchFavorites()
+    }
+    
+    private func bindStoreStatus() {
+        coreDataService.storeStatus
+            .withUnretained(self)
+            .subscribe(
+                onNext: { repository, storeStatus in
+                    if storeStatus == .loaded {
+                        repository.migrateFavorites()
+                    }
+                }
+            )
+            .disposed(by: disposeBag)
     }
     
     private func fetchFavorites() {
