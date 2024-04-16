@@ -10,36 +10,40 @@ import Foundation
 
 import Core
 
+import CloudKit
 import CoreData
 
 public final class DefaultCoreDataService: CoreDataService {
-    private let container: NSPersistentContainer
+    private let ckContainer = CKContainer.default()
+    private var container: NSPersistentContainer
     
     private let fileName = "Model"
     private let appGroupName = "group.Pepsi-Club.WhereMyBus"
     
     public init() {
-        container = NSPersistentCloudKitContainer(name: fileName)
-        configureContainer()
-        migrateStore()
-        container.loadPersistentStores { desc, error in
-            if let error {
-                #if DEBUG
-                print(error.localizedDescription)
-                #endif
-            }
-            if let storeUrl = desc.url {
-                #if DEBUG
-                print(
-                    "💾 Load된 SQLite URL: \(storeUrl)"
-                )
-                #endif
-            }
+        container = NSPersistentContainer(name: fileName)
+        do {
+            try configureContainer()
+        } catch {
+            #if DEBUG
+            print(error.localizedDescription)
+            #endif
         }
     }
     
-    private func configureContainer() {
-        container.viewContext.automaticallyMergesChangesFromParent = true
+    private func configureContainer() throws {
+        Task {
+            let accountStatus = try await ckContainer.accountStatus()
+            switch accountStatus {
+            case .available:
+                container = NSPersistentCloudKitContainer(name: fileName)
+            default:
+                break
+            }
+            container.viewContext.automaticallyMergesChangesFromParent = true
+            migrateStore()
+            loadStore()
+        }
     }
     
     private func migrateStore() {
@@ -82,6 +86,20 @@ public final class DefaultCoreDataService: CoreDataService {
                 "💾 AppGroup SQLite URL: \(appGroupStoreUrl)",
                 separator: "\n"
             )
+            if coordinator.persistentStores.isEmpty {
+                if !fileManager.fileExists(atPath: appGroupStoreUrl.path) {
+                    do {
+                        _ = try coordinator.addPersistentStore(
+                            type: .sqlite,
+                            at: appGroupStoreUrl
+                        )
+                    } catch {
+                        #if DEBUG
+                        print(error.localizedDescription)
+                        #endif
+                    }
+                }
+            }
             #endif
             container.persistentStoreDescriptions = [
                 .init(url: appGroupStoreUrl)
@@ -124,7 +142,24 @@ public final class DefaultCoreDataService: CoreDataService {
             #endif
         }
     }
-
+    
+    private func loadStore() {
+        container.loadPersistentStores { desc, error in
+            if let error {
+                #if DEBUG
+                print(error.localizedDescription)
+                #endif
+            }
+            if let storeUrl = desc.url {
+                #if DEBUG
+                print(
+                    "💾 Load된 SQLite URL: \(storeUrl)"
+                )
+                #endif
+            }
+        }
+    }
+    
     public func fetch<T: CoreDataStorable>(type: T.Type) throws -> [T] {
         do {
             return try fetchMO(type: type)
@@ -156,7 +191,7 @@ public final class DefaultCoreDataService: CoreDataService {
             throw error
         }
     }
-    
+
     public func saveUniqueData<T: CoreDataStorable, U: Equatable>(
         data: T,
         uniqueKeyPath: KeyPath<T, U>
@@ -167,25 +202,7 @@ public final class DefaultCoreDataService: CoreDataService {
             uniqueValue: data[keyPath: uniqueKeyPath]
         )
         if isUnique {
-            let object = NSEntityDescription.insertNewObject(
-                forEntityName: "\(type(of: data))MO",
-                into: container.viewContext
-            )
-            let mirror = Mirror(reflecting: data)
-            mirror.children.forEach { key, value in
-                guard let key,
-                      let propertyName = String(describing: key)
-                    .split(separator: ".")
-                    .last
-                else { return }
-                object.setValue(value, forKey: String(propertyName))
-            }
-            do {
-                try container.viewContext.save()
-            } catch {
-                container.viewContext.rollback()
-                throw error
-            }
+            try save(data: data)
         }
     }
     
@@ -193,37 +210,29 @@ public final class DefaultCoreDataService: CoreDataService {
         data: T,
         uniqueKeyPath: KeyPath<T, U>
     ) throws {
-        do {
-            let fetchedMo = try fetchMO(type: type(of: data))
-            let uniqueValue = data[keyPath: uniqueKeyPath]
-            let object = fetchedMo.first { object in
-                guard let fetchedValue = object.value(
-                    forKey: uniqueKeyPath.propertyName
-                ) as? U
-                else { return false }
-                return fetchedValue == uniqueValue
-            }
-            let mirror = Mirror(reflecting: data)
-            mirror.children.forEach { key, value in
-                guard let key,
-                      let propertyName = String(describing: key)
-                    .split(separator: ".")
-                    .last
-                else { return }
-                object?.setValue(
-                    value,
-                    forKey: String(propertyName)
-                )
-            }
-            if container.viewContext.hasChanges {
-                do {
-                    try container.viewContext.save()
-                } catch {
-                    throw error
-                }
-            }
-        } catch {
-            throw error
+        let fetchedMo = try fetchMO(type: type(of: data))
+        let uniqueValue = data[keyPath: uniqueKeyPath]
+        let object = fetchedMo.first { object in
+            guard let fetchedValue = object.value(
+                forKey: uniqueKeyPath.propertyName
+            ) as? U
+            else { return false }
+            return fetchedValue == uniqueValue
+        }
+        let mirror = Mirror(reflecting: data)
+        mirror.children.forEach { key, value in
+            guard let key,
+                  let propertyName = String(describing: key)
+                .split(separator: ".")
+                .last
+            else { return }
+            object?.setValue(
+                value,
+                forKey: String(propertyName)
+            )
+        }
+        if container.viewContext.hasChanges {
+            try container.viewContext.save()
         }
     }
     
@@ -231,26 +240,18 @@ public final class DefaultCoreDataService: CoreDataService {
         data: T,
         uniqueKeyPath: KeyPath<T, U>
     ) throws where U: Equatable {
-        do {
-            let fetchedMo = try fetchMO(type: type(of: data))
-            guard let object = fetchedMo.first(where: { object in
-                guard let value = object.value(
-                    forKey: uniqueKeyPath.propertyName
-                ) as? U
-                else { return false }
-                return value == data[keyPath: uniqueKeyPath]
-            })
-            else { return }
-            container.viewContext.delete(object)
-            if container.viewContext.hasChanges {
-                do {
-                    try container.viewContext.save()
-                } catch {
-                    throw error
-                }
-            }
-        } catch {
-            throw error
+        let fetchedMo = try fetchMO(type: type(of: data))
+        guard let object = fetchedMo.first(where: { object in
+            guard let value = object.value(
+                forKey: uniqueKeyPath.propertyName
+            ) as? U
+            else { return false }
+            return value == data[keyPath: uniqueKeyPath]
+        })
+        else { return }
+        container.viewContext.delete(object)
+        if container.viewContext.hasChanges {
+            try container.viewContext.save()
         }
     }
     
@@ -259,17 +260,13 @@ public final class DefaultCoreDataService: CoreDataService {
         uniqueKeyPath: KeyPath<T, U>,
         uniqueValue: U
     ) throws -> Bool {
-        do {
-            let fetchedMO = try fetchMO(type: type)
-            return fetchedMO.contains { object in
-                guard let uniqueProperty = object.value(
-                    forKey: uniqueKeyPath.propertyName
-                ) as? U
-                else { return false }
-                return uniqueProperty == uniqueValue
-            }
-        } catch {
-            throw error
+        let fetchedMO = try fetchMO(type: type)
+        return fetchedMO.contains { object in
+            guard let uniqueProperty = object.value(
+                forKey: uniqueKeyPath.propertyName
+            ) as? U
+            else { return false }
+            return uniqueProperty == uniqueValue
         }
     }
     
@@ -279,10 +276,6 @@ public final class DefaultCoreDataService: CoreDataService {
         let request = NSFetchRequest<NSManagedObject>(
             entityName: "\(type)MO"
         )
-        do {
-            return try container.viewContext.fetch(request)
-        } catch {
-            throw error
-        }
+        return try container.viewContext.fetch(request)
     }
 }
