@@ -48,6 +48,18 @@ public extension BusStopArrivalInfoResponse {
             buses: updatedBuses
         )
     }
+    
+    func filterUnfavoritesBuses() -> Self {
+        let filteredBuses = buses.filter { busResponse in
+            busResponse.isFavorites
+        }
+        return BusStopArrivalInfoResponse(
+            busStopId: busStopId,
+            busStopName: busStopName,
+            direction: direction,
+            buses: filteredBuses
+        )
+    }
 }
 
 public extension Array<BusStopArrivalInfoResponse> {
