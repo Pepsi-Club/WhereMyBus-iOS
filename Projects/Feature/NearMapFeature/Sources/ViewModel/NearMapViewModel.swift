@@ -44,7 +44,6 @@ public final class NearMapViewModel: ViewModel {
             .withUnretained(self)
             .bind(
                 onNext: { viewModel, _ in
-                    viewModel.useCase.requestAuthorize()
                     if case .normal = viewModel.viewMode {
                         viewModel.useCase.getNearByStopInfo()
                             .subscribe(
@@ -138,17 +137,6 @@ public final class NearMapViewModel: ViewModel {
         
         return output
 	}
-    
-    func setSelectClusterMaker() -> Observable<String> {
-        switch viewMode {
-        case .normal:
-            return useCase.getNearByStopInfo().map { response, _ in
-                return response.busStopId
-            }
-        case .focused(let busStopId):
-            return Observable.just(busStopId)
-        }
-    }
 }
 
 extension NearMapViewModel {

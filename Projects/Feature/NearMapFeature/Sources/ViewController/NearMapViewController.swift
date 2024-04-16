@@ -16,16 +16,6 @@ public final class NearMapViewController: UIViewController {
     
     private lazy var leafMarkerUpdater: LeafMarkerUpdater = {
         let updater = LeafMarkerUpdater()
-        
-        viewModel.setSelectClusterMaker()
-            .take(1)
-            .subscribe(
-                onNext: { busStopId in
-                    updater.selectedBusStopId.onNext(busStopId)
-                }
-            )
-            .disposed(by: disposeBag)
-        
         return updater
     }()
     
@@ -159,6 +149,7 @@ public final class NearMapViewController: UIViewController {
         )
         
         output.selectedBusStopInfo
+            .observe(on: MainScheduler.asyncInstance)
             .withUnretained(self)
             .subscribe(
                 onNext: { vc, tuple in
@@ -166,6 +157,9 @@ public final class NearMapViewController: UIViewController {
                     vc.busStopInformationView.updateUI(
                         response: response,
                         distance: distance
+                    )
+                    vc.leafMarkerUpdater.selectedBusStopId.onNext(
+                        response.busStopId
                     )
                     vc.moveCamera(response: response)
                 }
