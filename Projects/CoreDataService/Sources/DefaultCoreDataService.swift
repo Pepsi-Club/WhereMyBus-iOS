@@ -7,13 +7,15 @@
 //
 
 import Foundation
-
-import Core
-
 import CloudKit
 import CoreData
 
+import Core
+
+import RxSwift
+
 public final class DefaultCoreDataService: CoreDataService {
+    public let storeStatus = BehaviorSubject<StoreStatus>(value: .loading)
     private let ckContainer = CKContainer.default()
     private var container: NSPersistentContainer
     
@@ -144,7 +146,7 @@ public final class DefaultCoreDataService: CoreDataService {
     }
     
     private func loadStore() {
-        container.loadPersistentStores { desc, error in
+        container.loadPersistentStores { [weak self] desc, error in
             if let error {
                 #if DEBUG
                 print(error.localizedDescription)
@@ -157,6 +159,7 @@ public final class DefaultCoreDataService: CoreDataService {
                 )
                 #endif
             }
+            self?.storeStatus.onNext(.loaded)
         }
     }
     
