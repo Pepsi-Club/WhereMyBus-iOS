@@ -11,15 +11,8 @@ import Foundation
 import RxSwift
 
 public protocol FavoritesRepository {
-    var favorites: BehaviorSubject<[FavoritesBusStopResponse]> { get }
+    var favorites: BehaviorSubject<[FavoritesBusResponse]> { get }
     
-    func addRoute(
-        arsId: String,
-        bus: BusArrivalInfoResponse
-    ) throws
-    
-    func removeRoute(
-        arsId: String,
-        bus: BusArrivalInfoResponse
-    ) throws
+    func addFavorites(favorites: FavoritesBusResponse) throws
+    func removeFavorites(favorites: FavoritesBusResponse) throws
 }

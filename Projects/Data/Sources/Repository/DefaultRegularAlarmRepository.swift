@@ -103,8 +103,7 @@ public final class DefaultRegularAlarmRepository: RegularAlarmRepository {
             decoder: JSONDecoder()
         )
         .map { dto in
-            print(dto.message)
-            return response
+            response
         }
         .withUnretained(self)
         .subscribe(

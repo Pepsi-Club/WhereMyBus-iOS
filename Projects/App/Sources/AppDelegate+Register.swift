@@ -21,7 +21,10 @@ extension AppDelegate {
         let locationService: LocationService = DefaultLocationService()
 		
         let favoritesRepository: FavoritesRepository
-        = DefaultFavoritesRepository(coreDataService: coreDataService)
+        = DefaultFavoritesRepository(
+            coreDataService: coreDataService,
+            networkService: networkService
+        )
         let busStopArrivalInfoRepository: BusStopArrivalInfoRepository
         = DefaultBusStopArrivalInfoRepository(networkService: networkService)
         let stationListRepository: StationListRepository

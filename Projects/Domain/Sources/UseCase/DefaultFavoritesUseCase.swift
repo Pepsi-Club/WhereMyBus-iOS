@@ -29,59 +29,43 @@ public final class DefaultFavoritesUseCase: FavoritesUseCase {
     
     public func fetchFavoritesArrivals() {
         do {
-            let favoritesBusStops = try favoritesRepository.favorites.value()
+            let favoritesList = try favoritesRepository.favorites.value()
+            let favoritesBusStopId = Set(favoritesList.map { $0.busStopId })
             Observable.combineLatest(
-                favoritesBusStops
-                    .map { response in
+                favoritesBusStopId
+                    .map { busStopId in
                         busStopArrivalInfoRepository.fetchArrivalList(
-                            busStopId: response.busStopId
+                            busStopId: busStopId
                         )
                     }
             )
             .withUnretained(self)
             .subscribe(
                 onNext: { useCase, responses in
-                    let filteredResponses = useCase.filterFavorites(
-                        fetchedResponses: responses,
-                        favoritesBusStops: favoritesBusStops
+                    let updatedResponses = responses
+                        .updateFavoritesStatus(
+                            favoritesList: favoritesList
+                        )
+                        .map { busStopResponse in
+                            let filteredBuses = busStopResponse.buses
+                                .filter { busResponse in
+                                    busResponse.isFavorites
+                                }
+                            return BusStopArrivalInfoResponse(
+                                busStopId: busStopResponse.busStopId,
+                                busStopName: busStopResponse.busStopName,
+                                direction: busStopResponse.direction,
+                                buses: filteredBuses
+                            )
+                        }
+                    useCase.busStopArrivalInfoResponse.onNext(
+                        updatedResponses
                     )
-                    useCase.busStopArrivalInfoResponse.onNext(filteredResponses)
                 }
             )
             .disposed(by: disposeBag)
         } catch {
             busStopArrivalInfoResponse.onError(error)
         }
-    }
-    
-    private func filterFavorites(
-        fetchedResponses: [BusStopArrivalInfoResponse],
-        favoritesBusStops: [FavoritesBusStopResponse]
-    ) -> [BusStopArrivalInfoResponse] {
-        let filteredBusStop = fetchedResponses.filter { fetchedResponse in
-            favoritesBusStops.contains {
-                $0.busStopId == fetchedResponse.busStopId
-            }
-        }
-        let result: [BusStopArrivalInfoResponse] = filteredBusStop
-            .compactMap { filteredResponse in
-                guard let currentFavorites = favoritesBusStops.first(
-                    where: { $0.busStopId == filteredResponse.busStopId }
-                )
-                else { return nil }
-                let filteredBus = filteredResponse.buses
-                    .filter { fetchedBusInfo in
-                    currentFavorites.busIds.contains { favoriteBusIds in
-                        favoriteBusIds == fetchedBusInfo.busId
-                    }
-                }
-                return .init(
-                    busStopId: filteredResponse.busStopId,
-                    busStopName: filteredResponse.busStopName,
-                    direction: filteredResponse.direction,
-                    buses: filteredBus
-                )
-            }
-        return result
     }
 }

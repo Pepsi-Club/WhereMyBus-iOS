@@ -16,122 +16,107 @@ import RxSwift
 
 public final class DefaultFavoritesRepository: FavoritesRepository {
     private let coreDataService: CoreDataService
+    private let networkService: NetworkService
     
-    public var favorites = BehaviorSubject<[FavoritesBusStopResponse]>(
+    public var favorites = BehaviorSubject<[FavoritesBusResponse]>(
         value: []
     )
+    
     private let disposeBag = DisposeBag()
     
     public init(
-        coreDataService: CoreDataService
+        coreDataService: CoreDataService,
+        networkService: NetworkService
     ) {
         self.coreDataService = coreDataService
+        self.networkService = networkService
+        migrateFavorites()
         fetchFavorites()
     }
     
-    public func addRoute(
-        arsId: String,
-        bus: BusArrivalInfoResponse
-    ) throws {
-        do {
-            let oldFavorites = try favorites.value()
-            let hasBusStopId = try coreDataService.isValueDuplicated(
-                type: FavoritesBusStopResponse.self,
-                uniqueKeyPath: \.busStopId,
-                uniqueValue: arsId
-            )
-            if hasBusStopId {
-                guard let busStopToUpdate = oldFavorites
-                    .first(
-                        where: {
-                            $0.busStopId == arsId
-                        }
-                    )
-                else { return }
-                let busIdArrToUpdate = busStopToUpdate.busIds + [bus.busId]
-                let newFavorites = FavoritesBusStopResponse(
-                    busStopId: busStopToUpdate.busStopId,
-                    busIds: busIdArrToUpdate
-                )
-                do {
-                    try coreDataService.update(
-                        data: newFavorites,
-                        uniqueKeyPath: \.busStopId
-                    )
-                } catch {
-                    throw error
-                }
-            } else {
-                do {
-                    try coreDataService.save(
-                        data: FavoritesBusStopResponse(
-                            busStopId: arsId,
-                            busIds: [bus.busId]
-                        )
-                    )
-                } catch {
-                    throw error
-                }
-            }
-            fetchFavorites()
-        } catch {
-            throw error
-        }
+    public func addFavorites(favorites: FavoritesBusResponse) throws {
+        try coreDataService.saveUniqueData(
+            data: favorites,
+            uniqueKeyPath: \.identifier
+        )
+        fetchFavorites()
     }
     
-    public func removeRoute(
-        arsId: String,
-        bus: BusArrivalInfoResponse
-    ) throws {
-        do {
-            let oldFavorites = try favorites.value()
-            guard let busStopToRemove = oldFavorites
-                .first(
-                    where: {
-                        $0.busStopId == arsId
-                    }
-                )
-            else { return }
-            if busStopToRemove.busIds.count > 1 {
-                let newBusId = busStopToRemove.busIds.filter { $0 != bus.busId }
-                do {
-                    try coreDataService.update(
-                        data: FavoritesBusStopResponse(
-                            busStopId: arsId,
-                            busIds: newBusId
-                        ),
-                        uniqueKeyPath: \.busStopId
-                    )
-                } catch {
-                    throw error
-                }
-            } else {
-                do {
-                    try coreDataService.delete(
-                        data: FavoritesBusStopResponse(
-                            busStopId: arsId,
-                            busIds: [bus.busId]
-                        ),
-                        uniqueKeyPath: \.busStopId
-                    )
-                } catch {
-                    throw error
-                }
-            }
-            fetchFavorites()
-        } catch {
-            throw error
-        }
+    public func removeFavorites(favorites: FavoritesBusResponse) throws {
+        try coreDataService.delete(
+            data: favorites,
+            uniqueKeyPath: \.identifier
+        )
+        fetchFavorites()
     }
     
     private func fetchFavorites() {
         do {
             let fetchedFavorites = try coreDataService.fetch(
-                type: FavoritesBusStopResponse.self
+                type: FavoritesBusResponse.self
             )
             favorites.onNext(fetchedFavorites)
         } catch {
             favorites.onError(error)
+        }
+    }
+    
+    private func migrateFavorites() {
+        do {
+            let legacyFavoritesList = try coreDataService.fetch(
+                type: FavoritesBusStopResponse.self
+            )
+            guard !legacyFavoritesList.isEmpty
+            else { return }
+            legacyFavoritesList.forEach { legacyFavorites in
+                networkService.request(
+                    endPoint: BusStopArrivalInfoEndPoint(
+                        arsId: legacyFavorites.busStopId
+                    )
+                )
+                .decode(
+                    type: BusStopArrivalInfoResponse.self,
+                    decoder: JSONDecoder()
+                )
+                .withUnretained(self)
+                .subscribe(
+                    onNext: { repository, response in
+                        do {
+                            try legacyFavorites.busIds.forEach { legacyBusId in
+                                guard let bus = response.buses.first(
+                                    where: { bus in
+                                        bus.busId == legacyBusId
+                                    }
+                                )
+                                else { return }
+                                try repository.coreDataService.saveUniqueData(
+                                    data: FavoritesBusResponse(
+                                        busStopId: response.busStopId,
+                                        busStopName: response.busStopName,
+                                        busId: bus.busId,
+                                        busName: bus.busName,
+                                        adirection: bus.adirection
+                                    ),
+                                    uniqueKeyPath: \.identifier
+                                )
+                            }
+                            try repository.coreDataService.delete(
+                                data: legacyFavorites,
+                                uniqueKeyPath: \.busStopId
+                            )
+                        } catch {
+                            #if DEBUG
+                            print(error.localizedDescription)
+                            #endif
+                        }
+                    }
+                )
+                .disposed(by: disposeBag)
+            }
+        } catch {
+            #if DEBUG
+            print(error.localizedDescription)
+            #endif
         }
     }
 }
