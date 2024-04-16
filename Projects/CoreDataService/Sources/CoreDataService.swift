@@ -28,7 +28,7 @@ public protocol CoreDataService {
     func delete<T: CoreDataStorable, U>(
         data: T,
         uniqueKeyPath: KeyPath<T, U>
-    ) throws
+    ) throws where U: Equatable
     
     func isValueDuplicated<T: CoreDataStorable, U: Equatable>(
         type: T.Type,

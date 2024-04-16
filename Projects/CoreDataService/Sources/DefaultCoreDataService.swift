@@ -161,7 +161,7 @@ public final class DefaultCoreDataService: CoreDataService {
         data: T,
         uniqueKeyPath: KeyPath<T, U>
     ) throws {
-        let isUnique = try isValueDuplicated(
+        let isUnique = try !isValueDuplicated(
             type: type(of: data),
             uniqueKeyPath: uniqueKeyPath,
             uniqueValue: data[keyPath: uniqueKeyPath]
@@ -230,11 +230,15 @@ public final class DefaultCoreDataService: CoreDataService {
     public func delete<T: CoreDataStorable, U>(
         data: T,
         uniqueKeyPath: KeyPath<T, U>
-    ) throws {
+    ) throws where U: Equatable {
         do {
             let fetchedMo = try fetchMO(type: type(of: data))
             guard let object = fetchedMo.first(where: { object in
-                object.value(forKey: uniqueKeyPath.propertyName) != nil
+                guard let value = object.value(
+                    forKey: uniqueKeyPath.propertyName
+                ) as? U
+                else { return false }
+                return value == data[keyPath: uniqueKeyPath]
             })
             else { return }
             container.viewContext.delete(object)
