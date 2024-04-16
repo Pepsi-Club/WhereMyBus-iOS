@@ -11,6 +11,7 @@ import Foundation
 import Core
 
 public struct FavoritesBusResponse: CoreDataStorable {
+    public let identifier: String
     public let busStopId: String
     public let busStopName: String
     public let busId: String
@@ -24,6 +25,7 @@ public struct FavoritesBusResponse: CoreDataStorable {
         busName: String,
         adirection: String
     ) {
+        self.identifier = busStopId + busId + adirection
         self.busStopId = busStopId
         self.busStopName = busStopName
         self.busId = busId

@@ -6,6 +6,7 @@
         <attribute name="busName" optional="YES" attributeType="String"/>
         <attribute name="busStopId" optional="YES" attributeType="String"/>
         <attribute name="busStopName" optional="YES" attributeType="String"/>
+        <attribute name="identifier" optional="YES" attributeType="String"/>
     </entity>
     <entity name="FavoritesBusStopResponseMO" representedClassName="FavoritesBusStopResponseMO" syncable="YES">
         <attribute name="busIds" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[String]"/>

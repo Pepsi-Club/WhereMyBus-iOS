@@ -17,6 +17,7 @@ extension FavoritesBusResponseMO {
         )
     }
 
+    @NSManaged public var identifier: String?
     @NSManaged public var busStopId: String?
     @NSManaged public var busStopName: String?
     @NSManaged public var busId: String?
