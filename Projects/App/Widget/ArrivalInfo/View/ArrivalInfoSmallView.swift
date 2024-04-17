@@ -39,12 +39,10 @@ struct ArrivalInfoSmallView: View {
     
     var emptyView: some View {
         VStack(alignment: .center, spacing: 5) {
-            Text("위젯편집에서")
-                .font(.nanumHeavy(19))
             Text("즐겨찾기를")
             Text("추가하세요")
         }
-        .font(.nanumExtraBold(18))
+        .font(.nanumExtraBold(14))
         .foregroundColor(.white)
         .multilineTextAlignment(.center)
     }
