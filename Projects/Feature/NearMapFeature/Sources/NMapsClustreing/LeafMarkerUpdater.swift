@@ -16,7 +16,7 @@ import RxSwift
 public class LeafMarkerUpdater: NMCDefaultLeafMarkerUpdater {
     let selectedBusStopId = BehaviorSubject<String>(value: "")
     
-    var selectedMarker: NMFMarker? {
+    private var selectedMarker: NMFMarker? {
         didSet {
             oldValue?.iconImage = unselectedImg
             selectedMarker?.iconImage = selectedImg
