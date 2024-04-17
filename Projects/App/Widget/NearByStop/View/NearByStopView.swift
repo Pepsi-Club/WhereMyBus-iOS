@@ -9,8 +9,12 @@
 import SwiftUI
 import WidgetKit
 
+import DesignSystem
+
 struct NearByStopView: View {
     let entry: NearByStopProvider.Entry
+    
+    let backgroundColor = DesignSystemAsset.appColor.swiftUIColor
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -20,6 +24,7 @@ struct NearByStopView: View {
                     Text("주변")
                     Text("정류장")
                 }
+                .foregroundStyle(.white)
                 .font(.nanumHeavySU(size: 20))
                 
                 Spacer()
@@ -27,11 +32,21 @@ struct NearByStopView: View {
             Spacer()
             
             Text(entry.busStopName)
-                .font(.nanumRegularSU(size: 16))
+                .foregroundStyle(.white)
+                .font(.nanumBoldSU(size: 16))
             Text("\(entry.distance)m")
+                .foregroundStyle(
+                    DesignSystemAsset.blueBus.swiftUIColor
+                )
                 .font(.nanumExtraBoldSU(size: 16))
+                .padding(EdgeInsets(
+                    top: 0.5,
+                    leading: 0,
+                    bottom: 0,
+                    trailing: 0
+                ))
         }
-        .widgetBackground(Color.white)
+        .widgetBackground(backgroundColor)
     }
 }
 
