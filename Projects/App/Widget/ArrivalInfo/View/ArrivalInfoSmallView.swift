@@ -8,6 +8,7 @@
 
 import SwiftUI
 import WidgetKit
+import DesignSystem
 
 import Core
 import Domain
@@ -38,14 +39,16 @@ struct ArrivalInfoSmallView: View {
     
     var emptyView: some View {
         VStack(alignment: .center) {
-            Text("즐겨찾기를 추가해 도착 정보를 확인하세요")
-                .font(.custom("", size: 20))
+            Text("즐겨찾기를 추가하세요")
+                .font(.nanumExtraBold(18))
+                .foregroundColor(.white)
                 .multilineTextAlignment(.center)
         }
     }
     
     var arrivalInfoView: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .trailing, spacing: 9) {
+            Spacer()
             ForEach(
                 entry.responses.prefix(1),
                 id: \.busStopId
@@ -54,29 +57,49 @@ struct ArrivalInfoSmallView: View {
                 HStack {
                     VStack(alignment: .leading) {
                         Text(busStopResponse.busStopName)
-                            .font(.headline)
+                            .font(.nanumExtraBold(15))
                             .lineLimit(1)
                         Text(busStopResponse.direction)
-                            .font(.subheadline)
+                            .font(.nanumRegular(11))
                             .lineLimit(1)
+                    }
+                    Spacer()
+                }
+                ForEach(
+                    busStopResponse.buses.prefix(1),
+                    id: \.hashValue
+                ) { bus in
+                    VStack(alignment: .trailing) {
+                        Text(bus.busName)
+                            .font(.nanumHeavy(22))
+                            .foregroundColor(.green)
+                        Spacer()
+                        VStack(spacing: 6) {
+                            HStack {
+                                Spacer()
+                                Text(bus.firstArrivalState.toString)
+                                    .font(.nanumHeavy(14))
+                                    .lineLimit(1)
+                                /// Todo : firstArrivalRemaining으로 바꿔야함.
+                                Text(bus.firstArrivalState.toString)
+                                    .font(.nanumExtraBold(12))
+                            }
+                            HStack {
+                                Spacer()
+                                Text(bus.secondArrivalState.toString)
+                                    .font(.nanumHeavy(14))
+                                    .lineLimit(1)
+                                /// Todo : SecondtArrivalRemaining으로 바꿔야함.
+                                Text(bus.firstArrivalState.toString)
+                                    .font(.nanumExtraBold(12))
+                            }
+                        }
                     }
                 }
                 Spacer()
-                ForEach(
-                    busStopResponse.buses.prefix(2),
-                    id: \.hashValue
-                ) { bus in
-                    HStack {
-                        Text(bus.busName)
-                            .font(.subheadline)
-                        Spacer()
-                        Text(bus.firstArrivalState.toString)
-                            .font(.subheadline)
-                            .lineLimit(1)
-                    }
-                }
             }
         }
+        .foregroundColor(.white)
     }
 }
 

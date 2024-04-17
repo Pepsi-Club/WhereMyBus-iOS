@@ -7,10 +7,11 @@
 //
 
 import SwiftUI
+import DesignSystem
 
 extension View {
     func widgetBackground(
-        _ backgroundView: some View = Color.white
+        _ backgroundView: some View = DesignSystemAsset.settingColor.swiftUIColor
     ) -> some View {
         if #available(iOSApplicationExtension 17.0, *) {
             return containerBackground(for: .widget) {
