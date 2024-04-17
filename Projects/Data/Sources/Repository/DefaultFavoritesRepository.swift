@@ -62,11 +62,16 @@ public final class DefaultFavoritesRepository: FavoritesRepository {
             .disposed(by: disposeBag)
     }
     
-    private func fetchFavorites() {
+    public func fetchFavorites() {
         coreDataService.fetch(
             type: FavoritesBusResponse.self
         )
-        .bind(to: favorites)
+        .withUnretained(self)
+        .subscribe(
+            onNext: { repository, favoritesList in
+                repository.favorites.onNext(favoritesList)
+            }
+        )
         .disposed(by: disposeBag)
     }
     
@@ -134,7 +139,10 @@ public final class DefaultFavoritesRepository: FavoritesRepository {
                         }
                     }
                 },
-                onDisposed: { [weak self] in
+                onError: { [weak self] _ in
+                    self?.fetchFavorites()
+                },
+                onCompleted: { [weak self] in
                     self?.fetchFavorites()
                 }
             )

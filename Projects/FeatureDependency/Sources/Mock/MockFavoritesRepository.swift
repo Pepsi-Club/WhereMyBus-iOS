@@ -21,7 +21,9 @@ public final class MockFavoritesRepository: FavoritesRepository {
     public init() {
         
     }
-    
+    public func fetchFavorites() {
+        
+    }
     public func addFavorites(favorites: FavoritesBusResponse) throws {
         
     }

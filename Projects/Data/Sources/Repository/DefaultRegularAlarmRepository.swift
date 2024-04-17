@@ -218,7 +218,10 @@ public final class DefaultRegularAlarmRepository: RegularAlarmRepository {
                         repository.updateRegularAlarm(response: newAlarm) { }
                     }
                 },
-                onDisposed: { [weak self] in
+                onError: { [weak self] _ in
+                    self?.fetchRegularAlarm()
+                },
+                onCompleted: { [weak self] in
                     self?.fetchRegularAlarm()
                 }
             )

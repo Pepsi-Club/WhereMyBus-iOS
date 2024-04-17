@@ -106,6 +106,7 @@ public final class DefaultCoreDataService: CoreDataService {
                     .compactMap { $0 as? CoreDataModelObject }
                     .compactMap { $0.toDomain as? T }
                 observer.onNext(result)
+                observer.onCompleted()
                 return Disposables.create()
             } catch {
                 observer.onError(error)
