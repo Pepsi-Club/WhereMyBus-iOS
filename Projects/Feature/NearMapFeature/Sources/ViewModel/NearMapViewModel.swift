@@ -131,7 +131,6 @@ public final class NearMapViewModel: LeafMarkerUpdater, ViewModel {
                     let selectedStopInfo = viewModel.useCase
                         .getSelectedBusStop(busStopId: busStopId)
                     output.selectedBusStopInfo.onNext(selectedStopInfo)
-                    viewModel.selectedMarker
                 }
             )
             .disposed(by: disposeBag)
