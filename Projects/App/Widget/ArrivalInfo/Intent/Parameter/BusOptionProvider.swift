@@ -14,7 +14,7 @@ import Domain
 struct BusOptionProvider: DynamicOptionsProvider {
     let coreDataService = DefaultCoreDataService()
     func defaultResult() async -> String? {
-        ""
+        return nil
     }
     
     func results() async throws -> [String] {
@@ -22,6 +22,5 @@ struct BusOptionProvider: DynamicOptionsProvider {
             type: FavoritesBusStopResponse.self
         )
         return responses.flatMap { $0.busIds }
-//        []
     }
 }

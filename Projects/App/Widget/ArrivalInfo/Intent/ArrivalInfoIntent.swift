@@ -10,7 +10,7 @@ import WidgetKit
 import AppIntents
 
 @available(iOS 17.0, *)
-struct ArrivalInfoIntent: WidgetConfigurationIntent {
+struct ArrivalInfoIntent: WidgetConfigurationIntent, AppIntent {
     static var title: LocalizedStringResource = "Configuration"
 
     @Parameter(title: "정류장", optionsProvider: BusStopOptionProvider())

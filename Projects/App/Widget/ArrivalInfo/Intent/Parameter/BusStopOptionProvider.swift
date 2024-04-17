@@ -14,7 +14,7 @@ import Domain
 struct BusStopOptionProvider: DynamicOptionsProvider {
     let coreDataService = DefaultCoreDataService()
     func defaultResult() async -> String? {
-        ""
+        return nil
     }
     
     func results() async throws -> [String] {
