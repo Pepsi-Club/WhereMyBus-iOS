@@ -30,7 +30,6 @@ public final class DefaultFavoritesUseCase: FavoritesUseCase {
     
     public func fetchFavoritesArrivals() {
         favoritesRepository.favorites
-            .distinctUntilChanged()
             .filter { !$0.isEmpty }
             .take(1)
             .withUnretained(self)
@@ -49,10 +48,23 @@ public final class DefaultFavoritesUseCase: FavoritesUseCase {
                         }
                 )
             }
+            .withLatestFrom(
+                favoritesRepository.favorites
+            ) { responses, favoritesList in
+                (responses, favoritesList)
+            }
             .withUnretained(self)
             .subscribe(
-                onNext: { useCase, responses in
-                    useCase.busStopArrivalInfoResponse.onNext(responses)
+                onNext: { useCase, tuple in
+                    let (responses, favoritesList) = tuple
+                    let result = responses
+                        .updateFavoritesStatus(
+                            favoritesList: favoritesList
+                        )
+                        .map { response in
+                            response.filterUnfavoritesBuses()
+                        }
+                    useCase.busStopArrivalInfoResponse.onNext(result)
                 }
             )
             .disposed(by: disposeBag)
@@ -60,8 +72,8 @@ public final class DefaultFavoritesUseCase: FavoritesUseCase {
     
     private func bindFavorites() {
         favoritesRepository.favorites
+            .distinctUntilChanged()
             .filter { !$0.isEmpty }
-            .take(1)
             .withUnretained(self)
             .flatMap { useCase, favoritesList in
                 Observable.combineLatest(
@@ -78,10 +90,23 @@ public final class DefaultFavoritesUseCase: FavoritesUseCase {
                         }
                 )
             }
+            .withLatestFrom(
+                favoritesRepository.favorites
+            ) { responses, favoritesList in
+                (responses, favoritesList)
+            }
             .withUnretained(self)
             .subscribe(
-                onNext: { useCase, responses in
-                    useCase.busStopArrivalInfoResponse.onNext(responses)
+                onNext: { useCase, tuple in
+                    let (responses, favoritesList) = tuple
+                    let result = responses
+                        .updateFavoritesStatus(
+                            favoritesList: favoritesList
+                        )
+                        .map { response in
+                            response.filterUnfavoritesBuses()
+                        }
+                    useCase.busStopArrivalInfoResponse.onNext(result)
                 }
             )
             .disposed(by: disposeBag)
