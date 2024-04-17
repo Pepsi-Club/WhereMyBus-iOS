@@ -42,6 +42,13 @@ public struct UserDefaultsWrapper<T: Codable> {
         self.key = key
         self.defaultValue = defaultValue
         self.dataBase = kind.dataBase
+        if kind == .appGroup,
+           !UserDefaults.standard.bool(forKey: "legacyRemoved") {
+            UserDefaults.standard.set(true, forKey: "legacyRemoved")
+            kind.dataBase.removePersistentDomain(
+                forName: "group.Pepsi-Club.WhereMyBus"
+            )
+        }
     }
 }
 
