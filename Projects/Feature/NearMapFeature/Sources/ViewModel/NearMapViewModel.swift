@@ -123,7 +123,6 @@ public final class NearMapViewModel: LeafMarkerUpdater, ViewModel {
             .disposed(by: disposeBag)
         
         selectedBusStopId
-            .distinctUntilChanged()
             .withUnretained(self)
             .subscribe(
                 onNext: { viewModel, busStopId in
