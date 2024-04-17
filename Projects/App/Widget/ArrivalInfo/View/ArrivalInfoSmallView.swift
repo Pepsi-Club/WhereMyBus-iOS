@@ -39,6 +39,7 @@ struct ArrivalInfoSmallView: View {
     var emptyView: some View {
         VStack(alignment: .center) {
             Text("즐겨찾기를 추가해 도착 정보를 확인하세요")
+                .font(.custom("", size: 20))
                 .multilineTextAlignment(.center)
         }
     }
