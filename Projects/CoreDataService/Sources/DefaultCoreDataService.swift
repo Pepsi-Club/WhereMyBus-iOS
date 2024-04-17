@@ -15,10 +15,16 @@ import Core
 import RxSwift
 
 public final class DefaultCoreDataService: CoreDataService {
-    public let storeStatus = BehaviorSubject<StoreStatus>(value: .loading)
-    private let ckContainer = CKContainer.default()
     private var container: NSPersistentContainer
     
+    public let storeStatus = BehaviorSubject<StoreStatus>(value: .loading)
+    
+    private let ckContainer = CKContainer.default()
+    @UserDefaultsWrapper(
+        key: "coreDataMigrationStatus",
+        defaultValue: CoreDataMigrationStatus.applicationSupport
+    )
+    private var migrationStatus
     private let fileName = "Model"
     private let appGroupName = "group.Pepsi-Club.WhereMyBus"
     
@@ -43,110 +49,21 @@ public final class DefaultCoreDataService: CoreDataService {
                 break
             }
             container.viewContext.automaticallyMergesChangesFromParent = true
-            migrateStore()
-            loadStore()
-        }
-    }
-    
-    private func migrateStore() {
-        let fileManager = FileManager.default
-        let coordinator = container.persistentStoreCoordinator
-        guard let legacyStoreUrl = fileManager
-            .urls(
-                for: .applicationSupportDirectory,
-                in: .userDomainMask
-            )
-            .first?
-            .appendingPathComponent(
-                "\(fileName).sqlite"
-            )
-        else {
-            #if DEBUG
-            print("💾 레거시 디렉토리 URL 찾기 실패")
-            #endif
-            return
-        }
-        guard let appGroupStoreUrl = fileManager
-            .containerURL(
-                forSecurityApplicationGroupIdentifier: appGroupName
-            )?
-            .appendingPathComponent(
-                "\(fileName).sqlite"
-            )
-        else {
-            #if DEBUG
-            print("💾 AppGroup 디렉토리 URL 찾기 실패")
-            #endif
-            return
-        }
-        guard let legacyStore = coordinator.persistentStore(for: legacyStoreUrl)
-        else {
-            #if DEBUG
-            print(
-                "💾 레거시 SQLite 파일 없음",
-                "💾 레거시 SQLite URL: \(legacyStoreUrl)",
-                "💾 AppGroup SQLite URL: \(appGroupStoreUrl)",
-                separator: "\n"
-            )
-            if coordinator.persistentStores.isEmpty {
-                if !fileManager.fileExists(atPath: appGroupStoreUrl.path) {
-                    do {
-                        _ = try coordinator.addPersistentStore(
-                            type: .sqlite,
-                            at: appGroupStoreUrl
-                        )
-                    } catch {
-                        #if DEBUG
-                        print(error.localizedDescription)
-                        #endif
-                    }
-                }
-            }
-            #endif
-            container.persistentStoreDescriptions = [
-                .init(url: appGroupStoreUrl)
-            ]
-            return
-        }
-        do {
-            let newStore = try coordinator.migratePersistentStore(
-                legacyStore,
-                to: appGroupStoreUrl,
-                type: .sqlite
-            )
-            if let newStoreUrl = newStore.url {
+            switch migrationStatus {
+            case .applicationSupport:
+                break
+            case .appGroup:
                 container.persistentStoreDescriptions = [
-                    .init(url: newStoreUrl)
+                    .init(url: appGroupStoreUrl)
                 ]
-                print("💾 AppGroup SQLite Url: \(newStoreUrl)")
             }
-            do {
-                try coordinator.destroyPersistentStore(
-                    at: legacyStoreUrl,
-                    type: .sqlite
-                )
-            } catch {
-                #if DEBUG
-                print(
-                    "💾 레거시 제거 실패",
-                    "💾 \(error.localizedDescription)",
-                    separator: "\n"
-                )
-                #endif
-            }
-        } catch {
-            #if DEBUG
-            print(
-                "💾 마이그레이션 실패",
-                "💾 \(error.localizedDescription)",
-                separator: "\n"
-            )
-            #endif
+            loadStore()
         }
     }
     
     private func loadStore() {
         container.loadPersistentStores { [weak self] desc, error in
+            guard let self else { return }
             if let error {
                 #if DEBUG
                 print(error.localizedDescription)
@@ -159,7 +76,13 @@ public final class DefaultCoreDataService: CoreDataService {
                 )
                 #endif
             }
-            self?.storeStatus.onNext(.loaded)
+            switch self.migrationStatus {
+            case .applicationSupport:
+                self.migrateStore()
+            case .appGroup:
+                break
+            }
+            self.storeStatus.onNext(.loaded)
         }
     }
     
@@ -280,5 +203,77 @@ public final class DefaultCoreDataService: CoreDataService {
             entityName: "\(type)MO"
         )
         return try container.viewContext.fetch(request)
+    }
+}
+// MARK: 마이그레이션
+extension DefaultCoreDataService {
+    var appGroupStoreUrl: URL {
+        guard let appGroupStoreUrl = FileManager.default
+            .containerURL(
+                forSecurityApplicationGroupIdentifier: appGroupName
+            )?
+            .appendingPathComponent(
+                "\(fileName).sqlite"
+            )
+        else {
+            #if DEBUG
+            print("💾 AppGroup 디렉토리 URL 찾기 실패")
+            #endif
+            return URL(filePath: "")
+        }
+        return appGroupStoreUrl
+    }
+    
+    var legacyStoreUrl: URL {
+        guard let legacyStoreUrl = FileManager.default
+            .urls(
+                for: .applicationSupportDirectory,
+                in: .userDomainMask
+            )
+            .first?
+            .appendingPathComponent(
+                "\(fileName).sqlite"
+            )
+        else {
+            #if DEBUG
+            print("💾 레거시 디렉토리 URL 찾기 실패")
+            #endif
+            return URL(filePath: "")
+        }
+        return legacyStoreUrl
+    }
+    
+    private func migrateStore() {
+        let fileManager = FileManager.default
+        let coordinator = container.persistentStoreCoordinator
+        guard let legacyStore = coordinator.persistentStore(for: legacyStoreUrl)
+        else { return }
+        do {
+            let newStore = try coordinator.migratePersistentStore(
+                legacyStore,
+                to: appGroupStoreUrl,
+                type: .sqlite
+            )
+            migrationStatus = .appGroup
+            do {
+                try fileManager.removeItem(atPath: legacyStoreUrl.path)
+            } catch {
+                #if DEBUG
+                print(
+                    "💾 레거시 제거 실패",
+                    "💾 \(error.localizedDescription)",
+                    separator: "\n"
+                )
+                #endif
+            }
+        } catch {
+            #if DEBUG
+            print(
+                "💾 마이그레이션 실패",
+                "💾 \(error.localizedDescription)",
+                separator: "\n"
+            )
+            #endif
+        }
     }
 }
