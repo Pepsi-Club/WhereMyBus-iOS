@@ -138,7 +138,6 @@ public final class NearMapViewController: UIViewController {
                     .methodInvoked(#selector(UIViewController.viewWillAppear))
                     .map { _ in },
                 informationViewTapEvent: tapGesture.rx.event.map { _ in },
-                selectedBusStopId: .empty(),
                 locationChangeEvent: cameraMoveEvent
             )
         )
