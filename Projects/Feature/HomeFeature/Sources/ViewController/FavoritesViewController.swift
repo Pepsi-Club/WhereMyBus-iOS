@@ -208,7 +208,7 @@ public final class FavoritesViewController: UIViewController {
                     else { return nil }
                     return data
                 }
-                UserDefaults.appGroup?.set(
+                UserDefaults.appGroup.set(
                     datas,
                     forKey: "arrivalResponse"
                 )
