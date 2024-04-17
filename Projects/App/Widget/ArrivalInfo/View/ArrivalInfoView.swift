@@ -8,6 +8,7 @@
 
 import SwiftUI
 import WidgetKit
+import DesignSystem
 
 @available (iOS 17.0, *)
 struct ArrivalInfoView: View {
@@ -15,7 +16,7 @@ struct ArrivalInfoView: View {
     @Environment(\.widgetFamily) var widgetFamily
     
     var body: some View {
-        view.widgetBackground(Color.white)
+        view.widgetBackground(DesignSystemAsset.settingColor.swiftUIColor)
     }
     
     @ViewBuilder
