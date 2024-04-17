@@ -64,7 +64,8 @@ public final class DefaultBusStopUseCase: BusStopUseCase {
             busStopId: busStopInfo.busStopId,
             busStopName: busStopInfo.busStopName,
             busId: busInfo.busId,
-            busName: busInfo.busName
+            busName: busInfo.busName,
+            adirection: busInfo.adirection
         )
     }
 }
