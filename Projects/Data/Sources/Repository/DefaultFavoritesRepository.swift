@@ -79,59 +79,67 @@ public final class DefaultFavoritesRepository: FavoritesRepository {
                 .fetch(
                     type: FavoritesBusStopResponse.self
                 )
-                .filterDuplicated()
             guard !legacyFavoritesList.isEmpty
             else {
                 fetchFavorites()
                 return
             }
-            legacyFavoritesList.forEach { legacyFavorites in
-                networkService.request(
-                    endPoint: BusStopArrivalInfoEndPoint(
-                        arsId: legacyFavorites.busStopId
+            Observable
+                .from(legacyFavoritesList.filterDuplicated())
+                .withUnretained(self)
+                .flatMap { repository, legacyFilteredFavorites in
+                    repository.networkService.request(
+                        endPoint: BusStopArrivalInfoEndPoint(
+                            arsId: legacyFilteredFavorites.busStopId
+                        )
                     )
-                )
-                .decode(
-                    type: BusStopArrivalInfoDTO.self,
-                    decoder: JSONDecoder()
-                )
-                .map { $0.toDomain }
+                    .decode(
+                        type: BusStopArrivalInfoDTO.self,
+                        decoder: JSONDecoder()
+                    )
+                    .map { ($0.toDomain, legacyFilteredFavorites) }
+                }
                 .withUnretained(self)
                 .subscribe(
-                    onNext: { repository, response in
+                    onNext: { repository, tuple in
+                        let (response, legacyFilteredFavorites) = tuple
                         do {
-                            try legacyFavorites.busIds.forEach { legacyBusId in
+                            for legacyBusId in legacyFilteredFavorites.busIds {
                                 guard let bus = response.buses.first(
-                                    where: { bus in
-                                        bus.busId == legacyBusId
-                                    }
+                                    where: { $0.busId == legacyBusId }
+                                ) else {
+                                    continue
+                                }
+                                let favoritesResponse = FavoritesBusResponse(
+                                    busStopId: response.busStopId,
+                                    busStopName: response.busStopName,
+                                    busId: bus.busId,
+                                    busName: bus.busName,
+                                    adirection: bus.adirection
                                 )
-                                else { return }
                                 try repository.coreDataService.saveUniqueData(
-                                    data: FavoritesBusResponse(
-                                        busStopId: response.busStopId,
-                                        busStopName: response.busStopName,
-                                        busId: bus.busId,
-                                        busName: bus.busName,
-                                        adirection: bus.adirection
-                                    ),
+                                    data: favoritesResponse,
                                     uniqueKeyPath: \.identifier
                                 )
                             }
-                            try repository.coreDataService.delete(
-                                data: legacyFavorites,
-                                uniqueKeyPath: \.busStopId
-                            )
-                            repository.fetchFavorites()
                         } catch {
                             #if DEBUG
                             print(error.localizedDescription)
                             #endif
+                            return
                         }
+                        legacyFavoritesList.forEach { legacyFavorites in
+                            try? self.coreDataService.delete(
+                                data: legacyFavorites,
+                                uniqueKeyPath: \.busStopId
+                            )
+                        }
+                    },
+                    onDisposed: { [weak self] in
+                        self?.fetchFavorites()
                     }
                 )
                 .disposed(by: disposeBag)
-            }
         } catch {
             #if DEBUG
             print(error.localizedDescription)

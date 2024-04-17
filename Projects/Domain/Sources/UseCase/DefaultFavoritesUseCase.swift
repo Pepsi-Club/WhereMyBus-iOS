@@ -32,6 +32,8 @@ public final class DefaultFavoritesUseCase: FavoritesUseCase {
         do {
             let favoritesList = try favoritesRepository.favorites.value()
             let favoritesBusStopId = Set(favoritesList.map { $0.busStopId })
+            guard !favoritesBusStopId.isEmpty
+            else { return }
             Observable.combineLatest(
                 favoritesBusStopId
                     .map { busStopId in
@@ -63,6 +65,7 @@ public final class DefaultFavoritesUseCase: FavoritesUseCase {
     
     private func bindFavorites() {
         favoritesRepository.favorites
+            .filter { !$0.isEmpty }
             .withLatestFrom(
                 busStopArrivalInfoResponse
             ) { favorites, responses in
