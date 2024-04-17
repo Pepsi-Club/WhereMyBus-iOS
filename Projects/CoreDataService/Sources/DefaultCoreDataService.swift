@@ -57,6 +57,9 @@ public final class DefaultCoreDataService: CoreDataService {
                     .init(url: appGroupStoreUrl)
                 ]
             }
+            #if DEBUG
+            print("💾 \(migrationStatus)")
+            #endif
             loadStore()
         }
     }
@@ -82,6 +85,9 @@ public final class DefaultCoreDataService: CoreDataService {
             case .appGroup:
                 break
             }
+            #if DEBUG
+            print("💾 Repository Fetch / Migration 시작")
+            #endif
             self.storeStatus.onNext(.loaded)
         }
     }
@@ -249,11 +255,16 @@ extension DefaultCoreDataService {
         guard let legacyStore = coordinator.persistentStore(for: legacyStoreUrl)
         else { return }
         do {
-            let newStore = try coordinator.migratePersistentStore(
+            _ = try coordinator.migratePersistentStore(
                 legacyStore,
                 to: appGroupStoreUrl,
                 type: .sqlite
             )
+            #if DEBUG
+            print(
+                "💾 마이그레이션 성공"
+            )
+            #endif
             migrationStatus = .appGroup
             do {
                 try fileManager.removeItem(atPath: legacyStoreUrl.path)
