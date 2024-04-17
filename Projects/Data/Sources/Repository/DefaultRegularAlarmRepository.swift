@@ -145,7 +145,9 @@ public final class DefaultRegularAlarmRepository: RegularAlarmRepository {
             .subscribe(
                 onNext: { repository, storeStatus in
                     if storeStatus == .loaded {
-                        repository.migrateAlarmV2()
+                        DispatchQueue.global().async {
+                            repository.migrateAlarmV2()
+                        }
                     }
                 }
             )

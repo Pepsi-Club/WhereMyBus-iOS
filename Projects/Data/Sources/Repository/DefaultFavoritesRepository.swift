@@ -18,9 +18,7 @@ public final class DefaultFavoritesRepository: FavoritesRepository {
     private let coreDataService: CoreDataService
     private let networkService: NetworkService
     
-    public var favorites = BehaviorSubject<[FavoritesBusResponse]>(
-        value: []
-    )
+    public var favorites = BehaviorSubject<[FavoritesBusResponse]>(value: [])
     
     private let disposeBag = DisposeBag()
     
@@ -55,7 +53,9 @@ public final class DefaultFavoritesRepository: FavoritesRepository {
             .subscribe(
                 onNext: { repository, storeStatus in
                     if storeStatus == .loaded {
-                        repository.migrateFavorites()
+                        DispatchQueue.global().async {
+                            repository.migrateFavorites()
+                        }
                     }
                 }
             )

@@ -25,94 +25,63 @@ public final class DefaultFavoritesUseCase: FavoritesUseCase {
     ) {
         self.busStopArrivalInfoRepository = busStopArrivalInfoRepository
         self.favoritesRepository = favoritesRepository
-//        bindFavorites()
+        bindFavorites()
     }
     
     public func fetchFavoritesArrivals() {
-        do {
-            let favoritesList = try favoritesRepository.favorites.value()
-            let favoritesBusStopId = Set(favoritesList.map { $0.busStopId })
-            guard !favoritesBusStopId.isEmpty
-            else { return }
-            Observable.combineLatest(
-                favoritesBusStopId
-                    .map { busStopId in
-                        busStopArrivalInfoRepository.fetchArrivalList(
-                            busStopId: busStopId
-                        )
-                    }
-            )
+        favoritesRepository.favorites
+            .distinctUntilChanged()
+            .filter { !$0.isEmpty }
+            .take(1)
+            .withUnretained(self)
+            .flatMap { useCase, favoritesList in
+                Observable.combineLatest(
+                    favoritesList
+                        .map {
+                            $0.busStopId
+                        }
+                        .removeDuplicated()
+                        .map { busStopId in
+                            useCase.busStopArrivalInfoRepository
+                                .fetchArrivalList(
+                                    busStopId: busStopId
+                                )
+                        }
+                )
+            }
             .withUnretained(self)
             .subscribe(
                 onNext: { useCase, responses in
-                    let updatedResponses = responses
-                        .updateFavoritesStatus(
-                            favoritesList: favoritesList
-                        )
-                        .map { busStopResponse in
-                            busStopResponse.filterUnfavoritesBuses()
-                        }
-                    useCase.busStopArrivalInfoResponse.onNext(
-                        updatedResponses
-                    )
+                    useCase.busStopArrivalInfoResponse.onNext(responses)
                 }
             )
             .disposed(by: disposeBag)
-        } catch {
-            busStopArrivalInfoResponse.onError(error)
-        }
     }
     
     private func bindFavorites() {
         favoritesRepository.favorites
             .filter { !$0.isEmpty }
-            .withLatestFrom(
-                busStopArrivalInfoResponse
-            ) { favorites, responses in
-                (favorites, responses)
+            .take(1)
+            .withUnretained(self)
+            .flatMap { useCase, favoritesList in
+                Observable.combineLatest(
+                    favoritesList
+                        .map {
+                            $0.busStopId
+                        }
+                        .removeDuplicated()
+                        .map { busStopId in
+                            useCase.busStopArrivalInfoRepository
+                                .fetchArrivalList(
+                                    busStopId: busStopId
+                                )
+                        }
+                )
             }
             .withUnretained(self)
             .subscribe(
-                onNext: { useCase, tuple in
-                    let (favoritesList, responses) = tuple
-                    let favoritesBusStopId = Set(
-                        favoritesList.map { favorites in
-                            favorites.busStopId
-                        }
-                    )
-                    let currentBusStopId = responses.map { $0.busStopId }
-                    let unfetchedBusStopIds = favoritesBusStopId.subtracting(
-                        currentBusStopId
-                    )
-                    guard !unfetchedBusStopIds.isEmpty
-                    else { return }
-                    Observable.merge(
-                        unfetchedBusStopIds.map { busStopId in
-                            useCase.busStopArrivalInfoRepository
-                                .fetchArrivalList(busStopId: busStopId)
-                        }
-                    )
-                    .subscribe(
-                        onNext: { response in
-                            do {
-                                let currentResponse = try useCase
-                                    .busStopArrivalInfoResponse.value()
-                                let updatedResponse = response
-                                    .updateFavoritesStatus(
-                                        favoritesList: favoritesList
-                                    )
-                                    .filterUnfavoritesBuses()
-                                useCase.busStopArrivalInfoResponse.onNext(
-                                    currentResponse + [updatedResponse]
-                                )
-                            } catch {
-                                #if DEBUG
-                                print(error.localizedDescription)
-                                #endif
-                            }
-                        }
-                    )
-                    .disposed(by: useCase.disposeBag)
+                onNext: { useCase, responses in
+                    useCase.busStopArrivalInfoResponse.onNext(responses)
                 }
             )
             .disposed(by: disposeBag)

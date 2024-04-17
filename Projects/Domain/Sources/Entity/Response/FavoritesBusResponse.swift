@@ -10,7 +10,7 @@ import Foundation
 
 import Core
 
-public struct FavoritesBusResponse: CoreDataStorable {
+public struct FavoritesBusResponse: CoreDataStorable, Equatable {
     public let identifier: String
     public let busStopId: String
     public let busStopName: String
