@@ -81,14 +81,19 @@ public final class DefaultCoreDataService: CoreDataService {
             }
             switch self.migrationStatus {
             case .applicationSupport:
-                self.migrateStore()
+                DispatchQueue.global(qos: .userInitiated).async {
+                    self.migrateStore()
+                    self.storeStatus.onNext(.loaded)
+                    #if DEBUG
+                    print("💾 저장소 마이그레이션 완료")
+                    #endif
+                }
             case .appGroup:
-                break
+                self.storeStatus.onNext(.loaded)
+                #if DEBUG
+                print("💾 저장소 마이그레이션 없음")
+                #endif
             }
-            #if DEBUG
-            print("💾 Repository Fetch / Migration 시작")
-            #endif
-            self.storeStatus.onNext(.loaded)
         }
     }
     

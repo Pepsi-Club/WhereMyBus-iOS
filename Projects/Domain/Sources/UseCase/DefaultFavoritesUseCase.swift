@@ -25,7 +25,7 @@ public final class DefaultFavoritesUseCase: FavoritesUseCase {
     ) {
         self.busStopArrivalInfoRepository = busStopArrivalInfoRepository
         self.favoritesRepository = favoritesRepository
-        bindFavorites()
+//        bindFavorites()
     }
     
     public func fetchFavoritesArrivals() {
