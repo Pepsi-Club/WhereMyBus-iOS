@@ -187,7 +187,7 @@ public final class DefaultRegularAlarmRepository: RegularAlarmRepository {
                         type: BusStopArrivalInfoDTO.self,
                         decoder: JSONDecoder()
                     )
-                    .map { dto in
+                    .compactMap { dto in
                         dto.toDomain
                     }
                 }

@@ -99,7 +99,7 @@ public final class DefaultFavoritesRepository: FavoritesRepository {
                 type: BusStopArrivalInfoDTO.self,
                 decoder: JSONDecoder()
             )
-            .map { $0.toDomain }
+            .compactMap { $0.toDomain }
             .withUnretained(self)
                 .subscribe(
                     onNext: { repository, response in
