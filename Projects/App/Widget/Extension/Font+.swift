@@ -1,5 +1,5 @@
 //
-//  Font +.swift
+//  Font+.swift
 //  Widget
 //
 //  Created by 유하은 on 4/17/24.
