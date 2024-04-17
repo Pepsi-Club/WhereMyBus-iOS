@@ -155,47 +155,50 @@ public final class DefaultRegularAlarmRepository: RegularAlarmRepository {
     }
     
     private func fetchRegularAlarm() {
-        do {
-            let responses = try coreDataService.fetch(
-                type: RegularAlarmResponse.self
+        coreDataService.fetch(type: RegularAlarmResponse.self)
+            .withUnretained(self)
+            .subscribe(
+                onNext: { repository, alarmList in
+                    repository.currentRegularAlarm.onNext(alarmList)
+                    repository.syncRegularAlarms(responses: alarmList)
+                }
             )
-            currentRegularAlarm.onNext(responses)
-            syncRegularAlarms(responses: responses)
-        } catch {
-            currentRegularAlarm.onError(error)
-        }
+            .disposed(by: disposeBag)
     }
     
     private func migrateAlarmV2() {
-        do {
-            let legacyAlarms = try coreDataService
-                .fetch(
-                    type: RegularAlarmResponse.self
+        coreDataService.fetch(type: RegularAlarmResponse.self)
+            .map { legacyAlarmList in
+                legacyAlarmList.filter { $0.adirection.isEmpty }
+            }
+            .withUnretained(self)
+            .flatMap { repository, legacyAlarmList in
+                Observable.merge(
+                    legacyAlarmList.filterDuplicatedBusStop()
+                        .map { legacyAlarm in
+                            repository.networkService.request(
+                                endPoint: BusStopArrivalInfoEndPoint(
+                                    arsId: legacyAlarm.busStopId
+                                )
+                            )
+                            .decode(
+                                type: BusStopArrivalInfoDTO.self,
+                                decoder: JSONDecoder()
+                            )
+                            .compactMap { dto in
+                                dto.toDomain
+                            }
+                            .map { busStopResponse in
+                                (busStopResponse, legacyAlarmList)
+                            }
+                        }
                 )
-                .filter { legacyResponse in
-                    legacyResponse.adirection.isEmpty
-                }
-                .filterDuplicatedBusStop()
-            Observable.merge(
-                legacyAlarms.map { legacyAlarm in
-                    networkService.request(
-                        endPoint: BusStopArrivalInfoEndPoint(
-                            arsId: legacyAlarm.busStopId
-                        )
-                    )
-                    .decode(
-                        type: BusStopArrivalInfoDTO.self,
-                        decoder: JSONDecoder()
-                    )
-                    .compactMap { dto in
-                        dto.toDomain
-                    }
-                }
-            )
+            }
             .withUnretained(self)
             .subscribe(
-                onNext: { repository, busStopResponse in
-                    legacyAlarms.forEach { legacyAlarm in
+                onNext: { repository, tuple in
+                    let (busStopResponse, legacyAlarmList) = tuple
+                    legacyAlarmList.forEach { legacyAlarm in
                         guard let busInfo = busStopResponse.buses.first(
                             where: { bus in
                                 bus.busId == legacyAlarm.busId
@@ -212,11 +215,7 @@ public final class DefaultRegularAlarmRepository: RegularAlarmRepository {
                             weekday: legacyAlarm.weekday,
                             adirection: busInfo.adirection
                         )
-                        repository.updateRegularAlarm(
-                            response: newAlarm
-                        ) {
-                            
-                        }
+                        repository.updateRegularAlarm(response: newAlarm) { }
                     }
                 },
                 onDisposed: { [weak self] in
@@ -224,10 +223,82 @@ public final class DefaultRegularAlarmRepository: RegularAlarmRepository {
                 }
             )
             .disposed(by: disposeBag)
-        } catch {
-            currentRegularAlarm.onError(error)
-        }
     }
+    
+//    private func fetchRegularAlarm() {
+//        do {
+//            let responses = try coreDataService.fetch(
+//                type: RegularAlarmResponse.self
+//            )
+//            currentRegularAlarm.onNext(responses)
+//            syncRegularAlarms(responses: responses)
+//        } catch {
+//            currentRegularAlarm.onError(error)
+//        }
+//    }
+//    
+//    private func migrateAlarmV2() {
+//        do {
+//            let legacyAlarms = try coreDataService
+//                .fetch(
+//                    type: RegularAlarmResponse.self
+//                )
+//                .filter { legacyResponse in
+//                    legacyResponse.adirection.isEmpty
+//                }
+//                .filterDuplicatedBusStop()
+//            Observable.merge(
+//                legacyAlarms.map { legacyAlarm in
+//                    networkService.request(
+//                        endPoint: BusStopArrivalInfoEndPoint(
+//                            arsId: legacyAlarm.busStopId
+//                        )
+//                    )
+//                    .decode(
+//                        type: BusStopArrivalInfoDTO.self,
+//                        decoder: JSONDecoder()
+//                    )
+//                    .compactMap { dto in
+//                        dto.toDomain
+//                    }
+//                }
+//            )
+//            .withUnretained(self)
+//            .subscribe(
+//                onNext: { repository, busStopResponse in
+//                    legacyAlarms.forEach { legacyAlarm in
+//                        guard let busInfo = busStopResponse.buses.first(
+//                            where: { bus in
+//                                bus.busId == legacyAlarm.busId
+//                            }
+//                        )
+//                        else { return }
+//                        let newAlarm = RegularAlarmResponse(
+//                            requestId: legacyAlarm.requestId,
+//                            busStopId: legacyAlarm.busStopId,
+//                            busStopName: legacyAlarm.busStopName,
+//                            busId: legacyAlarm.busId,
+//                            busName: legacyAlarm.busName,
+//                            time: legacyAlarm.time,
+//                            weekday: legacyAlarm.weekday,
+//                            adirection: busInfo.adirection
+//                        )
+//                        repository.updateRegularAlarm(
+//                            response: newAlarm
+//                        ) {
+//                            
+//                        }
+//                    }
+//                },
+//                onDisposed: { [weak self] in
+//                    self?.fetchRegularAlarm()
+//                }
+//            )
+//            .disposed(by: disposeBag)
+//        } catch {
+//            currentRegularAlarm.onError(error)
+//        }
+//    }
     
     private func syncRegularAlarms(responses: [RegularAlarmResponse]) {
         networkService.request(endPoint: FetchRegularAlarmEndPoint())

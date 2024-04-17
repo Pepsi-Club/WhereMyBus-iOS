@@ -14,7 +14,11 @@ import RxSwift
 
 public protocol CoreDataService {
     var storeStatus: BehaviorSubject<StoreStatus> { get }
-    func fetch<T: CoreDataStorable>(type: T.Type) throws -> [T]
+    
+    func fetch<T: CoreDataStorable>(
+        type: T.Type
+    ) -> Observable<[T]>
+//    func fetch<T: CoreDataStorable>(type: T.Type) throws -> [T]
     
     func save(data: some CoreDataStorable) throws
     

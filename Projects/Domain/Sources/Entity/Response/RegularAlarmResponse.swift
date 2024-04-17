@@ -42,6 +42,7 @@ public struct RegularAlarmResponse: Hashable, CoreDataStorable {
 }
 
 public extension Array<RegularAlarmResponse> {
+    /// 버스정류장 ID 중복을 제거 후 리턴
     func filterDuplicatedBusStop() -> Self {
         var uniqueStops = Set<String>()
         return filter { stop in

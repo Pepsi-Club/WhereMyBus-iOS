@@ -97,6 +97,23 @@ public final class DefaultCoreDataService: CoreDataService {
         }
     }
     
+    public func fetch<T: CoreDataStorable>(
+        type: T.Type
+    ) -> Observable<[T]> {
+        Observable.create { observer in
+            do {
+                let result = try self.fetchMO(type: type)
+                    .compactMap { $0 as? CoreDataModelObject }
+                    .compactMap { $0.toDomain as? T }
+                observer.onNext(result)
+                return Disposables.create()
+            } catch {
+                observer.onError(error)
+                return Disposables.create()
+            }
+        }
+    }
+    
     public func fetch<T: CoreDataStorable>(type: T.Type) throws -> [T] {
         do {
             return try fetchMO(type: type)
