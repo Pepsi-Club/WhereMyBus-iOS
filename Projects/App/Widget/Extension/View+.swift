@@ -11,7 +11,7 @@ import DesignSystem
 
 extension View {
     func widgetBackground(
-        _ backgroundView: some View = DesignSystemAsset.settingColor.swiftUIColor
+        _ backgroundView: some View = DesignSystemAsset.logoColor.swiftUIColor
     ) -> some View {
         if #available(iOSApplicationExtension 17.0, *) {
             return containerBackground(for: .widget) {

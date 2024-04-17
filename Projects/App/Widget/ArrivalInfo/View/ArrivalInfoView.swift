@@ -16,7 +16,7 @@ struct ArrivalInfoView: View {
     @Environment(\.widgetFamily) var widgetFamily
     
     var body: some View {
-        view.widgetBackground(DesignSystemAsset.settingColor.swiftUIColor)
+        view.widgetBackground(DesignSystemAsset.logoColor.swiftUIColor)
     }
     
     @ViewBuilder
