@@ -29,6 +29,7 @@ public final class DefaultRegularAlarmRepository: RegularAlarmRepository {
     ) {
         self.coreDataService = coreDataService
         self.networkService = networkService
+        bindStoreStatus()
     }
     
     public func createRegularAlarm(
@@ -118,7 +119,9 @@ public final class DefaultRegularAlarmRepository: RegularAlarmRepository {
                     let currentAlarms = try repository.currentRegularAlarm
                         .value()
                     repository.currentRegularAlarm.onNext(
-                        currentAlarms.filter { $0 != response }
+                        currentAlarms.filter {
+                            $0.requestId != response.requestId
+                        }
                     )
                     completion()
                 } catch {
@@ -142,7 +145,7 @@ public final class DefaultRegularAlarmRepository: RegularAlarmRepository {
             .subscribe(
                 onNext: { repository, storeStatus in
                     if storeStatus == .loaded {
-                        repository.fetchRegularAlarm()
+                        repository.migrateAlarmV2()
                     }
                 }
             )
@@ -156,6 +159,69 @@ public final class DefaultRegularAlarmRepository: RegularAlarmRepository {
             )
             currentRegularAlarm.onNext(responses)
             syncRegularAlarms(responses: responses)
+        } catch {
+            currentRegularAlarm.onError(error)
+        }
+    }
+    
+    private func migrateAlarmV2() {
+        do {
+            let legacyAlarms = try coreDataService
+                .fetch(
+                    type: RegularAlarmResponse.self
+                )
+                .filter { legacyResponse in
+                    legacyResponse.adirection.isEmpty
+                }
+                .filterDuplicatedBusStop()
+            Observable.merge(
+                legacyAlarms.map { legacyAlarm in
+                    networkService.request(
+                        endPoint: BusStopArrivalInfoEndPoint(
+                            arsId: legacyAlarm.busStopId
+                        )
+                    )
+                    .decode(
+                        type: BusStopArrivalInfoDTO.self,
+                        decoder: JSONDecoder()
+                    )
+                    .map { dto in
+                        dto.toDomain
+                    }
+                }
+            )
+            .withUnretained(self)
+            .subscribe(
+                onNext: { repository, busStopResponse in
+                    legacyAlarms.forEach { legacyAlarm in
+                        guard let busInfo = busStopResponse.buses.first(
+                            where: { bus in
+                                bus.busId == legacyAlarm.busId
+                            }
+                        )
+                        else { return }
+                        let newAlarm = RegularAlarmResponse(
+                            requestId: legacyAlarm.requestId,
+                            busStopId: legacyAlarm.busStopId,
+                            busStopName: legacyAlarm.busStopName,
+                            busId: legacyAlarm.busId,
+                            busName: legacyAlarm.busName,
+                            time: legacyAlarm.time,
+                            weekday: legacyAlarm.weekday,
+                            adirection: busInfo.adirection
+                        )
+                        repository.updateRegularAlarm(
+                            response: newAlarm
+                        ) {
+                            
+                        }
+                    }
+                },
+                onDisposed: { [weak self] in
+                    self?.fetchRegularAlarm()
+                }
+            )
+            .disposed(by: disposeBag)
         } catch {
             currentRegularAlarm.onError(error)
         }
@@ -216,7 +282,8 @@ public final class DefaultRegularAlarmRepository: RegularAlarmRepository {
                         busId: response.busId,
                         busName: response.busName,
                         time: response.time,
-                        weekday: response.weekday
+                        weekday: response.weekday,
+                        adirection: response.adirection
                     )
                     do {
                         try repository.coreDataService.delete(
