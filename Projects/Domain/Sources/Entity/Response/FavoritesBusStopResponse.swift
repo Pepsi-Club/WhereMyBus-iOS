@@ -10,7 +10,7 @@ import Foundation
 
 import Core
 
-public struct FavoritesBusStopResponse: CoreDataStorable {
+public struct FavoritesBusStopResponse: CoreDataStorable, Hashable {
     public let busStopId: String
     public var busIds: [String]
     
@@ -20,5 +20,26 @@ public struct FavoritesBusStopResponse: CoreDataStorable {
     ) {
         self.busStopId = busStopId
         self.busIds = busIds
+    }
+}
+
+public extension Array<FavoritesBusStopResponse> {
+    func filterDuplicated() -> Self {
+        var newArr = [String: [String]]()
+        forEach { favorites in
+            let busIds = favorites.busIds
+            if let value = newArr[favorites.busStopId] {
+                var newBusIds = value + busIds
+                newArr[favorites.busStopId] = newBusIds.removeDuplicated()
+            } else {
+                newArr[favorites.busStopId] = busIds.removeDuplicated()
+            }
+        }
+        return newArr.map { key, value in
+            FavoritesBusStopResponse(
+                busStopId: key,
+                busIds: value
+            )
+        }
     }
 }

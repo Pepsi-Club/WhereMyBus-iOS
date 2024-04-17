@@ -199,7 +199,7 @@ public final class DefaultCoreDataService: CoreDataService {
         data: T,
         uniqueKeyPath: KeyPath<T, U>
     ) throws {
-        let isUnique = try !isValueDuplicated(
+        let isUnique = try isUnique(
             type: type(of: data),
             uniqueKeyPath: uniqueKeyPath,
             uniqueValue: data[keyPath: uniqueKeyPath]
@@ -258,13 +258,13 @@ public final class DefaultCoreDataService: CoreDataService {
         }
     }
     
-    public func isValueDuplicated<T: CoreDataStorable, U: Equatable>(
+    public func isUnique<T: CoreDataStorable, U: Equatable>(
         type: T.Type,
         uniqueKeyPath: KeyPath<T, U>,
         uniqueValue: U
     ) throws -> Bool {
         let fetchedMO = try fetchMO(type: type)
-        return fetchedMO.contains { object in
+        return !fetchedMO.contains { object in
             guard let uniqueProperty = object.value(
                 forKey: uniqueKeyPath.propertyName
             ) as? U

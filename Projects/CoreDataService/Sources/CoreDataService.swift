@@ -33,7 +33,7 @@ public protocol CoreDataService {
         uniqueKeyPath: KeyPath<T, U>
     ) throws where U: Equatable
     
-    func isValueDuplicated<T: CoreDataStorable, U: Equatable>(
+    func isUnique<T: CoreDataStorable, U: Equatable>(
         type: T.Type,
         uniqueKeyPath: KeyPath<T, U>,
         uniqueValue: U

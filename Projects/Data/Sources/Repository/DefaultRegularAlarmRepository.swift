@@ -52,7 +52,10 @@ public final class DefaultRegularAlarmRepository: RegularAlarmRepository {
         .subscribe(
             onNext: { repository, response in
                 do {
-                    try repository.coreDataService.save(data: response)
+                    try repository.coreDataService.saveUniqueData(
+                        data: response,
+                        uniqueKeyPath: \.requestId
+                    )
                     let currentAlarms = try repository.currentRegularAlarm
                         .value()
                     repository.currentRegularAlarm.onNext(
@@ -101,7 +104,7 @@ public final class DefaultRegularAlarmRepository: RegularAlarmRepository {
             type: RemoveRegularAlarmDTO.self,
             decoder: JSONDecoder()
         )
-        .map { dto in
+        .map { _ in
             response
         }
         .withUnretained(self)
@@ -220,7 +223,10 @@ public final class DefaultRegularAlarmRepository: RegularAlarmRepository {
                             data: response,
                             uniqueKeyPath: \.requestId
                         )
-                        try repository.coreDataService.save(data: newResponse)
+                        try repository.coreDataService.saveUniqueData(
+                            data: newResponse,
+                            uniqueKeyPath: \.requestId
+                        )
                         let currentResponse = try repository.currentRegularAlarm
                             .value()
                         let updatedResponse = currentResponse

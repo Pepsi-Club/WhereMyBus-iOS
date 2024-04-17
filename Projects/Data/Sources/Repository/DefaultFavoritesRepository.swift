@@ -75,9 +75,11 @@ public final class DefaultFavoritesRepository: FavoritesRepository {
     
     private func migrateFavorites() {
         do {
-            let legacyFavoritesList = try coreDataService.fetch(
-                type: FavoritesBusStopResponse.self
-            )
+            let legacyFavoritesList = try coreDataService
+                .fetch(
+                    type: FavoritesBusStopResponse.self
+                )
+                .filterDuplicated()
             guard !legacyFavoritesList.isEmpty
             else {
                 fetchFavorites()
