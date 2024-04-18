@@ -31,7 +31,7 @@ public final class DefaultFavoritesUseCase: FavoritesUseCase {
     public func fetchFavoritesArrivals() {
         favoritesRepository.fetchFavorites()
     }
-    // 바인딩한다면 정류장 뷰에서 즐겨찾기가 수정될 때마다 API 호출되기 때문에 수정이 필요함
+    // TODO: 바인딩한다면 정류장 뷰에서 즐겨찾기가 수정될 때마다 API 호출되기 때문에 수정이 필요함
     private func bindFavorites() {
         favoritesRepository.favorites
             .withUnretained(self)
