@@ -29,7 +29,7 @@ public extension Array<FavoritesBusStopResponse> {
         forEach { favorites in
             let busIds = favorites.busIds
             if let value = newArr[favorites.busStopId] {
-                var newBusIds = value + busIds
+                let newBusIds = value + busIds
                 newArr[favorites.busStopId] = newBusIds.removeDuplicated()
             } else {
                 newArr[favorites.busStopId] = busIds.removeDuplicated()
