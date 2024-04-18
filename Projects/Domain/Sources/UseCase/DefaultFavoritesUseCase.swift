@@ -31,12 +31,12 @@ public final class DefaultFavoritesUseCase: FavoritesUseCase {
     public func fetchFavoritesArrivals() {
         favoritesRepository.fetchFavorites()
     }
-    
+    // 바인딩한다면 정류장 뷰에서 즐겨찾기가 수정될 때마다 API 호출되기 때문에 수정이 필요함
     private func bindFavorites() {
         favoritesRepository.favorites
             .withUnretained(self)
             .flatMap { useCase, favoritesList in
-                Observable.combineLatest(
+                Observable.zip(
                     favoritesList
                         .map {
                             $0.busStopId
@@ -67,9 +67,6 @@ public final class DefaultFavoritesUseCase: FavoritesUseCase {
                             response.filterUnfavoritesBuses()
                         }
                     useCase.busStopArrivalInfoResponse.onNext(result)
-                },
-                onCompleted: {
-                    
                 }
             )
             .disposed(by: disposeBag)
