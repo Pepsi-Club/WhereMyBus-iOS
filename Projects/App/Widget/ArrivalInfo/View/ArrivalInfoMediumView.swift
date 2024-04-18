@@ -84,7 +84,8 @@ struct ArrivalInfoMediumView: View {
                                 
                                 Text(bus.firstArrivalState.toString)
                                     .font(.nanumExtraBold(13))
-                                    .foregroundColor(bus.secondArrivalState.toColor)
+                                    .foregroundColor(
+                                        bus.secondArrivalState.toColor)
                                     .lineLimit(1)
                                 
                                 Spacer()
@@ -106,7 +107,8 @@ struct ArrivalInfoMediumView: View {
                                 
                                 Text(bus.secondArrivalState.toString)
                                     .font(.nanumExtraBold(13))
-                                    .foregroundColor(bus.secondArrivalState.toColor)
+                                    .foregroundColor(
+                                        bus.secondArrivalState.toColor)
                                     .lineLimit(1)
                                 
                                 Spacer()

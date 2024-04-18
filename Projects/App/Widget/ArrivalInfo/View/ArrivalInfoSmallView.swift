@@ -80,7 +80,8 @@ struct ArrivalInfoSmallView: View {
                                 Spacer()
                                 Text(bus.firstArrivalState.toString)
                                     .font(.nanumHeavy(14))
-                                    .foregroundColor(bus.firstArrivalState.toColor)
+                                    .foregroundColor(
+                                        bus.firstArrivalState.toColor)
                                     .lineLimit(1)
                                 Text(bus.firstArrivalRemaining)
                                     .font(.nanumExtraBold(12))
@@ -89,7 +90,8 @@ struct ArrivalInfoSmallView: View {
                                 Spacer()
                                 Text(bus.secondArrivalState.toString)
                                     .font(.nanumHeavy(14))
-                                    .foregroundColor(bus.secondArrivalState.toColor)
+                                    .foregroundColor(
+                                        bus.secondArrivalState.toColor)
                                     .lineLimit(1)
                                 Text(bus.firstArrivalRemaining)
                                     .font(.nanumExtraBold(12))
