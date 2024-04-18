@@ -53,9 +53,7 @@ public final class DefaultFavoritesRepository: FavoritesRepository {
             .subscribe(
                 onNext: { repository, storeStatus in
                     if storeStatus == .loaded {
-                        DispatchQueue.global().async {
-                            repository.migrateFavorites()
-                        }
+                        repository.migrateFavorites()
                     }
                 }
             )

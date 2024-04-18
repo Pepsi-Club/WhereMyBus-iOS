@@ -33,9 +33,7 @@ public class DefaultRegularAlarmUseCase: RegularAlarmUseCase {
             }
             .bind(to: fetchedAlarm)
             .disposed(by: disposeBag)
-        DispatchQueue.global().async { [weak self] in
-            self?.migrateRegularAlarm()
-        }
+        migrateRegularAlarm()
     }
     
     public func removeAlarm(response: RegularAlarmResponse) throws {
