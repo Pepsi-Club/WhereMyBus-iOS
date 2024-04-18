@@ -22,7 +22,7 @@ public final class DefaultCoreDataService: CoreDataService {
     private let ckContainer = CKContainer.default()
     @UserDefaultsWrapper(
         key: "coreDataMigrationStatus",
-        defaultValue: CoreDataMigrationStatus.applicationSupport
+        defaultValue: CoreDataPersistence.applicationSupport
     )
     private var migrationStatus
     private let fileName = "Model"
@@ -45,8 +45,13 @@ public final class DefaultCoreDataService: CoreDataService {
             switch accountStatus {
             case .available:
                 container = NSPersistentCloudKitContainer(name: fileName)
+                #if DEBUG
+                print("💾 로그인된 계정, CoreData CloudKit 연동")
+                #endif
             default:
-                break
+                #if DEBUG
+                print("💾 로그인 되지 않은 계정, CoreData CloudKit 연동 안됨")
+                #endif
             }
             container.viewContext.automaticallyMergesChangesFromParent = true
             switch migrationStatus {
@@ -58,7 +63,10 @@ public final class DefaultCoreDataService: CoreDataService {
                 ]
             }
             #if DEBUG
-            print("💾 \(migrationStatus)")
+            print(
+                "💾 CoreData 저장소: \(String(describing: migrationStatus))",
+                "[applicationSupport(마이그레이션 필요) / appGroup(마이그레이션 완)]"
+            )
             #endif
             loadStore()
         }
@@ -91,7 +99,7 @@ public final class DefaultCoreDataService: CoreDataService {
             case .appGroup:
                 self.storeStatus.onNext(.loaded)
                 #if DEBUG
-                print("💾 저장소 마이그레이션 없음")
+                print("💾 저장소 마이그레이션 필요 없음")
                 #endif
             }
         }
@@ -241,9 +249,7 @@ extension DefaultCoreDataService {
             .containerURL(
                 forSecurityApplicationGroupIdentifier: appGroupName
             )?
-            .appendingPathComponent(
-                "\(fileName).sqlite"
-            )
+            .appendingPathComponent("\(fileName).sqlite")
         else {
             #if DEBUG
             print("💾 AppGroup 디렉토리 URL 찾기 실패")
@@ -260,9 +266,7 @@ extension DefaultCoreDataService {
                 in: .userDomainMask
             )
             .first?
-            .appendingPathComponent(
-                "\(fileName).sqlite"
-            )
+            .appendingPathComponent("\(fileName).sqlite")
         else {
             #if DEBUG
             print("💾 레거시 디렉토리 URL 찾기 실패")
@@ -284,13 +288,14 @@ extension DefaultCoreDataService {
                 type: .sqlite
             )
             #if DEBUG
-            print(
-                "💾 마이그레이션 성공"
-            )
+            print("💾 마이그레이션 성공")
             #endif
             migrationStatus = .appGroup
             do {
                 try fileManager.removeItem(atPath: legacyStoreUrl.path)
+                #if DEBUG
+                print("💾 레거시 저장소 제거 완료")
+                #endif
             } catch {
                 #if DEBUG
                 print(

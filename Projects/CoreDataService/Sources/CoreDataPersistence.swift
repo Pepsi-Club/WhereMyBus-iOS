@@ -1,5 +1,5 @@
 //
-//  CoreDataMigrationStatus.swift
+//  CoreDataPersistence.swift
 //  CoreDataService
 //
 //  Created by gnksbm on 4/17/24.
@@ -8,6 +8,6 @@
 
 import Foundation
 
-enum CoreDataMigrationStatus: Codable {
+enum CoreDataPersistence: Codable {
     case applicationSupport, appGroup
 }
