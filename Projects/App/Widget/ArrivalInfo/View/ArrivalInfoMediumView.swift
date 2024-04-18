@@ -65,7 +65,7 @@ struct ArrivalInfoMediumView: View {
                 Spacer()
                 
                 Rectangle()
-                    .frame(height: 1)
+                    .frame(height: 0.8)
                 
                 ForEach(
                     busStopResponse.buses.prefix(2),
@@ -73,29 +73,51 @@ struct ArrivalInfoMediumView: View {
                 ) { bus in
                     HStack {
                         Text(bus.busName)
-                            .font(.nanumHeavy(22))
+                            .font(.nanumHeavy(23))
                             .foregroundColor(.green)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
                         VStack(alignment: .leading) {
-                            Text(bus.firstArrivalState.toString)
-                                .font(.nanumExtraBold(13))
-                                .lineLimit(1)
-                            
-                            /// firstArrivalRemaining으로 바꾸기
-                            Text(bus.firstArrivalState.toString)
-                                .font(.nanumRegular(10))
+                            if bus.secondArrivalRemaining.isEmpty {
+                                
+                                Spacer()
+                                
+                                Text(bus.firstArrivalState.toString)
+                                    .font(.nanumExtraBold(13))
+                                    .foregroundColor(bus.secondArrivalState.toColor)
+                                    .lineLimit(1)
+                                
+                                Spacer()
+                            } else {
+                                Text(bus.firstArrivalState.toString)
+                                    .font(.nanumExtraBold(13))
+                                    .lineLimit(1)
+                                
+                                Text(bus.firstArrivalRemaining)
+                                    .font(.nanumRegular(10))
+                            }
                         }
                         .frame(width: 60)
                         
                         VStack(alignment: .leading) {
-                            Text(bus.secondArrivalState.toString)
-                                .font(.nanumExtraBold(13))
-                                .lineLimit(1)
-                            
-                            /// SecondArrivalRemaining으로 바꾸기
-                            Text(bus.secondArrivalState.toString)
-                                .font(.nanumRegular(10))
+                            if bus.secondArrivalRemaining.isEmpty {
+                                
+                                Spacer()
+                                
+                                Text(bus.secondArrivalState.toString)
+                                    .font(.nanumExtraBold(13))
+                                    .foregroundColor(bus.secondArrivalState.toColor)
+                                    .lineLimit(1)
+                                
+                                Spacer()
+                            } else {
+                                Text(bus.secondArrivalState.toString)
+                                    .font(.nanumExtraBold(13))
+                                    .lineLimit(1)
+                                
+                                Text(bus.secondArrivalRemaining)
+                                    .font(.nanumRegular(10))
+                            }
                         }
                         .frame(width: 60)
                         
@@ -104,7 +126,7 @@ struct ArrivalInfoMediumView: View {
                     
                     if bus == busStopResponse.buses.prefix(2).first {
                         Rectangle()
-                            .frame(height: 1)
+                            .frame(height: 0.6)
                     }
                 }
             }

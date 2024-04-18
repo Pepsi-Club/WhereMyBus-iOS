@@ -80,18 +80,18 @@ struct ArrivalInfoSmallView: View {
                                 Spacer()
                                 Text(bus.firstArrivalState.toString)
                                     .font(.nanumHeavy(14))
+                                    .foregroundColor(bus.firstArrivalState.toColor)
                                     .lineLimit(1)
-                                /// Todo : firstArrivalRemaining으로 바꿔야함.
-                                Text(bus.firstArrivalState.toString)
+                                Text(bus.firstArrivalRemaining)
                                     .font(.nanumExtraBold(12))
                             }
                             HStack {
                                 Spacer()
                                 Text(bus.secondArrivalState.toString)
                                     .font(.nanumHeavy(14))
+                                    .foregroundColor(bus.secondArrivalState.toColor)
                                     .lineLimit(1)
-                                /// Todo : SecondtArrivalRemaining으로 바꿔야함.
-                                Text(bus.firstArrivalState.toString)
+                                Text(bus.firstArrivalRemaining)
                                     .font(.nanumExtraBold(12))
                             }
                         }

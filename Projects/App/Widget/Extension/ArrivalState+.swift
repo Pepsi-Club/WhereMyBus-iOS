@@ -6,13 +6,11 @@
 //  Copyright © 2024 Pepsi-Club. All rights reserved.
 //
 
-import Foundation
-
-import DesignSystem
 import Domain
+import SwiftUI
 
 extension ArrivalState {
-    public var toColor: DesignSystemColors.Color {
+    public var toColor: Color {
         switch self {
         case .soon:
                 .red
@@ -20,8 +18,8 @@ extension ArrivalState {
                 .red
         case .finished:
                 .red
-        case .arrivalTime(time: let time):
-                .red
+        case .arrivalTime(time: _):
+                .white
         }
     }
 }
