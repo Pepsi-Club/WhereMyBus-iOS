@@ -76,25 +76,25 @@ struct ArrivalInfoSmallView: View {
                             .foregroundColor(.green)
                         Spacer()
                         VStack(spacing: 6) {
-                            HStack {
+                            HStack(spacing:3) {
                                 Spacer()
                                 Text(bus.firstArrivalState.toString)
-                                    .font(.nanumHeavy(14))
+                                    .font(.nanumHeavy(13))
                                     .foregroundColor(
                                         bus.firstArrivalState.toColor)
                                     .lineLimit(1)
                                 Text(bus.firstArrivalRemaining)
                                     .font(.nanumExtraBold(12))
                             }
-                            HStack {
+                            HStack(spacing:3) {
                                 Spacer()
                                 Text(bus.secondArrivalState.toString)
-                                    .font(.nanumHeavy(14))
+                                    .font(.nanumHeavy(13))
                                     .foregroundColor(
                                         bus.secondArrivalState.toColor)
                                     .lineLimit(1)
                                 Text(bus.firstArrivalRemaining)
-                                    .font(.nanumExtraBold(12))
+                                    .font(.nanumBold(12))
                             }
                         }
                     }
