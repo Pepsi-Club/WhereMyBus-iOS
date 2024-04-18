@@ -45,23 +45,32 @@ public final class DefaultCoreDataService: CoreDataService {
             switch accountStatus {
             case .available:
                 container = NSPersistentCloudKitContainer(name: fileName)
+                let cloudStoreDescription = NSPersistentStoreDescription(
+                    url: appGroupStoreUrl
+                )
+                cloudStoreDescription.cloudKitContainerOptions = .init(
+                    containerIdentifier: "iCloud.Pepsi-Club.WhereMyBus"
+                )
+                container.persistentStoreDescriptions = [
+                    cloudStoreDescription
+                ]
                 #if DEBUG
                 print("💾 로그인된 계정, CoreData CloudKit 연동")
                 #endif
             default:
+                switch migrationStatus {
+                case .applicationSupport:
+                    break
+                case .appGroup:
+                    container.persistentStoreDescriptions = [
+                        .init(url: appGroupStoreUrl)
+                    ]
+                }
                 #if DEBUG
                 print("💾 로그인 되지 않은 계정, CoreData CloudKit 연동 안됨")
                 #endif
             }
             container.viewContext.automaticallyMergesChangesFromParent = true
-            switch migrationStatus {
-            case .applicationSupport:
-                break
-            case .appGroup:
-                container.persistentStoreDescriptions = [
-                    .init(url: appGroupStoreUrl)
-                ]
-            }
             #if DEBUG
             print(
                 "💾 CoreData 저장소: \(String(describing: migrationStatus))",
