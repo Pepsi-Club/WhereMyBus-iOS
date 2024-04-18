@@ -10,17 +10,21 @@ import UIKit
 import CoreLocation
 
 public extension String {
+    /**
+     String을 Date로 변환
+     - Parameters:
+        - dateFormat: 변환할 포맷
+     - Returns: 포맷된 Date 반환, 소스가 잘못되었을 경우 Date.now 반환
+     */
     func toDate(dateFormat: String) -> Date {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = dateFormat
         dateFormatter.locale = .current
         guard let date = dateFormatter.date(from: self)
-        else {
-            fatalError("Invalid String to dateFormat")
-        }
+        else { return .now }
         return date
     }
-    
+    /// 공공 버스 API Key
     static var serverKey: Self {
         guard let any = Bundle.main.object(
             forInfoDictionaryKey: "DATA_GO_KR_API_KEY"

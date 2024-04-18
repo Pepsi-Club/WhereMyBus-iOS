@@ -9,6 +9,7 @@
 import Foundation
 
 public extension Array where Element: Hashable {
+    /// 중복을 제거한 배열 리턴
     func removeDuplicated() -> Self {
         Array(Set(self))
     }

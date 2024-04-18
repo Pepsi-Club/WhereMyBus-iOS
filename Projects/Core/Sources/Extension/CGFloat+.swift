@@ -14,12 +14,14 @@ public extension CGFloat {
 }
 
 public extension IntegerLiteralType {
+    /// CGFloat으로 변환
     var f: CGFloat {
         return CGFloat(self)
     }
 }
 
 public extension FloatLiteralType {
+    /// CGFloat으로 변환
     var f: CGFloat {
         return CGFloat(self)
     }
