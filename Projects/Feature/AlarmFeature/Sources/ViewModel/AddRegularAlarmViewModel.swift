@@ -46,6 +46,8 @@ final class AddRegularAlarmViewModel: ViewModel {
         if let alarmToEdit {
             output.title.accept("수정하기")
             regularAlarmEditingService.update(response: alarmToEdit)
+        } else {
+            regularAlarmEditingService.resetManagedObject()
         }
         
         input.viewWillAppear
