@@ -9,7 +9,7 @@ import RxSwift
 import RxRelay
 import NMapsMap
 
-public final class NearMapViewModel: ViewModel {
+public final class NearMapViewModel: LeafMarkerUpdater, ViewModel {
     @Injected(NearMapUseCase.self) var useCase: NearMapUseCase
     private let coordinator: NearMapCoordinator
     private let viewMode: NearMapMode
@@ -40,27 +40,6 @@ public final class NearMapViewModel: ViewModel {
 		)
         
         input.viewWillAppearEvent
-            .take(1)
-            .withUnretained(self)
-            .bind(
-                onNext: { viewModel, _ in
-                    viewModel.useCase.requestAuthorize()
-                    if case .normal = viewModel.viewMode {
-                        viewModel.useCase.getNearByStopInfo()
-                            .subscribe(
-                                onNext: { selectedBusStopInfo in
-                                    output.selectedBusStopInfo.onNext(
-                                        selectedBusStopInfo
-                                    )
-                                }
-                            )
-                            .disposed(by: viewModel.disposeBag)
-                    }
-                }
-            )
-            .disposed(by: disposeBag)
-        
-        input.viewWillAppearEvent
             .withUnretained(self)
             .bind(
                 onNext: { viewModel, _ in
@@ -68,10 +47,30 @@ public final class NearMapViewModel: ViewModel {
                     if case .focused(let busStopId) = viewModel.viewMode {
                         let selectedBusStopInfo = viewModel.useCase
                             .getSelectedBusStop(busStopId: busStopId)
-                        output.selectedBusStopInfo.onNext(selectedBusStopInfo)
+                        viewModel
+                            .selectedBusStopId.onNext(busStopId)
                         output.navigationTitle.accept(
                             selectedBusStopInfo.0.busStopName
                         )
+                    }
+                }
+            )
+            .disposed(by: disposeBag)
+        
+        input.viewWillAppearEvent
+            .take(1)
+            .withUnretained(self)
+            .bind(
+                onNext: { viewModel, _ in
+                    if case .normal = viewModel.viewMode {
+                        viewModel.useCase.getNearByStopInfo()
+                            .subscribe(
+                                onNext: { selectedBusStopInfo in
+                                    viewModel.selectedBusStopId
+                                        .onNext(selectedBusStopInfo.0.busStopId)
+                                }
+                            )
+                            .disposed(by: viewModel.disposeBag)
                     }
                 }
             )
@@ -112,19 +111,6 @@ public final class NearMapViewModel: ViewModel {
             )
             .disposed(by: disposeBag)
         
-        input.selectedBusStopId
-            .distinctUntilChanged()
-            .withUnretained(self)
-            .subscribe(
-                onNext: { viewModel, busStopId in
-                    guard !busStopId.isEmpty else { return }
-                    let selectedStopInfo = viewModel.useCase
-                        .getSelectedBusStop(busStopId: busStopId)
-                    output.selectedBusStopInfo.onNext(selectedStopInfo)
-                }
-            )
-            .disposed(by: disposeBag)
-        
         input.locationChangeEvent
             .withUnretained(self)
             .map { viewModel, range in
@@ -136,6 +122,18 @@ public final class NearMapViewModel: ViewModel {
             .bind(to: output.nearStopList)
             .disposed(by: disposeBag)
         
+        selectedBusStopId
+            .withUnretained(self)
+            .subscribe(
+                onNext: { viewModel, busStopId in
+                    guard !busStopId.isEmpty else { return }
+                    let selectedStopInfo = viewModel.useCase
+                        .getSelectedBusStop(busStopId: busStopId)
+                    output.selectedBusStopInfo.onNext(selectedStopInfo)
+                }
+            )
+            .disposed(by: disposeBag)
+        
         return output
 	}
 }
@@ -144,7 +142,6 @@ extension NearMapViewModel {
     public struct Input {
         let viewWillAppearEvent: Observable<Void>
         let informationViewTapEvent: Observable<Void>
-        let selectedBusStopId: Observable<String>
         let locationChangeEvent
         : Observable<(ClosedRange<Double>, ClosedRange<Double>)>
     }
