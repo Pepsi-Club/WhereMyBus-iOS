@@ -15,7 +15,7 @@ public final class DefaultFavoritesUseCase: FavoritesUseCase {
     private let busStopArrivalInfoRepository: BusStopArrivalInfoRepository
     private let favoritesRepository: FavoritesRepository
     
-    public let busStopArrivalInfoResponse 
+    public let fetchedArrivalInfo 
     = BehaviorSubject<[BusStopArrivalInfoResponse]>(value: [])
     private let disposeBag = DisposeBag()
     
@@ -35,6 +35,13 @@ public final class DefaultFavoritesUseCase: FavoritesUseCase {
     private func bindFavorites() {
         favoritesRepository.favorites
             .withUnretained(self)
+            .filter { useCase, favoritesList in
+                let shouldFetchFavorites = !favoritesList.isEmpty
+                if !shouldFetchFavorites {
+                    useCase.fetchedArrivalInfo.onNext([])
+                }
+                return shouldFetchFavorites
+            }
             .flatMap { useCase, favoritesList in
                 Observable.zip(
                     favoritesList
@@ -66,7 +73,7 @@ public final class DefaultFavoritesUseCase: FavoritesUseCase {
                         .map { response in
                             response.filterUnfavoritesBuses()
                         }
-                    useCase.busStopArrivalInfoResponse.onNext(result)
+                    useCase.fetchedArrivalInfo.onNext(result)
                 }
             )
             .disposed(by: disposeBag)
