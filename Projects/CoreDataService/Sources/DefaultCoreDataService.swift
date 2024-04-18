@@ -22,7 +22,7 @@ public final class DefaultCoreDataService: CoreDataService {
     private let ckContainer = CKContainer.default()
     @UserDefaultsWrapper(
         key: "coreDataMigrationStatus",
-        defaultValue: CoreDataPersistence.applicationSupport
+        defaultValue: CoreDataDirectory.applicationSupport
     )
     private var migrationStatus
     private let fileName = "Model"

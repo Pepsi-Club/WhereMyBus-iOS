@@ -1,5 +1,5 @@
 //
-//  CoreDataPersistence.swift
+//  CoreDataDirectory.swift
 //  CoreDataService
 //
 //  Created by gnksbm on 4/17/24.
@@ -8,6 +8,6 @@
 
 import Foundation
 
-enum CoreDataPersistence: Codable {
+enum CoreDataDirectory: Codable {
     case applicationSupport, appGroup
 }
