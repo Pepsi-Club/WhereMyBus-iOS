@@ -7,22 +7,83 @@
 //
 
 import Foundation
+import CloudKit
+import CoreData
 
 import Core
 
-import CoreData
+import RxSwift
 
 public final class DefaultCoreDataService: CoreDataService {
-    private let container: NSPersistentContainer
+    private var container: NSPersistentContainer
     
+    public let storeStatus = BehaviorSubject<StoreStatus>(value: .loading)
+    
+    private let ckContainer = CKContainer.default()
+    @UserDefaultsWrapper(
+        key: "coreDataMigrationStatus",
+        defaultValue: CoreDataDirectory.applicationSupport
+    )
+    private var migrationStatus
     private let fileName = "Model"
     private let appGroupName = "group.Pepsi-Club.WhereMyBus"
     
     public init() {
-        container = NSPersistentCloudKitContainer(name: fileName)
-        configureContainer()
-        migrateStore()
-        container.loadPersistentStores { desc, error in
+        container = NSPersistentContainer(name: fileName)
+        do {
+            try configureContainer()
+        } catch {
+            #if DEBUG
+            print(error.localizedDescription)
+            #endif
+        }
+    }
+    
+    private func configureContainer() throws {
+        Task {
+            let accountStatus = try await ckContainer.accountStatus()
+            switch accountStatus {
+            case .available:
+                container = NSPersistentCloudKitContainer(name: fileName)
+                let cloudStoreDescription = NSPersistentStoreDescription(
+                    url: appGroupStoreUrl
+                )
+                cloudStoreDescription.cloudKitContainerOptions = .init(
+                    containerIdentifier: "iCloud.Pepsi-Club.WhereMyBus"
+                )
+                container.persistentStoreDescriptions = [
+                    cloudStoreDescription
+                ]
+                #if DEBUG
+                print("💾 로그인된 계정, CoreData CloudKit 연동")
+                #endif
+            default:
+                switch migrationStatus {
+                case .applicationSupport:
+                    break
+                case .appGroup:
+                    container.persistentStoreDescriptions = [
+                        .init(url: appGroupStoreUrl)
+                    ]
+                }
+                #if DEBUG
+                print("💾 로그인 되지 않은 계정, CoreData CloudKit 연동 안됨")
+                #endif
+            }
+            container.viewContext.automaticallyMergesChangesFromParent = true
+            #if DEBUG
+            print(
+                "💾 CoreData 저장소: \(String(describing: migrationStatus))",
+                "[applicationSupport(마이그레이션 필요) / appGroup(마이그레이션 완)]"
+            )
+            #endif
+            loadStore()
+        }
+    }
+    
+    private func loadStore() {
+        container.loadPersistentStores { [weak self] desc, error in
+            guard let self else { return }
             if let error {
                 #if DEBUG
                 print(error.localizedDescription)
@@ -35,96 +96,42 @@ public final class DefaultCoreDataService: CoreDataService {
                 )
                 #endif
             }
-        }
-    }
-    
-    private func configureContainer() {
-        container.viewContext.automaticallyMergesChangesFromParent = true
-    }
-    
-    private func migrateStore() {
-        let fileManager = FileManager.default
-        let coordinator = container.persistentStoreCoordinator
-        guard let legacyStoreUrl = fileManager
-            .urls(
-                for: .applicationSupportDirectory,
-                in: .userDomainMask
-            )
-            .first?
-            .appendingPathComponent(
-                "\(fileName).sqlite"
-            )
-        else {
-            #if DEBUG
-            print("💾 레거시 디렉토리 URL 찾기 실패")
-            #endif
-            return
-        }
-        guard let appGroupStoreUrl = fileManager
-            .containerURL(
-                forSecurityApplicationGroupIdentifier: appGroupName
-            )?
-            .appendingPathComponent(
-                "\(fileName).sqlite"
-            )
-        else {
-            #if DEBUG
-            print("💾 AppGroup 디렉토리 URL 찾기 실패")
-            #endif
-            return
-        }
-        guard let legacyStore = coordinator.persistentStore(for: legacyStoreUrl)
-        else {
-            #if DEBUG
-            print(
-                "💾 레거시 SQLite 파일 없음",
-                "💾 레거시 SQLite URL: \(legacyStoreUrl)",
-                "💾 AppGroup SQLite URL: \(appGroupStoreUrl)",
-                separator: "\n"
-            )
-            #endif
-            container.persistentStoreDescriptions = [
-                .init(url: appGroupStoreUrl)
-            ]
-            return
-        }
-        do {
-            let newStore = try coordinator.migratePersistentStore(
-                legacyStore,
-                to: appGroupStoreUrl,
-                type: .sqlite
-            )
-            if let newStoreUrl = newStore.url {
-                container.persistentStoreDescriptions = [
-                    .init(url: newStoreUrl)
-                ]
-                print("💾 AppGroup SQLite Url: \(newStoreUrl)")
-            }
-            do {
-                try coordinator.destroyPersistentStore(
-                    at: legacyStoreUrl,
-                    type: .sqlite
-                )
-            } catch {
+            switch self.migrationStatus {
+            case .applicationSupport:
+                DispatchQueue.global(qos: .userInitiated).async {
+                    self.migrateStore()
+                    self.storeStatus.onNext(.loaded)
+                    #if DEBUG
+                    print("💾 저장소 마이그레이션 완료")
+                    #endif
+                }
+            case .appGroup:
+                self.storeStatus.onNext(.loaded)
                 #if DEBUG
-                print(
-                    "💾 레거시 제거 실패",
-                    "💾 \(error.localizedDescription)",
-                    separator: "\n"
-                )
+                print("💾 저장소 마이그레이션 필요 없음")
                 #endif
             }
-        } catch {
-            #if DEBUG
-            print(
-                "💾 마이그레이션 실패",
-                "💾 \(error.localizedDescription)",
-                separator: "\n"
-            )
-            #endif
         }
     }
-
+    
+    public func fetch<T: CoreDataStorable>(
+        type: T.Type
+    ) -> Observable<[T]> {
+        Observable.create { observer in
+            do {
+                let result = try self.fetchMO(type: type)
+                    .compactMap { $0 as? CoreDataModelObject }
+                    .compactMap { $0.toDomain as? T }
+                observer.onNext(result)
+                observer.onCompleted()
+                return Disposables.create()
+            } catch {
+                observer.onError(error)
+                return Disposables.create()
+            }
+        }
+    }
+    
     public func fetch<T: CoreDataStorable>(type: T.Type) throws -> [T] {
         do {
             return try fetchMO(type: type)
@@ -156,84 +163,82 @@ public final class DefaultCoreDataService: CoreDataService {
             throw error
         }
     }
+
+    public func saveUniqueData<T: CoreDataStorable, U: Equatable>(
+        data: T,
+        uniqueKeyPath: KeyPath<T, U>
+    ) throws {
+        let isUnique = try isUnique(
+            type: type(of: data),
+            uniqueKeyPath: uniqueKeyPath,
+            uniqueValue: data[keyPath: uniqueKeyPath]
+        )
+        if isUnique {
+            try save(data: data)
+        }
+    }
     
     public func update<T: CoreDataStorable, U: Equatable>(
         data: T,
         uniqueKeyPath: KeyPath<T, U>
     ) throws {
-        do {
-            let fetchedMo = try fetchMO(type: type(of: data))
-            let uniqueValue = data[keyPath: uniqueKeyPath]
-            let object = fetchedMo.first { object in
-                guard let fetchedValue = object.value(
-                    forKey: uniqueKeyPath.propertyName
-                ) as? U
-                else { return false }
-                return fetchedValue == uniqueValue
-            }
-            let mirror = Mirror(reflecting: data)
-            mirror.children.forEach { key, value in
-                guard let key,
-                      let propertyName = String(describing: key)
-                    .split(separator: ".")
-                    .last
-                else { return }
-                object?.setValue(
-                    value,
-                    forKey: String(propertyName)
-                )
-            }
-            if container.viewContext.hasChanges {
-                do {
-                    try container.viewContext.save()
-                } catch {
-                    throw error
-                }
-            }
-        } catch {
-            throw error
+        let fetchedMo = try fetchMO(type: type(of: data))
+        let uniqueValue = data[keyPath: uniqueKeyPath]
+        let object = fetchedMo.first { object in
+            guard let fetchedValue = object.value(
+                forKey: uniqueKeyPath.propertyName
+            ) as? U
+            else { return false }
+            return fetchedValue == uniqueValue
+        }
+        let mirror = Mirror(reflecting: data)
+        mirror.children.forEach { key, value in
+            guard let key,
+                  let propertyName = String(describing: key)
+                .split(separator: ".")
+                .last
+            else { return }
+            object?.setValue(
+                value,
+                forKey: String(propertyName)
+            )
+        }
+        if container.viewContext.hasChanges {
+            try container.viewContext.save()
         }
     }
     
     public func delete<T: CoreDataStorable, U>(
         data: T,
         uniqueKeyPath: KeyPath<T, U>
-    ) throws {
-        do {
-            let fetchedMo = try fetchMO(type: type(of: data))
-            guard let object = fetchedMo.first(where: { object in
-                object.value(forKey: uniqueKeyPath.propertyName) != nil
-            })
-            else { return }
-            container.viewContext.delete(object)
-            if container.viewContext.hasChanges {
-                do {
-                    try container.viewContext.save()
-                } catch {
-                    throw error
-                }
-            }
-        } catch {
-            throw error
+    ) throws where U: Equatable {
+        let fetchedMo = try fetchMO(type: type(of: data))
+        guard let object = fetchedMo.first(where: { object in
+            guard let value = object.value(
+                forKey: uniqueKeyPath.propertyName
+            ) as? U
+            else { return false }
+            return value == data[keyPath: uniqueKeyPath]
+        })
+        else { return }
+        container.viewContext.delete(object)
+        if container.viewContext.hasChanges {
+            try container.viewContext.save()
         }
     }
     
-    public func duplicationCheck<T: CoreDataStorable, U: Equatable>(
+    public func isUnique<T: CoreDataStorable, U: Equatable>(
         type: T.Type,
         uniqueKeyPath: KeyPath<T, U>,
         uniqueValue: U
     ) throws -> Bool {
-        do {
-            let fetchedMO = try fetchMO(type: type)
-            return fetchedMO.contains { object in
-                guard let uniqueProperty = object.value(
-                    forKey: uniqueKeyPath.propertyName
-                ) as? U
-                else { return false }
-                return uniqueProperty == uniqueValue
-            }
-        } catch {
-            throw error
+        let fetchedMO = try fetchMO(type: type)
+        return !fetchedMO.contains { object in
+            guard let uniqueProperty = object.value(
+                forKey: uniqueKeyPath.propertyName
+            ) as? U
+            else { return false }
+            return uniqueProperty == uniqueValue
         }
     }
     
@@ -243,10 +248,80 @@ public final class DefaultCoreDataService: CoreDataService {
         let request = NSFetchRequest<NSManagedObject>(
             entityName: "\(type)MO"
         )
+        return try container.viewContext.fetch(request)
+    }
+}
+// MARK: 마이그레이션
+extension DefaultCoreDataService {
+    var appGroupStoreUrl: URL {
+        guard let appGroupStoreUrl = FileManager.default
+            .containerURL(
+                forSecurityApplicationGroupIdentifier: appGroupName
+            )?
+            .appendingPathComponent("\(fileName).sqlite")
+        else {
+            #if DEBUG
+            print("💾 AppGroup 디렉토리 URL 찾기 실패")
+            #endif
+            return URL(filePath: "")
+        }
+        return appGroupStoreUrl
+    }
+    
+    var legacyStoreUrl: URL {
+        guard let legacyStoreUrl = FileManager.default
+            .urls(
+                for: .applicationSupportDirectory,
+                in: .userDomainMask
+            )
+            .first?
+            .appendingPathComponent("\(fileName).sqlite")
+        else {
+            #if DEBUG
+            print("💾 레거시 디렉토리 URL 찾기 실패")
+            #endif
+            return URL(filePath: "")
+        }
+        return legacyStoreUrl
+    }
+    
+    private func migrateStore() {
+        let fileManager = FileManager.default
+        let coordinator = container.persistentStoreCoordinator
+        guard let legacyStore = coordinator.persistentStore(for: legacyStoreUrl)
+        else { return }
         do {
-            return try container.viewContext.fetch(request)
+            _ = try coordinator.migratePersistentStore(
+                legacyStore,
+                to: appGroupStoreUrl,
+                type: .sqlite
+            )
+            #if DEBUG
+            print("💾 마이그레이션 성공")
+            #endif
+            migrationStatus = .appGroup
+            do {
+                try fileManager.removeItem(atPath: legacyStoreUrl.path)
+                #if DEBUG
+                print("💾 레거시 저장소 제거 완료")
+                #endif
+            } catch {
+                #if DEBUG
+                print(
+                    "💾 레거시 제거 실패",
+                    "💾 \(error.localizedDescription)",
+                    separator: "\n"
+                )
+                #endif
+            }
         } catch {
-            throw error
+            #if DEBUG
+            print(
+                "💾 마이그레이션 실패",
+                "💾 \(error.localizedDescription)",
+                separator: "\n"
+            )
+            #endif
         }
     }
 }

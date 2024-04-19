@@ -15,7 +15,7 @@ public final class DefaultFavoritesUseCase: FavoritesUseCase {
     private let busStopArrivalInfoRepository: BusStopArrivalInfoRepository
     private let favoritesRepository: FavoritesRepository
     
-    public let busStopArrivalInfoResponse 
+    public let fetchedArrivalInfo 
     = BehaviorSubject<[BusStopArrivalInfoResponse]>(value: [])
     private let disposeBag = DisposeBag()
     
@@ -25,63 +25,57 @@ public final class DefaultFavoritesUseCase: FavoritesUseCase {
     ) {
         self.busStopArrivalInfoRepository = busStopArrivalInfoRepository
         self.favoritesRepository = favoritesRepository
+        bindFavorites()
     }
     
     public func fetchFavoritesArrivals() {
-        do {
-            let favoritesBusStops = try favoritesRepository.favorites.value()
-            Observable.combineLatest(
-                favoritesBusStops
-                    .map { response in
-                        busStopArrivalInfoRepository.fetchArrivalList(
-                            busStopId: response.busStopId
-                        )
-                    }
-            )
+        favoritesRepository.fetchFavorites()
+    }
+    // TODO: 바인딩한다면 정류장 뷰에서 즐겨찾기가 수정될 때마다 API 호출되기 때문에 수정이 필요함
+    private func bindFavorites() {
+        favoritesRepository.favorites
+            .withUnretained(self)
+            .filter { useCase, favoritesList in
+                let shouldFetchFavorites = !favoritesList.isEmpty
+                if !shouldFetchFavorites {
+                    useCase.fetchedArrivalInfo.onNext([])
+                }
+                return shouldFetchFavorites
+            }
+            .flatMap { useCase, favoritesList in
+                Observable.zip(
+                    favoritesList
+                        .map {
+                            $0.busStopId
+                        }
+                        .removeDuplicated()
+                        .map { busStopId in
+                            useCase.busStopArrivalInfoRepository
+                                .fetchArrivalList(
+                                    busStopId: busStopId
+                                )
+                        }
+                )
+            }
+            .withLatestFrom(
+                favoritesRepository.favorites
+            ) { responses, favoritesList in
+                (responses, favoritesList)
+            }
             .withUnretained(self)
             .subscribe(
-                onNext: { useCase, responses in
-                    let filteredResponses = useCase.filterFavorites(
-                        fetchedResponses: responses,
-                        favoritesBusStops: favoritesBusStops
-                    )
-                    useCase.busStopArrivalInfoResponse.onNext(filteredResponses)
+                onNext: { useCase, tuple in
+                    let (responses, favoritesList) = tuple
+                    let result = responses
+                        .updateFavoritesStatus(
+                            favoritesList: favoritesList
+                        )
+                        .map { response in
+                            response.filterUnfavoritesBuses()
+                        }
+                    useCase.fetchedArrivalInfo.onNext(result)
                 }
             )
             .disposed(by: disposeBag)
-        } catch {
-            busStopArrivalInfoResponse.onError(error)
-        }
-    }
-    
-    private func filterFavorites(
-        fetchedResponses: [BusStopArrivalInfoResponse],
-        favoritesBusStops: [FavoritesBusStopResponse]
-    ) -> [BusStopArrivalInfoResponse] {
-        let filteredBusStop = fetchedResponses.filter { fetchedResponse in
-            favoritesBusStops.contains {
-                $0.busStopId == fetchedResponse.busStopId
-            }
-        }
-        let result: [BusStopArrivalInfoResponse] = filteredBusStop
-            .compactMap { filteredResponse in
-                guard let currentFavorites = favoritesBusStops.first(
-                    where: { $0.busStopId == filteredResponse.busStopId }
-                )
-                else { return nil }
-                let filteredBus = filteredResponse.buses
-                    .filter { fetchedBusInfo in
-                    currentFavorites.busIds.contains { favoriteBusIds in
-                        favoriteBusIds == fetchedBusInfo.busId
-                    }
-                }
-                return .init(
-                    busStopId: filteredResponse.busStopId,
-                    busStopName: filteredResponse.busStopName,
-                    direction: filteredResponse.direction,
-                    buses: filteredBus
-                )
-            }
-        return result
     }
 }

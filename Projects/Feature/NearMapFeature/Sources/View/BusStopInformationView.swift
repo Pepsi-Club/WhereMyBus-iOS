@@ -12,9 +12,6 @@ import DesignSystem
 import Domain
 
 public final class BusStopInformationView: UIView {
-	
-	// MARK: - UI Property
-	
 	private let symbolSize = 50
 	
 	private let busStopSymbol: UIImageView = {
@@ -25,18 +22,14 @@ public final class BusStopInformationView: UIView {
 	
     private let busStopNameLabel: UILabel = {
 		let label = UILabel()
-		label.font = DesignSystemFontFamily.NanumSquareNeoOTF.extraBold.font(
-			size: 15
-		)
+        label.font = .nanumExtraBold(size: 15)
         label.textColor = .black
 		return label
 	}()
 	
     private let busStopDescription: UILabel = {
 		let label = UILabel()
-		label.font = DesignSystemFontFamily.NanumSquareNeoOTF.light.font(
-            size: 13
-        )
+        label.font = .nanumLight(size: 13)
         label.adjustsFontForContentSizeCategory = true
         label.minimumScaleFactor = 0.8
         label.textColor = .black
@@ -45,9 +38,7 @@ public final class BusStopInformationView: UIView {
 	
     private let distanceStringLabel: UILabel = {
         let label = UILabel()
-        label.font = DesignSystemFontFamily.NanumSquareNeoOTF.light.font(
-            size: 13
-        )
+        label.font = .nanumLight(size: 13)
         label.text = "현재 위치에서 약 "
         label.textColor = .black
         return label
@@ -55,18 +46,14 @@ public final class BusStopInformationView: UIView {
     
     private let distanceFromBusStopLabel: UILabel = {
 		let label = UILabel()
-		label.font = DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(
-			size: 13
-		)
+        label.font = .nanumBold(size: 13)
         label.textColor = DesignSystemAsset.lightRed.color
 		return label
 	}()
     
     private let distanceStringLabel2: UILabel = {
         let label = UILabel()
-        label.font = DesignSystemFontFamily.NanumSquareNeoOTF.light.font(
-            size: 13
-        )
+        label.font = .nanumLight(size: 13)
         label.text = " 떨어져 있어요"
         label.textColor = .black
         return label
@@ -78,20 +65,6 @@ public final class BusStopInformationView: UIView {
 		return view
 	}()
 	
-	private lazy var busStopNameStackView: UIStackView = {
-		let stackView = UIStackView(
-			arrangedSubviews: [
-                busStopNameLabel,
-                busStopDescription,
-            ]
-		)
-		stackView.axis = .vertical
-		stackView.distribution = .fillEqually
-		stackView.alignment = .leading
-		stackView.spacing = 3
-		return stackView
-	}()
-    
     private lazy var distancStackView: UIStackView = {
         let stackView = UIStackView(
             arrangedSubviews: [
@@ -106,8 +79,6 @@ public final class BusStopInformationView: UIView {
         return stackView
     }()
 	
-	// MARK: - Life Cycle
-	
 	override init(frame: CGRect) {
 		super.init(frame: frame)
 		configureUI()
@@ -117,91 +88,90 @@ public final class BusStopInformationView: UIView {
 		fatalError("init(coder:) has not been implemented")
 	}
 	
-	// MARK: - Function
-	
 	private func configureUI() {
-        self.backgroundColor = DesignSystemAsset.gray1.color
+        backgroundColor = DesignSystemAsset.gray1.color
 		
 		[
 			busStopSymbol,
-			busStopNameStackView,
+            busStopNameLabel,
+            busStopDescription,
 			distancStackView,
 			separationView,
 		].forEach {
-			self.addSubview($0)
+			addSubview($0)
 			$0.translatesAutoresizingMaskIntoConstraints = false
 		}
 		
 		NSLayoutConstraint.activate([
-			
-			// busStopSymbol
-			busStopSymbol.topAnchor.constraint(
-				equalTo: self.topAnchor,
-				constant: 20
-			),
-			busStopSymbol.leftAnchor.constraint(
-				equalTo: self.leftAnchor,
+			busStopSymbol.leadingAnchor.constraint(
+				equalTo: leadingAnchor,
 				constant: 20
 			),
 			busStopSymbol.heightAnchor.constraint(
-				equalToConstant: CGFloat(symbolSize)
+				equalToConstant: symbolSize.f
 			),
 			busStopSymbol.widthAnchor.constraint(
-				equalToConstant: CGFloat(symbolSize)
+				equalToConstant: symbolSize.f
 			),
             busStopSymbol.bottomAnchor.constraint(
-                equalTo: separationView.topAnchor,
-                constant: 0
+                equalTo: separationView.topAnchor
+            ),
+            
+            busStopNameLabel.topAnchor.constraint(
+                equalTo: topAnchor,
+                constant: 25
+            ),
+            busStopNameLabel.leadingAnchor.constraint(
+                equalTo: busStopSymbol.trailingAnchor,
+                constant: 15
+            ),
+            busStopNameLabel.trailingAnchor.constraint(
+                equalTo: trailingAnchor,
+                constant: -10
+            ),
+            
+            busStopDescription.topAnchor.constraint(
+                equalTo: busStopNameLabel.bottomAnchor,
+                constant: 5
+            ),
+            busStopDescription.leadingAnchor.constraint(
+                equalTo: busStopNameLabel.leadingAnchor
+            ),
+            busStopDescription.trailingAnchor.constraint(
+                equalTo: busStopNameLabel.trailingAnchor
             ),
 			
-			// busStopNameStackView
-			busStopNameStackView.topAnchor.constraint(
-				equalTo: self.topAnchor,
-				constant: 20
-			),
-			busStopNameStackView.leftAnchor.constraint(
-				equalTo: busStopSymbol.rightAnchor,
-				constant: 15
-			),
-			busStopNameStackView.rightAnchor.constraint(
-				equalTo: self.rightAnchor,
-				constant: -10
-			),
-			busStopNameStackView.heightAnchor.constraint(
-				equalToConstant: CGFloat(symbolSize)
-			),
-			
-			// separationView
 			separationView.topAnchor.constraint(
-				equalTo: busStopNameStackView.bottomAnchor,
+				equalTo: busStopDescription.bottomAnchor,
 				constant: 10
 			),
-			separationView.leftAnchor.constraint(
-				equalTo: self.leftAnchor,
+			separationView.leadingAnchor.constraint(
+				equalTo: leadingAnchor,
 				constant: 15
 			),
-			separationView.rightAnchor.constraint(
-				equalTo: self.rightAnchor,
+			separationView.trailingAnchor.constraint(
+				equalTo: trailingAnchor,
 				constant: -10
 			),
 			separationView.heightAnchor.constraint(
                 equalToConstant: 1
 			),
 			
-			// distanceFromBusStopLabel
             distancStackView.topAnchor.constraint(
 				equalTo: separationView.bottomAnchor,
 				constant: 10
 			),
-            distancStackView.leftAnchor.constraint(
-				equalTo: self.leftAnchor,
-				constant: 20 + CGFloat(symbolSize) + 15
-			)
+            distancStackView.leadingAnchor.constraint(
+                equalTo: busStopNameLabel.leadingAnchor
+            ),
 		])
 		
 	}
     
-    func updateUI(response: BusStopInfoResponse, distance: String) {
+    func updateUI(
+        response: BusStopInfoResponse,
+        distance: String
+    ) {
         busStopNameLabel.text = response.busStopName
         if !response.busStopId.isEmpty && !response.direction.isEmpty {
         }

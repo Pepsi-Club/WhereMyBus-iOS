@@ -208,7 +208,7 @@ public final class FavoritesViewController: UIViewController {
                     else { return nil }
                     return data
                 }
-                UserDefaults.appGroup?.set(
+                UserDefaults.appGroup.set(
                     datas,
                     forKey: "arrivalResponse"
                 )
@@ -248,6 +248,7 @@ public final class FavoritesViewController: UIViewController {
                                 firstArrivalRemaining: firstReaining,
                                 secondArrivalState: newSecondArrivalState,
                                 secondArrivalRemaining: secondReaining,
+                                adirection: busInfo.adirection,
                                 isFavorites: busInfo.isFavorites,
                                 isAlarmOn: busInfo.isAlarmOn
                             )

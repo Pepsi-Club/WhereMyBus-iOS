@@ -15,7 +15,7 @@ final class ArrivalInfoUseCase {
     var responses = [BusStopArrivalInfoResponse]()
     
     func fetchUserDefaultValue() {
-        guard let datas = UserDefaults.appGroup?.array(
+        guard let datas = UserDefaults.appGroup.array(
             forKey: "arrivalResponse"
         ) as? [Data]
         else { return }

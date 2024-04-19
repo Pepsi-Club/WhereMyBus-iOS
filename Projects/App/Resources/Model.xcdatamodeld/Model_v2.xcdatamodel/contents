@@ -13,6 +13,7 @@
         <attribute name="busStopId" optional="YES" attributeType="String"/>
     </entity>
     <entity name="RegularAlarmResponseMO" representedClassName="RegularAlarmResponseMO" syncable="YES">
+        <attribute name="adirection" optional="YES" attributeType="String" defaultValueString=""/>
         <attribute name="busId" optional="YES" attributeType="String"/>
         <attribute name="busName" optional="YES" attributeType="String"/>
         <attribute name="busStopId" optional="YES" attributeType="String"/>

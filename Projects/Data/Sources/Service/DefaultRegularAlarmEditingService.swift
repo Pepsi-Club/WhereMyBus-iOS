@@ -21,7 +21,8 @@ public final class DefaultRegularAlarmEditingService
             busId: "",
             busName: "",
             time: .now,
-            weekday: []
+            weekday: [],
+            adirection: ""
         )
     )
     
@@ -35,7 +36,8 @@ public final class DefaultRegularAlarmEditingService
         busStopId: String,
         busStopName: String,
         busId: String,
-        busName: String
+        busName: String,
+        adirection: String
     ) {
         managedAlarm.accept(
             .init(
@@ -45,7 +47,8 @@ public final class DefaultRegularAlarmEditingService
                 busId: busId,
                 busName: busName,
                 time: currentAlarm.time,
-                weekday: currentAlarm.weekday
+                weekday: currentAlarm.weekday,
+                adirection: adirection
             )
         )
     }
@@ -59,7 +62,8 @@ public final class DefaultRegularAlarmEditingService
                 busId: currentAlarm.busId,
                 busName: currentAlarm.busName,
                 time: time,
-                weekday: currentAlarm.weekday
+                weekday: currentAlarm.weekday,
+                adirection: currentAlarm.adirection
             )
         )
     }
@@ -73,7 +77,8 @@ public final class DefaultRegularAlarmEditingService
                 busId: currentAlarm.busId,
                 busName: currentAlarm.busName,
                 time: currentAlarm.time,
-                weekday: weekday
+                weekday: weekday,
+                adirection: currentAlarm.adirection
             )
         )
     }
@@ -90,7 +95,8 @@ public final class DefaultRegularAlarmEditingService
                 busId: "",
                 busName: "",
                 time: .now,
-                weekday: []
+                weekday: [],
+                adirection: ""
             )
         )
     }

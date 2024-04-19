@@ -10,10 +10,22 @@ import Foundation
 
 import Core
 
+import RxSwift
+
 public protocol CoreDataService {
-    func fetch<T: CoreDataStorable>(type: T.Type) throws -> [T]
+    var storeStatus: BehaviorSubject<StoreStatus> { get }
+    
+    func fetch<T: CoreDataStorable>(
+        type: T.Type
+    ) -> Observable<[T]>
+//    func fetch<T: CoreDataStorable>(type: T.Type) throws -> [T]
     
     func save(data: some CoreDataStorable) throws
+    
+    func saveUniqueData<T: CoreDataStorable, U: Equatable>(
+        data: T,
+        uniqueKeyPath: KeyPath<T, U>
+    ) throws
     
     func update<T: CoreDataStorable, U: Equatable>(
         data: T,
@@ -23,9 +35,9 @@ public protocol CoreDataService {
     func delete<T: CoreDataStorable, U>(
         data: T,
         uniqueKeyPath: KeyPath<T, U>
-    ) throws
+    ) throws where U: Equatable
     
-    func duplicationCheck<T: CoreDataStorable, U: Equatable>(
+    func isUnique<T: CoreDataStorable, U: Equatable>(
         type: T.Type,
         uniqueKeyPath: KeyPath<T, U>,
         uniqueValue: U

@@ -43,7 +43,8 @@ extension AddRegularAlarmDTO {
             busId: String(request.busRouteId),
             busName: request.busName,
             time: request.time.toDate(dateFormat: "HHmm"),
-            weekday: request.weekday
+            weekday: request.weekday,
+            adirection: request.adirection
         )
     }
 }

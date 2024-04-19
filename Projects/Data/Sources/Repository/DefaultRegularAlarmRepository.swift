@@ -29,7 +29,7 @@ public final class DefaultRegularAlarmRepository: RegularAlarmRepository {
     ) {
         self.coreDataService = coreDataService
         self.networkService = networkService
-        fetchRegularAlarm()
+        bindStoreStatus()
     }
     
     public func createRegularAlarm(
@@ -53,7 +53,10 @@ public final class DefaultRegularAlarmRepository: RegularAlarmRepository {
         .subscribe(
             onNext: { repository, response in
                 do {
-                    try repository.coreDataService.save(data: response)
+                    try repository.coreDataService.saveUniqueData(
+                        data: response,
+                        uniqueKeyPath: \.requestId
+                    )
                     let currentAlarms = try repository.currentRegularAlarm
                         .value()
                     repository.currentRegularAlarm.onNext(
@@ -102,9 +105,8 @@ public final class DefaultRegularAlarmRepository: RegularAlarmRepository {
             type: RemoveRegularAlarmDTO.self,
             decoder: JSONDecoder()
         )
-        .map { dto in
-            print(dto.message)
-            return response
+        .map { _ in
+            response
         }
         .withUnretained(self)
         .subscribe(
@@ -117,7 +119,9 @@ public final class DefaultRegularAlarmRepository: RegularAlarmRepository {
                     let currentAlarms = try repository.currentRegularAlarm
                         .value()
                     repository.currentRegularAlarm.onNext(
-                        currentAlarms.filter { $0 != response }
+                        currentAlarms.filter {
+                            $0.requestId != response.requestId
+                        }
                     )
                     completion()
                 } catch {
@@ -135,18 +139,33 @@ public final class DefaultRegularAlarmRepository: RegularAlarmRepository {
         .disposed(by: disposeBag)
     }
     
-    private func fetchRegularAlarm() {
-        do {
-            let responses = try coreDataService.fetch(
-                type: RegularAlarmResponse.self
+    private func bindStoreStatus() {
+        coreDataService.storeStatus
+            .withUnretained(self)
+            .subscribe(
+                onNext: { repository, storeStatus in
+                    if storeStatus == .loaded {
+                        repository.migrateAlarmV2()
+                    }
+                }
             )
-            currentRegularAlarm.onNext(responses)
-            syncRegularAlarms(responses: responses)
-        } catch {
-            currentRegularAlarm.onError(error)
-        }
+            .disposed(by: disposeBag)
     }
     
+    private func fetchRegularAlarm() {
+        coreDataService.fetch(type: RegularAlarmResponse.self)
+            .withUnretained(self)
+            .subscribe(
+                onNext: { repository, alarmList in
+                    repository.currentRegularAlarm.onNext(alarmList)
+                    repository.syncRegularAlarms(responses: alarmList)
+                }
+            )
+            .disposed(by: disposeBag)
+    }
+}
+// MARK: 로컬 / 서버 싱크
+extension DefaultRegularAlarmRepository {
     private func syncRegularAlarms(responses: [RegularAlarmResponse]) {
         networkService.request(endPoint: FetchRegularAlarmEndPoint())
             .decode(
@@ -195,6 +214,9 @@ public final class DefaultRegularAlarmRepository: RegularAlarmRepository {
             .withUnretained(self)
             .subscribe(
                 onNext: { repository, dto in
+                    #if DEBUG
+                    print("⏰ 서버에 없는 알람 등록 완료")
+                    #endif
                     let newResponse = RegularAlarmResponse(
                         requestId: dto.alarmId,
                         busStopId: response.busStopId,
@@ -202,24 +224,29 @@ public final class DefaultRegularAlarmRepository: RegularAlarmRepository {
                         busId: response.busId,
                         busName: response.busName,
                         time: response.time,
-                        weekday: response.weekday
+                        weekday: response.weekday,
+                        adirection: response.adirection
                     )
                     do {
                         try repository.coreDataService.delete(
                             data: response,
                             uniqueKeyPath: \.requestId
                         )
-                        try repository.coreDataService.save(data: newResponse)
+                        try repository.coreDataService.saveUniqueData(
+                            data: newResponse,
+                            uniqueKeyPath: \.requestId
+                        )
                         let currentResponse = try repository.currentRegularAlarm
                             .value()
                         let updatedResponse = currentResponse
                             .filter { $0 != response } + [ newResponse ]
                         repository.currentRegularAlarm.onNext(updatedResponse)
                         #if DEBUG
-                        print("로컬 싱크 성공")
+                        print("⏰ 서버에 없는 알람 등록 후 새로운 ID 로컬 저장 성공")
                         #endif
                     } catch {
                         #if DEBUG
+                        print("⏰ 서버에 없는 알람 등록 후 새로운 ID 로컬 저장 실패")
                         print(error.localizedDescription)
                         #endif
                     }
@@ -229,7 +256,7 @@ public final class DefaultRegularAlarmRepository: RegularAlarmRepository {
                     print(error.localizedDescription)
                     #endif
                 }
-            ) // 성공, Error에 따라 추가 작업을 해줘야할지 고민입니다
+            )
             .disposed(by: disposeBag)
         }
     }
@@ -248,17 +275,109 @@ public final class DefaultRegularAlarmRepository: RegularAlarmRepository {
             .subscribe(
                 onNext: { dto in
                     #if DEBUG
-                    print(dto)
-                    print("id: \(alarmId)")
+                    print("⏰ 로컬에 없는 알람 제거 결과: \(dto)")
                     #endif
                 },
                 onError: { error in
                     #if DEBUG
+                    print("⏰ 로컬에 없는 알람 제거 실패")
                     print(error.localizedDescription)
                     #endif
                 }
-            ) // 성공, Error에 따라 추가 작업을 해줘야할지 고민입니다
+            )
             .disposed(by: disposeBag)
         }
     }
+}
+// MARK: 마이그레이션_v2 adirection
+extension DefaultRegularAlarmRepository {
+    private func migrateAlarmV2() {
+        coreDataService.fetch(type: RegularAlarmResponse.self)
+            .map { legacyAlarmList in
+                legacyAlarmList.filter { $0.adirection.isEmpty }
+            }
+            .withUnretained(self)
+            .flatMap { repository, legacyAlarmList in
+                repository.fetchLegacyFavoritesToBusStop(
+                    legacyAlarmList: legacyAlarmList
+                )
+                .map { busStopResponse in
+                    (busStopResponse, legacyAlarmList)
+                }
+            }
+            .withUnretained(self)
+            .subscribe(
+                onNext: { repository, tuple in
+                    repository.updateLegacyToNewAlarm(
+                        busStopResponse: tuple.0,
+                        legacyAlarmList: tuple.1
+                    )
+                },
+                onError: { [weak self] _ in
+                    self?.fetchRegularAlarm()
+                },
+                onCompleted: { [weak self] in
+                    self?.fetchRegularAlarm()
+                }
+            )
+            .disposed(by: disposeBag)
+    }
+    
+    private func fetchLegacyFavoritesToBusStop(
+        legacyAlarmList: [RegularAlarmResponse]
+    ) -> Observable<BusStopArrivalInfoResponse> {
+        Observable.merge(
+            legacyAlarmList.filterDuplicatedBusStop()
+                .map { legacyAlarm in
+                    networkService.request(
+                        endPoint: BusStopArrivalInfoEndPoint(
+                            arsId: legacyAlarm.busStopId
+                        )
+                    )
+                    .decode(
+                        type: BusStopArrivalInfoDTO.self,
+                        decoder: JSONDecoder()
+                    )
+                    .compactMap { dto in
+                        dto.toDomain
+                    }
+                }
+        )
+    }
+    
+    private func updateLegacyToNewAlarm(
+        busStopResponse: BusStopArrivalInfoResponse,
+        legacyAlarmList: [RegularAlarmResponse]
+    ) {
+        legacyAlarmList.forEach { legacyAlarm in
+            guard let busInfo = busStopResponse.buses.first(
+                where: { bus in
+                    bus.busId == legacyAlarm.busId
+                }
+            )
+            else { return }
+            let newAlarm = RegularAlarmResponse(
+                requestId: legacyAlarm.requestId,
+                busStopId: legacyAlarm.busStopId,
+                busStopName: legacyAlarm.busStopName,
+                busId: legacyAlarm.busId,
+                busName: legacyAlarm.busName,
+                time: legacyAlarm.time,
+                weekday: legacyAlarm.weekday,
+                adirection: busInfo.adirection
+            )
+            updateRegularAlarm(response: newAlarm) {
+                #if DEBUG
+                print(
+                    "⏰ \(newAlarm.busStopName)",
+                    "\(newAlarm.busStopName)",
+                    "\(newAlarm.adirection)",
+                    "마이그레이션 완료"
+                )
+                #endif
+                
+            }
+        }
+    }
+    
 }
