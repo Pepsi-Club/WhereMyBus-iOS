@@ -24,7 +24,7 @@ struct ArrivalInfoSmallView: View {
         }
         return url
     }
-    
+
     var body: some View {
         VStack {
             switch entry.responses.isEmpty {
@@ -76,7 +76,7 @@ struct ArrivalInfoSmallView: View {
                             .foregroundColor(.green)
                         Spacer()
                         VStack(spacing: 6) {
-                            HStack(spacing:3) {
+                            HStack(spacing: 3) {
                                 Spacer()
                                 Text(bus.firstArrivalState.toString)
                                     .font(.nanumHeavy(13))
@@ -86,14 +86,14 @@ struct ArrivalInfoSmallView: View {
                                 Text(bus.firstArrivalRemaining)
                                     .font(.nanumExtraBold(12))
                             }
-                            HStack(spacing:3) {
+                            HStack(spacing: 3) {
                                 Spacer()
                                 Text(bus.secondArrivalState.toString)
                                     .font(.nanumHeavy(13))
                                     .foregroundColor(
                                         bus.secondArrivalState.toColor)
                                     .lineLimit(1)
-                                Text(bus.firstArrivalRemaining)
+                                Text(bus.secondArrivalRemaining)
                                     .font(.nanumBold(12))
                             }
                         }

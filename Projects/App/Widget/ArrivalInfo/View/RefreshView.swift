@@ -23,7 +23,7 @@ struct RefreshView: View {
                 )
             )
             .font(.nanumBold(10))
-            Button(intent: entry.configuration) {
+            Button(intent: ReloadWidgetIntent()) {
                 Image(systemName: "arrow.clockwise")
                     .fontWeight(.bold)
                     .font(.system(size: 14))
@@ -58,3 +58,4 @@ struct RefreshView_Preview: PreviewProvider {
     }
 }
 #endif
+

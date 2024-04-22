@@ -14,13 +14,15 @@ import Domain
 final class ArrivalInfoUseCase {
     var responses = [BusStopArrivalInfoResponse]()
     
-    func fetchUserDefaultValue() {
-        guard let datas = UserDefaults.appGroup.array(
-            forKey: "arrivalResponse"
-        ) as? [Data]
-        else { return }
+    func loadBusStopArrivalInfo() {
+        guard let datas = 
+            UserDefaults.appGroup.array(forKey: "arrivalResponse") as? [Data]
+        else {
+            print("Failed to load or cast user defaults data.")
+            return
+        }
         responses = datas.compactMap {
-            return try? $0.decode(type: BusStopArrivalInfoResponse.self)
+            try? $0.decode(type: BusStopArrivalInfoResponse.self)
         }
     }
 }

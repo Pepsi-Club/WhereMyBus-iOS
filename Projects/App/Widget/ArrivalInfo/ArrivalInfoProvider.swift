@@ -15,30 +15,32 @@ import Domain
 @available(iOS 17.0, *)
 struct ArrivalInfoProvider: AppIntentTimelineProvider {
     private let useCase = ArrivalInfoUseCase()
-    
+
     func placeholder(in context: Context) -> ArrivalInfoEntry {
         ArrivalInfoEntry(
             date: Date(),
             configuration: ArrivalInfoIntent(),
-            responses: useCase.responses
+            responses: []
         )
     }
-    
+
     func snapshot(
         for configuration: ArrivalInfoIntent,
         in context: Context
-    ) async -> ArrivalInfoEntry {
-        ArrivalInfoEntry(
+    ) -> ArrivalInfoEntry {
+        let _: () = useCase.loadBusStopArrivalInfo()
+        return ArrivalInfoEntry(
             date: Date(),
             configuration: configuration,
             responses: useCase.responses
         )
     }
-    
+
     func timeline(
         for configuration: ArrivalInfoIntent,
         in context: Context
-    ) async -> Timeline<ArrivalInfoEntry> {
+    ) -> Timeline<ArrivalInfoEntry> {
+        let _: () = useCase.loadBusStopArrivalInfo()
         let entry = ArrivalInfoEntry(
             date: Date(),
             configuration: configuration,
