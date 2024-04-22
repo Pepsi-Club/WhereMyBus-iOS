@@ -38,6 +38,7 @@ public final class MockBusStopArrivalInfoRepository
                             secondArrivalState: ArrivalState
                                 .arrivalTime(time: 913),
                             secondArrivalRemaining: "6번째 전",
+                            adirection: "",
                             isFavorites: false,
                             isAlarmOn: false
                         ),
@@ -52,6 +53,7 @@ public final class MockBusStopArrivalInfoRepository
                             secondArrivalState: ArrivalState
                                 .arrivalTime(time: 566),
                             secondArrivalRemaining: "5번째 전",
+                            adirection: "",
                             isFavorites: false,
                             isAlarmOn: false
                         ),
@@ -65,6 +67,7 @@ public final class MockBusStopArrivalInfoRepository
                             secondArrivalState: ArrivalState
                                 .arrivalTime(time: 1086),
                             secondArrivalRemaining: "9번째 전",
+                            adirection: "",
                             isFavorites: false,
                             isAlarmOn: false
                         ),
@@ -78,6 +81,7 @@ public final class MockBusStopArrivalInfoRepository
                             secondArrivalState: ArrivalState
                                 .arrivalTime(time: 689),
                             secondArrivalRemaining: "6번째 전",
+                            adirection: "",
                             isFavorites: false,
                             isAlarmOn: false
                         ),
@@ -92,6 +96,7 @@ public final class MockBusStopArrivalInfoRepository
                             secondArrivalState: ArrivalState
                                 .arrivalTime(time: 916),
                             secondArrivalRemaining: "9번째 전",
+                            adirection: "",
                             isFavorites: false,
                             isAlarmOn: false
                         ),
@@ -105,6 +110,7 @@ public final class MockBusStopArrivalInfoRepository
                             secondArrivalState: ArrivalState
                                 .arrivalTime(time: 1086),
                             secondArrivalRemaining: "9번째 전",
+                            adirection: "",
                             isFavorites: false,
                             isAlarmOn: false
                         ),
@@ -118,6 +124,7 @@ public final class MockBusStopArrivalInfoRepository
                             secondArrivalState: ArrivalState
                                 .arrivalTime(time: 689),
                             secondArrivalRemaining: "6번째 전",
+                            adirection: "",
                             isFavorites: false,
                             isAlarmOn: false
                         ),
@@ -132,6 +139,7 @@ public final class MockBusStopArrivalInfoRepository
                             secondArrivalState: ArrivalState
                                 .arrivalTime(time: 916),
                             secondArrivalRemaining: "9번째 전",
+                            adirection: "",
                             isFavorites: false,
                             isAlarmOn: false
                         ),
@@ -146,6 +154,7 @@ public final class MockBusStopArrivalInfoRepository
                             secondArrivalState: ArrivalState
                                 .arrivalTime(time: 916),
                             secondArrivalRemaining: "9번째 전",
+                            adirection: "",
                             isFavorites: false,
                             isAlarmOn: false
                         ),
@@ -160,6 +169,7 @@ public final class MockBusStopArrivalInfoRepository
                             secondArrivalState: ArrivalState
                                 .arrivalTime(time: 916),
                             secondArrivalRemaining: "9번째 전",
+                            adirection: "",
                             isFavorites: false,
                             isAlarmOn: false
                         ),
@@ -174,6 +184,7 @@ public final class MockBusStopArrivalInfoRepository
                             secondArrivalState: ArrivalState
                                 .arrivalTime(time: 916),
                             secondArrivalRemaining: "9번째 전",
+                            adirection: "",
                             isFavorites: false,
                             isAlarmOn: false
                         ),
@@ -188,6 +199,7 @@ public final class MockBusStopArrivalInfoRepository
                             secondArrivalState: ArrivalState
                                 .arrivalTime(time: 916),
                             secondArrivalRemaining: "9번째 전",
+                            adirection: "",
                             isFavorites: false,
                             isAlarmOn: false
                         )

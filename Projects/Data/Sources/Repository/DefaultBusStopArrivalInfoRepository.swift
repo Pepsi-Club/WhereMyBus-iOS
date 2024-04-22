@@ -33,7 +33,7 @@ public final class DefaultBusStopArrivalInfoRepository:
             type: BusStopArrivalInfoDTO.self,
             decoder: JSONDecoder()
         )
-        .map {
+        .compactMap {
             $0.toDomain
         }
     }

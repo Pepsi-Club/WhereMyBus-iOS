@@ -76,7 +76,7 @@ final class SearchNearStopInformationView: UIButton {
     }
     
     private func configureUI() {
-        backgroundColor = DesignSystemAsset.gray2.color
+        backgroundColor = .white
         let symbolSize = 45
         
         [

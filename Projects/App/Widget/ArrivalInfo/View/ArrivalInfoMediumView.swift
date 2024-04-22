@@ -32,7 +32,6 @@ struct ArrivalInfoMediumView: View {
                 arrivalInfoView
             }
         }
-        .widgetBackground(Color.white)
         .widgetURL(url)
     }
     
@@ -86,10 +85,21 @@ struct ArrivalInfoMediumView_Preview: PreviewProvider {
         ArrivalInfoMediumView(
             entry: ArrivalInfoEntry(
                 date: .now,
+                configuration: .init()
+            )
+        )
+        .widgetBackground()
+        .previewContext(
+            WidgetPreviewContext(family: .systemMedium)
+        )
+        ArrivalInfoMediumView(
+            entry: ArrivalInfoEntry(
+                date: .now,
                 configuration: .init(),
                 responses: .mock
             )
         )
+        .widgetBackground()
         .previewContext(
             WidgetPreviewContext(family: .systemMedium)
         )

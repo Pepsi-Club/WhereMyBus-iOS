@@ -95,7 +95,8 @@ public class DefaultRegularAlarmUseCase: RegularAlarmUseCase {
                 busId: response.busId,
                 busName: response.busName,
                 time: response.time,
-                weekday: newWeekdy
+                weekday: newWeekdy,
+                adirection: response.adirection
             )
         }
     }

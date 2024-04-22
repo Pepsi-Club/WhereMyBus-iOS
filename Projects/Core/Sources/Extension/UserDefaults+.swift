@@ -11,5 +11,5 @@ import Foundation
 public extension UserDefaults {
     static let appGroup = UserDefaults(
         suiteName: "group.Pepsi-Club.WhereMyBus"
-    )
+    ) ?? .standard
 }

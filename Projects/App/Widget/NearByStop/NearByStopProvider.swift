@@ -12,14 +12,24 @@ struct NearByStopProvider: TimelineProvider {
     func placeholder(
         in context: Context
     ) -> NearByStopEntry {
-        NearByStopEntry.mock
+        NearByStopEntry(
+            date: .now,
+            busStopName: "강남역 2호선",
+            distance: 60
+        )
     }
     
     func getSnapshot(
         in context: Context,
         completion: @escaping (NearByStopEntry) -> Void
     ) {
-        completion(NearByStopEntry.mock)
+        completion(
+            NearByStopEntry(
+                date: .now,
+                busStopName: "강남역 2호선",
+                distance: 60
+            )
+        )
     }
     
     func getTimeline(
@@ -27,7 +37,13 @@ struct NearByStopProvider: TimelineProvider {
         completion: @escaping (Timeline<NearByStopEntry>) -> Void
     ) {
         let timeline = Timeline(
-            entries: [NearByStopEntry.mock],
+            entries: [
+                NearByStopEntry(
+                    date: .now,
+                    busStopName: "강남역 2호선",
+                    distance: 60
+                )
+            ],
             policy: .never
         )
         completion(timeline)

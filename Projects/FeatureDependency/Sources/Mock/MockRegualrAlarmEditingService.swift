@@ -21,12 +21,19 @@ public final class MockRegualrAlarmEditingService: RegularAlarmEditingService {
             busId: "",
             busName: "",
             time: .now,
-            weekday: []
+            weekday: [],
+            adirection: ""
         )
     )
     public init() { }
     
-    public func update(busStopId: String, busStopName: String, busId: String, busName: String) {
+    public func update(
+        busStopId: String,
+        busStopName: String,
+        busId: String,
+        busName: String,
+        adirection: String
+    ) {
         
     }
     

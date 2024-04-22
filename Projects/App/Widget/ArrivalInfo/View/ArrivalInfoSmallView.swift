@@ -33,7 +33,6 @@ struct ArrivalInfoSmallView: View {
                 arrivalInfoView
             }
         }
-        .widgetBackground(Color.white)
         .widgetURL(url)
     }
     
@@ -87,10 +86,21 @@ struct ArrivalInfoSmallView_Preview: PreviewProvider {
         ArrivalInfoSmallView(
             entry: ArrivalInfoEntry(
                 date: .now,
+                configuration: .init()
+            )
+        )
+        .widgetBackground()
+        .previewContext(
+            WidgetPreviewContext(family: .systemSmall)
+        )
+        ArrivalInfoSmallView(
+            entry: ArrivalInfoEntry(
+                date: .now,
                 configuration: .init(),
                 responses: .mock
             )
         )
+        .widgetBackground()
         .previewContext(
             WidgetPreviewContext(family: .systemSmall)
         )

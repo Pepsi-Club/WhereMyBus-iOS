@@ -9,11 +9,13 @@
 import Foundation
 
 public extension Data {
+    /**
+     JSONDecoder로 디코딩
+     - Parameters:
+        - type: Decodable을 채택한 타입
+     - Returns: 디코딩 성공 객체
+     */
     func decode<T>(type: T.Type) throws -> T where T: Decodable {
-        do {
-            return try JSONDecoder().decode(type, from: self)
-        } catch {
-            throw error
-        }
+        try JSONDecoder().decode(type, from: self)
     }
 }

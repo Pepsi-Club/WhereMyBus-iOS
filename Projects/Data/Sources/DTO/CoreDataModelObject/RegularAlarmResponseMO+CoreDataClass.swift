@@ -21,7 +21,8 @@ public class RegularAlarmResponseMO: NSManagedObject, CoreDataModelObject {
               let busId,
               let busName,
               let time,
-              let weekday
+              let weekday,
+              let adirection
         else { fatalError() }
         return RegularAlarmResponse(
             requestId: requestId,
@@ -30,7 +31,8 @@ public class RegularAlarmResponseMO: NSManagedObject, CoreDataModelObject {
             busId: busId,
             busName: busName,
             time: time,
-            weekday: weekday
+            weekday: weekday,
+            adirection: adirection
         )
     }
 }
