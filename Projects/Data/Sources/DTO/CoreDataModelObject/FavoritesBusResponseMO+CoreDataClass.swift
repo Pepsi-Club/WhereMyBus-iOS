@@ -1,8 +1,8 @@
 //
-//  RegularAlarmResponseMO+CoreDataClass.swift
+//  FavoritesBusResponseMO+CoreDataClass.swift
 //  
 //
-//  Created by gnksbm on 4/6/24.
+//  Created by gnksbm on 4/16/24.
 //
 //
 
@@ -12,26 +12,20 @@ import CoreData
 import Core
 import Domain
 
-@objc(RegularAlarmResponseMO)
-public class RegularAlarmResponseMO: NSManagedObject, CoreDataModelObject {
+@objc(FavoritesBusResponseMO)
+public class FavoritesBusResponseMO: NSManagedObject, CoreDataModelObject {
     public var toDomain: CoreDataStorable {
-        guard let requestId,
-              let busStopId,
+        guard let busStopId,
               let busStopName,
               let busId,
               let busName,
-              let time,
-              let weekday,
               let adirection
         else { fatalError() }
-        return RegularAlarmResponse(
-            requestId: requestId,
+        return FavoritesBusResponse(
             busStopId: busStopId,
             busStopName: busStopName,
             busId: busId,
             busName: busName,
-            time: time,
-            weekday: weekday,
             adirection: adirection
         )
     }

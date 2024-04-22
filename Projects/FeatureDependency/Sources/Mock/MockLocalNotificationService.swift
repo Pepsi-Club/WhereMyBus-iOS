@@ -34,7 +34,8 @@ public final class MockLocalNotificationService: LocalNotificationService {
                     busId: "테스트",
                     busName: "영등포02",
                     time: .now,
-                    weekday: [0, 5]
+                    weekday: [0, 5],
+                    adirection: ""
                 ),
                 .init(
                     busStopId: "테스트",
@@ -42,7 +43,8 @@ public final class MockLocalNotificationService: LocalNotificationService {
                     busId: "테스트",
                     busName: "영등포02",
                     time: .now,
-                    weekday: [0, 5]
+                    weekday: [0, 5],
+                    adirection: ""
                 ),
                 .init(
                     busStopId: "테스트",
@@ -50,7 +52,8 @@ public final class MockLocalNotificationService: LocalNotificationService {
                     busId: "테스트",
                     busName: "영등포02",
                     time: .now,
-                    weekday: [0, 5]
+                    weekday: [0, 5],
+                    adirection: ""
                 ),
             ]
         )

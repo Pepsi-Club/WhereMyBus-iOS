@@ -27,6 +27,71 @@ public struct BusStopArrivalInfoResponse: Codable, Hashable {
     }
 }
 
+public extension BusStopArrivalInfoResponse {
+    func updateFavoritesStatus(
+        favoritesList: [FavoritesBusResponse]
+    ) -> Self {
+        let favoritesSet = Set(
+            favoritesList.map { $0.identifier }
+        )
+        
+        let updatedBuses = buses.map { bus in
+            var updatedBus = bus
+            let identifier = "\(busStopId)\(bus.busId)\(bus.adirection)"
+            updatedBus.isFavorites = favoritesSet.contains(identifier)
+            return updatedBus
+        }
+        return .init(
+            busStopId: busStopId,
+            busStopName: busStopName,
+            direction: direction,
+            buses: updatedBuses
+        )
+    }
+    
+    func filterUnfavoritesBuses() -> Self {
+        let filteredBuses = buses.filter { busResponse in
+            busResponse.isFavorites
+        }
+        return BusStopArrivalInfoResponse(
+            busStopId: busStopId,
+            busStopName: busStopName,
+            direction: direction,
+            buses: filteredBuses
+        )
+    }
+}
+
+public extension Array<BusStopArrivalInfoResponse> {
+    func updateFavoritesStatus(
+        favoritesList: [FavoritesBusResponse]
+    ) -> Self {
+        let favoritesDic = Dictionary(
+            uniqueKeysWithValues: favoritesList.map { favorites in
+                (favorites.identifier, true)
+            }
+        )
+        return map { busStop in
+            var updatedBuses: [BusArrivalInfoResponse] = busStop.buses
+            
+            for index in updatedBuses.indices {
+                let bus = updatedBuses[index]
+                let key = "\(busStop.busStopId)\(bus.busId)\(bus.adirection)"
+                if let isFavorites = favoritesDic[key] {
+                    updatedBuses[index].isFavorites = isFavorites
+                }
+            }
+            
+            return BusStopArrivalInfoResponse(
+                busStopId: busStop.busStopId,
+                busStopName: busStop.busStopName,
+                direction: busStop.direction,
+                buses: updatedBuses
+            )
+        }
+    }
+}
+
 public struct BusArrivalInfoResponse: Codable, Hashable {
     public let busId: String
     public let busName: String
@@ -36,6 +101,7 @@ public struct BusArrivalInfoResponse: Codable, Hashable {
     public let firstArrivalRemaining: String
     public let secondArrivalState: ArrivalState
     public let secondArrivalRemaining: String
+    public let adirection: String
     public var isFavorites: Bool
     public var isAlarmOn: Bool
     
@@ -48,6 +114,7 @@ public struct BusArrivalInfoResponse: Codable, Hashable {
         firstArrivalRemaining: String,
         secondArrivalState: ArrivalState,
         secondArrivalRemaining: String,
+        adirection: String,
         isFavorites: Bool,
         isAlarmOn: Bool
     ) {
@@ -59,6 +126,7 @@ public struct BusArrivalInfoResponse: Codable, Hashable {
         self.firstArrivalRemaining = firstArrivalRemaining
         self.secondArrivalState = secondArrivalState
         self.secondArrivalRemaining = secondArrivalRemaining
+        self.adirection = adirection
         self.isFavorites = isFavorites
         self.isAlarmOn = isAlarmOn
     }

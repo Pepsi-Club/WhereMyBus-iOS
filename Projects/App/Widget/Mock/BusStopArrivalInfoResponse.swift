@@ -27,6 +27,7 @@ extension [BusStopArrivalInfoResponse] {
                     firstArrivalRemaining: "1번째 전",
                     secondArrivalState: ArrivalState.arrivalTime(time: 896),
                     secondArrivalRemaining: "8번째 전",
+                    adirection: "",
                     isFavorites: false,
                     isAlarmOn: false
                 ),
@@ -39,6 +40,7 @@ extension [BusStopArrivalInfoResponse] {
                     firstArrivalRemaining: "",
                     secondArrivalState: ArrivalState.pending,
                     secondArrivalRemaining: "",
+                    adirection: "",
                     isFavorites: false,
                     isAlarmOn: false
                 ),
@@ -51,6 +53,7 @@ extension [BusStopArrivalInfoResponse] {
                     firstArrivalRemaining: "",
                     secondArrivalState: ArrivalState.pending,
                     secondArrivalRemaining: "",
+                    adirection: "",
                     isFavorites: false,
                     isAlarmOn: false
                 )
@@ -70,6 +73,7 @@ extension [BusStopArrivalInfoResponse] {
                     firstArrivalRemaining: "2번째 전",
                     secondArrivalState: ArrivalState.arrivalTime(time: 633),
                     secondArrivalRemaining: "8번째 전",
+                    adirection: "",
                     isFavorites: false,
                     isAlarmOn: false
                 ),
@@ -82,6 +86,7 @@ extension [BusStopArrivalInfoResponse] {
                     firstArrivalRemaining: "2번째 전",
                     secondArrivalState: ArrivalState.arrivalTime(time: 803),
                     secondArrivalRemaining: "막차",
+                    adirection: "",
                     isFavorites: false,
                     isAlarmOn: false
                 ),
@@ -94,6 +99,7 @@ extension [BusStopArrivalInfoResponse] {
                     firstArrivalRemaining: "6번째 전",
                     secondArrivalState: ArrivalState.arrivalTime(time: 1091),
                     secondArrivalRemaining: "11번째 전",
+                    adirection: "",
                     isFavorites: false,
                     isAlarmOn: false
                 ),
@@ -106,6 +112,7 @@ extension [BusStopArrivalInfoResponse] {
                     firstArrivalRemaining: "",
                     secondArrivalState: ArrivalState.finished,
                     secondArrivalRemaining: "",
+                    adirection: "",
                     isFavorites: false,
                     isAlarmOn: false
                 ),
@@ -118,6 +125,7 @@ extension [BusStopArrivalInfoResponse] {
                     firstArrivalRemaining: "",
                     secondArrivalState: ArrivalState.finished,
                     secondArrivalRemaining: "",
+                    adirection: "",
                     isFavorites: false,
                     isAlarmOn: false
                 )
@@ -137,6 +145,7 @@ extension [BusStopArrivalInfoResponse] {
                     firstArrivalRemaining: "",
                     secondArrivalState: ArrivalState.pending,
                     secondArrivalRemaining: "",
+                    adirection: "",
                     isFavorites: false,
                     isAlarmOn: false
                 ),
@@ -149,6 +158,7 @@ extension [BusStopArrivalInfoResponse] {
                     firstArrivalRemaining: "",
                     secondArrivalState: ArrivalState.pending,
                     secondArrivalRemaining: "",
+                    adirection: "",
                     isFavorites: false,
                     isAlarmOn: false
                 )
@@ -168,6 +178,7 @@ extension [BusStopArrivalInfoResponse] {
                     firstArrivalRemaining: "0번째 전",
                     secondArrivalState: ArrivalState.arrivalTime(time: 915),
                     secondArrivalRemaining: "4번째 전",
+                    adirection: "",
                     isFavorites: false,
                     isAlarmOn: false
                 )

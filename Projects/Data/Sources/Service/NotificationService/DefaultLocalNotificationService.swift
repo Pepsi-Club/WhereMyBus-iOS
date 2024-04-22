@@ -68,7 +68,8 @@ public final class DefaultLocalNotificationService: LocalNotificationService {
                         busId: busId,
                         busName: busName,
                         time: time,
-                        weekday: weekDay
+                        weekday: weekDay,
+                        adirection: ""
                     )
                 }
                 observer.onNext(Array(Set(responses)))

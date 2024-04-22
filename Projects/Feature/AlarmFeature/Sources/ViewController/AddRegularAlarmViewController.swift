@@ -256,7 +256,7 @@ final class AddRegularAlarmViewController: UIViewController {
                     )
                     .map { _ in },
                 searchBtnTapEvent: searchBtn.rx.tap.asObservable(),
-                dateSelectEvent: timePicker.rx.date.asObservable(),
+                dateSelectEvent: timePicker.rx.date.skip(1).asObservable(),
                 weekDayBtnTapEvent: Observable.merge(
                     weekDayBtns
                         .map { btn in

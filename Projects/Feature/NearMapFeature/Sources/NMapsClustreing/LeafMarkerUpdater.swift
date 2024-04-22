@@ -13,7 +13,7 @@ import DesignSystem
 import NMapsMap
 import RxSwift
 
-final class LeafMarkerUpdater: NMCDefaultLeafMarkerUpdater {
+public class LeafMarkerUpdater: NMCDefaultLeafMarkerUpdater {
     let selectedBusStopId = BehaviorSubject<String>(value: "")
     
     private var selectedMarker: NMFMarker? {
@@ -39,7 +39,7 @@ final class LeafMarkerUpdater: NMCDefaultLeafMarkerUpdater {
         )
     }
     
-    override func updateLeafMarker(
+    public override func updateLeafMarker(
         _ info: NMCLeafMarkerInfo,
         _ marker: NMFMarker
     ) {

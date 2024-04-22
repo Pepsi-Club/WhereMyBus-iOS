@@ -15,6 +15,10 @@ import Domain
 struct ArrivalInfoIntent: WidgetConfigurationIntent {
     static var title: LocalizedStringResource = "Configuration"
 
+<<<<<<< HEAD
     @Parameter(title: "정류장, 버스", optionsProvider: BusStopOptionProvider())
+=======
+    @Parameter(title: "정류장, 버스", optionsProvider: FavoritesOptionProvider())
+>>>>>>> dev
     var busStop: String
 }
