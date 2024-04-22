@@ -9,6 +9,8 @@
 import WidgetKit
 import AppIntents
 
+import Domain
+
 @available(iOS 17.0, *)
 struct ArrivalInfoIntent: WidgetConfigurationIntent {
     static var title: LocalizedStringResource = "Configuration"
