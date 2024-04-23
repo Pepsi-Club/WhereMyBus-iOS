@@ -18,22 +18,38 @@ struct NearByStopView: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            Spacer()
             HStack {
                 VStack(alignment: .leading) {
                     Text("주변")
+                        .padding(EdgeInsets(
+                            top: 0,
+                            leading: 0,
+                            bottom: -2,
+                            trailing: 0
+                        ))
                     Text("정류장")
                 }
                 .foregroundStyle(.white)
-                .font(.nanumHeavySU(size: 20))
+                .font(.nanumHeavySU(size: 21))
                 
                 Spacer()
             }
-            Spacer()
+            .padding(EdgeInsets(
+                top: 10,
+                leading: 0,
+                bottom: 15,
+                trailing: 0
+            ))
             
             Text(entry.busStopName)
                 .foregroundStyle(.white)
                 .font(.nanumBoldSU(size: 16))
+                .padding(EdgeInsets(
+                    top: 0,
+                    leading: 0,
+                    bottom: -3,
+                    trailing: 0
+                ))
             Text("\(entry.distance)m")
                 .foregroundStyle(
                     DesignSystemAsset.blueBus.swiftUIColor
@@ -47,6 +63,7 @@ struct NearByStopView: View {
                 ))
         }
         .widgetBackground(backgroundColor)
+//        .widgetURL(<#T##url: URL?##URL?#>)
     }
 }
 
