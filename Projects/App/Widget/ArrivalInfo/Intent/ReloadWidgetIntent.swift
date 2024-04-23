@@ -13,9 +13,10 @@ struct ReloadWidgetIntent: AppIntent {
     static var title: LocalizedStringResource = "Reload widget"
     static var description = IntentDescription("Reload widget.")
 
-    init() {}
+    init() { }
 
     func perform() async throws -> some IntentResult {
+        WidgetCenter.shared.reloadTimelines(ofKind: "ArrivalInfo")
         return .result()
     }
 }

@@ -48,7 +48,7 @@ struct ArrivalInfoProvider: AppIntentTimelineProvider {
         )
         return Timeline(
             entries: [entry],
-            policy: .never
+            policy: .atEnd
         )
     }
 }
