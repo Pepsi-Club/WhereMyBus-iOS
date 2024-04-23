@@ -9,13 +9,16 @@
 import Foundation
 import WidgetKit
 
-import Core
+import Data
 import Domain
 
 import RxSwift
 
 struct NearByStopProvider: TimelineProvider {
-    @Injected(NearMapUseCase.self) var useCase: NearMapUseCase
+    private let useCase = NearByStopUseCase(
+        stationListRepository: DefaultStationListRepository(),
+        locationService: DefaultLocationService()
+    )
     
     private let disposeBag = DisposeBag()
     
@@ -37,31 +40,34 @@ struct NearByStopProvider: TimelineProvider {
         in context: Context,
         completion: @escaping (Timeline<NearByStopEntry>) -> Void
     ) {
-//        이때는 위젯에 잘 나옴
-        let timeline = Timeline(
-            entries: [NearByStopEntry.mock],
-            policy: .never
-        )
-        completion(timeline)
+        //        이때는 위젯에 잘 나옴
+        //        let timeline = Timeline(
+        //            entries: [NearByStopEntry.mock],
+        //            policy: .never
+        //        )
+        //        completion(timeline)
         
-// 이렇게 됐을 때 위젯에 데이터 안나옴
-//        useCase.getNearByStopInfo()
-//            .subscribe(onNext: { response, distance in
-//                var entries: [NearByStopEntry] = [NearByStopEntry(
-//                    date: Date(),
-//                    busStopName: response.busStopName,
-//                    distance: Int(distance) ?? 0
-//                )]
-//
-//                // 데이터 업데이트를 위한 타임라인 생성
-//                let timeline = Timeline(
-//                    entries: entries,
-//                    policy: .after(Date().addingTimeInterval(60 * 30))
-//                )
-//
-//                completion(timeline)
-//            })
-//            .disposed(by: disposeBag)
+        // 이렇게 됐을 때 위젯에 데이터 안나옴
+        useCase.updateNearByStop()
+            .subscribe(onNext: { response, distance in
+                var entries: [NearByStopEntry] = []
+                
+                entries.append(NearByStopEntry(
+                    date: .now,
+                    busStopName: response.busStopName,
+                    distance: Int(distance) ?? 0
+                ))
+                
+                // 데이터 업데이트를 위한 타임라인 생성
+                let timeline = Timeline(
+                    entries: entries,
+                    policy: .never
+                )
+                print("❤️‍🔥 \(timeline)")
+                
+                completion(timeline)
+            })
+            .disposed(by: disposeBag)
         
     }
     
