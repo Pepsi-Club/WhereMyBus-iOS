@@ -25,14 +25,24 @@ struct NearByStopProvider: TimelineProvider {
     func placeholder(
         in context: Context
     ) -> NearByStopEntry {
-        NearByStopEntry.mock
+        NearByStopEntry(
+            date: .now,
+            busStopName: "강남역 2호선",
+            distance: 60
+        )
     }
     
     func getSnapshot(
         in context: Context,
         completion: @escaping (NearByStopEntry) -> Void
     ) {
-        completion(NearByStopEntry.mock)
+        completion(
+            NearByStopEntry(
+                date: .now,
+                busStopName: "강남역 2호선",
+                distance: 60
+            )
+        )
     }
     
     // 리프레시되는 주기 및 실질적으로 보여질 데이터를 처리하는 공간
@@ -40,13 +50,6 @@ struct NearByStopProvider: TimelineProvider {
         in context: Context,
         completion: @escaping (Timeline<NearByStopEntry>) -> Void
     ) {
-        //        이때는 위젯에 잘 나옴
-        //        let timeline = Timeline(
-        //            entries: [NearByStopEntry.mock],
-        //            policy: .never
-        //        )
-        //        completion(timeline)
-        
         // 이렇게 됐을 때 위젯에 데이터 안나옴
         useCase.updateNearByStop()
             .subscribe(onNext: { response, distance in
@@ -69,6 +72,18 @@ struct NearByStopProvider: TimelineProvider {
             })
             .disposed(by: disposeBag)
         
+//         let timeline = Timeline(
+//             entries: [
+//                 NearByStopEntry(
+//                     date: .now,
+//                     busStopName: "강남역 2호선",
+//                     distance: 60
+//                 )
+//             ],
+//             policy: .never
+//         )
+//         completion(timeline)
+
     }
     
     typealias Entry = NearByStopEntry

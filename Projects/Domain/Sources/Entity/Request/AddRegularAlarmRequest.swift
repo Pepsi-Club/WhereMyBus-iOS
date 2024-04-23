@@ -23,6 +23,7 @@ public struct AddRegularAlarmRequest {
     // MARK: 로컬에서 필요한 데이터
     public let busStopName: String
     public let busName: String
+    public let adirection: String
     
     public init(
         date: Date,
@@ -30,7 +31,8 @@ public struct AddRegularAlarmRequest {
         busRouteId: String,
         arsId: String,
         busStopName: String,
-        busName: String
+        busName: String,
+        adirection: String
     ) {
         self.time = date.toString(dateFormat: "HHmm")
         self.weekday = weekday
@@ -38,5 +40,6 @@ public struct AddRegularAlarmRequest {
         self.arsId = arsId
         self.busStopName = busStopName
         self.busName = busName
+        self.adirection = adirection
     }
 }

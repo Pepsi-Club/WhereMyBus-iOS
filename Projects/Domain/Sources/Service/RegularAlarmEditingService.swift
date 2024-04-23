@@ -16,7 +16,8 @@ public protocol RegularAlarmEditingService {
         busStopId: String,
         busStopName: String,
         busId: String,
-        busName: String
+        busName: String,
+        adirection: String
     )
     func update(time: Date)
     func update(weekday: [Int])

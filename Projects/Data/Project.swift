@@ -10,6 +10,9 @@ let project = Project.makeProject(
         .coreDataService
     ],
     coreDataModel: [
-        .init("../App/Resources/Model.xcdatamodeld")
+        .init(
+            "../App/Resources/Model.xcdatamodeld",
+            currentVersion: "Model_v2"
+        )
     ]
 )

@@ -38,7 +38,8 @@ struct ArrivalInfoMediumView: View {
     var emptyView: some View {
         VStack(alignment: .center) {
             Text("즐겨찾기를 추가해 도착 정보를 확인하세요")
-                .multilineTextAlignment(.center)
+                .font(.nanumBold(14))
+                .foregroundColor(.white)
         }
     }
     
@@ -51,30 +52,88 @@ struct ArrivalInfoMediumView: View {
                 HStack(alignment: .top) {
                     VStack(alignment: .leading) {
                         Text(busStopResponse.busStopName)
-                            .font(.headline)
+                            .font(.nanumExtraBold(15))
                             .lineLimit(1)
                         Text(busStopResponse.direction)
-                            .font(.subheadline)
+                            .font(.nanumRegular(12))
                             .lineLimit(1)
                     }
+                    Spacer()
                     RefreshView(entry: entry)
                 }
+                
                 Spacer()
+                
+                Rectangle()
+                    .frame(height: 0.8)
+                
                 ForEach(
-                    busStopResponse.buses.prefix(1),
+                    busStopResponse.buses.prefix(2),
                     id: \.hashValue
                 ) { bus in
                     HStack {
                         Text(bus.busName)
-                            .font(.subheadline)
+                            .font(.nanumHeavy(23))
+                            .foregroundColor(.green)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        
+                        VStack(alignment: .leading) {
+                            if bus.secondArrivalRemaining.isEmpty {
+                                
+                                Spacer()
+                                
+                                Text(bus.firstArrivalState.toString)
+                                    .font(.nanumExtraBold(13))
+                                    .foregroundColor(
+                                        bus.secondArrivalState.toColor)
+                                    .lineLimit(1)
+                                
+                                Spacer()
+                            } else {
+                                Text(bus.firstArrivalState.toString)
+                                    .font(.nanumExtraBold(13))
+                                    .lineLimit(1)
+                                
+                                Text(bus.firstArrivalRemaining)
+                                    .font(.nanumRegular(10))
+                            }
+                        }
+                        .frame(width: 60)
+                        
+                        VStack(alignment: .leading) {
+                            if bus.secondArrivalRemaining.isEmpty {
+                                
+                                Spacer()
+                                
+                                Text(bus.secondArrivalState.toString)
+                                    .font(.nanumExtraBold(13))
+                                    .foregroundColor(
+                                        bus.secondArrivalState.toColor)
+                                    .lineLimit(1)
+                                
+                                Spacer()
+                            } else {
+                                Text(bus.secondArrivalState.toString)
+                                    .font(.nanumExtraBold(13))
+                                    .lineLimit(1)
+                                
+                                Text(bus.secondArrivalRemaining)
+                                    .font(.nanumRegular(10))
+                            }
+                        }
+                        .frame(width: 60)
+                        
                         Spacer()
-                        Text(bus.firstArrivalState.toString)
-                            .font(.subheadline)
-                            .lineLimit(1)
+                    }
+                    
+                    if bus == busStopResponse.buses.prefix(2).first {
+                        Rectangle()
+                            .frame(height: 0.6)
                     }
                 }
             }
         }
+        .foregroundColor(.white)
     }
 }
 

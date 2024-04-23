@@ -35,6 +35,7 @@ public struct AddRegularAlarmEndPoint: RegularAlarmEndPoint {
             "day": request.weekday,
             "busRouteId": request.busRouteId,
             "arsId": request.arsId,
+            "adirection": request.adirection,
         ]
     }
     

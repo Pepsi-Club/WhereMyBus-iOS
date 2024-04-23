@@ -28,7 +28,6 @@ public final class BusStopViewModel: ViewModel {
     public func transform(input: Input) -> Output {
         let output = Output(
             busStopArrivalInfoResponse: .init(),
-            favorites: .init(value: .init([])),
             isRefreshing: .init()
         )
         
@@ -73,14 +72,32 @@ public final class BusStopViewModel: ViewModel {
             .withLatestFrom(
                 output.busStopArrivalInfoResponse
             ) { busInfo, busStopInfo in
-                return (busInfo, busStopInfo.busStopId)
+                return (busInfo, busStopInfo.busStopId, busStopInfo.busStopName)
             }
-            .subscribe(onNext: { [weak self] busInfo, busStopId in
-                guard let self = self else { return }
-                self.useCase.handleFavorites(
-                    busStop: busStopId,
-                    bus: busInfo
-                )
+            .withUnretained(self)
+            .subscribe(
+                onNext: { vm, tuple in
+                    let (busInfo, busStopId, busStopName) = tuple
+                    do {
+                        try vm.useCase.handleFavorites(
+                            isFavorites: busInfo.isFavorites,
+                            favorites: .init(
+                                busStopId: busStopId,
+                                busStopName: busStopName,
+                                busId: busInfo.busId,
+                                busName: busInfo.busName,
+                                adirection: busInfo.adirection
+                            )
+                        )
+                    } catch {
+                        #if DEBUG
+                        print(error.localizedDescription)
+                        #endif
+                    }
+//                self.useCase.handleFavorites(
+//                    busStop: busStopId,
+//                    bus: busInfo
+//                )
             })
             .disposed(by: disposeBag)
         
@@ -116,10 +133,6 @@ public final class BusStopViewModel: ViewModel {
             })
             .disposed(by: disposeBag)
         
-        useCase.favorites
-            .bind(to: output.favorites)
-            .disposed(by: disposeBag)
-        
         return output
     }
 }
@@ -144,8 +157,6 @@ extension BusStopViewModel {
     public struct Output {
         var busStopArrivalInfoResponse
         : PublishSubject<BusStopArrivalInfoResponse>
-        var favorites
-        : BehaviorSubject<[FavoritesBusStopResponse]>
         var isRefreshing
         : PublishSubject<ViewRefreshState>
     }

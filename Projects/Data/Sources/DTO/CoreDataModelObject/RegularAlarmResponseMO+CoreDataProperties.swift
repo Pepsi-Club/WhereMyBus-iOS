@@ -24,4 +24,5 @@ extension RegularAlarmResponseMO {
     @NSManaged public var busName: String?
     @NSManaged public var time: Date?
     @NSManaged public var weekday: [Int]?
+    @NSManaged public var adirection: String?
 }

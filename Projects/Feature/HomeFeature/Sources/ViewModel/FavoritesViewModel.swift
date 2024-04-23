@@ -67,7 +67,7 @@ public final class FavoritesViewModel: ViewModel {
                 onNext: { viewModel, selectedId in
                     do {
                         let responses = try viewModel.useCase
-                            .busStopArrivalInfoResponse.value()
+                            .fetchedArrivalInfo.value()
                         guard let selectedBusStop = responses.first(
                             where: { response in
                                 response.busStopId == selectedId
@@ -90,7 +90,7 @@ public final class FavoritesViewModel: ViewModel {
             .bind(to: output.distanceFromTimerStart)
             .disposed(by: disposeBag)
         
-        useCase.busStopArrivalInfoResponse
+        useCase.fetchedArrivalInfo
             .subscribe(
                 onNext: { responses in
                     output.busStopArrivalInfoResponse.onNext(responses)

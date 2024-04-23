@@ -16,6 +16,7 @@ struct FetchRegularAlarmDTO: Decodable {
     let weekday: [Int]
     let busId: String
     let busStopId: String
+//    let adirection: String
 }
 
 extension Array<FetchRegularAlarmDTO> {
@@ -42,5 +43,6 @@ extension FetchRegularAlarmDTO {
         case weekday = "day"
         case busId = "busRoutedId"
         case busStopId = "arsId"
+//        case adirection
     }
 }

@@ -14,11 +14,9 @@ public final class NearMapViewController: UIViewController {
     PublishSubject<(ClosedRange<Double>, ClosedRange<Double>)>()
     private let disposeBag = DisposeBag()
     
-    private let leafMarkerUpdater = LeafMarkerUpdater()
-    
     private lazy var builder: NMCBuilder<BusStopClusteringKey> = {
         let builder = NMCBuilder<BusStopClusteringKey>()
-        builder.leafMarkerUpdater = leafMarkerUpdater
+        builder.leafMarkerUpdater = viewModel
         builder.maxZoom = 16
         return builder
     }()
@@ -140,12 +138,12 @@ public final class NearMapViewController: UIViewController {
                     .methodInvoked(#selector(UIViewController.viewWillAppear))
                     .map { _ in },
                 informationViewTapEvent: tapGesture.rx.event.map { _ in },
-                selectedBusStopId: leafMarkerUpdater.selectedBusStopId,
                 locationChangeEvent: cameraMoveEvent
             )
         )
         
         output.selectedBusStopInfo
+            .observe(on: MainScheduler.asyncInstance)
             .withUnretained(self)
             .subscribe(
                 onNext: { vc, tuple in
