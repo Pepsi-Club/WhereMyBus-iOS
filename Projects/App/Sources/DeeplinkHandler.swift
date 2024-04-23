@@ -24,7 +24,7 @@ final class DeeplinkHandler {
             switch queryItem.name {
             case "busStop":
                 if let busStopId = queryItem.value {
-                    appCoordinator?.startBusStopFlow(busStopId: busStopId)
+                appCoordinator?.resetAndStartBusStopFlow(busStopId: busStopId)
                 }
             default:
                 break

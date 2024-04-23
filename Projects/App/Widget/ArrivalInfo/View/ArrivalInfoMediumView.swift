@@ -73,7 +73,7 @@ struct ArrivalInfoMediumView: View {
                 ) { bus in
                     HStack {
                         Text(bus.busName)
-                            .font(.nanumHeavy(23))
+                            .font(.nanumHeavy(21))
                             .foregroundColor(.green)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         

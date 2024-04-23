@@ -17,6 +17,5 @@ struct ReloadWidgetIntent: AppIntent {
 
     func perform() async throws -> some IntentResult {
         return .result()
-        WidgetCenter.shared.reloadTimelines(ofKind: "")
     }
 }
