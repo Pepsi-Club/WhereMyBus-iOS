@@ -25,15 +25,12 @@ public final class DefaultFavoritesUseCase: FavoritesUseCase {
     ) {
         self.busStopArrivalInfoRepository = busStopArrivalInfoRepository
         self.favoritesRepository = favoritesRepository
-        bindFavorites()
     }
     
-    public func fetchFavoritesArrivals() {
+    public func fetchFavoritesArrivals(
+    ) -> Observable<[BusStopArrivalInfoResponse]> {
         favoritesRepository.fetchFavorites()
-    }
-    // TODO: 바인딩한다면 정류장 뷰에서 즐겨찾기가 수정될 때마다 API 호출되기 때문에 수정이 필요함
-    private func bindFavorites() {
-        favoritesRepository.favorites
+        return favoritesRepository.favorites
             .withUnretained(self)
             .filter { useCase, favoritesList in
                 let shouldFetchFavorites = !favoritesList.isEmpty
@@ -62,20 +59,15 @@ public final class DefaultFavoritesUseCase: FavoritesUseCase {
             ) { responses, favoritesList in
                 (responses, favoritesList)
             }
-            .withUnretained(self)
-            .subscribe(
-                onNext: { useCase, tuple in
-                    let (responses, favoritesList) = tuple
-                    let result = responses
-                        .updateFavoritesStatus(
-                            favoritesList: favoritesList
-                        )
-                        .map { response in
-                            response.filterUnfavoritesBuses()
-                        }
-                    useCase.fetchedArrivalInfo.onNext(result)
-                }
-            )
-            .disposed(by: disposeBag)
+            .map { responses, favoritesList in
+                let result = responses
+                    .updateFavoritesStatus(
+                        favoritesList: favoritesList
+                    )
+                    .map { response in
+                        response.filterUnfavoritesBuses()
+                    }
+                return result
+            }
     }
 }

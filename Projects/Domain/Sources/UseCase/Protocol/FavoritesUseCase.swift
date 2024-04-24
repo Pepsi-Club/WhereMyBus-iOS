@@ -11,8 +11,5 @@ import Foundation
 import RxSwift
 
 public protocol FavoritesUseCase {
-    var fetchedArrivalInfo
-    : BehaviorSubject<[BusStopArrivalInfoResponse]> { get }
-    
-    func fetchFavoritesArrivals()
+    func fetchFavoritesArrivals() -> Observable<[BusStopArrivalInfoResponse]>
 }

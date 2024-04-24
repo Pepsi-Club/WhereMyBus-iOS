@@ -175,7 +175,11 @@ public final class FavoritesViewController: UIViewController {
         let refreshControl = favoritesTableView.enableRefreshControl(
             refreshStr: ""
         )
-        
+        let fetchRequestEvent = Observable.merge(
+            refreshControl.rx.controlEvent(.valueChanged)
+                .asObservable(),
+            refreshBtn.rx.tap.asObservable()
+        )
         let output = viewModel.transform(
             input: .init(
                 viewWillAppearEvent: rx
@@ -184,11 +188,7 @@ public final class FavoritesViewController: UIViewController {
                     )
                     .map { _ in },
                 searchBtnTapEvent: searchBtn.rx.tap.asObservable(),
-                refreshBtnTapEvent: Observable.merge(
-                    refreshControl.rx.controlEvent(.valueChanged)
-                        .asObservable(),
-                    refreshBtn.rx.tap.asObservable()
-                ),
+                refreshBtnTapEvent: fetchRequestEvent,
                 alarmBtnTapEvent: alarmBtnTapEvent.asObservable(),
                 busStopTapEvent: headerTapEvent
             )
@@ -269,32 +269,37 @@ public final class FavoritesViewController: UIViewController {
         .disposed(by: disposeBag)
         
         output.favoritesState
+            .distinctUntilChanged { oldValue, newValue in
+                oldValue == .fakeFetching || newValue == .realFetching
+            }
             .withUnretained(self)
+            .subscribe(
+                onNext: { _, state in
+                    switch state {
+                    case .realFetching, .fakeFetching:
+                        refreshControl.beginRefreshing()
+                    case .fetchComplete:
+                        refreshControl.endRefreshing()
+                    }
+                }
+            )
+            .disposed(by: disposeBag)
+        fetchRequestEvent
+            .observe(on: MainScheduler.asyncInstance)
+            .withUnretained(self)
+            .subscribe(
+                onNext: { vc, _ in
+                    vc.refreshBtn.isHidden = false
+                    refreshControl.beginRefreshing()
+                }
+            )
+            .disposed(by: disposeBag)
+        
+        output.busStopArrivalInfoResponse
             .observe(on: MainScheduler.asyncInstance)
             .subscribe(
-                onNext: { viewController, state in
-                    viewController.updateState(state: state)
-                    switch state {
-                    case .fetching:
-                        refreshControl.beginRefreshing()
-                    case .emptyFavorites, .fetchComplete:
-                        DispatchQueue.main.asyncAfter(
-                            deadline: .now() + 1,
-                            execute: .init(
-                                block: {
-                                    refreshControl.endRefreshing()
-                                    let timeStr = Date()
-                                        .toString(dateFormat: "HH:mm")
-                                    viewController.refreshBtn.configuration?
-                                        .attributedTitle = .init(
-                                            "\(timeStr) 업데이트",
-                                            attributes: viewController
-                                                .refreshAttribute
-                                        )
-                                }
-                            )
-                        )
-                    }
+                onNext: { _ in
+                    refreshControl.endRefreshing()
                 }
             )
             .disposed(by: disposeBag)
@@ -382,6 +387,13 @@ public final class FavoritesViewController: UIViewController {
     }
     
     private func updateSnapshot(busStopResponse: [BusStopArrivalInfoResponse]) {
+        if busStopResponse.isEmpty {
+            favoritesTableView.backgroundView = EmptyFavoritesView()
+            refreshBtn.isHidden = true
+        } else {
+            favoritesTableView.backgroundView = nil
+            refreshBtn.isHidden = false
+        }
         snapshot = .init()
         snapshot.appendSections(busStopResponse)
         busStopResponse.forEach { response in
@@ -391,22 +403,6 @@ public final class FavoritesViewController: UIViewController {
             )
         }
         dataSource.apply(snapshot, animatingDifferences: false)
-    }
-    
-    private func updateState(state: FavoritesViewModel.FavoritesState) {
-        switch state {
-        case .emptyFavorites:
-            favoritesTableView.backgroundView = EmptyFavoritesView()
-            refreshBtn.isHidden = true
-//            editBtn.isHidden = true
-        case .fetching:
-            favoritesTableView.loadingBackground()
-            refreshBtn.isHidden = false
-//            editBtn.isHidden = false
-        case .fetchComplete:
-            favoritesTableView.backgroundView = nil
-            refreshBtn.isHidden = false
-        }
     }
 }
 

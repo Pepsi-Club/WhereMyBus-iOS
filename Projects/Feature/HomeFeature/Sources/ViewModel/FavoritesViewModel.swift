@@ -28,16 +28,69 @@ public final class FavoritesViewModel: ViewModel {
     
     public func transform(input: Input) -> Output {
         let output = Output(
-            busStopArrivalInfoResponse: .init(),
+            busStopArrivalInfoResponse: .init(value: []),
             favoritesState: .init(),
             distanceFromTimerStart: .init(value: 0)
         )
         
-        input.viewWillAppearEvent
-            .withUnretained(self)
+        let fetchRequest = Observable.merge(
+            input.viewWillAppearEvent,
+            input.refreshBtnTapEvent
+        )
+        
+        fetchRequest
             .subscribe(
-                onNext: { viewModel, _ in
-                    viewModel.useCase.fetchFavoritesArrivals()
+                onNext: { _ in
+                    output.favoritesState.onNext(.fakeFetching)
+                }
+            )
+            .disposed(by: disposeBag)
+        
+        fetchRequest
+            .throttle(
+                .seconds(20),
+                latest: false,
+                scheduler: MainScheduler.asyncInstance
+            )
+            .subscribe(
+                onNext: { _ in
+                    output.favoritesState.onNext(.realFetching)
+                }
+            )
+            .disposed(by: disposeBag)
+        
+        output.favoritesState
+            .filter { state in
+                state == .realFetching
+            }
+            .withUnretained(self)
+            .flatMap { vm, _ in
+                vm.useCase.fetchFavoritesArrivals()
+            }
+            .subscribe(
+                onNext: { responses in
+                    output.favoritesState.onNext(.fetchComplete)
+                    output.busStopArrivalInfoResponse.accept(responses)
+                }
+            )
+            .disposed(by: disposeBag)
+        
+        output.favoritesState
+            .filter { state in
+                state == .fakeFetching
+            }
+            .delay(
+                .seconds(3),
+                scheduler: MainScheduler.asyncInstance
+            )
+            .subscribe(
+                onNext: { state in
+                    if state == .fakeFetching {
+                        output.favoritesState.onNext(.fetchComplete)
+                        output.busStopArrivalInfoResponse.accept(
+                            output.busStopArrivalInfoResponse.value
+                        )
+                    }
                 }
             )
             .disposed(by: disposeBag)
@@ -51,37 +104,13 @@ public final class FavoritesViewModel: ViewModel {
             )
             .disposed(by: disposeBag)
         
-        input.refreshBtnTapEvent
-            .withUnretained(self)
-            .subscribe(
-                onNext: { viewModel, _ in
-                    output.favoritesState.onNext(.fetching)
-                    viewModel.useCase.fetchFavoritesArrivals()
-                }
-            )
-            .disposed(by: disposeBag)
-        
         input.busStopTapEvent
             .withUnretained(self)
             .subscribe(
                 onNext: { viewModel, selectedId in
-                    do {
-                        let responses = try viewModel.useCase
-                            .fetchedArrivalInfo.value()
-                        guard let selectedBusStop = responses.first(
-                            where: { response in
-                                response.busStopId == selectedId
-                            }
-                        )
-                        else { return }
-                        viewModel.coordinator.startBusStopFlow(
-                            stationId: selectedBusStop.busStopId
-                        )
-                    } catch {
-                        #if DEBUG
-                        print(error.localizedDescription)
-                        #endif
-                    }
+                    viewModel.coordinator.startBusStopFlow(
+                        stationId: selectedId
+                    )
                 }
             )
             .disposed(by: disposeBag)
@@ -90,27 +119,12 @@ public final class FavoritesViewModel: ViewModel {
             .bind(to: output.distanceFromTimerStart)
             .disposed(by: disposeBag)
         
-        useCase.fetchedArrivalInfo
-            .subscribe(
-                onNext: { responses in
-                    output.busStopArrivalInfoResponse.onNext(responses)
-                    if responses.isEmpty {
-                        output.favoritesState.onNext(.emptyFavorites)
-                    } else {
-                        output.favoritesState.onNext(.fetchComplete)
-                    }
-                }
-            )
-            .disposed(by: disposeBag)
-        
         output.favoritesState
             .withUnretained(self)
             .subscribe(
                 onNext: { viewModel, state in
                     switch state {
-                    case .emptyFavorites:
-                        break
-                    case .fetching:
+                    case .realFetching, .fakeFetching:
                         viewModel.timer.stop()
                     case .fetchComplete:
                         viewModel.timer.start()
@@ -134,12 +148,12 @@ extension FavoritesViewModel {
     
     public struct Output {
         var busStopArrivalInfoResponse
-        : PublishSubject<[BusStopArrivalInfoResponse]>
+        : BehaviorRelay<[BusStopArrivalInfoResponse]>
         var favoritesState: PublishSubject<FavoritesState>
         var distanceFromTimerStart: BehaviorRelay<Int>
     }
     
     enum FavoritesState {
-        case emptyFavorites, fetching, fetchComplete
+        case realFetching, fakeFetching, fetchComplete
     }
 }
