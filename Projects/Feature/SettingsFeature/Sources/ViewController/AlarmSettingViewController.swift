@@ -95,7 +95,7 @@ public final class AlarmSettingViewController: UIViewController {
     
     private let busIconView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = DesignSystemAsset.bus2.image
+        imageView.image = DesignSystemAsset.busStop2.image
         return imageView
     }()
     
