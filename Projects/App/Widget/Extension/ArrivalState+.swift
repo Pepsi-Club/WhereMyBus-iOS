@@ -18,7 +18,7 @@ extension ArrivalState {
                 .red
         case .finished:
                 .red
-        case .arrivalTime(time: _): 
+        case .arrivalTime(time: _):
                 .white
         }
     }
