@@ -74,7 +74,7 @@ public final class BusStopInfoHeaderView: UIView {
     
     private let busStopIcon: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = DesignSystemAsset.busStop2.image
+        imageView.image = DesignSystemAsset.busStop4.image
         return imageView
     }()
     
