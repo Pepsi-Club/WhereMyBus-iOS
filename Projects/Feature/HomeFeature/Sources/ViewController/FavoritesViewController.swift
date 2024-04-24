@@ -175,11 +175,7 @@ public final class FavoritesViewController: UIViewController {
         let refreshControl = favoritesTableView.enableRefreshControl(
             refreshStr: ""
         )
-        let fetchRequestEvent = Observable.merge(
-            refreshControl.rx.controlEvent(.valueChanged)
-                .asObservable(),
-            refreshBtn.rx.tap.asObservable()
-        )
+        
         let output = viewModel.transform(
             input: .init(
                 viewWillAppearEvent: rx
@@ -188,7 +184,11 @@ public final class FavoritesViewController: UIViewController {
                     )
                     .map { _ in },
                 searchBtnTapEvent: searchBtn.rx.tap.asObservable(),
-                refreshBtnTapEvent: fetchRequestEvent,
+                refreshBtnTapEvent: Observable.merge(
+                    refreshControl.rx.controlEvent(.valueChanged)
+                        .asObservable(),
+                    refreshBtn.rx.tap.asObservable()
+                ),
                 alarmBtnTapEvent: alarmBtnTapEvent.asObservable(),
                 busStopTapEvent: headerTapEvent
             )
@@ -208,10 +208,6 @@ public final class FavoritesViewController: UIViewController {
                     else { return nil }
                     return data
                 }
-                UserDefaults.appGroup.set(
-                    datas,
-                    forKey: "arrivalResponse"
-                )
                 let newResponses = responses.map {
                     return BusStopArrivalInfoResponse(
                         busStopId: $0.busStopId,
@@ -281,25 +277,6 @@ public final class FavoritesViewController: UIViewController {
                     case .fetchComplete:
                         refreshControl.endRefreshing()
                     }
-                }
-            )
-            .disposed(by: disposeBag)
-        fetchRequestEvent
-            .observe(on: MainScheduler.asyncInstance)
-            .withUnretained(self)
-            .subscribe(
-                onNext: { vc, _ in
-                    vc.refreshBtn.isHidden = false
-                    refreshControl.beginRefreshing()
-                }
-            )
-            .disposed(by: disposeBag)
-        
-        output.busStopArrivalInfoResponse
-            .observe(on: MainScheduler.asyncInstance)
-            .subscribe(
-                onNext: { _ in
-                    refreshControl.endRefreshing()
                 }
             )
             .disposed(by: disposeBag)
