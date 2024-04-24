@@ -60,10 +60,12 @@ struct ArrivalInfoSmallView: View {
                         Text(busStopResponse.busStopName)
                             .font(.nanumExtraBold(15))
                             .lineLimit(1)
+                            .padding(.bottom,1)
                         Text(busStopResponse.direction)
                             .font(.nanumRegular(11))
                             .lineLimit(1)
                     }
+                    
                     Spacer()
                 }
                 ForEach(
@@ -74,27 +76,33 @@ struct ArrivalInfoSmallView: View {
                         Text(bus.busName)
                             .font(.nanumHeavy(22))
                             .foregroundColor(.green)
+                            
                         Spacer()
                         VStack(spacing: 6) {
                             HStack(spacing: 3) {
                                 Spacer()
                                 Text(bus.firstArrivalState.toString)
-                                    .font(.nanumHeavy(13))
+                                    .font(.nanumHeavy(14))
                                     .foregroundColor(
                                         bus.firstArrivalState.toColor)
                                     .lineLimit(1)
+                                    
                                 Text(bus.firstArrivalRemaining)
-                                    .font(.nanumExtraBold(12))
+                                    .font(.nanumExtraBold(10))
+                                    .frame(width:40)
                             }
+                            .frame(width:135)
+                            
                             HStack(spacing: 3) {
                                 Spacer()
                                 Text(bus.secondArrivalState.toString)
-                                    .font(.nanumHeavy(13))
+                                    .font(.nanumHeavy(14))
                                     .foregroundColor(
                                         bus.secondArrivalState.toColor)
                                     .lineLimit(1)
                                 Text(bus.secondArrivalRemaining)
-                                    .font(.nanumBold(12))
+                                    .font(.nanumBold(10))
+                                    .frame(width:40)
                             }
                         }
                     }
