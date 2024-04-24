@@ -54,6 +54,7 @@ struct ArrivalInfoMediumView: View {
                         Text(busStopResponse.busStopName)
                             .font(.nanumExtraBold(15))
                             .lineLimit(1)
+                            .padding(.bottom,0.2)
                         Text(busStopResponse.direction)
                             .font(.nanumRegular(12))
                             .lineLimit(1)
@@ -73,26 +74,24 @@ struct ArrivalInfoMediumView: View {
                 ) { bus in
                     HStack {
                         Text(bus.busName)
-                            .font(.nanumHeavy(21))
+                            .font(.nanumHeavy(20))
                             .foregroundColor(.green)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
                         VStack(alignment: .leading) {
                             if bus.secondArrivalRemaining.isEmpty {
-                                
-                                Spacer()
-                                
+                                                        
                                 Text(bus.firstArrivalState.toString)
                                     .font(.nanumExtraBold(13))
                                     .foregroundColor(
                                         bus.secondArrivalState.toColor)
                                     .lineLimit(1)
+                                    .background(.black)
                                 
-                                Spacer()
                             } else {
                                 Text(bus.firstArrivalState.toString)
                                     .font(.nanumExtraBold(13))
-                                    .lineLimit(1)
+                                    .padding(.bottom,0.1)
                                 
                                 Text(bus.firstArrivalRemaining)
                                     .font(.nanumRegular(10))
@@ -102,21 +101,18 @@ struct ArrivalInfoMediumView: View {
                         
                         VStack(alignment: .leading) {
                             if bus.secondArrivalRemaining.isEmpty {
-                                
-                                Spacer()
-                                
+                                                        
                                 Text(bus.secondArrivalState.toString)
                                     .font(.nanumExtraBold(13))
                                     .foregroundColor(
                                         bus.secondArrivalState.toColor)
                                     .lineLimit(1)
                                 
-                                Spacer()
                             } else {
                                 Text(bus.secondArrivalState.toString)
                                     .font(.nanumExtraBold(13))
-                                    .lineLimit(1)
-                                
+                                    .padding(.bottom,0.1)
+
                                 Text(bus.secondArrivalRemaining)
                                     .font(.nanumRegular(10))
                             }
