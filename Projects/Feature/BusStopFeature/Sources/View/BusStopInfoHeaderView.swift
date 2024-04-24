@@ -122,10 +122,10 @@ extension BusStopInfoHeaderView {
                 constant: 15
             ),
             busStopIcon.widthAnchor.constraint(
-                equalToConstant: 60
+                equalToConstant: 40
             ),
             busStopIcon.heightAnchor.constraint(
-                equalToConstant: 60
+                equalToConstant: 40
             ),
             busStopNumLb.topAnchor.constraint(
                 equalTo: busStopIcon.bottomAnchor,
