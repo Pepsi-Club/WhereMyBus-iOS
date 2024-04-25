@@ -35,6 +35,7 @@ public final class DefaultFavoritesUseCase: FavoritesUseCase {
                 Observable.zip(
                     favoritesList
                         .prefix(useCase.fetchItemLimit)
+                        .prefix(5)
                         .map {
                             $0.busStopId
                         }
