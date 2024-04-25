@@ -32,6 +32,7 @@ public final class BusStopViewModel: ViewModel {
         )
         
         input.viewWillAppearEvent
+            .take(1)
             .withUnretained(self)
             .subscribe(
                 onNext: { viewModel, _ in
@@ -57,11 +58,10 @@ public final class BusStopViewModel: ViewModel {
             }
             .disposed(by: disposeBag)
         
-        input.refreshLoading
+        input.refreshLoading?
             .withUnretained(self)
             .subscribe(onNext: { viewModel, _ in
                 output.isRefreshing.onNext(.fetching)
-                
                 viewModel.useCase.fetchBusArrivals(
                     request: viewModel.fetchData
                 )
@@ -149,7 +149,7 @@ extension BusStopViewModel {
         let likeBusBtnTapEvent: Observable<BusArrivalInfoResponse>
         let alarmBtnTapEvent: Observable<BusArrivalInfoResponse>
         let mapBtnTapEvent: Observable<Void>
-        let refreshLoading: Observable<Void>
+        let refreshLoading: Observable<Void>?
         let navigationBackBtnTapEvent: Observable<Void>
         let cellSelectTapEvent: Observable<BusArrivalInfoResponse>
     }

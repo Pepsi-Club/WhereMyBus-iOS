@@ -75,9 +75,16 @@ public final class BusStopViewController: UIViewController {
     }
     
     private func bind() {
-        let refreshControl = scrollView.enableRefreshControl(
-            refreshStr: "당겨서 새로고침"
-        )
+        let refreshControl: UIRefreshControl? = {
+            switch flow {
+            case .fromHome:
+                return scrollView.enableRefreshControl(
+                    refreshStr: "당겨서 새로고침"
+                )
+            case .fromAlarm:
+                return nil
+            }
+        }()
         
         let input = BusStopViewModel.Input(
             viewWillAppearEvent: rx
@@ -87,7 +94,7 @@ public final class BusStopViewController: UIViewController {
             alarmBtnTapEvent: alarmBtnTapEvent.asObservable(),
             mapBtnTapEvent: headerView.mapBtn.rx.tap.asObservable(),
             refreshLoading
-            : refreshControl.rx.controlEvent(.valueChanged).asObservable(),
+            : refreshControl?.rx.controlEvent(.valueChanged).asObservable(),
             navigationBackBtnTapEvent
             : headerView.navigationBtn.rx.tap.asObservable(),
             cellSelectTapEvent: tableCellTapEvent.asObservable()
@@ -101,7 +108,7 @@ public final class BusStopViewController: UIViewController {
             .subscribe(onNext: { refresh in
                 switch refresh {
                 case .fetchComplete:
-                    refreshControl.endRefreshing()
+                    refreshControl?.endRefreshing()
                 case .fetching:
                     break
                 }
