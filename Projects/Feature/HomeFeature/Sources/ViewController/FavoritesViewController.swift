@@ -54,21 +54,6 @@ public final class FavoritesViewController: UIViewController {
         return button
     }()
     
-    private let editBtn: UIButton = {
-        var config = UIButton.Configuration.plain()
-        config.baseForegroundColor = .black
-        config.imagePadding = 5
-        var titleContainer = AttributeContainer()
-        titleContainer.font = .systemFont(ofSize: 13)
-        config.attributedTitle = AttributedString(
-            "편집",
-            attributes: titleContainer
-        )
-        let button = UIButton(configuration: config)
-        button.isHidden = true
-        return button
-    }()
-    
     private lazy var favoritesTableView: UITableView = {
         let tableView = UITableView()
         tableView.backgroundColor = .white
@@ -114,7 +99,6 @@ public final class FavoritesViewController: UIViewController {
         view.backgroundColor = .white
         [
             searchBtn,
-            editBtn,
             refreshBtn,
             favoritesTableView
         ].forEach {
@@ -142,15 +126,6 @@ public final class FavoritesViewController: UIViewController {
             refreshBtn.leadingAnchor.constraint(
                 equalTo: safeArea.leadingAnchor,
                 constant: 5
-            ),
-            
-            editBtn.topAnchor.constraint(
-                equalTo: searchBtn.bottomAnchor,
-                constant: 10
-            ),
-            editBtn.trailingAnchor.constraint(
-                equalTo: safeArea.trailingAnchor,
-                constant: -20
             ),
             
             favoritesTableView.topAnchor.constraint(
@@ -202,49 +177,9 @@ public final class FavoritesViewController: UIViewController {
         .observe(on: MainScheduler.asyncInstance)
         .subscribe(
             onNext: { viewController, tuple in
-                let (timerTime, responses) = tuple
+                let (timerValue, responses) = tuple
                 let newResponses = responses.map {
-                    return BusStopArrivalInfoResponse(
-                        busStopId: $0.busStopId,
-                        busStopName: $0.busStopName,
-                        direction: $0.direction,
-                        buses: $0.buses.map { busInfo in
-                            let newFirstArrivalState: ArrivalState
-                            let newSecondArrivalState: ArrivalState
-                            switch busInfo.firstArrivalState {
-                            case .soon, .pending, .finished:
-                                newFirstArrivalState = busInfo.firstArrivalState
-                            case .arrivalTime(let time):
-                                newFirstArrivalState = time - timerTime > 60 ?
-                                    .arrivalTime(time: time - timerTime):
-                                    .soon
-                            }
-                            switch busInfo.secondArrivalState {
-                            case .soon, .pending, .finished:
-                                newSecondArrivalState 
-                                = busInfo.secondArrivalState
-                            case .arrivalTime(let time):
-                                newSecondArrivalState = time - timerTime > 60 ?
-                                    .arrivalTime(time: time - timerTime):
-                                    .soon
-                            }
-                            let firstReaining = busInfo.firstArrivalRemaining
-                            let secondReaining = busInfo.secondArrivalRemaining
-                            return BusArrivalInfoResponse(
-                                busId: busInfo.busId,
-                                busName: busInfo.busName,
-                                busType: busInfo.busType.rawValue,
-                                nextStation: busInfo.nextStation,
-                                firstArrivalState: newFirstArrivalState,
-                                firstArrivalRemaining: firstReaining,
-                                secondArrivalState: newSecondArrivalState,
-                                secondArrivalRemaining: secondReaining,
-                                adirection: busInfo.adirection,
-                                isFavorites: busInfo.isFavorites,
-                                isAlarmOn: busInfo.isAlarmOn
-                            )
-                        }
-                    )
+                    return $0.replaceTime(timerSecond: timerValue)
                 }
                 viewController.headerInfoList.removeAll()
                 newResponses.forEach { response in
@@ -259,19 +194,10 @@ public final class FavoritesViewController: UIViewController {
         )
         .disposed(by: disposeBag)
         
-        refreshBtn.rx.tap
+        output.fetchStatus
             .observe(on: MainScheduler.asyncInstance)
             .subscribe(
-                onNext: { _ in
-                    refreshControl.beginRefreshing()
-                }
-            )
-            .disposed(by: disposeBag)
-        
-        output.favoritesState
-            .withUnretained(self)
-            .subscribe(
-                onNext: { _, state in
+                onNext: { state in
                     switch state {
                     case .realFetching, .fakeFetching:
                         refreshControl.beginRefreshing()
@@ -281,33 +207,6 @@ public final class FavoritesViewController: UIViewController {
                 }
             )
             .disposed(by: disposeBag)
-        
-        editBtn.rx.tap
-            .asObservable()
-            .withUnretained(self)
-            .subscribe(
-                onNext: { viewController, _ in
-                    guard let isEditMode = try? viewController
-                        .isTableViewEditMode.value()
-                    else { return }
-                    viewController.isTableViewEditMode
-                        .onNext(!isEditMode)
-                }
-            )
-            .disposed(by: disposeBag)
-        
-//        isTableViewEditMode
-//            .withUnretained(self)
-//            .subscribe(
-//                onNext: { viewController, isEditMode in
-//                    viewController.editBtn.setTitle(
-//                        isEditMode ? "완료" : "편집",
-//                        for: .normal
-//                    )
-//                    viewController.favoritesTableView.isEditing = isEditMode
-//                }
-//            )
-//            .disposed(by: disposeBag)
     }
     
     private func configureDataSource() {

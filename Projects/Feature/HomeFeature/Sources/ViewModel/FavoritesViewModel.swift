@@ -29,7 +29,7 @@ public final class FavoritesViewModel: ViewModel {
     public func transform(input: Input) -> Output {
         let output = Output(
             busStopArrivalInfoResponse: .init(value: []),
-            favoritesState: .init(),
+            fetchStatus: .init(),
             distanceFromTimerStart: .init(value: 0)
         )
         
@@ -41,7 +41,7 @@ public final class FavoritesViewModel: ViewModel {
         fetchRequest
             .subscribe(
                 onNext: { _ in
-                    output.favoritesState.onNext(.fakeFetching)
+                    output.fetchStatus.onNext(.fakeFetching)
                 }
             )
             .disposed(by: disposeBag)
@@ -52,14 +52,16 @@ public final class FavoritesViewModel: ViewModel {
                 latest: false,
                 scheduler: MainScheduler.asyncInstance
             )
+            .withUnretained(self)
             .subscribe(
-                onNext: { _ in
-                    output.favoritesState.onNext(.realFetching)
+                onNext: { vm, _ in
+                    output.fetchStatus.onNext(.realFetching)
+                    vm.timer.stop()
                 }
             )
             .disposed(by: disposeBag)
         
-        output.favoritesState
+        output.fetchStatus
             .filter { state in
                 state == .realFetching
             }
@@ -67,15 +69,17 @@ public final class FavoritesViewModel: ViewModel {
             .flatMap { vm, _ in
                 vm.useCase.fetchFavoritesArrivals()
             }
+            .withUnretained(self)
             .subscribe(
-                onNext: { responses in
-                    output.favoritesState.onNext(.fetchComplete)
+                onNext: { vm, responses in
+                    vm.timer.start()
+                    output.fetchStatus.onNext(.fetchComplete)
                     output.busStopArrivalInfoResponse.accept(responses)
                 }
             )
             .disposed(by: disposeBag)
         
-        output.favoritesState
+        output.fetchStatus
             .filter { state in
                 state == .fakeFetching
             }
@@ -83,13 +87,16 @@ public final class FavoritesViewModel: ViewModel {
                 .seconds(3),
                 scheduler: MainScheduler.asyncInstance
             )
+            .withLatestFrom(
+                output.busStopArrivalInfoResponse
+            ) { state, responses in
+                (state, responses)
+            }
             .subscribe(
-                onNext: { state in
+                onNext: { state, responses in
                     if state == .fakeFetching {
-                        output.favoritesState.onNext(.fetchComplete)
-                        output.busStopArrivalInfoResponse.accept(
-                            output.busStopArrivalInfoResponse.value
-                        )
+                        output.fetchStatus.onNext(.fetchComplete)
+                        output.busStopArrivalInfoResponse.accept(responses)
                     }
                 }
             )
@@ -119,20 +126,6 @@ public final class FavoritesViewModel: ViewModel {
             .bind(to: output.distanceFromTimerStart)
             .disposed(by: disposeBag)
         
-        output.favoritesState
-            .withUnretained(self)
-            .subscribe(
-                onNext: { viewModel, state in
-                    switch state {
-                    case .realFetching, .fakeFetching:
-                        viewModel.timer.stop()
-                    case .fetchComplete:
-                        viewModel.timer.start()
-                    }
-                }
-            )
-            .disposed(by: disposeBag)
-        
         return output        
     }
 }
@@ -149,11 +142,11 @@ extension FavoritesViewModel {
     public struct Output {
         var busStopArrivalInfoResponse
         : BehaviorRelay<[BusStopArrivalInfoResponse]>
-        var favoritesState: PublishSubject<FavoritesState>
+        var fetchStatus: PublishSubject<FetchStatus>
         var distanceFromTimerStart: BehaviorRelay<Int>
     }
     
-    enum FavoritesState {
+    enum FetchStatus {
         case realFetching, fakeFetching, fetchComplete
     }
 }

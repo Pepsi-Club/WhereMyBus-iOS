@@ -28,6 +28,52 @@ public struct BusStopArrivalInfoResponse: Codable, Hashable {
 }
 
 public extension BusStopArrivalInfoResponse {
+    func replaceTime(timerSecond: Int) -> Self {
+        BusStopArrivalInfoResponse(
+            busStopId: busStopId,
+            busStopName: busStopName,
+            direction: direction,
+            buses: buses.map { busInfo in
+                let newFirstArrivalState: ArrivalState
+                let newSecondArrivalState: ArrivalState
+                switch busInfo.firstArrivalState {
+                case .soon, .pending, .finished:
+                    newFirstArrivalState = busInfo.firstArrivalState
+                case .arrivalTime(let time):
+                    newFirstArrivalState = time - timerSecond > 60 ?
+                        .arrivalTime(time: time - timerSecond):
+                        .soon
+                }
+                switch busInfo.secondArrivalState {
+                case .soon, .pending, .finished:
+                    newSecondArrivalState
+                    = busInfo.secondArrivalState
+                case .arrivalTime(let time):
+                    newSecondArrivalState = time - timerSecond > 60 ?
+                        .arrivalTime(time: time - timerSecond):
+                        .soon
+                }
+                let firstReaining = busInfo.firstArrivalRemaining
+                let secondReaining = busInfo.secondArrivalRemaining
+                return BusArrivalInfoResponse(
+                    busId: busInfo.busId,
+                    busName: busInfo.busName,
+                    busType: busInfo.busType.rawValue,
+                    nextStation: busInfo.nextStation,
+                    firstArrivalState: newFirstArrivalState,
+                    firstArrivalRemaining: firstReaining,
+                    secondArrivalState: newSecondArrivalState,
+                    secondArrivalRemaining: secondReaining,
+                    adirection: busInfo.adirection,
+                    isFavorites: busInfo.isFavorites,
+                    isAlarmOn: busInfo.isAlarmOn
+                )
+            }
+        )
+    }
+}
+
+public extension BusStopArrivalInfoResponse {
     func updateFavoritesStatus(
         favoritesList: [FavoritesBusResponse]
     ) -> Self {
