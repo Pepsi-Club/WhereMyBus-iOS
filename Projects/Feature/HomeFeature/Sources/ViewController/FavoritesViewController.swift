@@ -201,13 +201,8 @@ public final class FavoritesViewController: UIViewController {
         .withUnretained(self)
         .observe(on: MainScheduler.asyncInstance)
         .subscribe(
-            onNext: { viewController, arg1 in
-                let (timerTime, responses) = arg1
-                let datas: [Data] = responses.compactMap { response in
-                    guard let data = response.encode()
-                    else { return nil }
-                    return data
-                }
+            onNext: { viewController, tuple in
+                let (timerTime, responses) = tuple
                 let newResponses = responses.map {
                     return BusStopArrivalInfoResponse(
                         busStopId: $0.busStopId,
@@ -264,10 +259,16 @@ public final class FavoritesViewController: UIViewController {
         )
         .disposed(by: disposeBag)
         
+        refreshBtn.rx.tap
+            .observe(on: MainScheduler.asyncInstance)
+            .subscribe(
+                onNext: { _ in
+                    refreshControl.beginRefreshing()
+                }
+            )
+            .disposed(by: disposeBag)
+        
         output.favoritesState
-            .distinctUntilChanged { oldValue, newValue in
-                oldValue == .fakeFetching || newValue == .realFetching
-            }
             .withUnretained(self)
             .subscribe(
                 onNext: { _, state in
