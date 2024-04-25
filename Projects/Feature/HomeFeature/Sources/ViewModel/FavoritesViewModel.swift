@@ -67,7 +67,7 @@ public final class FavoritesViewModel: ViewModel {
             }
             .withUnretained(self)
             .flatMap { vm, _ in
-                vm.useCase.fetchFavoritesArrivals()
+                vm.useCase.fetchAllFavorites()
             }
             .withUnretained(self)
             .subscribe(
