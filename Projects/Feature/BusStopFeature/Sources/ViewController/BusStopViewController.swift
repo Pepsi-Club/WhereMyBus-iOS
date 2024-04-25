@@ -93,10 +93,10 @@ public final class BusStopViewController: UIViewController {
             likeBusBtnTapEvent: likeBusBtnTapEvent.asObservable(),
             alarmBtnTapEvent: alarmBtnTapEvent.asObservable(),
             mapBtnTapEvent: headerView.mapBtn.rx.tap.asObservable(),
-            refreshLoading
-            : refreshControl?.rx.controlEvent(.valueChanged).asObservable(),
-            navigationBackBtnTapEvent
-            : headerView.navigationBtn.rx.tap.asObservable(),
+            refreshLoading: refreshControl?.rx
+                .controlEvent(.valueChanged).asObservable() ?? .empty(),
+            navigationBackBtnTapEvent: headerView.navigationBtn.rx
+                .tap.asObservable(),
             cellSelectTapEvent: tableCellTapEvent.asObservable()
         )
         
