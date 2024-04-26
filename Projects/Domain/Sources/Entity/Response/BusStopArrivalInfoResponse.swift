@@ -71,9 +71,7 @@ public extension BusStopArrivalInfoResponse {
             }
         )
     }
-}
-
-public extension BusStopArrivalInfoResponse {
+    
     func updateFavoritesStatus(
         favoritesList: [FavoritesBusResponse]
     ) -> Self {

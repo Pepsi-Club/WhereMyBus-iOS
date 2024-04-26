@@ -12,6 +12,7 @@ public final class FavoritesViewController: UIViewController {
     
     private let headerTapEvent = PublishSubject<String>()
     private let alarmBtnTapEvent = PublishSubject<IndexPath>()
+    private let scrollReachedBtmEvent = PublishSubject<Void>()
     private let isTableViewEditMode = BehaviorSubject(value: false)
     private let disposeBag = DisposeBag()
     
@@ -165,7 +166,8 @@ public final class FavoritesViewController: UIViewController {
                     refreshBtn.rx.tap.asObservable()
                 ),
                 alarmBtnTapEvent: alarmBtnTapEvent.asObservable(),
-                busStopTapEvent: headerTapEvent
+                busStopTapEvent: headerTapEvent,
+                scrollReachedBtmEvent: scrollReachedBtmEvent
             )
         )
         
@@ -199,9 +201,9 @@ public final class FavoritesViewController: UIViewController {
             .subscribe(
                 onNext: { state in
                     switch state {
-                    case .realFetching, .fakeFetching:
+                    case .firstFetching, .nextFetching, .fakeFetching:
                         refreshControl.beginRefreshing()
-                    case .fetchComplete:
+                    case .fetchComplete, .finalPage:
                         refreshControl.endRefreshing()
                     }
                 }
@@ -284,6 +286,13 @@ public final class FavoritesViewController: UIViewController {
 }
 
 extension FavoritesViewController: UITableViewDelegate {
+    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView.contentOffset.y >
+            scrollView.contentSize.height - scrollView.bounds.height {
+            scrollReachedBtmEvent.onNext(())
+        }
+    }
+    
     public func tableView(
         _ tableView: UITableView,
         viewForFooterInSection section: Int

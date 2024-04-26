@@ -28,7 +28,7 @@ public final class FavoritesViewModel: ViewModel {
     
     public func transform(input: Input) -> Output {
         let output = Output(
-            busStopArrivalInfoResponse: .init(value: []),
+            busStopArrivalInfoResponse: .init(),
             fetchStatus: .init(),
             distanceFromTimerStart: .init(value: 0)
         )
@@ -39,6 +39,10 @@ public final class FavoritesViewModel: ViewModel {
         )
         
         fetchRequest
+            .withLatestFrom(output.fetchStatus)
+            .filter { status in
+                status == .fetchComplete || status == .finalPage
+            }
             .subscribe(
                 onNext: { _ in
                     output.fetchStatus.onNext(.fakeFetching)
@@ -55,26 +59,8 @@ public final class FavoritesViewModel: ViewModel {
             .withUnretained(self)
             .subscribe(
                 onNext: { vm, _ in
-                    output.fetchStatus.onNext(.realFetching)
+                    output.fetchStatus.onNext(.firstFetching)
                     vm.timer.stop()
-                }
-            )
-            .disposed(by: disposeBag)
-        
-        output.fetchStatus
-            .filter { state in
-                state == .realFetching
-            }
-            .withUnretained(self)
-            .flatMap { vm, _ in
-                vm.useCase.fetchAllFavorites()
-            }
-            .withUnretained(self)
-            .subscribe(
-                onNext: { vm, responses in
-                    vm.timer.start()
-                    output.fetchStatus.onNext(.fetchComplete)
-                    output.busStopArrivalInfoResponse.accept(responses)
                 }
             )
             .disposed(by: disposeBag)
@@ -87,16 +73,70 @@ public final class FavoritesViewModel: ViewModel {
                 .seconds(3),
                 scheduler: MainScheduler.asyncInstance
             )
+            .withLatestFrom(output.fetchStatus)
             .withLatestFrom(
                 output.busStopArrivalInfoResponse
             ) { state, responses in
                 (state, responses)
             }
+            .withUnretained(self)
             .subscribe(
-                onNext: { state, responses in
+                onNext: { vm, tuple in
+                    let (state, responses) = tuple
                     if state == .fakeFetching {
+                        vm.useCase.fakeFetchComplete()
                         output.fetchStatus.onNext(.fetchComplete)
-                        output.busStopArrivalInfoResponse.accept(responses)
+                        output.busStopArrivalInfoResponse.onNext(
+                            Array(responses.prefix(5))
+                        )
+                    }
+                }
+            )
+            .disposed(by: disposeBag)
+        
+        output.fetchStatus
+            .filter { state in
+                state == .firstFetching
+            }
+            .withUnretained(self)
+            .flatMap { vm, _ in
+                vm.useCase.fetchFirstPage()
+            }
+            .withUnretained(self)
+            .subscribe(
+                onNext: { vm, responses in
+                    vm.timer.start()
+                    output.fetchStatus.onNext(.fetchComplete)
+                    output.busStopArrivalInfoResponse.onNext(responses)
+                }
+            )
+            .disposed(by: disposeBag)
+        
+        input.scrollReachedBtmEvent
+            .withLatestFrom(output.fetchStatus)
+            .filter { status in
+                status == .fetchComplete
+            }
+            .withUnretained(self)
+            .flatMapLatest { vm, _ in
+                output.fetchStatus.onNext(.nextFetching)
+                return vm.useCase.fetchNextPage()
+            }
+            .withLatestFrom(
+                output.busStopArrivalInfoResponse
+            ) { oldPage, newPage in
+                (oldPage, newPage)
+            }
+            .subscribe(
+                onNext: { tuple in
+                    let (oldPage, newPage) = tuple
+                    if oldPage.isEmpty {
+                        output.fetchStatus.onNext(.finalPage)
+                    } else {
+                        let newResponses = (newPage + oldPage)
+                            .removeDuplicated()
+                        output.busStopArrivalInfoResponse.onNext(newResponses)
+                        output.fetchStatus.onNext(.fetchComplete)
                     }
                 }
             )
@@ -137,16 +177,19 @@ extension FavoritesViewModel {
         let refreshBtnTapEvent: Observable<Void>
         let alarmBtnTapEvent: Observable<IndexPath>
         let busStopTapEvent: Observable<String>
+        let scrollReachedBtmEvent: Observable<Void>
     }
     
     public struct Output {
         var busStopArrivalInfoResponse
-        : BehaviorRelay<[BusStopArrivalInfoResponse]>
+        : PublishSubject<[BusStopArrivalInfoResponse]>
         var fetchStatus: PublishSubject<FetchStatus>
         var distanceFromTimerStart: BehaviorRelay<Int>
     }
     
     enum FetchStatus {
-        case realFetching, fakeFetching, fetchComplete
+        case firstFetching, nextFetching
+        case fakeFetching
+        case fetchComplete, finalPage
     }
 }

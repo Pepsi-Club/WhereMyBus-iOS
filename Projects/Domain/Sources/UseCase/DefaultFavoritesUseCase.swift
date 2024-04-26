@@ -16,6 +16,7 @@ public final class DefaultFavoritesUseCase: FavoritesUseCase {
     private let favoritesRepository: FavoritesRepository
     
     private var fetchItemLimit = 0
+    private var isFinalPage = false
     private let disposeBag = DisposeBag()
     
     public init(
@@ -26,16 +27,30 @@ public final class DefaultFavoritesUseCase: FavoritesUseCase {
         self.favoritesRepository = favoritesRepository
     }
     
+    public func fakeFetchComplete() {
+        fetchItemLimit = 5
+        isFinalPage = false
+    }
+    
     public func fetchNextPage() -> Observable<[BusStopArrivalInfoResponse]> {
+        guard !isFinalPage
+        else { return .just([]) }
         fetchItemLimit += 5
         favoritesRepository.fetchFavorites()
         return favoritesRepository.favorites
             .withUnretained(self)
-            .flatMap { useCase, favoritesList in
-                Observable.zip(
-                    favoritesList
-                        .prefix(useCase.fetchItemLimit)
-                        .prefix(5)
+            .flatMapLatest { useCase, favoritesList in
+                useCase.isFinalPage
+                = favoritesList.count < useCase.fetchItemLimit
+                let suffixCount = useCase.fetchItemLimit > 5 ?
+                min(favoritesList.count % 5, 5) :
+                5
+                let fetchList = favoritesList
+                    .prefix(useCase.fetchItemLimit)
+                    .suffix(suffixCount)
+                return Observable.zip(
+                    fetchList
+                        .lazy
                         .map {
                             $0.busStopId
                         }
@@ -47,11 +62,9 @@ public final class DefaultFavoritesUseCase: FavoritesUseCase {
                                 )
                         }
                 )
-            }
-            .withLatestFrom(
-                favoritesRepository.favorites
-            ) { responses, favoritesList in
-                (responses, favoritesList)
+                .map { responses in
+                    (responses, favoritesList)
+                }
             }
             .map { responses, favoritesList in
                 let result = responses
@@ -63,48 +76,13 @@ public final class DefaultFavoritesUseCase: FavoritesUseCase {
                     }
                 return result
             }
+            .take(1)
     }
     
     public func fetchFirstPage(
     ) -> Observable<[BusStopArrivalInfoResponse]> {
         fetchItemLimit = 0
+        isFinalPage = false
         return fetchNextPage()
-    }
-    
-    public func fetchAllFavorites(
-    ) -> Observable<[BusStopArrivalInfoResponse]> {
-        favoritesRepository.fetchFavorites()
-        return favoritesRepository.favorites
-            .withUnretained(self)
-            .flatMap { useCase, favoritesList in
-                Observable.zip(
-                    favoritesList
-                        .map {
-                            $0.busStopId
-                        }
-                        .removeDuplicated()
-                        .map { busStopId in
-                            useCase.busStopArrivalInfoRepository
-                                .fetchArrivalList(
-                                    busStopId: busStopId
-                                )
-                        }
-                )
-            }
-            .withLatestFrom(
-                favoritesRepository.favorites
-            ) { responses, favoritesList in
-                (responses, favoritesList)
-            }
-            .map { responses, favoritesList in
-                let result = responses
-                    .updateFavoritesStatus(
-                        favoritesList: favoritesList
-                    )
-                    .map { response in
-                        response.filterUnfavoritesBuses()
-                    }
-                return result
-            }
     }
 }
