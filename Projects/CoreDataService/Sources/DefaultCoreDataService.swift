@@ -74,7 +74,7 @@ public final class DefaultCoreDataService: CoreDataService {
             #if DEBUG
             print(
                 "💾 CoreData 저장소: \(String(describing: migrationStatus))",
-                "[applicationSupport(마이그레이션 필요) / appGroup(마이그레이션 완)]"
+                "\(migrationStatus.description)"
             )
             #endif
             loadStore()
