@@ -134,7 +134,6 @@ public final class FavoritesViewModel: ViewModel {
                         output.fetchStatus.onNext(.finalPage)
                     } else {
                         let newResponses = (newPage + oldPage)
-                            .removeDuplicated()
                         output.busStopArrivalInfoResponse.onNext(newResponses)
                         output.fetchStatus.onNext(.fetchComplete)
                     }
