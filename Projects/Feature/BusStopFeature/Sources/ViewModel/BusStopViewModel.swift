@@ -12,13 +12,16 @@ public final class BusStopViewModel: ViewModel {
     private var useCase: BusStopUseCase
     private let disposeBag = DisposeBag()
     private var fetchData: ArrivalInfoRequest
+    private let flow: FlowState
     
     public init(
         coordinator: BusStopCoordinator,
-        fetchData: ArrivalInfoRequest
+        fetchData: ArrivalInfoRequest,
+        flow: FlowState
     ) {
         self.coordinator = coordinator
         self.fetchData = fetchData
+        self.flow = flow
     }
     
     deinit {
@@ -34,12 +37,28 @@ public final class BusStopViewModel: ViewModel {
         input.viewWillAppearEvent
             .take(1)
             .withUnretained(self)
-            .subscribe(
+            .bind(
                 onNext: { viewModel, _ in
-                    output.isRefreshing.onNext(.fetching)
-                    viewModel.useCase.fetchBusArrivals(
-                        request: viewModel.fetchData
-                    )
+                    if viewModel.flow == .fromAlarm {
+                        output.isRefreshing.onNext(.fetching)
+                        viewModel.useCase.fetchBusArrivals(
+                            request: viewModel.fetchData
+                        )
+                    }
+                }
+            )
+            .disposed(by: disposeBag)
+        
+        input.viewWillAppearEvent
+            .withUnretained(self)
+            .bind(
+                onNext: { viewModel, _ in
+                    if viewModel.flow == .fromHome {
+                        output.isRefreshing.onNext(.fetching)
+                        viewModel.useCase.fetchBusArrivals(
+                            request: viewModel.fetchData
+                        )
+                    }
                 }
             )
             .disposed(by: disposeBag)
@@ -134,6 +153,10 @@ public final class BusStopViewModel: ViewModel {
             .disposed(by: disposeBag)
         
         return output
+    }
+    
+    func getBusStopFlow() -> FlowState {
+        return flow
     }
 }
 

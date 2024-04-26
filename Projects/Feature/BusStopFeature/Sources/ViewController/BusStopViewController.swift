@@ -17,7 +17,6 @@ public final class BusStopViewController: UIViewController {
     
     private var dataSource: BusStopDataSource!
     private var snapshot: BusStopSnapshot!
-    private var flow: FlowState
     
     private let headerView: BusStopInfoHeaderView = BusStopInfoHeaderView()
     private let scrollView: UIScrollView = UIScrollView()
@@ -41,11 +40,9 @@ public final class BusStopViewController: UIViewController {
     private var tableViewHeightConstraint = NSLayoutConstraint()
     
     public init(
-        viewModel: BusStopViewModel,
-        flow: FlowState
+        viewModel: BusStopViewModel
     ) {
         self.viewModel = viewModel
-        self.flow = flow
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -76,7 +73,7 @@ public final class BusStopViewController: UIViewController {
     
     private func bind() {
         let refreshControl: UIRefreshControl? = {
-            switch flow {
+            switch viewModel.getBusStopFlow() {
             case .fromHome:
                 return scrollView.enableRefreshControl(
                     refreshStr: "당겨서 새로고침"
@@ -159,7 +156,7 @@ public final class BusStopViewController: UIViewController {
         dataSource = .init(
             tableView: busStopTableView,
             cellProvider: { [weak self] tableView, indexPath, response in
-                switch self?.flow {
+                switch self?.viewModel.getBusStopFlow() {
                 case .fromHome:
                     tableView.register(
                         BusTableViewCell.self,
