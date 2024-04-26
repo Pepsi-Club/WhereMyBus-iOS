@@ -17,7 +17,6 @@ public final class BusStopViewController: UIViewController {
     
     private var dataSource: BusStopDataSource!
     private var snapshot: BusStopSnapshot!
-    private var flow: FlowState
     
     private let headerView: BusStopInfoHeaderView = BusStopInfoHeaderView()
     private let scrollView: UIScrollView = UIScrollView()
@@ -41,11 +40,9 @@ public final class BusStopViewController: UIViewController {
     private var tableViewHeightConstraint = NSLayoutConstraint()
     
     public init(
-        viewModel: BusStopViewModel,
-        flow: FlowState
+        viewModel: BusStopViewModel
     ) {
         self.viewModel = viewModel
-        self.flow = flow
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -75,9 +72,16 @@ public final class BusStopViewController: UIViewController {
     }
     
     private func bind() {
-        let refreshControl = scrollView.enableRefreshControl(
-            refreshStr: "당겨서 새로고침"
-        )
+        let refreshControl: UIRefreshControl? = {
+            switch viewModel.getBusStopFlow() {
+            case .fromHome:
+                return scrollView.enableRefreshControl(
+                    refreshStr: "당겨서 새로고침"
+                )
+            case .fromAlarm:
+                return nil
+            }
+        }()
         
         let input = BusStopViewModel.Input(
             viewWillAppearEvent: rx
@@ -86,10 +90,10 @@ public final class BusStopViewController: UIViewController {
             likeBusBtnTapEvent: likeBusBtnTapEvent.asObservable(),
             alarmBtnTapEvent: alarmBtnTapEvent.asObservable(),
             mapBtnTapEvent: headerView.mapBtn.rx.tap.asObservable(),
-            refreshLoading
-            : refreshControl.rx.controlEvent(.valueChanged).asObservable(),
-            navigationBackBtnTapEvent
-            : headerView.navigationBtn.rx.tap.asObservable(),
+            refreshLoading: refreshControl?.rx
+                .controlEvent(.valueChanged).asObservable() ?? .empty(),
+            navigationBackBtnTapEvent: headerView.navigationBtn.rx
+                .tap.asObservable(),
             cellSelectTapEvent: tableCellTapEvent.asObservable()
         )
         
@@ -101,7 +105,7 @@ public final class BusStopViewController: UIViewController {
             .subscribe(onNext: { refresh in
                 switch refresh {
                 case .fetchComplete:
-                    refreshControl.endRefreshing()
+                    refreshControl?.endRefreshing()
                 case .fetching:
                     break
                 }
@@ -152,7 +156,7 @@ public final class BusStopViewController: UIViewController {
         dataSource = .init(
             tableView: busStopTableView,
             cellProvider: { [weak self] tableView, indexPath, response in
-                switch self?.flow {
+                switch self?.viewModel.getBusStopFlow() {
                 case .fromHome:
                     tableView.register(
                         BusTableViewCell.self,
