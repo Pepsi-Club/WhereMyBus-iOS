@@ -8,7 +8,8 @@
 
 import Foundation
 
-public struct BusStopArrivalInfoResponse: Codable, Hashable {
+public struct BusStopArrivalInfoResponse: Hashable {
+    public let generatedDate: Date = .now
     public let busStopId: String
     public let busStopName: String
     public let direction: String
@@ -29,7 +30,8 @@ public struct BusStopArrivalInfoResponse: Codable, Hashable {
 
 public extension BusStopArrivalInfoResponse {
     func replaceTime(timerSecond: Int) -> Self {
-        BusStopArrivalInfoResponse(
+        let distance = Int(generatedDate.distance(to: .now)) + timerSecond
+        return BusStopArrivalInfoResponse(
             busStopId: busStopId,
             busStopName: busStopName,
             direction: direction,
@@ -40,8 +42,8 @@ public extension BusStopArrivalInfoResponse {
                 case .soon, .pending, .finished:
                     newFirstArrivalState = busInfo.firstArrivalState
                 case .arrivalTime(let time):
-                    newFirstArrivalState = time - timerSecond > 60 ?
-                        .arrivalTime(time: time - timerSecond):
+                    newFirstArrivalState = time - distance > 60 ?
+                        .arrivalTime(time: time - distance):
                         .soon
                 }
                 switch busInfo.secondArrivalState {
@@ -49,8 +51,8 @@ public extension BusStopArrivalInfoResponse {
                     newSecondArrivalState
                     = busInfo.secondArrivalState
                 case .arrivalTime(let time):
-                    newSecondArrivalState = time - timerSecond > 60 ?
-                        .arrivalTime(time: time - timerSecond):
+                    newSecondArrivalState = time - distance > 60 ?
+                        .arrivalTime(time: time - distance):
                         .soon
                 }
                 let firstReaining = busInfo.firstArrivalRemaining

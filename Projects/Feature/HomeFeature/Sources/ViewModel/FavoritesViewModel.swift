@@ -30,7 +30,7 @@ public final class FavoritesViewModel: ViewModel {
         let output = Output(
             busStopArrivalInfoResponse: .init(),
             fetchStatus: .init(),
-            distanceFromTimerStart: .init(value: 0)
+            distanceFromTimerStart: .init()
         )
         
         let fetchRequest = Observable.merge(
@@ -105,9 +105,9 @@ public final class FavoritesViewModel: ViewModel {
             .withUnretained(self)
             .subscribe(
                 onNext: { vm, responses in
-                    vm.timer.start()
                     output.fetchStatus.onNext(.fetchComplete)
                     output.busStopArrivalInfoResponse.onNext(responses)
+                    vm.timer.start()
                 }
             )
             .disposed(by: disposeBag)
@@ -184,7 +184,7 @@ extension FavoritesViewModel {
         var busStopArrivalInfoResponse
         : PublishSubject<[BusStopArrivalInfoResponse]>
         var fetchStatus: PublishSubject<FetchStatus>
-        var distanceFromTimerStart: BehaviorRelay<Int>
+        var distanceFromTimerStart: PublishSubject<Int>
     }
     
     enum FetchStatus {
