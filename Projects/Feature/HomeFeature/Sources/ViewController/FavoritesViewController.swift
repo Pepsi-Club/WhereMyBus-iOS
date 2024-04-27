@@ -198,13 +198,18 @@ public final class FavoritesViewController: UIViewController {
         
         output.fetchStatus
             .observe(on: MainScheduler.asyncInstance)
+            .withUnretained(self)
             .subscribe(
-                onNext: { state in
+                onNext: { vc, state in
                     switch state {
                     case .firstFetching, .nextFetching, .fakeFetching:
                         refreshControl.beginRefreshing()
                     case .fetchComplete, .finalPage:
                         refreshControl.endRefreshing()
+                        vc.refreshBtn.configuration?.attributedTitle = .init(
+                            "\(Date.now.toString(dateFormat: "HH:mm")) 업데이트",
+                            attributes: vc.refreshAttribute
+                        )
                     }
                 }
             )
