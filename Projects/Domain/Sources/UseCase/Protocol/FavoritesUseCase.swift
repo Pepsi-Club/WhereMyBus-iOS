@@ -11,7 +11,7 @@ import Foundation
 import RxSwift
 
 public protocol FavoritesUseCase {
-    func fakeFetchComplete()
+    func fakeFetch() -> Observable<[BusStopArrivalInfoResponse]>
     func fetchFirstPage() -> Observable<[BusStopArrivalInfoResponse]>
     func fetchNextPage() -> Observable<[BusStopArrivalInfoResponse]>
 }

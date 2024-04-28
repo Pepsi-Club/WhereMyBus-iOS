@@ -125,6 +125,8 @@ public extension Array<BusStopArrivalInfoResponse> {
                 let key = "\(busStop.busStopId)\(bus.busId)\(bus.adirection)"
                 if let isFavorites = favoritesDic[key] {
                     updatedBuses[index].isFavorites = isFavorites
+                } else {
+                    updatedBuses[index].isFavorites = false
                 }
             }
             

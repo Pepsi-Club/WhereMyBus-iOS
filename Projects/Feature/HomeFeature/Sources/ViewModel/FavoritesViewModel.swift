@@ -11,6 +11,8 @@ public final class FavoritesViewModel: ViewModel {
     private let coordinator: HomeCoordinator
     @Injected(FavoritesUseCase.self) var useCase: FavoritesUseCase
     
+    private let vmFetchStatus = PublishSubject<VMFetchStatus>()
+    private let fetchedResponse = PublishSubject<[BusStopArrivalInfoResponse]>()
     private let disposeBag = DisposeBag()
     private var timer: BCTimer
     
@@ -29,113 +31,118 @@ public final class FavoritesViewModel: ViewModel {
     public func transform(input: Input) -> Output {
         let output = Output(
             busStopArrivalInfoResponse: .init(),
-            fetchStatus: .init(),
-            distanceFromTimerStart: .init()
+            fetchStatus: .init()
         )
         
-        let fetchRequest = Observable.merge(
-            input.viewWillAppearEvent,
-            input.refreshBtnTapEvent
-        )
-        
-        fetchRequest
-            .withLatestFrom(output.fetchStatus)
-            .filter { status in
-                status == .fetchComplete || status == .finalPage
-            }
-            .subscribe(
-                onNext: { _ in
-                    output.fetchStatus.onNext(.fakeFetching)
+        vmFetchStatus
+            .map { status in
+                switch status {
+                case .firstFetching, .nextFetching, .fakeFetching:
+                    return .fetching
+                case .fetchComplete, .finalPage:
+                    return .fetchComplete
                 }
-            )
+            }
+            .bind(to: output.fetchStatus)
             .disposed(by: disposeBag)
         
-        fetchRequest
-            .throttle(
-                .seconds(20),
-                latest: false,
-                scheduler: MainScheduler.asyncInstance
-            )
-            .withUnretained(self)
-            .subscribe(
-                onNext: { vm, _ in
-                    output.fetchStatus.onNext(.firstFetching)
-                    vm.timer.stop()
-                }
-            )
-            .disposed(by: disposeBag)
+        vmFetchStatus.onNext(.firstFetching)
         
-        output.fetchStatus
-            .filter { state in
-                state == .fakeFetching
-            }
-            .delay(
-                .seconds(3),
-                scheduler: MainScheduler.asyncInstance
-            )
-            .withLatestFrom(output.fetchStatus)
-            .withLatestFrom(
-                output.busStopArrivalInfoResponse
-            ) { state, responses in
-                (state, responses)
-            }
-            .withUnretained(self)
-            .subscribe(
-                onNext: { vm, tuple in
-                    let (state, responses) = tuple
-                    if state == .fakeFetching {
-                        vm.useCase.fakeFetchComplete()
-                        output.fetchStatus.onNext(.fetchComplete)
-                        output.busStopArrivalInfoResponse.onNext(
-                            Array(responses.prefix(5))
-                        )
-                    }
-                }
-            )
-            .disposed(by: disposeBag)
-        
-        output.fetchStatus
-            .filter { state in
-                state == .firstFetching
-            }
-            .withUnretained(self)
-            .flatMap { vm, _ in
-                vm.useCase.fetchFirstPage()
-            }
+        useCase.fetchFirstPage()
             .withUnretained(self)
             .subscribe(
                 onNext: { vm, responses in
-                    output.fetchStatus.onNext(.fetchComplete)
-                    output.busStopArrivalInfoResponse.onNext(responses)
+                    vm.vmFetchStatus.onNext(.fetchComplete)
+                    vm.fetchedResponse.onNext(responses)
                     vm.timer.start()
                 }
             )
             .disposed(by: disposeBag)
         
-        input.scrollReachedBtmEvent
-            .withLatestFrom(output.fetchStatus)
+        Observable.merge(
+            input.viewWillAppearEvent,
+            input.refreshBtnTapEvent
+        )
+        .withLatestFrom(vmFetchStatus)
+        .filter { status in
+            status == .fetchComplete || status == .finalPage
+        }
+        .withLatestFrom(timer.distanceFromStart)
+        .map { timerValue in
+            if timerValue < 20 {
+                return VMFetchStatus.fakeFetching
+            } else {
+                return VMFetchStatus.firstFetching
+            }
+        }
+        .withUnretained(self)
+        .subscribe(
+            onNext: { vm, status in
+                if status == .firstFetching {
+                    vm.timer.stop()
+                }
+                vm.vmFetchStatus.onNext(status)
+            }
+        )
+        .disposed(by: disposeBag)
+        
+        vmFetchStatus // Fake Fetch
+            .filter { state in
+                state == .fakeFetching
+            }
+            .withUnretained(self)
+            .flatMapLatest { vm, _ in
+                vm.useCase.fakeFetch()
+            }
+            .withUnretained(self)
+            .subscribe(
+                onNext: { vm, responses in
+                    vm.fetchedResponse.onNext(responses)
+                    vm.vmFetchStatus.onNext(.fetchComplete)
+                }
+            )
+            .disposed(by: disposeBag)
+        
+        vmFetchStatus // FirstPage Fetch
+            .filter { state in
+                state == .firstFetching
+            }
+            .withUnretained(self)
+            .flatMapLatest { vm, _ in
+                vm.useCase.fetchFirstPage()
+            }
+            .withUnretained(self)
+            .subscribe(
+                onNext: { vm, responses in
+                    vm.vmFetchStatus.onNext(.fetchComplete)
+                    vm.fetchedResponse.onNext(responses)
+                    vm.timer.start()
+                }
+            )
+            .disposed(by: disposeBag)
+        
+        input.scrollReachedBtmEvent // NextPage Fetch
+            .withLatestFrom(vmFetchStatus)
             .filter { status in
                 status == .fetchComplete
             }
             .withUnretained(self)
             .flatMapLatest { vm, _ in
-                output.fetchStatus.onNext(.nextFetching)
+                vm.vmFetchStatus.onNext(.nextFetching)
                 return vm.useCase.fetchNextPage()
             }
-            .withLatestFrom(
-                output.busStopArrivalInfoResponse
-            ) { oldPage, newPage in
-                (oldPage, newPage)
+            .withLatestFrom(fetchedResponse) { newPage, oldPage in
+                (newPage, oldPage)
             }
+            .withUnretained(self)
             .subscribe(
-                onNext: { tuple in
-                    let (oldPage, newPage) = tuple
-                    if oldPage.isEmpty {
-                        output.fetchStatus.onNext(.finalPage)
+                onNext: { vm, tuple in
+                    let (newPage, oldPage) = tuple
+                    if newPage.count == oldPage.count {
+                        vm.vmFetchStatus.onNext(.finalPage)
                     } else {
-                        let newResponses = (newPage + oldPage)
-                        output.busStopArrivalInfoResponse.onNext(newResponses)
-                        output.fetchStatus.onNext(.fetchComplete)
+                        vm.fetchedResponse.onNext(newPage)
+                        vm.vmFetchStatus.onNext(.fetchComplete)
                     }
                 }
             )
@@ -162,10 +169,56 @@ public final class FavoritesViewModel: ViewModel {
             .disposed(by: disposeBag)
         
         timer.distanceFromStart
-            .bind(to: output.distanceFromTimerStart)
+            .withLatestFrom(fetchedResponse) { timerValue, responses in
+                (timerValue, responses)
+            }
+            .map { tuple in
+                let (timerValue, responses) = tuple
+                return responses.map {
+                    return $0.replaceTime(timerSecond: timerValue)
+                }
+            }
+            .distinctUntilChanged()
+            .bind(to: output.busStopArrivalInfoResponse)
             .disposed(by: disposeBag)
         
         return output        
+    }
+    
+    private func convertFetchRequest(
+        refreshEvent: Observable<Void>
+    ) {
+        refreshEvent
+            .withLatestFrom(timer.distanceFromStart)
+            .filter { timerValue in
+                timerValue >= 20
+            }
+            .withUnretained(self)
+            .subscribe(
+                onNext: { vm, _ in
+                    vm.vmFetchStatus.onNext(.firstFetching)
+                    vm.timer.stop()
+                }
+            )
+            .disposed(by: disposeBag)
+        
+        refreshEvent
+            .withLatestFrom(vmFetchStatus)
+            .filter { status in
+                status == .fetchComplete ||
+                status == .finalPage
+            }
+            .withLatestFrom(timer.distanceFromStart)
+            .filter { timerValue in
+                timerValue < 20
+            }
+            .withUnretained(self)
+            .subscribe(
+                onNext: { vm, _ in
+                    vm.vmFetchStatus.onNext(.fakeFetching)
+                }
+            )
+            .disposed(by: disposeBag)
     }
 }
 
@@ -180,15 +233,18 @@ extension FavoritesViewModel {
     }
     
     public struct Output {
-        var busStopArrivalInfoResponse
+        let busStopArrivalInfoResponse
         : PublishSubject<[BusStopArrivalInfoResponse]>
-        var fetchStatus: PublishSubject<FetchStatus>
-        var distanceFromTimerStart: PublishSubject<Int>
+        let fetchStatus: PublishSubject<VCFetchStatus>
     }
     
-    enum FetchStatus {
+    enum VMFetchStatus {
         case firstFetching, nextFetching
         case fakeFetching
         case fetchComplete, finalPage
+    }
+    
+    enum VCFetchStatus {
+        case fetching, fetchComplete
     }
 }

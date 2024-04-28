@@ -17,6 +17,7 @@ public final class DefaultFavoritesUseCase: FavoritesUseCase {
     
     private var fetchItemLimit = 0
     private var isFinalPage = false
+    private var cachedResponses = [BusStopArrivalInfoResponse]()
     private let disposeBag = DisposeBag()
     
     public init(
@@ -27,17 +28,47 @@ public final class DefaultFavoritesUseCase: FavoritesUseCase {
         self.favoritesRepository = favoritesRepository
     }
     
-    public func fakeFetchComplete() {
+    public func fakeFetch() -> Observable<[BusStopArrivalInfoResponse]> {
         fetchItemLimit = 5
         isFinalPage = false
+        return favoritesRepository.fetchFavorites()
+            .take(1)
+            .withUnretained(self)
+            .flatMap { useCase, favoritesList in
+                let cachedStopId = useCase.cachedResponses.map { $0.busStopId }
+                let favoritesIds = favoritesList.map { $0.busStopId }
+                let missedStopIds = Set(cachedStopId)
+                    .subtracting(Set(favoritesIds))
+                if missedStopIds.isEmpty {
+                    return useCase.fetchFirstPage()
+                }
+                let cachedResult = Array(
+                    useCase.cachedResponses
+                        .prefix(useCase.fetchItemLimit)
+                )
+                .updateFavoritesStatus(favoritesList: favoritesList)
+                .map { $0.filterUnfavoritesBuses() }
+                .filter { !$0.buses.isEmpty }
+                return Observable.just(cachedResult)
+            }
     }
     
-    public func fetchNextPage() -> Observable<[BusStopArrivalInfoResponse]> {
+    public func fetchFirstPage(
+    ) -> Observable<[BusStopArrivalInfoResponse]> {
+        cachedResponses.removeAll()
+        fetchItemLimit = 0
+        isFinalPage = false
+        return fetchNextPage()
+    }
+    
+    public func fetchNextPage(
+    ) -> Observable<[BusStopArrivalInfoResponse]> {
         guard !isFinalPage
-        else { return .just([]) }
+        else { return .just(cachedResponses) }
         fetchItemLimit += 5
-        favoritesRepository.fetchFavorites()
-        return favoritesRepository.favorites
+        
+        let fetchResult = favoritesRepository.fetchFavorites()
+            .take(1)
             .withUnretained(self)
             .flatMapLatest { useCase, favoritesList in
                 useCase.isFinalPage
@@ -48,6 +79,12 @@ public final class DefaultFavoritesUseCase: FavoritesUseCase {
                 let fetchList = favoritesList
                     .prefix(useCase.fetchItemLimit)
                     .suffix(suffixCount)
+                guard !favoritesList.isEmpty
+                else {
+                    return Observable.just(
+                        ([BusStopArrivalInfoResponse](), favoritesList)
+                    )
+                }
                 return Observable.zip(
                     fetchList
                         .lazy
@@ -66,8 +103,10 @@ public final class DefaultFavoritesUseCase: FavoritesUseCase {
                     (responses, favoritesList)
                 }
             }
-            .map { responses, favoritesList in
-                let result = responses
+            .withUnretained(self)
+            .map { useCase, tuple in
+                let (responses, favoritesList) = tuple
+                let result = (useCase.cachedResponses + responses)
                     .updateFavoritesStatus(
                         favoritesList: favoritesList
                     )
@@ -76,13 +115,15 @@ public final class DefaultFavoritesUseCase: FavoritesUseCase {
                     }
                 return result
             }
-            .take(1)
-    }
-    
-    public func fetchFirstPage(
-    ) -> Observable<[BusStopArrivalInfoResponse]> {
-        fetchItemLimit = 0
-        isFinalPage = false
-        return fetchNextPage()
+            .share()
+        fetchResult
+            .withUnretained(self)
+            .subscribe(
+                onNext: { useCase, responses in
+                    useCase.cachedResponses = responses
+                }
+            )
+            .disposed(by: disposeBag)
+        return fetchResult
     }
 }

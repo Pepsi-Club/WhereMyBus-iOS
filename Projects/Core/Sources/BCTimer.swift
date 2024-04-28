@@ -29,6 +29,5 @@ public final class BCTimer {
     
     public func stop() {
         disposeBag = .init()
-        distanceFromStart.accept(0)
     }
 }

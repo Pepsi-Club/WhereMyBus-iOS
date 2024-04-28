@@ -12,7 +12,7 @@ public final class FavoritesViewController: UIViewController {
     
     private let headerTapEvent = PublishSubject<String>()
     private let alarmBtnTapEvent = PublishSubject<IndexPath>()
-    private let scrollReachedBtmEvent = PublishSubject<Void>()
+    private let scrollReachedBtmEvent = PublishSubject<Int>()
     private let isTableViewEditMode = BehaviorSubject(value: false)
     private let disposeBag = DisposeBag()
     
@@ -168,43 +168,39 @@ public final class FavoritesViewController: UIViewController {
                 alarmBtnTapEvent: alarmBtnTapEvent.asObservable(),
                 busStopTapEvent: headerTapEvent,
                 scrollReachedBtmEvent: scrollReachedBtmEvent
+                    .distinctUntilChanged()
+                    .map { _ in }
             )
         )
         
-        Observable.combineLatest(
-            output.distanceFromTimerStart,
-            output.busStopArrivalInfoResponse
-        )
-        .withUnretained(self)
-        .observe(on: MainScheduler.asyncInstance)
-        .subscribe(
-            onNext: { viewController, tuple in
-                let (timerValue, responses) = tuple
-                let newResponses = responses.map {
-                    return $0.replaceTime(timerSecond: timerValue)
+        output.busStopArrivalInfoResponse
+            .withUnretained(self)
+            .observe(on: MainScheduler.asyncInstance)
+            .subscribe(
+                onNext: { viewController, responses in
+                    viewController.headerInfoList.removeAll()
+                    responses.forEach { response in
+                        viewController.updateHeaderInfo(
+                            name: response.busStopName,
+                            direction: response.direction,
+                            busStopId: response.busStopId
+                        )
+                    }
+                    viewController.updateSnapshot(busStopResponse: responses)
                 }
-                viewController.headerInfoList.removeAll()
-                newResponses.forEach { response in
-                    viewController.updateHeaderInfo(
-                        name: response.busStopName,
-                        direction: response.direction,
-                        busStopId: response.busStopId
-                    )
-                }
-                viewController.updateSnapshot(busStopResponse: newResponses)
-            }
-        )
-        .disposed(by: disposeBag)
+            )
+            .disposed(by: disposeBag)
         
         output.fetchStatus
+            .distinctUntilChanged()
             .observe(on: MainScheduler.asyncInstance)
             .withUnretained(self)
             .subscribe(
                 onNext: { vc, state in
                     switch state {
-                    case .firstFetching, .nextFetching, .fakeFetching:
+                    case .fetching:
                         refreshControl.beginRefreshing()
-                    case .fetchComplete, .finalPage:
+                    case .fetchComplete:
                         refreshControl.endRefreshing()
                         vc.refreshBtn.configuration?.attributedTitle = .init(
                             "\(Date.now.toString(dateFormat: "HH:mm")) 업데이트",
@@ -292,9 +288,9 @@ public final class FavoritesViewController: UIViewController {
 
 extension FavoritesViewController: UITableViewDelegate {
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if scrollView.contentOffset.y >
-            scrollView.contentSize.height - scrollView.bounds.height {
-            scrollReachedBtmEvent.onNext(())
+        if scrollView.contentOffset.y >=
+            scrollView.contentSize.height - scrollView.bounds.size.height {
+            scrollReachedBtmEvent.onNext(Int(scrollView.contentSize.height))
         }
     }
     
