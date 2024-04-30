@@ -34,7 +34,7 @@ public final class FavoritesViewModel: ViewModel {
             fetchStatus: .init()
         )
         
-        vmFetchStatus
+        vmFetchStatus // VMStatus, VCStatus 바인딩
             .map { status in
                 switch status {
                 case .firstFetching, .nextFetching, .fakeFetching:
@@ -45,9 +45,10 @@ public final class FavoritesViewModel: ViewModel {
             }
             .bind(to: output.fetchStatus)
             .disposed(by: disposeBag)
-        
-        vmFetchStatus.onNext(.firstFetching)
-        
+        /*
+         input의 fetchRequest 이벤트는 vmFetchStatus이 complete나 finalPage인 상태에서만
+         바인딩, PublishSubject이기 때문에 초기값이 없어 1번은 VM에서 수동 호출
+         */
         useCase.fetchFirstPage()
             .withUnretained(self)
             .subscribe(
@@ -59,7 +60,9 @@ public final class FavoritesViewModel: ViewModel {
             )
             .disposed(by: disposeBag)
         
-        Observable.merge(
+        vmFetchStatus.onNext(.firstFetching) // 상단의 수동 호출과 같은 맥락
+        
+        Observable.merge( // fakeFetching, firstFetching 상태 업데이트
             input.viewWillAppearEvent,
             input.refreshBtnTapEvent
         )
@@ -86,7 +89,7 @@ public final class FavoritesViewModel: ViewModel {
         )
         .disposed(by: disposeBag)
         
-        vmFetchStatus // Fake Fetch
+        vmFetchStatus // fakeFetcing 이벤트 처리
             .filter { state in
                 state == .fakeFetching
             }
@@ -103,7 +106,7 @@ public final class FavoritesViewModel: ViewModel {
             )
             .disposed(by: disposeBag)
         
-        vmFetchStatus // FirstPage Fetch
+        vmFetchStatus // firstFetch 이벤트 처리
             .filter { state in
                 state == .firstFetching
             }
@@ -121,7 +124,7 @@ public final class FavoritesViewModel: ViewModel {
             )
             .disposed(by: disposeBag)
         
-        input.scrollReachedBtmEvent // NextPage Fetch
+        input.scrollReachedBtmEvent // nextFetch 상태 업데이트 및 이벤트 처리
             .withLatestFrom(vmFetchStatus)
             .filter { status in
                 status == .fetchComplete
@@ -148,7 +151,7 @@ public final class FavoritesViewModel: ViewModel {
             )
             .disposed(by: disposeBag)
         
-        input.searchBtnTapEvent
+        input.searchBtnTapEvent // 검색버튼 탭 이벤트 처리
             .withUnretained(self)
             .subscribe(
                 onNext: { viewModel, _ in
@@ -157,7 +160,7 @@ public final class FavoritesViewModel: ViewModel {
             )
             .disposed(by: disposeBag)
         
-        input.busStopTapEvent
+        input.busStopTapEvent // 정류장(헤더) 탭 이벤트 처리
             .withUnretained(self)
             .subscribe(
                 onNext: { viewModel, selectedId in
@@ -167,7 +170,7 @@ public final class FavoritesViewModel: ViewModel {
                 }
             )
             .disposed(by: disposeBag)
-        
+        // fetch한 데이터를 타이머로 가공하여 시간 정보가 변경된 경우만 output 바인딩
         timer.distanceFromStart
             .withLatestFrom(fetchedResponse) { timerValue, responses in
                 (timerValue, responses)
@@ -183,42 +186,6 @@ public final class FavoritesViewModel: ViewModel {
             .disposed(by: disposeBag)
         
         return output        
-    }
-    
-    private func convertFetchRequest(
-        refreshEvent: Observable<Void>
-    ) {
-        refreshEvent
-            .withLatestFrom(timer.distanceFromStart)
-            .filter { timerValue in
-                timerValue >= 20
-            }
-            .withUnretained(self)
-            .subscribe(
-                onNext: { vm, _ in
-                    vm.vmFetchStatus.onNext(.firstFetching)
-                    vm.timer.stop()
-                }
-            )
-            .disposed(by: disposeBag)
-        
-        refreshEvent
-            .withLatestFrom(vmFetchStatus)
-            .filter { status in
-                status == .fetchComplete ||
-                status == .finalPage
-            }
-            .withLatestFrom(timer.distanceFromStart)
-            .filter { timerValue in
-                timerValue < 20
-            }
-            .withUnretained(self)
-            .subscribe(
-                onNext: { vm, _ in
-                    vm.vmFetchStatus.onNext(.fakeFetching)
-                }
-            )
-            .disposed(by: disposeBag)
     }
 }
 
