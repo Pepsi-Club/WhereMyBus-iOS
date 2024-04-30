@@ -1,4 +1,4 @@
-import Foundation
+import UIKit
 
 import Core
 import Domain
@@ -47,22 +47,27 @@ public final class BusStopViewModel: ViewModel {
             )
             .disposed(by: disposeBag)
         
-        input.viewWillAppearEvent
-            .skip(1)
-            .withUnretained(self)
-            .filter({ viewModel, _ in
-                viewModel.flow == .fromHome
-            })
-            .bind(
-                onNext: { viewModel, _ in
-                    _ = viewModel.useCase
-                        .fetchBusArrivalsBusStopViewRefresh(
-                            request: viewModel.fetchData
-                        ) ? output.isRefreshing.onNext(.fetching)
-                    : output.isRefreshing.onNext(.fetchComplete)
-                }
-            )
-            .disposed(by: disposeBag)
+        Observable.merge(
+            NotificationCenter.default.rx.notification(
+                UIApplication.willEnterForegroundNotification
+            ).map { _ in },
+            input.viewWillAppearEvent
+        )
+        .skip(1)
+        .withUnretained(self)
+        .filter({ viewModel, _ in
+            viewModel.flow == .fromHome
+        })
+        .bind(
+            onNext: { viewModel, _ in
+                _ = viewModel.useCase
+                    .fetchBusArrivalsBusStopViewRefresh(
+                        request: viewModel.fetchData
+                    ) ? output.isRefreshing.onNext(.fetching)
+                : output.isRefreshing.onNext(.fetchComplete)
+            }
+        )
+        .disposed(by: disposeBag)
         
         input.mapBtnTapEvent
             .withLatestFrom(
