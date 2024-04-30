@@ -50,15 +50,16 @@ public final class BusStopViewModel: ViewModel {
         input.viewWillAppearEvent
             .skip(1)
             .withUnretained(self)
+            .filter({ viewModel, _ in
+                viewModel.flow == .fromHome
+            })
             .bind(
                 onNext: { viewModel, _ in
-                    if viewModel.flow == .fromHome {
-                        _ = viewModel.useCase
-                            .fetchBusArrivalsBusStopViewRefresh(
-                                request: viewModel.fetchData
-                            ) ? output.isRefreshing.onNext(.fetching)
-                        : output.isRefreshing.onNext(.fetchComplete)
-                    }
+                    _ = viewModel.useCase
+                        .fetchBusArrivalsBusStopViewRefresh(
+                            request: viewModel.fetchData
+                        ) ? output.isRefreshing.onNext(.fetching)
+                    : output.isRefreshing.onNext(.fetchComplete)
                 }
             )
             .disposed(by: disposeBag)
