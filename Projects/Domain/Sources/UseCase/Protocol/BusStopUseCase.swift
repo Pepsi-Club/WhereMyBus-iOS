@@ -15,10 +15,15 @@ public protocol BusStopUseCase {
     : PublishSubject<BusStopArrivalInfoResponse> { get }
     
     func fetchBusArrivals(request: ArrivalInfoRequest)
+    func fetchBusArrivalsBusStopViewRefresh(
+            request: ArrivalInfoRequest
+        ) -> Bool
+    
     func handleFavorites(
         isFavorites: Bool,
         favorites: FavoritesBusResponse
     ) throws
+    
     func update(
         busStopInfo: BusStopArrivalInfoResponse,
         busInfo: BusArrivalInfoResponse

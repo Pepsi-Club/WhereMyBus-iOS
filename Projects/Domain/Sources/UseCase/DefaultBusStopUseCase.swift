@@ -17,6 +17,7 @@ public final class DefaultBusStopUseCase: BusStopUseCase {
     private let regularAlarmEditingService: RegularAlarmEditingService
     
     public let busStopSection = PublishSubject<BusStopArrivalInfoResponse>()
+    private var busStopFetchStatus: Bool = true
     private let disposeBag = DisposeBag()
     
     public init(
@@ -43,6 +44,34 @@ public final class DefaultBusStopUseCase: BusStopUseCase {
         .bind(to: busStopSection)
         .disposed(by: disposeBag)
     }
+    
+    public func fetchBusArrivalsBusStopViewRefresh(
+            request: ArrivalInfoRequest
+        ) -> Bool {
+            guard busStopFetchStatus else { return false }
+            busStopFetchStatus = false
+
+            Observable<Int>.timer(
+                .seconds(1),
+                period: .seconds(1),
+                scheduler: MainScheduler.instance
+            )
+            .take(15)
+            .subscribe(
+                onCompleted: { [weak self] in
+                    #if DEBUG
+                    print("BusStopView Throttle Refresh Ready")
+                    #endif
+                    self?.busStopFetchStatus = true
+                }
+            )
+            .disposed(by: disposeBag)
+            #if DEBUG
+            print("BusStopView Throttle Refresh Start")
+            #endif
+            fetchBusArrivals(request: request)
+            return true
+        }
     
     // MARK: - 즐찾 추가 및 해제
     public func handleFavorites(
