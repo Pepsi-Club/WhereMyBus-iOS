@@ -168,7 +168,11 @@ public final class FavoritesViewController: UIViewController {
                 alarmBtnTapEvent: alarmBtnTapEvent.asObservable(),
                 busStopTapEvent: headerTapEvent,
                 scrollReachedBtmEvent: scrollReachedBtmEvent
-                    .distinctUntilChanged()
+                    .throttle(
+                        .seconds(1),
+                        latest: false,
+                        scheduler: MainScheduler.asyncInstance
+                    )
                     .map { _ in }
             )
         )
@@ -288,10 +292,17 @@ public final class FavoritesViewController: UIViewController {
 
 extension FavoritesViewController: UITableViewDelegate {
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if scrollView.contentOffset.y >=
-            scrollView.contentSize.height - scrollView.bounds.size.height {
-            scrollReachedBtmEvent.onNext(Int(scrollView.contentSize.height))
-        }
+        scrollView.rx.didScroll
+            .filter { _ in
+                scrollView.contentOffset.y >=
+                    scrollView.contentSize.height -
+                scrollView.bounds.size.height
+            }
+            .map {
+                Int(scrollView.contentSize.height)
+            }
+            .bind(to: scrollReachedBtmEvent)
+            .disposed(by: disposeBag)
     }
     
     public func tableView(

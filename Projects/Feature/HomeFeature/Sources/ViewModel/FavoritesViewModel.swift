@@ -36,6 +36,7 @@ public final class FavoritesViewModel: ViewModel {
         
         vmFetchStatus // VMStatus, VCStatus 바인딩
             .map { status in
+                print(status)
                 switch status {
                 case .firstFetching, .nextFetching, .fakeFetching:
                     return .fetching
@@ -98,10 +99,11 @@ public final class FavoritesViewModel: ViewModel {
                 vm.useCase.fakeFetch()
             }
             .withUnretained(self)
+            .observe(on: MainScheduler.asyncInstance)
             .subscribe(
                 onNext: { vm, responses in
-                    vm.fetchedResponse.onNext(responses)
                     vm.vmFetchStatus.onNext(.fetchComplete)
+                    vm.fetchedResponse.onNext(responses)
                 }
             )
             .disposed(by: disposeBag)
@@ -124,6 +126,15 @@ public final class FavoritesViewModel: ViewModel {
             )
             .disposed(by: disposeBag)
         
+        input.scrollReachedBtmEvent
+            .withLatestFrom(vmFetchStatus)
+            .subscribe(
+                onNext: { status in
+                    print(status)
+                }
+            )
+            .disposed(by: disposeBag)
+        
         input.scrollReachedBtmEvent // nextFetch 상태 업데이트 및 이벤트 처리
             .withLatestFrom(vmFetchStatus)
             .filter { status in
@@ -134,17 +145,13 @@ public final class FavoritesViewModel: ViewModel {
                 vm.vmFetchStatus.onNext(.nextFetching)
                 return vm.useCase.fetchNextPage()
             }
-            .withLatestFrom(fetchedResponse) { newPage, oldPage in
-                (newPage, oldPage)
-            }
             .withUnretained(self)
             .subscribe(
-                onNext: { vm, tuple in
-                    let (newPage, oldPage) = tuple
-                    if newPage.count == oldPage.count {
+                onNext: { vm, responses in
+                    if vm.useCase.isFinalPage {
                         vm.vmFetchStatus.onNext(.finalPage)
                     } else {
-                        vm.fetchedResponse.onNext(newPage)
+                        vm.fetchedResponse.onNext(responses)
                         vm.vmFetchStatus.onNext(.fetchComplete)
                     }
                 }
