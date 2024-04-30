@@ -39,25 +39,25 @@ public final class BusStopViewModel: ViewModel {
             .withUnretained(self)
             .bind(
                 onNext: { viewModel, _ in
-                    output.isRefreshing.onNext(.fetching)
-                    viewModel.useCase.fetchBusArrivals(
-                        request: viewModel.fetchData
-                    )
+                    if viewModel.flow == .fromAlarm {
+                        output.isRefreshing.onNext(.fetching)
+                        viewModel.useCase.fetchBusArrivals(
+                            request: viewModel.fetchData
+                        )
+                    }
                 }
             )
             .disposed(by: disposeBag)
         
         input.viewWillAppearEvent
-            .skip(1)
             .withUnretained(self)
             .bind(
                 onNext: { viewModel, _ in
                     if viewModel.flow == .fromHome {
-                        _ = viewModel.useCase
-                            .fetchBusArrivalsBusStopViewRefresh(
+                        output.isRefreshing.onNext(.fetching)
+                        viewModel.useCase.fetchBusArrivals(
                             request: viewModel.fetchData
-                        ) ? output.isRefreshing.onNext(.fetching)
-                        : output.isRefreshing.onNext(.fetchComplete)
+                        )
                     }
                 }
             )
@@ -81,12 +81,10 @@ public final class BusStopViewModel: ViewModel {
             .withUnretained(self)
             .subscribe(onNext: { viewModel, _ in
                 output.isRefreshing.onNext(.fetching)
-                _ = viewModel.useCase.fetchBusArrivalsBusStopViewRefresh(
+                viewModel.useCase.fetchBusArrivals(
                     request: viewModel.fetchData
-                ) ? output.isRefreshing.onNext(.fetching)
-                : output.isRefreshing.onNext(.fetchComplete)
-            }
-            )
+                )
+            })
             .disposed(by: disposeBag)
         
         input.likeBusBtnTapEvent

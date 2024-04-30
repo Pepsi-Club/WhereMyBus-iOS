@@ -100,17 +100,17 @@ public final class BusStopViewController: UIViewController {
         let output = viewModel.transform(input: input)
         bindTableView(output: output)
         
-            output.isRefreshing
-                .observe(on: MainScheduler.asyncInstance)
-                .subscribe(onNext: { refresh in
-                    switch refresh {
-                    case .fetchComplete:
-                        refreshControl?.endRefreshing()
-                    case .fetching:
-                        break
-                    }
-                })
-                .disposed(by: disposeBag)
+        output.isRefreshing
+            .observe(on: MainScheduler.asyncInstance)
+            .subscribe(onNext: { refresh in
+                switch refresh {
+                case .fetchComplete:
+                    refreshControl?.endRefreshing()
+                case .fetching:
+                    break
+                }
+            })
+            .disposed(by: disposeBag)
     }
     
     private func bindTableView(output: BusStopViewModel.Output) {
