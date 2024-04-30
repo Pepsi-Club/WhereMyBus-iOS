@@ -69,8 +69,12 @@ public final class DefaultFavoritesUseCase: FavoritesUseCase {
             .take(1)
             .withUnretained(self)
             .flatMapLatest { useCase, favoritesList in
-                useCase.isFinalPage
-                = favoritesList.count < useCase.fetchItemLimit
+                if favoritesList.count < useCase.fetchItemLimit {
+                    useCase.isFinalPage = true
+                    return Observable.just(
+                        ([BusStopArrivalInfoResponse](), favoritesList)
+                    )
+                }
                 let suffixCount = useCase.fetchItemLimit > 5 ?
                 min(favoritesList.count % 5, 5) :
                 5
