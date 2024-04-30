@@ -109,6 +109,12 @@ public extension BusStopArrivalInfoResponse {
 }
 
 public extension Array<BusStopArrivalInfoResponse> {
+    func filterUnfavorites(favoritesList: [FavoritesBusResponse]) -> Self {
+        updateFavoritesStatus(favoritesList: favoritesList)
+        .map { $0.filterUnfavoritesBuses() }
+        .filter { !$0.buses.isEmpty }
+    }
+    
     func updateFavoritesStatus(
         favoritesList: [FavoritesBusResponse]
     ) -> Self {

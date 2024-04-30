@@ -46,9 +46,7 @@ public final class DefaultFavoritesUseCase: FavoritesUseCase {
                     useCase.cachedResponses
                         .prefix(useCase.fetchItemLimit)
                 )
-                .updateFavoritesStatus(favoritesList: favoritesList)
-                .map { $0.filterUnfavoritesBuses() }
-                .filter { !$0.buses.isEmpty }
+                .filterUnfavorites(favoritesList: favoritesList)
                 return Observable.just(cachedResult)
             }
     }
@@ -107,12 +105,7 @@ public final class DefaultFavoritesUseCase: FavoritesUseCase {
             .map { useCase, tuple in
                 let (responses, favoritesList) = tuple
                 let result = (useCase.cachedResponses + responses)
-                    .updateFavoritesStatus(
-                        favoritesList: favoritesList
-                    )
-                    .map { response in
-                        response.filterUnfavoritesBuses()
-                    }
+                    .filterUnfavorites(favoritesList: favoritesList)
                 return result
             }
             .share()
