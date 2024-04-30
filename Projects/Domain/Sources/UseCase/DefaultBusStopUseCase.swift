@@ -56,7 +56,7 @@ public final class DefaultBusStopUseCase: BusStopUseCase {
                 period: .seconds(1),
                 scheduler: MainScheduler.instance
             )
-            .take(15)
+            .take(3)
             .subscribe(
                 onCompleted: { [weak self] in
                     #if DEBUG
