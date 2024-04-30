@@ -36,13 +36,7 @@ public final class FavoritesViewModel: ViewModel {
         
         vmFetchStatus // VMStatus, VCStatus 바인딩
             .map { status in
-                print(status)
-                switch status {
-                case .firstFetching, .nextFetching, .fakeFetching:
-                    return .fetching
-                case .fetchComplete, .finalPage:
-                    return .fetchComplete
-                }
+                status.toVC
             }
             .bind(to: output.fetchStatus)
             .disposed(by: disposeBag)
@@ -122,15 +116,6 @@ public final class FavoritesViewModel: ViewModel {
                     vm.vmFetchStatus.onNext(.fetchComplete)
                     vm.fetchedResponse.onNext(responses)
                     vm.timer.start()
-                }
-            )
-            .disposed(by: disposeBag)
-        
-        input.scrollReachedBtmEvent
-            .withLatestFrom(vmFetchStatus)
-            .subscribe(
-                onNext: { status in
-                    print(status)
                 }
             )
             .disposed(by: disposeBag)
@@ -216,6 +201,15 @@ extension FavoritesViewModel {
         case firstFetching, nextFetching
         case fakeFetching
         case fetchComplete, finalPage
+        
+        var toVC: VCFetchStatus {
+            switch self {
+            case .firstFetching, .nextFetching, .fakeFetching:
+                return .fetching
+            case .fetchComplete, .finalPage:
+                return .fetchComplete
+            }
+        }
     }
     
     enum VCFetchStatus {
