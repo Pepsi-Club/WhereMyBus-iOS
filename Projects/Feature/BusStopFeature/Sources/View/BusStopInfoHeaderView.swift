@@ -74,7 +74,7 @@ public final class BusStopInfoHeaderView: UIView {
     
     private let busStopIcon: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = DesignSystemAsset.busStop.image
+        imageView.image = DesignSystemAsset.busStop2.image
         return imageView
     }()
     
@@ -122,10 +122,10 @@ extension BusStopInfoHeaderView {
                 constant: 15
             ),
             busStopIcon.widthAnchor.constraint(
-                equalToConstant: 60
+                equalToConstant: 45
             ),
             busStopIcon.heightAnchor.constraint(
-                equalToConstant: 60
+                equalToConstant: 45
             ),
             busStopNumLb.topAnchor.constraint(
                 equalTo: busStopIcon.bottomAnchor,
