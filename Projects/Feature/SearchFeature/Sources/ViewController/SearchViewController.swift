@@ -109,6 +109,7 @@ public final class SearchViewController: UIViewController {
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         configureNavigation()
+        nearByStopView.busStopImage.play()
     }
     
     public override func viewWillDisappear(_ animated: Bool) {
@@ -117,6 +118,7 @@ public final class SearchViewController: UIViewController {
             true,
             animated: true
         )
+        nearByStopView.busStopImage.stop()
         searchTextFieldView.removeFromSuperview()
     }
     

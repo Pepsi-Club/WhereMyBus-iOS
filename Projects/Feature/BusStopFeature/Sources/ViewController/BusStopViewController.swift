@@ -37,7 +37,7 @@ public final class BusStopViewController: UIViewController {
         table.accessibilityIdentifier = "정류장"
         return table
     }()
-    
+
     private var tableViewHeightConstraint = NSLayoutConstraint()
     
     public init(
@@ -54,12 +54,32 @@ public final class BusStopViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    private func setupGradientBackground() {
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.frame = view.bounds
+        gradientLayer.colors = [
+            DesignSystemAsset.regularAlarmBlue.color.cgColor,
+            DesignSystemAsset.tableViewColor.color.cgColor
+        ]
+        gradientLayer.locations = [0.0, 0.35]
+        gradientLayer.startPoint = CGPoint(x: 0.5, y: 0.0)
+        gradientLayer.endPoint = CGPoint(x: 0.5, y: 1.0)
+
+        view.layer.insertSublayer(gradientLayer, at: 0)
+    }
+
     public override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationController?
             .interactivePopGestureRecognizer?.delegate = nil
         
-        view.backgroundColor = .white
+        view.layoutMargins = UIEdgeInsets(
+            top: 0,
+            left: 0,
+            bottom: 10,
+            right: 0
+        )
+        setupGradientBackground()
         configureUI()
         bind()
         configureDataSource()
@@ -72,6 +92,10 @@ public final class BusStopViewController: UIViewController {
                 animated: true
             )
         }
+    }
+    
+    public override func viewWillDisappear(_ animated: Bool) {
+        headerView.busStopIcon.stop()
     }
     
     private func bind() {
@@ -268,6 +292,7 @@ public final class BusStopViewController: UIViewController {
 
 extension BusStopViewController {
     private func configureUI() {
+        
         [scrollView, contentView, headerView, busStopTableView]
             .forEach { components in
                 components.translatesAutoresizingMaskIntoConstraints = false

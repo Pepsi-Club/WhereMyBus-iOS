@@ -10,10 +10,11 @@ import UIKit
 import Lottie
 
 extension LottieAnimationView {
-    static func setting() {
-//
-//        animationView.contentMode = .scaleAspectFit
-//        animationView.loopMode = .loop
-//        animationView.play()
+    public func setting() {
+        self.contentMode = .scaleAspectFit
+        self.loopMode = .loop
+        self.backgroundBehavior = .pause
+        self.animationSpeed = 0.5
+        self.play()
     }
 }

@@ -23,7 +23,7 @@ public final class BusStopInformationView: UIView {
     private let busStopNameLabel: UILabel = {
 		let label = UILabel()
         label.font = .nanumExtraBold(size: 15)
-        label.textColor = .black
+        label.textColor = .black.withAlphaComponent(0.8)
 		return label
 	}()
 	
@@ -32,7 +32,7 @@ public final class BusStopInformationView: UIView {
         label.font = .nanumLight(size: 13)
         label.adjustsFontForContentSizeCategory = true
         label.minimumScaleFactor = 0.8
-        label.textColor = .black
+        label.textColor = .black.withAlphaComponent(0.8)
 		return label
 	}()
 	
@@ -40,13 +40,13 @@ public final class BusStopInformationView: UIView {
         let label = UILabel()
         label.font = .nanumLight(size: 13)
         label.text = "현재 위치에서 약 "
-        label.textColor = .black
+        label.textColor = .black.withAlphaComponent(0.8)
         return label
     }()
     
     private let distanceFromBusStopLabel: UILabel = {
 		let label = UILabel()
-        label.font = .nanumBold(size: 13)
+        label.font = .nanumRegular(size: 13)
         label.textColor = DesignSystemAsset.lightRed.color
 		return label
 	}()
@@ -89,7 +89,7 @@ public final class BusStopInformationView: UIView {
 	}
 	
 	private func configureUI() {
-        backgroundColor = DesignSystemAsset.gray1.color
+        backgroundColor = DesignSystemAsset.gray5.color
 		
 		[
 			busStopSymbol,
@@ -122,7 +122,7 @@ public final class BusStopInformationView: UIView {
                 constant: 25
             ),
             busStopNameLabel.leadingAnchor.constraint(
-                equalTo: busStopSymbol.trailingAnchor,
+                equalTo: leadingAnchor,
                 constant: 15
             ),
             busStopNameLabel.trailingAnchor.constraint(
@@ -141,24 +141,24 @@ public final class BusStopInformationView: UIView {
                 equalTo: busStopNameLabel.trailingAnchor
             ),
 			
-			separationView.topAnchor.constraint(
-				equalTo: busStopDescription.bottomAnchor,
-				constant: 10
-			),
-			separationView.leadingAnchor.constraint(
-				equalTo: leadingAnchor,
-				constant: 15
-			),
-			separationView.trailingAnchor.constraint(
-				equalTo: trailingAnchor,
-				constant: -10
-			),
-			separationView.heightAnchor.constraint(
-                equalToConstant: 1
-			),
+//			separationView.topAnchor.constraint(
+//				equalTo: busStopDescription.bottomAnchor,
+//				constant: 10
+//			),
+//			separationView.leadingAnchor.constraint(
+//				equalTo: leadingAnchor,
+//				constant: 15
+//			),
+//			separationView.trailingAnchor.constraint(
+//				equalTo: trailingAnchor,
+//				constant: -10
+//			),
+//			separationView.heightAnchor.constraint(
+//                equalToConstant: 1
+//			),
 			
             distancStackView.topAnchor.constraint(
-				equalTo: separationView.bottomAnchor,
+				equalTo: busStopDescription.bottomAnchor,
 				constant: 10
 			),
             distancStackView.leadingAnchor.constraint(
