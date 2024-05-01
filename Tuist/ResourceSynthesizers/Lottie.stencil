@@ -24,7 +24,7 @@ import Lottie
 // MARK: - Structures
 {{accessModifier}} struct AnimationAsset: Hashable {
   {{accessModifier}} fileprivate(set) var name: String
-  {{accessModifier}} let animation: Lottie.Animation?
+  {{accessModifier}} let animation: LottieAnimation?
   {{accessModifier}} init(named name: String) {
     self.name = name
     if let url = Bundle.module.url(forResource: name, withExtension: "lottie") {

@@ -7,7 +7,7 @@
 //
 
 import UIKit
-
+import Lottie
 import DesignSystem
 
 final class EmptyFavoritesView: UIView {
@@ -20,10 +20,10 @@ final class EmptyFavoritesView: UIView {
     private let messageLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(
-            ofSize: 16,
+            ofSize: 18,
             weight: .thin
         )
-        label.text = "다음 버스 도착 시간까지 알고 싶다면\n즐겨찾기를 추가해보세요."
+        label.text = "즐겨찾기를 추가해 버스 도착 시간을 확인하세요."
         label.numberOfLines = 2
         label.textColor = DesignSystemAsset.bottonBtnColor.color
         label.textAlignment = .center
