@@ -5,7 +5,15 @@ let project = Project.makeProject(
     name: "DesignSystem",
     moduleType: .dynamicFramework,
     hasResource: true,
-    dependencies: [],
+    packages: [
+        .remote(
+            url: "https://github.com/airbnb/lottie-ios",
+            requirement: .exact("4.4.3")
+        ),
+    ],
+    dependencies: [
+        .package(product: "Lottie"),
+    ],
     resourceSynthesizers: [
          .custom(
              name: "Lottie",
