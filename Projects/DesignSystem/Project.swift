@@ -5,8 +5,12 @@ let project = Project.makeProject(
     name: "DesignSystem",
     moduleType: .dynamicFramework,
     hasResource: true,
-    dependencies: []
-),
-resourceSynthesizers: [
-   .custom(name: "Lottie", parser: .json, extensions: ["lottie"]),
- ]
+    dependencies: [],
+    resourceSynthesizers: [
+         .custom(
+             name: "Lottie",
+             parser: .json,
+             extensions: ["lottie"]
+         ),
+     ]
+)

@@ -33,7 +33,7 @@ let project = Project.makeProject(
         .remote(
             url: "https://github.com/firebase/firebase-ios-sdk",
             requirement: .exact("10.23.1")
-        )
+        ),
         .remote(
             url: "https://github.com/airbnb/lottie-ios",
             requirement: .exact("4.4.3")
@@ -43,5 +43,6 @@ let project = Project.makeProject(
         .mainFeature,
         .data,
         .package(product: "FirebaseMessaging"),
+        .package(product: "Lottie"),
     ]
 )
