@@ -6,4 +6,7 @@ let project = Project.makeProject(
     moduleType: .dynamicFramework,
     hasResource: true,
     dependencies: []
-)
+),
+resourceSynthesizers: [
+   .custom(name: "Lottie", parser: .json, extensions: ["lottie"]),
+ ]
