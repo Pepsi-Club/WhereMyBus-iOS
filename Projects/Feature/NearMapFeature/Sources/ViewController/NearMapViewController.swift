@@ -38,10 +38,14 @@ public final class NearMapViewController: UIViewController {
     }()
     
     private let busStopInformationView: BusStopInformationView = {
-        let label = BusStopInformationView()
-        label.clipsToBounds = true
-        label.layer.cornerRadius = 15
-        return label
+        let view = BusStopInformationView()
+        view.clipsToBounds = false
+        view.layer.cornerRadius = 15
+        view.layer.shadowColor = UIColor.black.cgColor
+        view.layer.shadowOpacity = 0.5
+        view.layer.shadowOffset = CGSize(width: 0, height: 2)
+        view.layer.shadowRadius = 2
+        return view
     }()
     
     init(viewModel: NearMapViewModel) {

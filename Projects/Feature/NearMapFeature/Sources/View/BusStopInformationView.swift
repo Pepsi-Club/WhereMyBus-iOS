@@ -18,7 +18,7 @@ public final class BusStopInformationView: UIView {
     
     private let busStopSymbol: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = DesignSystemAsset.bigBusStop.image
+        imageView.image = DesignSystemAsset.busStop3.image
         return imageView
     }()
     
@@ -30,7 +30,7 @@ public final class BusStopInformationView: UIView {
     
     private let busStopNameLabel: UILabel = {
         let label = UILabel()
-        label.font = .nanumExtraBold(size: 20)
+        label.font = .nanumExtraBold(size: 18)
         label.textColor = .black.withAlphaComponent(0.8)
         return label
     }()
@@ -54,8 +54,16 @@ public final class BusStopInformationView: UIView {
     
     private let distanceFromBusStopLabel: UILabel = {
         let label = UILabel()
-        label.font = .nanumRegular(size: 13)
-        label.textColor = DesignSystemAsset.overnightBusColor.color
+        label.font = .nanumBold(size: 13)
+        label.textColor = .white
+        label.backgroundColor = DesignSystemAsset.weekDayBlue.color
+        label.clipsToBounds = true
+        label.textAlignment = .center
+
+        label.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        label.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        label.layer.cornerRadius = 10
+
         return label
     }()
     
@@ -76,9 +84,9 @@ public final class BusStopInformationView: UIView {
     private lazy var distancStackView: UIStackView = {
         let stackView = UIStackView(
             arrangedSubviews: [
-                distanceStringLabel,
+                // distanceStringLabel,
                 distanceFromBusStopLabel,
-                distanceStringLabel2
+                // distanceStringLabel2
             ]
         )
         stackView.axis = .horizontal
@@ -97,50 +105,38 @@ public final class BusStopInformationView: UIView {
     }
     
     private func configureUI() {
-        let color = UIColor(
-            red: 243.0 / 255.0,
-            green: 244.0 / 255.0,
-            blue: 246.0 / 255.0,
-            alpha: 1.0
-        )
-        backgroundColor = color
+        backgroundColor = .white
         
         [
-            busStopSymbol,
             busStopNameLabel,
             busStopDescription,
             distancStackView,
-            separationView,
         ].forEach {
             addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         
         NSLayoutConstraint.activate([
-            busStopSymbol.leadingAnchor.constraint(
-                equalTo: leadingAnchor,
-                constant: 30
-            ),
-            busStopSymbol.heightAnchor.constraint(
-                equalToConstant: symbolSize.f
-            ),
-            busStopSymbol.widthAnchor.constraint(
-                equalToConstant: symbolSize.f
-            ),
-            busStopSymbol.bottomAnchor.constraint(
-                equalTo: separationView.topAnchor
-            ),
+//            busStopSymbol.trailingAnchor.constraint(
+//                equalTo: trailingAnchor,
+//                constant: -30
+//            ),
+//            busStopSymbol.heightAnchor.constraint(
+//                equalToConstant: symbolSize.f
+//            ),
+//            busStopSymbol.widthAnchor.constraint(
+//                equalToConstant: symbolSize.f
+//            ),
+//            busStopSymbol.bottomAnchor.constraint(
+//                equalTo: bottomAnchor
+//            ),
             
             busStopNameLabel.centerYAnchor.constraint(
-                equalTo:centerYAnchor
+                equalTo: centerYAnchor
             ),
             busStopNameLabel.leadingAnchor.constraint(
                 equalTo: leadingAnchor,
                 constant: 15
-            ),
-            busStopNameLabel.trailingAnchor.constraint(
-                equalTo: trailingAnchor,
-                constant: -10
             ),
             
             busStopDescription.leadingAnchor.constraint(
@@ -172,7 +168,7 @@ public final class BusStopInformationView: UIView {
             
             distancStackView.topAnchor.constraint(
                 equalTo: busStopNameLabel.topAnchor,
-                constant: -20
+                constant: -40
             ),
             distancStackView.leadingAnchor.constraint(
                 equalTo: busStopNameLabel.leadingAnchor
@@ -206,7 +202,7 @@ public final class BusStopInformationView: UIView {
         if !response.busStopId.isEmpty {
             if !response.direction.isEmpty {
                 description
-                = " \(response.direction) 방면"
+                = "\(response.busStopId) | \(response.direction) 방면"
             } else {
                 description = "\(response.busStopId)"
             }

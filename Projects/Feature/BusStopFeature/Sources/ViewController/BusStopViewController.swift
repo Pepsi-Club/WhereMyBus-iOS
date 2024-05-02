@@ -30,7 +30,12 @@ public final class BusStopViewController: UIViewController {
         )
         table.delegate = self
         table.isScrollEnabled = false
-        table.backgroundColor = .white
+        table.backgroundColor = UIColor(
+            red: 0.95,
+            green: 0.96,
+            blue: 0.96,
+            alpha: 1.0
+        )
         table.rowHeight = 60
         table.sectionHeaderHeight = 46
         table.sectionFooterHeight = 10
@@ -59,7 +64,11 @@ public final class BusStopViewController: UIViewController {
         gradientLayer.frame = view.bounds
         gradientLayer.colors = [
             DesignSystemAsset.regularAlarmBlue.color.cgColor,
-            DesignSystemAsset.tableViewColor.color.cgColor
+            UIColor(
+                red: 0.95,
+                green: 0.96,
+                blue: 0.96,
+                alpha: 1.0).cgColor
         ]
         gradientLayer.locations = [0.0, 0.35]
         gradientLayer.startPoint = CGPoint(x: 0.5, y: 0.0)
@@ -204,7 +213,6 @@ public final class BusStopViewController: UIViewController {
                             response: response
                           )
                     else { return UITableViewCell() }
-                    
                     return cell
                 case .none:
                     return UITableViewCell()

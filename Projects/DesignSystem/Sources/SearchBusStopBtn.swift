@@ -62,7 +62,12 @@ public final class SearchBusStopBtn: UIButton {
         color: UIColor
     ) -> UIButton.Configuration {
         var config = UIButton.Configuration.plain()
-        config.background.backgroundColor = DesignSystemAsset.gray3.color
+        config.background.backgroundColor = UIColor(
+            red: 0.91,
+            green: 0.925,
+            blue: 0.93,
+            alpha: 1.0
+        )
         config.baseForegroundColor = color
         config.cornerStyle = .large
         config.contentInsets = .init(
