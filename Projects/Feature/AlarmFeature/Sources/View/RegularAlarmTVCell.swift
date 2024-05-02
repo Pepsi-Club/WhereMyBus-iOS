@@ -26,7 +26,7 @@ final class RegularAlarmTVCell: UITableViewCell {
         )
         config.image = image
         config.preferredSymbolConfigurationForImage = imgConfig
-        config.baseForegroundColor = DesignSystemAsset.gray5.color
+        config.baseForegroundColor = DesignSystemAsset.gray4.color
         let button = UIButton(configuration: config)
         return button
     }()
@@ -57,8 +57,12 @@ final class RegularAlarmTVCell: UITableViewCell {
             hasPadding: true,
             dividerRatio: 1.0
         )
-        stackView.backgroundColor =
-            DesignSystemAsset.weekDayBlue.color.withAlphaComponent(0.3)
+        stackView.backgroundColor = UIColor(
+            red: 243.0 / 255.0, 
+            green: 244.0 / 255.0,
+            blue: 246.0 / 255.0,
+            alpha: 1.0
+        )
         stackView.layer.cornerRadius = 10
         return stackView
     }()

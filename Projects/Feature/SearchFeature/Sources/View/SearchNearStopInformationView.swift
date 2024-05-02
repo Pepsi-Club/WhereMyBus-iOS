@@ -89,7 +89,7 @@ final class SearchNearStopInformationView: UIButton {
     
     private func configureUI() {
         backgroundColor = .white
-        let symbolSize = 80
+        let symbolSize = 64
         
         [
             busStopImage,

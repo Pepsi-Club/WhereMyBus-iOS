@@ -30,7 +30,7 @@ public final class BusStopInformationView: UIView {
     
     private let busStopNameLabel: UILabel = {
         let label = UILabel()
-        label.font = .nanumBold(size: 15)
+        label.font = .nanumExtraBold(size: 20)
         label.textColor = .black.withAlphaComponent(0.8)
         return label
     }()
@@ -97,7 +97,12 @@ public final class BusStopInformationView: UIView {
     }
     
     private func configureUI() {
-        let color = UIColor(red: 0.88, green: 0.91, blue: 0.94, alpha: 1.0)
+        let color = UIColor(
+            red: 243.0 / 255.0,
+            green: 244.0 / 255.0,
+            blue: 246.0 / 255.0,
+            alpha: 1.0
+        )
         backgroundColor = color
         
         [
@@ -106,7 +111,6 @@ public final class BusStopInformationView: UIView {
             busStopDescription,
             distancStackView,
             separationView,
-            birdLottieView,
         ].forEach {
             addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
@@ -127,9 +131,8 @@ public final class BusStopInformationView: UIView {
                 equalTo: separationView.topAnchor
             ),
             
-            busStopNameLabel.bottomAnchor.constraint(
-                equalTo: busStopDescription.topAnchor,
-                constant: -5
+            busStopNameLabel.centerYAnchor.constraint(
+                equalTo:centerYAnchor
             ),
             busStopNameLabel.leadingAnchor.constraint(
                 equalTo: leadingAnchor,
@@ -146,11 +149,10 @@ public final class BusStopInformationView: UIView {
             busStopDescription.trailingAnchor.constraint(
                 equalTo: busStopNameLabel.trailingAnchor
             ),
-            busStopDescription.centerYAnchor
-                .constraint(
-                    equalTo:
-                        centerYAnchor
-                ),
+            busStopDescription.topAnchor.constraint(
+                equalTo: busStopNameLabel.bottomAnchor,
+                constant: 5
+            ),
             
             //			separationView.topAnchor.constraint(
             //				equalTo: busStopDescription.bottomAnchor,
@@ -169,26 +171,26 @@ public final class BusStopInformationView: UIView {
             //			),
             
             distancStackView.topAnchor.constraint(
-                equalTo: busStopDescription.bottomAnchor,
-                constant: 10
+                equalTo: busStopNameLabel.topAnchor,
+                constant: -20
             ),
             distancStackView.leadingAnchor.constraint(
                 equalTo: busStopNameLabel.leadingAnchor
             ),
-            birdLottieView.leadingAnchor.constraint(
-                equalTo: leadingAnchor,
-                constant: -20
-            ),
-            birdLottieView.topAnchor.constraint(
-                equalTo: topAnchor,
-                constant: 10
-            ),
-            birdLottieView.widthAnchor.constraint(
-                equalToConstant: birdLottieView.intrinsicContentSize.width
-            ),
-            birdLottieView.heightAnchor.constraint(
-                equalToConstant: 150
-            ),
+//            birdLottieView.leadingAnchor.constraint(
+//                equalTo: leadingAnchor,
+//                constant: -20
+//            ),
+//            birdLottieView.topAnchor.constraint(
+//                equalTo: topAnchor,
+//                constant: 10
+//            ),
+//            birdLottieView.widthAnchor.constraint(
+//                equalToConstant: birdLottieView.intrinsicContentSize.width
+//            ),
+//            birdLottieView.heightAnchor.constraint(
+//                equalToConstant: 150
+//            ),
         ])
         
     }
@@ -204,7 +206,7 @@ public final class BusStopInformationView: UIView {
         if !response.busStopId.isEmpty {
             if !response.direction.isEmpty {
                 description
-                = "\(response.busStopId) | \(response.direction) 방면"
+                = " \(response.direction) 방면"
             } else {
                 description = "\(response.busStopId)"
             }
