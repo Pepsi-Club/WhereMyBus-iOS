@@ -75,7 +75,10 @@ public final class BusStopInfoHeaderView: UIView {
     }()
     
     public let busStopIcon: LottieAnimationView = {
-        let imgView = LottieAnimationView(name: "goingBus")
+        let imgView = LottieAnimationView(
+            name: "goingBus",
+            configuration: LottieConfiguration(renderingEngine: .mainThread)
+        )
         imgView.contentMode = .scaleAspectFit
         imgView.loopMode = .loop
         imgView.animationSpeed = 0.5

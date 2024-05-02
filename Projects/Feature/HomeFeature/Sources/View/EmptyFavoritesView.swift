@@ -12,7 +12,10 @@ import DesignSystem
 
 final class EmptyFavoritesView: UIView {
     private let listLottieView: LottieAnimationView = {
-        let imgView = LottieAnimationView(name: "list")
+        let imgView = LottieAnimationView(
+            name: "list",
+            configuration: LottieConfiguration(renderingEngine: .mainThread)
+        )
         imgView.contentMode = .scaleAspectFill
         imgView.loopMode = .loop
         imgView.animationSpeed = 0.5
@@ -21,7 +24,10 @@ final class EmptyFavoritesView: UIView {
     }()
     
     private let starImageView: LottieAnimationView = {
-        let imgView = LottieAnimationView(name: "star")
+        let imgView = LottieAnimationView(
+            name: "star",
+            configuration: LottieConfiguration(renderingEngine: .mainThread)
+        )
         imgView.contentMode = .scaleAspectFit
         imgView.loopMode = .loop
         imgView.animationSpeed = 0.5

@@ -15,7 +15,10 @@ import Lottie
 
 final class SearchNearStopInformationView: UIButton {
     public let busStopImage: LottieAnimationView = {
-        let imgView = LottieAnimationView(name: "cleanMap")
+        let imgView = LottieAnimationView(
+            name: "cleanMap",
+            configuration: LottieConfiguration(renderingEngine: .mainThread)
+        )
         imgView.contentMode = .scaleAspectFill
         imgView.loopMode = .loop
         imgView.backgroundBehavior = .pause

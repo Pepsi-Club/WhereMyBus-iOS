@@ -23,7 +23,10 @@ public final class BusStopInformationView: UIView {
     }()
     
     private let birdLottieView: LottieAnimationView = {
-        let imgView = LottieAnimationView(name: "goingBus")
+        let imgView = LottieAnimationView(
+            name: "goingBus",
+            configuration: LottieConfiguration(renderingEngine: .mainThread)
+        )
         imgView.setting()
         return imgView
     }()
