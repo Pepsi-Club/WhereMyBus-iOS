@@ -104,7 +104,6 @@ public final class BusStopViewController: UIViewController {
     }
     
     public override func viewWillDisappear(_ animated: Bool) {
-        headerView.busStopIcon.stop()
     }
     
     private func bind() {

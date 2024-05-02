@@ -123,7 +123,6 @@ public final class SearchViewController: UIViewController {
             true,
             animated: true
         )
-        nearByStopView.busStopImage.stop()
         searchTextFieldView.removeFromSuperview()
     }
     

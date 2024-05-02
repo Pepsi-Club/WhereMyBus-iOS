@@ -10,8 +10,8 @@ import UIKit
 import Lottie
 
 extension LottieAnimationView {
-    public func setting() {
-        self.contentMode = .scaleAspectFit
+    public func setting(contentMode: UIView.ContentMode = .scaleAspectFit) {
+        self.contentMode = contentMode
         self.loopMode = .loop
         self.backgroundBehavior = .pause
         self.animationSpeed = 0.5

@@ -19,11 +19,7 @@ final class SearchNearStopInformationView: UIButton {
             name: "cleanMap",
             configuration: LottieConfiguration(renderingEngine: .mainThread)
         )
-        imgView.contentMode = .scaleAspectFill
-        imgView.loopMode = .loop
-        imgView.backgroundBehavior = .pause
-        imgView.animationSpeed = 0.5
-        imgView.play()
+        imgView.setting(contentMode: .scaleAspectFill)
         
         return imgView
     }()
