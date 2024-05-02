@@ -34,7 +34,7 @@ final class SearchNearStopInformationView: UIButton {
         let label = UILabel()
         label.textColor = .black
         label.font =
-        DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(size: 10)
+        DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(size: 13)
         label.textColor = .black.withAlphaComponent(0.6)
         label.text = "근처 정류장"
         return label
@@ -43,7 +43,7 @@ final class SearchNearStopInformationView: UIButton {
     private let nearStopNameLabel: UILabel = {
         let label = UILabel()
         label.font =
-        DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(size: 14)
+        DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(size: 16)
         label.numberOfLines = 2
         label.adjustsFontForContentSizeCategory = true
         label.minimumScaleFactor = 0.7
