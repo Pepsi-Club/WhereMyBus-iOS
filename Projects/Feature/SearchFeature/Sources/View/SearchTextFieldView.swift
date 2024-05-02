@@ -27,8 +27,8 @@ public final class SearchTextFieldView: UITextField {
     private func configureUI() {
         self.backgroundColor = UIColor(
             red: 0.91,
-            green: 0.925,
-            blue: 0.93,
+            green: 0.91,
+            blue: 0.92,
             alpha: 1.0
         )
         self.font =
