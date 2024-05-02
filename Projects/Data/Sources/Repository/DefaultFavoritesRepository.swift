@@ -82,14 +82,10 @@ public final class DefaultFavoritesRepository: FavoritesRepository {
     
     private func migrateFavorites() {
         coreDataService.fetch(type: FavoritesBusStopResponse.self)
-            .withUnretained(self)
-            .filter { repository, legacyFavoritesList in
-                let needMigration = !legacyFavoritesList.isEmpty
-                if !needMigration {
-//                    repository.fetchFavorites()
-                }
-                return needMigration
+            .filter { legacyFavoritesList in
+                !legacyFavoritesList.isEmpty
             }
+            .withUnretained(self)
             .flatMap { repository, legacyFavoritesList in
                 repository.fetchLegacyFavoritesToBusStop(
                     legacyFavoritesList: legacyFavoritesList.filterDuplicated()
@@ -103,10 +99,10 @@ public final class DefaultFavoritesRepository: FavoritesRepository {
                         busStopList: tuple.0,
                         legacyFavoritesList: tuple.1
                     )
-//                    repository.fetchFavorites()
+                    _ = repository.fetchFavorites()
                 },
                 onError: { [weak self] _ in
-//                    self?.fetchFavorites()
+                    _ = self?.fetchFavorites()
                 }
             )
             .disposed(by: disposeBag)
