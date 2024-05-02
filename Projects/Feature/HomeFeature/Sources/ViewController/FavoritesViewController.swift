@@ -127,7 +127,7 @@ public final class FavoritesViewController: UIViewController {
         NSLayoutConstraint.activate([
             searchBtn.topAnchor.constraint(
                 equalTo: safeArea.topAnchor,
-                constant: 10
+                constant: 7
             ),
             searchBtn.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
             searchBtn.widthAnchor.constraint(

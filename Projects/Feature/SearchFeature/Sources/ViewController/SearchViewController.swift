@@ -241,7 +241,7 @@ public final class SearchViewController: UIViewController {
         NSLayoutConstraint.activate([
             searchTextFieldView.topAnchor.constraint(
                 equalTo: navigationView.topAnchor,
-                constant: 2.5
+                constant: 5
             ),
             searchTextFieldView.trailingAnchor.constraint(
                 equalTo: navigationView.trailingAnchor,
