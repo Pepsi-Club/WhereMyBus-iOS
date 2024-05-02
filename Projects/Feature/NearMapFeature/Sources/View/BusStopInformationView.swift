@@ -11,31 +11,39 @@ import UIKit
 import DesignSystem
 import Domain
 
+import Lottie
+
 public final class BusStopInformationView: UIView {
-	private let symbolSize = 50
-	
-	private let busStopSymbol: UIImageView = {
+    private let symbolSize = 50
+    
+    private let busStopSymbol: UIImageView = {
         let imageView = UIImageView()
         imageView.image = DesignSystemAsset.bigBusStop.image
         return imageView
-	}()
-	
+    }()
+    
+    private let birdLottieView: LottieAnimationView = {
+        let imgView = LottieAnimationView(name: "goingBus")
+        imgView.setting()
+        return imgView
+    }()
+    
     private let busStopNameLabel: UILabel = {
-		let label = UILabel()
-        label.font = .nanumExtraBold(size: 15)
+        let label = UILabel()
+        label.font = .nanumBold(size: 15)
         label.textColor = .black.withAlphaComponent(0.8)
-		return label
-	}()
-	
+        return label
+    }()
+    
     private let busStopDescription: UILabel = {
-		let label = UILabel()
-        label.font = .nanumLight(size: 13)
+        let label = UILabel()
+        label.font = .nanumRegular(size: 13)
         label.adjustsFontForContentSizeCategory = true
         label.minimumScaleFactor = 0.8
         label.textColor = .black.withAlphaComponent(0.8)
-		return label
-	}()
-	
+        return label
+    }()
+    
     private let distanceStringLabel: UILabel = {
         let label = UILabel()
         label.font = .nanumLight(size: 13)
@@ -45,11 +53,11 @@ public final class BusStopInformationView: UIView {
     }()
     
     private let distanceFromBusStopLabel: UILabel = {
-		let label = UILabel()
+        let label = UILabel()
         label.font = .nanumRegular(size: 13)
-        label.textColor = DesignSystemAsset.lightRed.color
-		return label
-	}()
+        label.textColor = DesignSystemAsset.overnightBusColor.color
+        return label
+    }()
     
     private let distanceStringLabel2: UILabel = {
         let label = UILabel()
@@ -58,13 +66,13 @@ public final class BusStopInformationView: UIView {
         label.textColor = .black
         return label
     }()
-	
+    
     private let separationView: UIView = {
-		let view = UIView()
+        let view = UIView()
         view.backgroundColor = .black
-		return view
-	}()
-	
+        return view
+    }()
+    
     private lazy var distancStackView: UIStackView = {
         let stackView = UIStackView(
             arrangedSubviews: [
@@ -78,48 +86,50 @@ public final class BusStopInformationView: UIView {
         stackView.spacing = 1
         return stackView
     }()
-	
-	override init(frame: CGRect) {
-		super.init(frame: frame)
-		configureUI()
-	}
-	
-	required init?(coder: NSCoder) {
-		fatalError("init(coder:) has not been implemented")
-	}
-	
-	private func configureUI() {
-        backgroundColor = DesignSystemAsset.gray5.color
-		
-		[
-			busStopSymbol,
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        configureUI()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func configureUI() {
+        let color = UIColor(red: 0.88, green: 0.91, blue: 0.94, alpha: 1.0)
+        backgroundColor = color
+        
+        [
+            busStopSymbol,
             busStopNameLabel,
             busStopDescription,
-			distancStackView,
-			separationView,
-		].forEach {
-			addSubview($0)
-			$0.translatesAutoresizingMaskIntoConstraints = false
-		}
-		
-		NSLayoutConstraint.activate([
-			busStopSymbol.leadingAnchor.constraint(
-				equalTo: leadingAnchor,
-				constant: 20
-			),
-			busStopSymbol.heightAnchor.constraint(
-				equalToConstant: symbolSize.f
-			),
-			busStopSymbol.widthAnchor.constraint(
-				equalToConstant: symbolSize.f
-			),
+            distancStackView,
+            separationView,
+            birdLottieView,
+        ].forEach {
+            addSubview($0)
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
+        
+        NSLayoutConstraint.activate([
+            busStopSymbol.leadingAnchor.constraint(
+                equalTo: leadingAnchor,
+                constant: 30
+            ),
+            busStopSymbol.heightAnchor.constraint(
+                equalToConstant: symbolSize.f
+            ),
+            busStopSymbol.widthAnchor.constraint(
+                equalToConstant: symbolSize.f
+            ),
             busStopSymbol.bottomAnchor.constraint(
                 equalTo: separationView.topAnchor
             ),
             
-            busStopNameLabel.topAnchor.constraint(
-                equalTo: topAnchor,
-                constant: 25
+            busStopNameLabel.bottomAnchor.constraint(
+                equalTo: busStopDescription.topAnchor,
+                constant: -5
             ),
             busStopNameLabel.leadingAnchor.constraint(
                 equalTo: leadingAnchor,
@@ -130,43 +140,58 @@ public final class BusStopInformationView: UIView {
                 constant: -10
             ),
             
-            busStopDescription.topAnchor.constraint(
-                equalTo: busStopNameLabel.bottomAnchor,
-                constant: 5
-            ),
             busStopDescription.leadingAnchor.constraint(
                 equalTo: busStopNameLabel.leadingAnchor
             ),
             busStopDescription.trailingAnchor.constraint(
                 equalTo: busStopNameLabel.trailingAnchor
             ),
-			
-//			separationView.topAnchor.constraint(
-//				equalTo: busStopDescription.bottomAnchor,
-//				constant: 10
-//			),
-//			separationView.leadingAnchor.constraint(
-//				equalTo: leadingAnchor,
-//				constant: 15
-//			),
-//			separationView.trailingAnchor.constraint(
-//				equalTo: trailingAnchor,
-//				constant: -10
-//			),
-//			separationView.heightAnchor.constraint(
-//                equalToConstant: 1
-//			),
-			
+            busStopDescription.centerYAnchor
+                .constraint(
+                    equalTo:
+                        centerYAnchor
+                ),
+            
+            //			separationView.topAnchor.constraint(
+            //				equalTo: busStopDescription.bottomAnchor,
+            //				constant: 10
+            //			),
+            //			separationView.leadingAnchor.constraint(
+            //				equalTo: leadingAnchor,
+            //				constant: 15
+            //			),
+            //			separationView.trailingAnchor.constraint(
+            //				equalTo: trailingAnchor,
+            //				constant: -10
+            //			),
+            //			separationView.heightAnchor.constraint(
+            //                equalToConstant: 1
+            //			),
+            
             distancStackView.topAnchor.constraint(
-				equalTo: busStopDescription.bottomAnchor,
-				constant: 10
-			),
+                equalTo: busStopDescription.bottomAnchor,
+                constant: 10
+            ),
             distancStackView.leadingAnchor.constraint(
                 equalTo: busStopNameLabel.leadingAnchor
             ),
-		])
-		
-	}
+            birdLottieView.leadingAnchor.constraint(
+                equalTo: leadingAnchor,
+                constant: -20
+            ),
+            birdLottieView.topAnchor.constraint(
+                equalTo: topAnchor,
+                constant: 10
+            ),
+            birdLottieView.widthAnchor.constraint(
+                equalToConstant: birdLottieView.intrinsicContentSize.width
+            ),
+            birdLottieView.heightAnchor.constraint(
+                equalToConstant: 150
+            ),
+        ])
+        
+    }
     
     func updateUI(
         response: BusStopInfoResponse,
@@ -178,7 +203,7 @@ public final class BusStopInformationView: UIView {
         var description = ""
         if !response.busStopId.isEmpty {
             if !response.direction.isEmpty {
-                description 
+                description
                 = "\(response.busStopId) | \(response.direction) 방면"
             } else {
                 description = "\(response.busStopId)"
