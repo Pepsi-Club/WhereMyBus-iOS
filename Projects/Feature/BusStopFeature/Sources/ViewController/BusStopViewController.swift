@@ -30,12 +30,7 @@ public final class BusStopViewController: UIViewController {
         )
         table.delegate = self
         table.isScrollEnabled = false
-        table.backgroundColor = UIColor(
-            red: 0.95,
-            green: 0.96,
-            blue: 0.96,
-            alpha: 1.0
-        )
+        table.backgroundColor = DesignSystemAsset.tableViewColor.color
         table.rowHeight = 60
         table.sectionHeaderHeight = 46
         table.sectionFooterHeight = 10
