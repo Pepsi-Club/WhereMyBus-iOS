@@ -109,6 +109,7 @@ public final class SearchViewController: UIViewController {
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         configureNavigation()
+        nearByStopView.busStopImage.play()
     }
     
     public override func viewWillDisappear(_ animated: Bool) {
@@ -235,7 +236,7 @@ public final class SearchViewController: UIViewController {
         NSLayoutConstraint.activate([
             searchTextFieldView.topAnchor.constraint(
                 equalTo: navigationView.topAnchor,
-                constant: 2.5
+                constant: 5
             ),
             searchTextFieldView.trailingAnchor.constraint(
                 equalTo: navigationView.trailingAnchor,

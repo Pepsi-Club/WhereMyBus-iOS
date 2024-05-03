@@ -58,7 +58,8 @@ internal final class FavoritesHeaderView: UITableViewHeaderFooterView {
     }
     
     private func configureUI() {
-        contentView.backgroundColor = DesignSystemAsset.gray1.color
+        contentView.backgroundColor =
+        DesignSystemAsset.tableViewColor.color
         
         [busStopNameLabel, directionLabel, dividerLine].forEach {
             contentView.addSubview($0)

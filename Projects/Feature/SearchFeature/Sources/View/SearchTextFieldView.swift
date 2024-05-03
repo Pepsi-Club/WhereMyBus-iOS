@@ -25,7 +25,12 @@ public final class SearchTextFieldView: UITextField {
     }
 
     private func configureUI() {
-        self.backgroundColor = DesignSystemAsset.gray3.color
+        self.backgroundColor = UIColor(
+            red: 0.91,
+            green: 0.91,
+            blue: 0.92,
+            alpha: 1.0
+        )
         self.font =
         DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(size: 15)
         self.layer.cornerRadius = 15

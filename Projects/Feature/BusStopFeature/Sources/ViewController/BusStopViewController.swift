@@ -37,7 +37,7 @@ public final class BusStopViewController: UIViewController {
         table.accessibilityIdentifier = "정류장"
         return table
     }()
-    
+
     private var tableViewHeightConstraint = NSLayoutConstraint()
     
     public init(
@@ -54,12 +54,36 @@ public final class BusStopViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    private func setupGradientBackground() {
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.frame = view.bounds
+        gradientLayer.colors = [
+            DesignSystemAsset.regularAlarmBlue.color.cgColor,
+            UIColor(
+                red: 0.95,
+                green: 0.96,
+                blue: 0.96,
+                alpha: 1.0).cgColor
+        ]
+        gradientLayer.locations = [0.0, 0.35]
+        gradientLayer.startPoint = CGPoint(x: 0.5, y: 0.0)
+        gradientLayer.endPoint = CGPoint(x: 0.5, y: 1.0)
+
+        view.layer.insertSublayer(gradientLayer, at: 0)
+    }
+
     public override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationController?
             .interactivePopGestureRecognizer?.delegate = nil
         
-        view.backgroundColor = .white
+        view.layoutMargins = UIEdgeInsets(
+            top: 0,
+            left: 0,
+            bottom: 10,
+            right: 0
+        )
+        setupGradientBackground()
         configureUI()
         bind()
         configureDataSource()
@@ -74,10 +98,15 @@ public final class BusStopViewController: UIViewController {
         }
     }
     
+    public override func viewWillDisappear(_ animated: Bool) {
+    }
+    
     private func bind() {
         let refreshControl = scrollView.enableRefreshControl(
-            refreshStr: "당겨서 새로고침"
+            refreshStr: "당겨서 새로고침",
+            refreshMsgColor: .white
         )
+        refreshControl.tintColor = .white
         
         let input = BusStopViewModel.Input(
             viewWillAppearEvent: rx
@@ -180,7 +209,6 @@ public final class BusStopViewController: UIViewController {
                             response: response
                           )
                     else { return UITableViewCell() }
-                    
                     return cell
                 case .none:
                     return UITableViewCell()
@@ -268,6 +296,7 @@ public final class BusStopViewController: UIViewController {
 
 extension BusStopViewController {
     private func configureUI() {
+        
         [scrollView, contentView, headerView, busStopTableView]
             .forEach { components in
                 components.translatesAutoresizingMaskIntoConstraints = false
