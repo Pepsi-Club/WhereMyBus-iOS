@@ -50,7 +50,7 @@ struct NearByStopView: View {
                     bottom: -3,
                     trailing: 0
                 ))
-            Text("\(entry.distance)m")
+            Text("\(entry.distance)")
                 .foregroundStyle(
                     DesignSystemAsset.blueBus.swiftUIColor
                 )

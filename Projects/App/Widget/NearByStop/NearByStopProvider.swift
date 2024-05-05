@@ -29,7 +29,7 @@ struct NearByStopProvider: TimelineProvider {
         NearByStopEntry(
             date: .now,
             busStopName: "강남역 2호선",
-            distance: 60
+            distance: "60m"
         )
     }
     
@@ -41,7 +41,7 @@ struct NearByStopProvider: TimelineProvider {
             NearByStopEntry(
                 date: .now,
                 busStopName: "강남역 2호선",
-                distance: 60
+                distance: "60m"
             )
         )
     }
@@ -54,14 +54,15 @@ struct NearByStopProvider: TimelineProvider {
         
         useCase.updateNearByStop()
             .subscribe(onNext: { response, distance in
-                var entries: [NearByStopEntry] = []
                 
-                entries.append(NearByStopEntry(
-                    date: .now,
-                    busStopName: response.busStopName,
-                    distance: Int(distance) ?? 0
-                ))
-                
+                var entries: [NearByStopEntry] = [
+                    NearByStopEntry(
+                        date: .now,
+                        busStopName: response.busStopName,
+                        distance: distance
+                    )
+                ]
+                                
                 // 데이터 업데이트를 위한 타임라인 생성
                 let timeline = Timeline(
                     entries: entries,
