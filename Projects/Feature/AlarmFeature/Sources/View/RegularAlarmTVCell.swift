@@ -113,7 +113,7 @@ final class RegularAlarmTVCell: UITableViewCell {
                 .font: DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(
                     size: 15
                 ),
-                .foregroundColor: DesignSystemAsset.lightRed.color
+                .foregroundColor: DesignSystemAsset.settingColor.color
             ]
         )
         let paddingString = NSAttributedString(

@@ -23,7 +23,7 @@ public final class Appearance {
     public static func setupTabBarAppearance() {
         let appearance = UITabBarAppearance()
         let backgroundColor = DesignSystemAsset.tabBackgroundColor.color
-        let tintColor = DesignSystemAsset.tabBarTintColor.color
+        let tintColor = DesignSystemAsset.changeBlue.color
         appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = backgroundColor
         appearance.inlineLayoutAppearance = .init(style: .compactInline)
