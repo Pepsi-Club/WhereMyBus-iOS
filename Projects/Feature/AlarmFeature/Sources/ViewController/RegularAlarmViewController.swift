@@ -52,6 +52,7 @@ public final class RegularAlarmViewController: UIViewController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
+        
         configureUI()
         bind()
         configureDataSource()

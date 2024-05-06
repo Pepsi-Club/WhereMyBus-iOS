@@ -16,12 +16,6 @@ import Lottie
 public final class BusStopInformationView: UIView {
     private let symbolSize = 50
     
-    private let busStopSymbol: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = DesignSystemAsset.busStop3.image
-        return imageView
-    }()
-    
     private let birdLottieView: LottieAnimationView = {
         let imgView = LottieAnimationView(
             name: "goingBus",
@@ -108,7 +102,8 @@ public final class BusStopInformationView: UIView {
     }
     
     private func configureUI() {
-        backgroundColor = .white
+        backgroundColor =
+            DesignSystemAsset.cellColor.color.withAlphaComponent(0.8)
         
         [
             busStopNameLabel,

@@ -97,6 +97,7 @@ public final class FavoritesViewController: UIViewController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
+
         configureDataSource()
         configureUI()
         bind()

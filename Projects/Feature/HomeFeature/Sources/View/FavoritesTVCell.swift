@@ -77,7 +77,7 @@ class FavoritesTVCell: UITableViewCell {
     
     private func configureUI() {
         contentView.backgroundColor =
-        DesignSystemAsset.tableViewColor.color
+        DesignSystemAsset.cellColor.color
         
         [
             routeLabel,

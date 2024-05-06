@@ -30,7 +30,7 @@ public final class BusStopViewController: UIViewController {
         )
         table.delegate = self
         table.isScrollEnabled = false
-        table.backgroundColor = DesignSystemAsset.tableViewColor.color
+        table.backgroundColor = DesignSystemAsset.cellColor.color
         table.rowHeight = 60
         table.sectionHeaderHeight = 46
         table.sectionFooterHeight = 10
@@ -58,7 +58,7 @@ public final class BusStopViewController: UIViewController {
         let gradientLayer = CAGradientLayer()
         gradientLayer.frame = view.bounds
         gradientLayer.colors = [
-            DesignSystemAsset.changeBlue.color.cgColor,
+            DesignSystemAsset.carrotOrange.color.cgColor,
             UIColor(
                 red: 0.95,
                 green: 0.96,
@@ -77,12 +77,6 @@ public final class BusStopViewController: UIViewController {
         self.navigationController?
             .interactivePopGestureRecognizer?.delegate = nil
         
-        view.layoutMargins = UIEdgeInsets(
-            top: 0,
-            left: 0,
-            bottom: 10,
-            right: 0
-        )
         setupGradientBackground()
         configureUI()
         bind()

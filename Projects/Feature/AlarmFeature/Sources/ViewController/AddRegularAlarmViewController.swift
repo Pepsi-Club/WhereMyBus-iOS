@@ -108,6 +108,7 @@ final class AddRegularAlarmViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+
         configureUI()
         setNavigation()
         bind()
@@ -297,7 +298,7 @@ final class AddRegularAlarmViewController: UIViewController {
                         .forEach { btn in
                             var color: UIColor
                             if response.weekday.contains(btn.tag) {
-                                color = DesignSystemAsset.changeBlue.color
+                                color = DesignSystemAsset.carrotOrange.color
                                 btn.setTitleColor(.white, for: .normal)
                             } else {
                                 color = DesignSystemAsset.gray1.color

@@ -37,7 +37,7 @@ internal final class FavoritesHeaderView: UITableViewHeaderFooterView {
     
     private let dividerLine: UIView = {
         let view = UIView()
-        view.backgroundColor = DesignSystemAsset.gray4Minor.color
+        view.backgroundColor = DesignSystemAsset.gray3.color
         return view
     }()
     
@@ -59,7 +59,7 @@ internal final class FavoritesHeaderView: UITableViewHeaderFooterView {
     
     private func configureUI() {
         contentView.backgroundColor =
-        DesignSystemAsset.tableViewColor.color
+            DesignSystemAsset.cellColor.color
         
         [busStopNameLabel, directionLabel, dividerLine].forEach {
             contentView.addSubview($0)

@@ -57,12 +57,8 @@ final class RegularAlarmTVCell: UITableViewCell {
             hasPadding: true,
             dividerRatio: 1.0
         )
-        stackView.backgroundColor = UIColor(
-            red: 0.95,
-            green: 0.96,
-            blue: 0.96,
-            alpha: 1.0
-        )
+        stackView.backgroundColor = 
+            DesignSystemAsset.cellColor.color
         stackView.layer.cornerRadius = 10
         return stackView
     }()

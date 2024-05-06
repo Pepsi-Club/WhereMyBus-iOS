@@ -25,7 +25,7 @@ public class LeafMarkerUpdater: NMCDefaultLeafMarkerUpdater {
     
     private var selectedImg: NMFOverlayImage {
         .init(
-            image: DesignSystemAsset.grayBusStopIcon.image
+            image: DesignSystemAsset.locationPin.image
                 .resize(45, 45),
             reuseIdentifier: "selectedbusStop"
         )
@@ -33,7 +33,7 @@ public class LeafMarkerUpdater: NMCDefaultLeafMarkerUpdater {
     
     private var unselectedImg: NMFOverlayImage {
         .init(
-            image: DesignSystemAsset.busStopIcon.image
+            image: DesignSystemAsset.locationPingray.image
                 .resize(45, 45),
             reuseIdentifier: "unselectedbusStop"
         )
