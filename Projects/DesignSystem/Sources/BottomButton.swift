@@ -42,7 +42,7 @@ public final class BottomButton: UIButton {
             for: .disabled
         )
         configuration = config
-        tintColor = DesignSystemAsset.settingColor.color
+        tintColor = DesignSystemAsset.changeBlue.color
     }
     
     required init?(coder: NSCoder) {

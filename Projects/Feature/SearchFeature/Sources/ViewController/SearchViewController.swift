@@ -43,7 +43,7 @@ public final class SearchViewController: UIViewController {
             style: .insetGrouped
         )
         table.register(SearchTVCell.self)
-        table.backgroundColor = .white
+        table.backgroundColor = DesignSystemAsset.cellColor.color
         table.dataSource = recentSearchDataSource
         table.delegate = self
         table.accessibilityIdentifier = "최근검색"

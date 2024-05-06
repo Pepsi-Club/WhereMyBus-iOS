@@ -63,7 +63,7 @@ public final class BusStopInfoHeaderView: UIView {
             .regular.font(size: 10)
         config.attributedTitle = title
         config.baseBackgroundColor = .white
-        config.baseForegroundColor = DesignSystemAsset.carrotOrange.color
+        config.baseForegroundColor = DesignSystemAsset.overnightBusColor.color
         config.imagePadding = 7
         let imgConfig = UIImage.SymbolConfiguration(
             font: .systemFont(ofSize: 11)
