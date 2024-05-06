@@ -167,7 +167,7 @@ final class RegularAlarmTVCell: UITableViewCell {
         let busStopString = NSAttributedString(
             string: busStop,
             attributes: [
-                .font: DesignSystemFontFamily.NanumSquareNeoOTF.light.font(
+                .font: DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(
                     size: 15
                 ),
                 .foregroundColor: UIColor.black
