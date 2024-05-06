@@ -138,7 +138,7 @@ public final class SearchViewController: UIViewController {
     }
     
     private func configureUI() {
-        view.backgroundColor = .white
+        view.backgroundColor = DesignSystemAsset.cellColor.color
         
         [
             recentSearchHeaderView,

@@ -105,7 +105,7 @@ public final class AlarmSettingViewController: UIViewController {
     private let endLabel: UILabel = {
         let label = UILabel()
         label.text = "완료"
-        label.textColor = .white
+        label.textColor = .adaptiveWhite
         label.textAlignment = .center
         label.font =
         DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(size: 18)

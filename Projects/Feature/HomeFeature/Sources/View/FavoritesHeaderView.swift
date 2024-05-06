@@ -59,7 +59,7 @@ internal final class FavoritesHeaderView: UITableViewHeaderFooterView {
     
     private func configureUI() {
         contentView.backgroundColor =
-            DesignSystemAsset.cellColor.color
+            .adaptiveWhite
         
         [busStopNameLabel, directionLabel, dividerLine].forEach {
             contentView.addSubview($0)

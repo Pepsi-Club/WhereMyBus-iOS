@@ -64,7 +64,7 @@ final class EmptyRegularAlarmView: UIView {
     }
     
     private func configureUI() {
-        backgroundColor = .white
+        backgroundColor = DesignSystemAsset.cellColor.color
         
         [messageLabel].forEach {
             addSubview($0)

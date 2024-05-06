@@ -76,7 +76,13 @@ public final class BusStopViewController: UIViewController {
         upperView.layer.insertSublayer(gradientLayer, at: 0)
         
         // 하단 부분의 cellColor로 된 두 번째 서브뷰
-        let lowerView = UIView(frame: CGRect(x: 0, y: view.bounds.height * 0.35, width: view.bounds.width, height: view.bounds.height * 0.65))
+        let lowerView = UIView(
+            frame: CGRect(
+                x: 0,
+                y: view.bounds.height * 0.35,
+                width: view.bounds.width,
+                height: view.bounds.height * 0.65)
+        )
         lowerView.backgroundColor = DesignSystemAsset.cellColor.color
 
         // 각 서브뷰를 메인 뷰에 추가

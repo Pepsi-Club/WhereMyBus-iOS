@@ -27,7 +27,7 @@ public final class RegularAlarmViewController: UIViewController {
     
     private lazy var alarmTableView: UITableView = {
         let tableView = UITableView()
-        tableView.backgroundColor = .white
+        tableView.backgroundColor = DesignSystemAsset.cellColor.color
         tableView.separatorStyle = .none
         tableView.backgroundView = emptyRegularAlarmView
         tableView.register(RegularAlarmTVCell.self)
@@ -67,7 +67,7 @@ public final class RegularAlarmViewController: UIViewController {
     }
     
     private func configureUI() {
-        view.backgroundColor = .white
+        view.backgroundColor = DesignSystemAsset.cellColor.color
         
         [floatingBtnSpacingView, titleLabel, alarmTableView, addBtn].forEach {
             view.addSubview($0)

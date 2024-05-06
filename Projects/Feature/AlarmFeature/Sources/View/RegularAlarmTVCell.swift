@@ -166,7 +166,7 @@ final class RegularAlarmTVCell: UITableViewCell {
                 .font: DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(
                     size: 15
                 ),
-                .foregroundColor: UIColor.black
+                .foregroundColor: UIColor.adaptiveBlack
             ]
         )
         

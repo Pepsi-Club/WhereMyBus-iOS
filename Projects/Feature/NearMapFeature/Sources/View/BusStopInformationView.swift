@@ -28,7 +28,7 @@ public final class BusStopInformationView: UIView {
     private let busStopNameLabel: UILabel = {
         let label = UILabel()
         label.font = .nanumExtraBold(size: 18)
-        label.textColor = .black.withAlphaComponent(0.8)
+        label.textColor = .adaptiveBlack.withAlphaComponent(0.8)
         return label
     }()
     
@@ -37,7 +37,7 @@ public final class BusStopInformationView: UIView {
         label.font = .nanumRegular(size: 13)
         label.adjustsFontForContentSizeCategory = true
         label.minimumScaleFactor = 0.8
-        label.textColor = .black.withAlphaComponent(0.8)
+        label.textColor = .adaptiveBlack.withAlphaComponent(0.8)
         return label
     }()
     
@@ -45,14 +45,14 @@ public final class BusStopInformationView: UIView {
         let label = UILabel()
         label.font = .nanumLight(size: 13)
         label.text = "현재 위치에서 약 "
-        label.textColor = .black.withAlphaComponent(0.8)
+        label.textColor = .adaptiveBlack.withAlphaComponent(0.8)
         return label
     }()
     
     private let distanceFromBusStopLabel: UILabel = {
         let label = UILabel()
         label.font = .nanumExtraBold(size: 12)
-        label.textColor = .white
+        label.textColor = .adaptiveWhite
         label.backgroundColor = DesignSystemAsset.carrotOrange.color
         label.clipsToBounds = true
         label.textAlignment = .center
@@ -68,13 +68,13 @@ public final class BusStopInformationView: UIView {
         let label = UILabel()
         label.font = .nanumLight(size: 13)
         label.text = " 떨어져 있어요"
-        label.textColor = .black
+        label.textColor = .adaptiveBlack
         return label
     }()
     
     private let separationView: UIView = {
         let view = UIView()
-        view.backgroundColor = .black
+        view.backgroundColor = .adaptiveBlack
         return view
     }()
     
@@ -102,7 +102,7 @@ public final class BusStopInformationView: UIView {
     }
     
     private func configureUI() {
-        backgroundColor = .white
+        backgroundColor = .adaptiveWhite
         
         [
             busStopNameLabel,
