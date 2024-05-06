@@ -58,11 +58,7 @@ public final class BusStopViewController: UIViewController {
         let gradientLayer = CAGradientLayer()
         gradientLayer.frame = view.bounds
         gradientLayer.colors = [
-            UIColor(
-                red: 26/255,
-                green: 58/255,
-                blue: 188/255,
-                alpha: 1.0).cgColor,
+            DesignSystemAsset.ChangeBlue.color.cgColor,
             UIColor(
                 red: 0.95,
                 green: 0.96,
