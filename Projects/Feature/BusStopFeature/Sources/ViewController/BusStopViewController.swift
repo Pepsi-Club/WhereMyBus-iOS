@@ -58,7 +58,11 @@ public final class BusStopViewController: UIViewController {
         let gradientLayer = CAGradientLayer()
         gradientLayer.frame = view.bounds
         gradientLayer.colors = [
-            DesignSystemAsset.regularAlarmBlue.color.cgColor,
+            UIColor(
+                red: 26/255,
+                green: 58/255,
+                blue: 188/255,
+                alpha: 1.0).cgColor,
             UIColor(
                 red: 0.95,
                 green: 0.96,
@@ -326,7 +330,8 @@ extension BusStopViewController {
             ),
             
             busStopTableView.topAnchor.constraint(
-                equalTo: headerView.bottomAnchor
+                equalTo: headerView.bottomAnchor,
+                constant: 20
             ),
             busStopTableView.leadingAnchor.constraint(
                 equalTo: contentView.leadingAnchor

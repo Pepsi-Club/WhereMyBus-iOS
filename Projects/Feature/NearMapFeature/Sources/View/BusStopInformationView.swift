@@ -57,13 +57,13 @@ public final class BusStopInformationView: UIView {
     
     private let distanceFromBusStopLabel: UILabel = {
         let label = UILabel()
-        label.font = .nanumBold(size: 13)
+        label.font = .nanumExtraBold(size: 13)
         label.textColor = .white
-        label.backgroundColor = DesignSystemAsset.weekDayBlue.color
+        label.backgroundColor = DesignSystemAsset.lightRed.color
         label.clipsToBounds = true
         label.textAlignment = .center
 
-        label.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        label.widthAnchor.constraint(equalToConstant: 70).isActive = true
         label.heightAnchor.constraint(equalToConstant: 20).isActive = true
         label.layer.cornerRadius = 10
 

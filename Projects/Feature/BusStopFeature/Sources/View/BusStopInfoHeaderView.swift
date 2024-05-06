@@ -48,7 +48,7 @@ public final class BusStopInfoHeaderView: UIView {
     private let nextStopNameLb: UILabel = {
         let label = UILabel()
         label.font = DesignSystemFontFamily.NanumSquareNeoOTF
-            .regular.font(size: 14)
+            .bold.font(size: 14)
         label.textColor = .white
         return label
     }()
@@ -63,7 +63,7 @@ public final class BusStopInfoHeaderView: UIView {
             .regular.font(size: 10)
         config.attributedTitle = title
         config.baseBackgroundColor = .white
-        config.baseForegroundColor = DesignSystemAsset.regularAlarmBlue.color
+        config.baseForegroundColor = DesignSystemAsset.overnightBusColor.color
         config.imagePadding = 7
         let imgConfig = UIImage.SymbolConfiguration(
             font: .systemFont(ofSize: 11)
@@ -126,7 +126,7 @@ extension BusStopInfoHeaderView {
            
             busStopNumLb.topAnchor.constraint(
                 equalTo: topAnchor,
-                constant: 15
+                constant: 25
             ),
             busStopNumLb.heightAnchor.constraint(equalToConstant: 15),
             busStopNameLb.topAnchor.constraint(
@@ -149,11 +149,11 @@ extension BusStopInfoHeaderView {
             nextStopNameLb.heightAnchor.constraint(equalToConstant: 15),
             mapBtn.topAnchor.constraint(
                 equalTo: nextStopNameLb.bottomAnchor,
-                constant: 12
+                constant: 20
             ),
             mapBtn.bottomAnchor.constraint(
                 equalTo: bottomAnchor,
-                constant: -20
+                constant: -10
             ),
             mapBtn.heightAnchor.constraint(equalToConstant: 25),
             navigationBtn.topAnchor.constraint(
