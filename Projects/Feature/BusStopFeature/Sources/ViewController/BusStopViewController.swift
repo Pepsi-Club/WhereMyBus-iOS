@@ -315,6 +315,7 @@ extension BusStopViewController {
             }
         
         view.addSubview(scrollView)
+        view.backgroundColor = DesignSystemAsset.cellColor.color
         
         [headerView, busStopTableView]
             .forEach { components in
