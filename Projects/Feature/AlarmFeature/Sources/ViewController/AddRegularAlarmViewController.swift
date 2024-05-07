@@ -299,10 +299,10 @@ final class AddRegularAlarmViewController: UIViewController {
                             var color: UIColor
                             if response.weekday.contains(btn.tag) {
                                 color = DesignSystemAsset.changeBlue.color
-                                btn.setTitleColor(.adaptiveWhite, for: .normal)
+                                btn.setTitleColor(.white, for: .normal)
                             } else {
-                                color = DesignSystemAsset.gray1.color
-                                btn.setTitleColor(.adaptiveBlack, for: .normal)
+                                color = DesignSystemAsset.gray3.color
+                                btn.setTitleColor(.black, for: .normal)
                             }
                             btn.backgroundColor = color
                         }
@@ -332,7 +332,7 @@ final class AddRegularAlarmViewController: UIViewController {
         btn.tag = weekDay.rawValue
         btn.titleLabel?.font = .systemFont(ofSize: 16)
         btn.setTitle(weekDay.toString, for: .normal)
-        btn.setTitleColor(.adaptiveBlack, for: .normal)
+        btn.setTitleColor(.black, for: .normal)
         btn.backgroundColor = DesignSystemAsset.weekDayGray.color
         return btn
     }
