@@ -158,11 +158,11 @@ extension BusStopInfoHeaderView {
             mapBtn.heightAnchor.constraint(equalToConstant: 25),
             navigationBtn.topAnchor.constraint(
                 equalTo: topAnchor,
-                constant: 5
+                constant: 0
             ),
             navigationBtn.leadingAnchor.constraint(
                 equalTo: leadingAnchor,
-                constant: 15
+                constant: 0
             ),
 //            busStopIcon.topAnchor.constraint(
 //                equalTo: mapBtn.topAnchor,
