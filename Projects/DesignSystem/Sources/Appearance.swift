@@ -10,11 +10,9 @@ import UIKit
 
 public final class Appearance {
     public static func setupAppearance() {
-        _ = DesignSystemAsset.backgroundColor.color
-        UINavigationBar.appearance().backgroundColor =
-            DesignSystemAsset.cellColor.color
-        UINavigationBar.appearance().tintColor =
-        DesignSystemAsset.settingColor.color
+        let backgroundColor = DesignSystemAsset.backgroundColor.color
+        UINavigationBar.appearance().backgroundColor = backgroundColor
+        UINavigationBar.appearance().tintColor = .black
         // 모든 BackButton의 타이틀을 없애버림
         UIBarButtonItem.appearance().setBackButtonTitlePositionAdjustment(
             UIOffset(horizontal: -1000, vertical: 0),
@@ -24,9 +22,10 @@ public final class Appearance {
     
     public static func setupTabBarAppearance() {
         let appearance = UITabBarAppearance()
-        let tintColor = DesignSystemAsset.settingColor.color
+        let backgroundColor = DesignSystemAsset.tabBackgroundColor.color
+        let tintColor = DesignSystemAsset.tabBarTintColor.color
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = DesignSystemAsset.cellColor.color
+        appearance.backgroundColor = backgroundColor
         appearance.inlineLayoutAppearance = .init(style: .compactInline)
         UITabBar.appearance().tintColor = tintColor
         UITabBar.appearance().standardAppearance = appearance

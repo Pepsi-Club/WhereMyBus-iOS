@@ -16,19 +16,19 @@ enum MainTab: Int, CaseIterable {
         case .home:
             return .init(
                 title: "홈",
-                image: .init(systemName: "house.fill"),
+                image: .init(systemName: "house"),
                 tag: rawValue
             )
         case .alarm:
             return .init(
                 title: "알람",
-                image: .init(systemName: "bell.fill"),
+                image: .init(systemName: "bell"),
                 tag: rawValue
             )
         case .settings:
             return .init(
                 title: "설정",
-                image: .init(systemName: "gearshape.fill"),
+                image: .init(systemName: "gearshape"),
                 tag: rawValue
             )
         }

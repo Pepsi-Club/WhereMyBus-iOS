@@ -77,7 +77,7 @@ public final class BusStopInfoView: UIView {
             attributedDescription.addAttributes(
                 [
                     .font: UIFont.nanumExtraBold(size: 13),
-                    .foregroundColor: UIColor.adaptiveBlack
+                    .foregroundColor: UIColor.black
                 ],
                 range: NSRange(
                     boldDescriptionRange,
@@ -91,7 +91,7 @@ public final class BusStopInfoView: UIView {
     }
     
     private func configureUI() {
-        backgroundColor = .adaptiveWhite
+        backgroundColor = .white
         [busStopNameLabel, descriptionLabel].forEach {
             addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false

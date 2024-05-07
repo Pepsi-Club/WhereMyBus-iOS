@@ -147,7 +147,7 @@ final class EmptyFavoritesView: UIView {
     }
     
     private func configureUI() {
-        backgroundColor = DesignSystemAsset.cellColor.color
+        backgroundColor = .white
         [
             listLottieView,
             messageLabel,

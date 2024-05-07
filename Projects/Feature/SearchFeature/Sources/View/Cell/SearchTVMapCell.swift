@@ -85,8 +85,8 @@ final class SearchTVMapCell: UITableViewCell {
     }
 
     private func configureUI() {
-        backgroundColor = .adaptiveWhite
-
+        backgroundColor = .white
+        
         [busStopInfoView, mapBtn].forEach {
             contentView.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false

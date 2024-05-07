@@ -25,7 +25,12 @@ public final class SearchTextFieldView: UITextField {
     }
 
     private func configureUI() {
-        self.backgroundColor = .adaptiveWhite
+        self.backgroundColor = UIColor(
+            red: 0.91,
+            green: 0.91,
+            blue: 0.92,
+            alpha: 1.0
+        )
         self.font =
         DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(size: 15)
         self.layer.cornerRadius = 15
@@ -36,7 +41,7 @@ public final class SearchTextFieldView: UITextField {
         self.addLeftPadding(width: 15)
         self.autocorrectionType = .no
         self.spellCheckingType = .no
-        self.textColor = .adaptiveBlack
+        self.textColor = .black
     }
     
     private func setPlaceholder(_ placeholder: String?) {
@@ -45,7 +50,7 @@ public final class SearchTextFieldView: UITextField {
             string: self.placeholder ?? "",
             attributes: [
                 NSAttributedString.Key.foregroundColor:
-                    DesignSystemAsset.mainColor.color
+                    DesignSystemAsset.gray4.color
             ]
         )
     }
