@@ -49,7 +49,7 @@ public final class BusStopInfoHeaderView: UIView {
         let label = UILabel()
         label.font = DesignSystemFontFamily.NanumSquareNeoOTF
             .bold.font(size: 14)
-        label.textColor = .white
+        label.textColor = DesignSystemAsset.gray2.color
         return label
     }()
     

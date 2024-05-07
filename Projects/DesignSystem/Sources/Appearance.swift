@@ -13,7 +13,8 @@ public final class Appearance {
         _ = DesignSystemAsset.backgroundColor.color
         UINavigationBar.appearance().backgroundColor =
             DesignSystemAsset.cellColor.color
-        UINavigationBar.appearance().tintColor = .black
+        UINavigationBar.appearance().tintColor =
+        DesignSystemAsset.settingColor.color
         // 모든 BackButton의 타이틀을 없애버림
         UIBarButtonItem.appearance().setBackButtonTitlePositionAdjustment(
             UIOffset(horizontal: -1000, vertical: 0),

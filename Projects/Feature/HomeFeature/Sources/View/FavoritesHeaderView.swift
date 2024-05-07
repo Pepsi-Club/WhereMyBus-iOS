@@ -31,7 +31,7 @@ internal final class FavoritesHeaderView: UITableViewHeaderFooterView {
             size: 13
         )
         label.textAlignment = .left
-        label.textColor = DesignSystemAsset.gray3.color
+        label.textColor = DesignSystemAsset.gray4.color
         return label
     }()
     
