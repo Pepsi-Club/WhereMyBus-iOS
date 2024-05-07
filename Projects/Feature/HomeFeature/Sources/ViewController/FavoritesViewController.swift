@@ -35,7 +35,7 @@ public final class FavoritesViewController: UIViewController {
     
     private lazy var refreshBtn: UIButton = {
         var config = UIButton.Configuration.plain()
-        config.baseForegroundColor = .black
+        config.baseForegroundColor = .adaptiveBlack
         config.imagePadding = 6
         // Image
         let image = UIImage(systemName: "arrow.triangle.2.circlepath")
@@ -56,7 +56,7 @@ public final class FavoritesViewController: UIViewController {
     
     private let editBtn: UIButton = {
         var config = UIButton.Configuration.plain()
-        config.baseForegroundColor = .black
+        config.baseForegroundColor = .adaptiveBlack
         config.imagePadding = 5
         var titleContainer = AttributeContainer()
         titleContainer.font = .systemFont(ofSize: 13)
@@ -71,7 +71,8 @@ public final class FavoritesViewController: UIViewController {
     
     private lazy var favoritesTableView: UITableView = {
         let tableView = UITableView()
-        tableView.backgroundColor = .white
+        tableView.backgroundColor =
+        DesignSystemAsset.cellColor.color
         tableView.register(FavoritesHeaderView.self)
         tableView.register(FavoritesTVCell.self)
         tableView.dataSource = dataSource
@@ -97,6 +98,7 @@ public final class FavoritesViewController: UIViewController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
+
         configureDataSource()
         configureUI()
         bind()
@@ -111,7 +113,7 @@ public final class FavoritesViewController: UIViewController {
     }
     
     private func configureUI() {
-        view.backgroundColor = .white
+        view.backgroundColor = DesignSystemAsset.cellColor.color
         [
             searchBtn,
             editBtn,
