@@ -14,7 +14,7 @@ extension LottieAnimationView {
         self.contentMode = contentMode
         self.loopMode = .loop
         self.backgroundBehavior = .pause
-        self.animationSpeed = 0.5
+        self.animationSpeed = 0.6
         self.play()
     }
 }
