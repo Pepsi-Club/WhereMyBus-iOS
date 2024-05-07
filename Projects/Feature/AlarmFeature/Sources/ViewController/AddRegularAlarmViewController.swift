@@ -133,7 +133,7 @@ final class AddRegularAlarmViewController: UIViewController {
     }
     
     private func configureUI() {
-        view.backgroundColor = .white
+        view.backgroundColor = DesignSystemAsset.cellColor.color
         [
             titleLabel,
             firstDescriptionLabel,

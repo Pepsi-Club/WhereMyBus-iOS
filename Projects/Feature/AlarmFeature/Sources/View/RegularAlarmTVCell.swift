@@ -53,12 +53,12 @@ final class RegularAlarmTVCell: UITableViewCell {
         stackView.distribution = .equalCentering
         stackView.alignment = .center
         stackView.addDivider(
-            color: .white,
+            color: DesignSystemAsset.cell2.color,
             hasPadding: true,
-            dividerRatio: 1.0
+            dividerRatio: 0.8
         )
         stackView.backgroundColor = 
-            DesignSystemAsset.cellColor.color
+            .adaptiveWhite
         stackView.layer.cornerRadius = 10
         return stackView
     }()
@@ -178,7 +178,7 @@ final class RegularAlarmTVCell: UITableViewCell {
     }
     
     private func configureUI() {
-        backgroundColor = .clear
+        backgroundColor = DesignSystemAsset.cellColor.color
         [removeBtn, stackView].forEach {
             contentView.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
