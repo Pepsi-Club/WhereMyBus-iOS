@@ -43,7 +43,7 @@ public final class SearchViewController: UIViewController {
             style: .insetGrouped
         )
         table.register(SearchTVCell.self)
-        table.backgroundColor = DesignSystemAsset.tableViewColor.color
+        table.backgroundColor = DesignSystemAsset.cellColor.color
         table.dataSource = recentSearchDataSource
         table.delegate = self
         table.accessibilityIdentifier = "최근검색"
@@ -62,7 +62,7 @@ public final class SearchViewController: UIViewController {
             style: .insetGrouped
         )
         table.register(SearchTVMapCell.self)
-        table.backgroundColor = DesignSystemAsset.tableViewColor.color
+        table.backgroundColor = DesignSystemAsset.cellColor.color
         table.isHidden = true
         table.dataSource = searchedDataSource
         table.delegate = self
@@ -100,6 +100,7 @@ public final class SearchViewController: UIViewController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
+        
         configureUI()
         configureDataSource()
         bind()
@@ -137,7 +138,7 @@ public final class SearchViewController: UIViewController {
     }
     
     private func configureUI() {
-        view.backgroundColor = .white
+        view.backgroundColor = DesignSystemAsset.cellColor.color
         
         [
             recentSearchHeaderView,

@@ -41,7 +41,7 @@ public final class SettingsViewController: UIViewController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = DesignSystemAsset.cellColor.color
         
         configureUI()
         bind()
