@@ -36,13 +36,13 @@ public final class BottomButton: UIButton {
                 string: title,
                 attributes: [
                     .font: font,
-                    .foregroundColor: DesignSystemAsset.cell2.color
+                    .foregroundColor: DesignSystemAsset.gray1.color
                 ]
             ),
             for: .disabled
         )
         configuration = config
-        tintColor = DesignSystemAsset.changeBlue.color
+        tintColor = DesignSystemAsset.weekDayBlue.color
     }
     
     required init?(coder: NSCoder) {

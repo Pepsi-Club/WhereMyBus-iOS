@@ -25,7 +25,7 @@ public extension UIView {
     
     func addBorder(
         edges: UIRectEdge,
-        color: UIColor = .adaptiveBlack,
+        color: UIColor = .black,
         thickness: CGFloat = 1
     ) {
         let border = CALayer()

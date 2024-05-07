@@ -21,7 +21,7 @@ public final class PrivacyWebViewController
         let webView = WKWebView()
         webView.translatesAutoresizingMaskIntoConstraints = false
         webView.allowsBackForwardNavigationGestures = true
-        webView.backgroundColor = .adaptiveWhite
+        webView.backgroundColor = .white
         return webView
     }()
     private let indicator: UIActivityIndicatorView = {
@@ -50,7 +50,7 @@ public final class PrivacyWebViewController
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .adaptiveWhite
+        view.backgroundColor = .white
         
         navigationController?.navigationBar.barTintColor = .white
         webView.navigationDelegate = self

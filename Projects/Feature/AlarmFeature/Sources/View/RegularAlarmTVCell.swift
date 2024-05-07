@@ -53,12 +53,16 @@ final class RegularAlarmTVCell: UITableViewCell {
         stackView.distribution = .equalCentering
         stackView.alignment = .center
         stackView.addDivider(
-            color: DesignSystemAsset.cell2.color,
+            color: .white,
             hasPadding: true,
-            dividerRatio: 0.8
+            dividerRatio: 1.0
         )
-        stackView.backgroundColor = 
-            .adaptiveWhite
+        stackView.backgroundColor = UIColor(
+            red: 0.95,
+            green: 0.96,
+            blue: 0.96,
+            alpha: 1.0
+        )
         stackView.layer.cornerRadius = 10
         return stackView
     }()
@@ -109,7 +113,7 @@ final class RegularAlarmTVCell: UITableViewCell {
                 .font: DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(
                     size: 15
                 ),
-                .foregroundColor: DesignSystemAsset.settingColor.color
+                .foregroundColor: DesignSystemAsset.lightRed.color
             ]
         )
         let paddingString = NSAttributedString(
@@ -163,10 +167,10 @@ final class RegularAlarmTVCell: UITableViewCell {
         let busStopString = NSAttributedString(
             string: busStop,
             attributes: [
-                .font: DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(
+                .font: DesignSystemFontFamily.NanumSquareNeoOTF.light.font(
                     size: 15
                 ),
-                .foregroundColor: UIColor.adaptiveBlack
+                .foregroundColor: UIColor.black
             ]
         )
         
@@ -178,7 +182,7 @@ final class RegularAlarmTVCell: UITableViewCell {
     }
     
     private func configureUI() {
-        backgroundColor = DesignSystemAsset.cellColor.color
+        backgroundColor = .clear
         [removeBtn, stackView].forEach {
             contentView.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false

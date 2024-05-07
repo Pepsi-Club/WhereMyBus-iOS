@@ -11,6 +11,11 @@ import UIKit
 import DesignSystem
 
 final class EmptyRegularAlarmView: UIView {
+    private let imageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = DesignSystemAsset.bus.image
+        return imageView
+    }()
     
     private let messageLabel: UILabel = {
         let label = UILabel()
@@ -64,7 +69,7 @@ final class EmptyRegularAlarmView: UIView {
     }
     
     private func configureUI() {
-        backgroundColor = DesignSystemAsset.cellColor.color
+        backgroundColor = .white
         
         [messageLabel].forEach {
             addSubview($0)

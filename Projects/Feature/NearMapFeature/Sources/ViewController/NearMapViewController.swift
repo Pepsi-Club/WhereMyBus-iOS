@@ -41,10 +41,10 @@ public final class NearMapViewController: UIViewController {
         let view = BusStopInformationView()
         view.clipsToBounds = false
         view.layer.cornerRadius = 15
-//        view.layer.shadowColor = UIColor.adaptiveBlack.cgColor
-//        view.layer.shadowOffset = CGSize(width: 0, height: 2)
-//        view.layer.shadowOpacity = 0.4
-//        view.layer.shadowRadius = 2
+        view.layer.shadowColor = UIColor.black.cgColor
+        view.layer.shadowOpacity = 0.5
+        view.layer.shadowOffset = CGSize(width: 0, height: 2)
+        view.layer.shadowRadius = 2
         return view
     }()
     
@@ -66,7 +66,6 @@ public final class NearMapViewController: UIViewController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-
         configureUI()
         bind()
     }
@@ -90,7 +89,7 @@ public final class NearMapViewController: UIViewController {
     }
     
     private func configureUI() {
-        view.backgroundColor = DesignSystemAsset.cellColor.color
+        view.backgroundColor = .white
         [busStopInformationView, naverMap].forEach {
             view.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
