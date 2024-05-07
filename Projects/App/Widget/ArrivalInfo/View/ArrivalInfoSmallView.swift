@@ -60,7 +60,7 @@ struct ArrivalInfoSmallView: View {
                         Text(busStopResponse.busStopName)
                             .font(.nanumExtraBold(15))
                             .lineLimit(1)
-                            .padding(.bottom,1)
+                            .padding(.bottom, 1)
                         Text(busStopResponse.direction)
                             .font(.nanumRegular(11))
                             .lineLimit(1)
@@ -89,9 +89,9 @@ struct ArrivalInfoSmallView: View {
                                     
                                 Text(bus.firstArrivalRemaining)
                                     .font(.nanumExtraBold(10))
-                                    .frame(width:40)
+                                    .frame(width: 40)
                             }
-                            .frame(width:135)
+                            .frame(width: 135)
                             
                             HStack(spacing: 3) {
                                 Spacer()
@@ -102,7 +102,7 @@ struct ArrivalInfoSmallView: View {
                                     .lineLimit(1)
                                 Text(bus.secondArrivalRemaining)
                                     .font(.nanumBold(10))
-                                    .frame(width:40)
+                                    .frame(width: 40)
                             }
                         }
                     }

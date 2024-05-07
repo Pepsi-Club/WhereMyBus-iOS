@@ -54,7 +54,7 @@ struct ArrivalInfoMediumView: View {
                         Text(busStopResponse.busStopName)
                             .font(.nanumExtraBold(15))
                             .lineLimit(1)
-                            .padding(.bottom,0.2)
+                            .padding(.bottom, 0.2)
                         Text(busStopResponse.direction)
                             .font(.nanumRegular(12))
                             .lineLimit(1)

@@ -1,8 +1,8 @@
 //
-//  ArrivalInfoUseCase.swift
-//  App
+//  ArrivalNetworkService.swift
+//  Widget
 //
-//  Created by gnksbm on 4/8/24.
+//  Created by 유하은 on 5/7/24.
 //  Copyright © 2024 Pepsi-Club. All rights reserved.
 //
 
@@ -10,19 +10,15 @@ import Foundation
 
 import Domain
 import NetworkService
-import CoreDataService
 
 import RxSwift
 
-
 @available(iOS 17.0, *)
-final class ArrivalInfoUseCase {
-    private let coreDataService: CoreDataService
+final class ArrivalNetworkService {
     private let networkService: NetworkService
     
-    public init(networkService: NetworkService, coreDataService: CoreDataService) {
+    public init(networkService: NetworkService) {
         self.networkService = networkService
-        self.coreDataService = coreDataService
     }
     
     public func fetchArrivalList(
@@ -38,11 +34,5 @@ final class ArrivalInfoUseCase {
         .compactMap {
             $0.toDomain
         }
-    }
-    
-    func loadBusStopArrivalInfo() {
-        coreDataService.fetch(
-            type: FavoritesBusResponse.self
-        )
     }
 }
