@@ -20,7 +20,11 @@ public final class SettingButton: UIButton {
     private lazy var leftIconLabel: UIImageView = {
         let title = iconName
         let view = UIImageView(image: UIImage(systemName: title))
-        view.tintColor = DesignSystemAsset.routeTimeColor.color
+        if self.traitCollection.userInterfaceStyle == .light {
+            view.tintColor = DesignSystemAsset.routeTimeColor.color
+        } else {
+            view.tintColor = .white
+        }
         view.contentMode = .scaleAspectFill
         return view
     }()

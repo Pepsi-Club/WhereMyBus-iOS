@@ -32,10 +32,9 @@ final class SearchNearStopInformationView: UIButton {
     
     private let nearStopLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .black
+        label.textColor = .adaptiveBlack
         label.font =
         DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(size: 13)
-        label.textColor = .black.withAlphaComponent(0.6)
         label.text = "근처 정류장"
         return label
     }()
@@ -48,7 +47,7 @@ final class SearchNearStopInformationView: UIButton {
         label.adjustsFontForContentSizeCategory = true
         label.minimumScaleFactor = 0.7
         label.sizeToFit()
-        label.textColor = .black.withAlphaComponent(0.6)
+        label.textColor = DesignSystemAsset.settingColor.color
         return label
     }()
     
@@ -80,14 +79,14 @@ final class SearchNearStopInformationView: UIButton {
     private func drawShadow() {
         layer.masksToBounds = false
         layer.cornerRadius = 10
-        layer.shadowColor = UIColor.black.cgColor
-        layer.shadowOffset = CGSize(width: 0, height: 2)
-        layer.shadowOpacity = 0.4
-        layer.shadowRadius = 2
+//        layer.shadowColor = UIColor.adaptiveBlack.cgColor
+//        layer.shadowOffset = CGSize(width: 0, height: 2)
+//        layer.shadowOpacity = 0.4
+//        layer.shadowRadius = 2
     }
     
     private func configureUI() {
-        backgroundColor = .white
+        backgroundColor = .adaptiveWhite
         let symbolSize = 64
         
         [

@@ -64,7 +64,7 @@ final class SearchTVCell: UITableViewCell {
     }
 
     private func configureUI() {
-        backgroundColor = .white
+        backgroundColor = .adaptiveWhite
         
         [busStopInfoView].forEach {
             contentView.addSubview($0)
