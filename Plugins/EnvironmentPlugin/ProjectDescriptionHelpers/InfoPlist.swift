@@ -129,6 +129,7 @@ public extension [String: Plist.Value] {
                 ]
             ]
         ],
+        "NSWidgetWantsLocation" : true,
     ]
     
     static let framework: Self = [
