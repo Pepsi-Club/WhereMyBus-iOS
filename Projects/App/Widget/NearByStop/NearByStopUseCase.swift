@@ -12,6 +12,6 @@ import Domain
 
 import RxSwift
 
-protocol NearByStopUseCase {
+public protocol NearByStopUseCase {
     func updateNearByStop() -> Observable<(BusStopInfoResponse, String)>
 }

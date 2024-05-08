@@ -8,7 +8,6 @@
 
 import Foundation
 
-import Widget
 import Core
 import CoreDataService
 import Data
@@ -93,13 +92,5 @@ extension AppDelegate {
             type: RegularAlarmEditingService.self,
             regularAlarmEditingService
         )
-        
-//        DIContainer.register(
-//            type: NearByStopUseCase.self,
-//            DefaultNearByStopUseCase(
-//                stationListRepository: stationListRepository,
-//                locationService: locationService
-//            )
-//        )
     }
 }

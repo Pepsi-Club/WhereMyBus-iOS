@@ -19,7 +19,6 @@ struct NearByStopProvider: TimelineProvider {
         stationListRepository: DefaultStationListRepository(),
         locationService: DefaultLocationService()
     )
-//    @Injected(NearByStopUseCase.self) var useCase: NearByStopUseCase
     
     private let disposeBag = DisposeBag()
     
@@ -66,7 +65,7 @@ struct NearByStopProvider: TimelineProvider {
                 // 데이터 업데이트를 위한 타임라인 생성
                 let timeline = Timeline(
                     entries: entries,
-                    policy: .never
+                    policy: .after(.now.addingTimeInterval(60))
                 )
                 print("❤️‍🔥 \(timeline)")
                 
