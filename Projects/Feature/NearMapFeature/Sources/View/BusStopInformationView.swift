@@ -114,19 +114,6 @@ public final class BusStopInformationView: UIView {
         }
         
         NSLayoutConstraint.activate([
-//            busStopSymbol.trailingAnchor.constraint(
-//                equalTo: trailingAnchor,
-//                constant: -30
-//            ),
-//            busStopSymbol.heightAnchor.constraint(
-//                equalToConstant: symbolSize.f
-//            ),
-//            busStopSymbol.widthAnchor.constraint(
-//                equalToConstant: symbolSize.f
-//            ),
-//            busStopSymbol.bottomAnchor.constraint(
-//                equalTo: bottomAnchor
-//            ),
             
             busStopNameLabel.centerYAnchor.constraint(
                 equalTo: centerYAnchor
@@ -147,22 +134,6 @@ public final class BusStopInformationView: UIView {
                 constant: 5
             ),
             
-            //			separationView.topAnchor.constraint(
-            //				equalTo: busStopDescription.bottomAnchor,
-            //				constant: 10
-            //			),
-            //			separationView.leadingAnchor.constraint(
-            //				equalTo: leadingAnchor,
-            //				constant: 15
-            //			),
-            //			separationView.trailingAnchor.constraint(
-            //				equalTo: trailingAnchor,
-            //				constant: -10
-            //			),
-            //			separationView.heightAnchor.constraint(
-            //                equalToConstant: 1
-            //			),
-            
             distancStackView.topAnchor.constraint(
                 equalTo: busStopNameLabel.topAnchor,
                 constant: -40
@@ -170,20 +141,6 @@ public final class BusStopInformationView: UIView {
             distancStackView.leadingAnchor.constraint(
                 equalTo: busStopNameLabel.leadingAnchor
             ),
-//            birdLottieView.leadingAnchor.constraint(
-//                equalTo: leadingAnchor,
-//                constant: -20
-//            ),
-//            birdLottieView.topAnchor.constraint(
-//                equalTo: topAnchor,
-//                constant: 10
-//            ),
-//            birdLottieView.widthAnchor.constraint(
-//                equalToConstant: birdLottieView.intrinsicContentSize.width
-//            ),
-//            birdLottieView.heightAnchor.constraint(
-//                equalToConstant: 150
-//            ),
         ])
         
     }

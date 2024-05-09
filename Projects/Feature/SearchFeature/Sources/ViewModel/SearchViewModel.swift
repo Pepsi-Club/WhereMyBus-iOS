@@ -35,13 +35,10 @@ public final class SearchViewModel: ViewModel {
             input.viewWillAppearEvent
         )
         .withUnretained(self)
-        .subscribe(
-            onNext: { vm, _ in
-                vm.useCase.updateNearByStop()
-                    .bind(to: output.nearByStopInfo)
-                    .disposed(by: vm.disposeBag)
-            }
-        )
+        .flatMapLatest { vm, _ in
+            vm.useCase.updateNearByStop()
+        }
+        .bind(to: output.nearByStopInfo)
         .disposed(by: disposeBag)
         
         input.removeBtnTapEvent

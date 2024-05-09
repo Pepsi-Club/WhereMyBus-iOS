@@ -69,7 +69,7 @@ public final class DefaultNearMapUseCase: NearMapUseCase {
                 case .error:
                     response = .init(
                         busStopName: errorMessage,
-                        busStopId: "",
+                        busStopId: "주변 정류장을 확인하려면 위치 정보가 필요합니다",
                         direction: "",
                         longitude: "126.979620",
                         latitude: "37.570028"
@@ -85,12 +85,12 @@ public final class DefaultNearMapUseCase: NearMapUseCase {
     ) -> (BusStopInfoResponse, String) {
         let errorResponse = BusStopInfoResponse(
             busStopName: "정류장 정보를 찾을 수 없습니다.",
-            busStopId: "",
+            busStopId: "설정으로 이동하기",
             direction: "",
             longitude: "",
             latitude: ""
         )
-        let errorDistance = ""
+        let errorDistance = "알수없음"
         do {
             let regions = try stationListRepository.busStopRegions.value()
             let selectedBusStop = regions
