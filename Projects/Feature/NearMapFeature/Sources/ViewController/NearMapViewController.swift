@@ -44,6 +44,26 @@ public final class NearMapViewController: UIViewController {
         return view
     }()
     
+    private lazy var busStopInformationViewChevron: UIImageView = {
+        let configuration = UIImage.SymbolConfiguration(
+            pointSize: 16,
+            weight: .regular
+        )
+        let image = UIImage(
+            systemName: "chevron.right",
+            withConfiguration: configuration
+        )
+        var view = UIImageView(image: image)
+        view.tintColor = DesignSystemAsset.remainingColor.color
+        switch self.viewModel.viewMode {
+        case .normal:
+            break
+        case .focused(let busStopId):
+            view.isHidden = true
+        }
+        return view
+    }()
+    
     init(viewModel: NearMapViewModel) {
         self.viewModel = viewModel
         super.init(
@@ -87,7 +107,11 @@ public final class NearMapViewController: UIViewController {
     
     private func configureUI() {
         view.backgroundColor = DesignSystemAsset.cellColor.color
-        [busStopInformationView, naverMap].forEach {
+        [
+            busStopInformationView,
+            naverMap,
+            busStopInformationViewChevron
+        ].forEach {
             view.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
@@ -126,6 +150,15 @@ public final class NearMapViewController: UIViewController {
                 equalTo: busStopInformationView.topAnchor,
                 constant: -10
             ),
+            
+            busStopInformationViewChevron.centerYAnchor.constraint(
+                equalTo: busStopInformationView.centerYAnchor,
+                constant: 10
+            ),
+            busStopInformationViewChevron.trailingAnchor.constraint(
+                equalTo: busStopInformationView.trailingAnchor,
+                constant: -10
+            ),
         ])
     }
     
@@ -148,7 +181,13 @@ public final class NearMapViewController: UIViewController {
             .withUnretained(self)
             .subscribe(
                 onNext: { vc, tuple in
-                    let (response, distance) = tuple
+                    var (response, distance) = tuple
+                    switch vc.viewModel.viewMode {
+                    case .normal:
+                        break
+                    case .focused(let busStopId):
+                        distance = "알수없음"
+                    }
                     vc.busStopInformationView.updateUI(
                         response: response,
                         distance: distance

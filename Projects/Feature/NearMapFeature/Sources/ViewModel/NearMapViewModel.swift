@@ -12,8 +12,7 @@ import NMapsMap
 public final class NearMapViewModel: LeafMarkerUpdater, ViewModel {
     @Injected(NearMapUseCase.self) var useCase: NearMapUseCase
     private let coordinator: NearMapCoordinator
-    private let viewMode: NearMapMode
-    
+    private(set) var viewMode: NearMapMode
     private let disposeBag = DisposeBag()
 	
     public init(
@@ -154,7 +153,7 @@ extension NearMapViewModel {
 }
 
 extension NearMapViewModel {
-    private enum NearMapMode {
+    enum NearMapMode {
         case normal, focused(busStopId: String)
     }
 }
