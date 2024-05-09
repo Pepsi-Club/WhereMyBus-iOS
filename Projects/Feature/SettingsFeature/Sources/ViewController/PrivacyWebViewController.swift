@@ -9,6 +9,7 @@
 import UIKit
 
 import WebKit
+import DesignSystem
 
 import RxSwift
 
@@ -50,7 +51,7 @@ public final class PrivacyWebViewController
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .adaptiveWhite
+        view.backgroundColor = DesignSystemAsset.cellColor.color
         
         navigationController?.navigationBar.barTintColor = .white
         webView.navigationDelegate = self

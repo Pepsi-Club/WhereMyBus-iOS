@@ -120,7 +120,7 @@ public final class AlarmSettingViewController: UIViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = DesignSystemAsset.cellColor.color
         
         [settingAlarmViewCell, alarmStack, labelStack, labelStack2,
          labelImgStack, timeLabel, alarmSettingLabel, alarmSettingLabel2,
