@@ -26,7 +26,7 @@ public final class Appearance {
         let appearance = UITabBarAppearance()
         let tintColor = DesignSystemAsset.settingColor.color
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = DesignSystemAsset.cellColor.color
+        appearance.backgroundColor = .adaptiveWhiteforDesign
         appearance.inlineLayoutAppearance = .init(style: .compactInline)
         UITabBar.appearance().tintColor = tintColor
         UITabBar.appearance().standardAppearance = appearance

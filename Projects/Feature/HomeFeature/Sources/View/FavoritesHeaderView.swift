@@ -37,12 +37,7 @@ internal final class FavoritesHeaderView: UITableViewHeaderFooterView {
     
     private let dividerLine: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor(
-            red: 170.0/255.0,
-            green: 170.0/255.0,
-            blue: 170.0/255.0,
-            alpha: 1.0
-        )
+        view.backgroundColor = DesignSystemAsset.gray5Minor.color
         return view
     }()
     

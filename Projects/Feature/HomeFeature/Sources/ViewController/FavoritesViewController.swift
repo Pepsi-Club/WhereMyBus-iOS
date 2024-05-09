@@ -76,7 +76,7 @@ public final class FavoritesViewController: UIViewController {
         tableView.register(FavoritesHeaderView.self)
         tableView.register(FavoritesTVCell.self)
         tableView.dataSource = dataSource
-        tableView.separatorColor = DesignSystemAsset.gray5Minor.color
+        tableView.separatorColor = DesignSystemAsset.gray4Minor.color
         tableView.delegate = self
         tableView.sectionHeaderTopPadding = 0
         tableView.separatorInset = UIEdgeInsets(
