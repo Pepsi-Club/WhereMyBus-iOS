@@ -24,8 +24,6 @@ public final class DefaultSearchUseCase: SearchUseCase {
     public var recentSearchResult = BehaviorSubject<[BusStopInfoResponse]>(
         value: []
     )
-    private var updateBusStopObservable: 
-    Observable<(BusStopInfoResponse, String)>?
     private let disposeBag = DisposeBag()
     
     public init(
