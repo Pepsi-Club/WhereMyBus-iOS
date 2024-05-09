@@ -77,10 +77,5 @@ final class EmptyFavoritesView: UIView {
                 equalToConstant: 40
             ),
         ])
-//        exampleStackView.addDivider(
-//            color: DesignSystemAsset.gray6.color,
-//            hasPadding: true,
-//            dividerRatio: 0.8
-//        )
     }
 }
