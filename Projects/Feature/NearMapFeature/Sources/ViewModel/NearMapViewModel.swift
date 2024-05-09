@@ -88,7 +88,7 @@ public final class NearMapViewModel: LeafMarkerUpdater, ViewModel {
                     switch viewModel.viewMode {
                     case .normal:
                         switch status {
-                        case .denied:
+                        case .denied, .error:
                             guard let url = URL(
                                 string: UIApplication
                                     .openSettingsURLString
