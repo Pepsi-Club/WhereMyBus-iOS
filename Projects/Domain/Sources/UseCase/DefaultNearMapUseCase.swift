@@ -39,7 +39,6 @@ public final class DefaultNearMapUseCase: NearMapUseCase {
         locationService.locationStatus
             .withUnretained(self)
             .map { useCase, status in
-                print(status)
                 var response: BusStopInfoResponse
                 var distanceStr: String
                 let requestMessage = "위치 사용을 허용해주세요"
