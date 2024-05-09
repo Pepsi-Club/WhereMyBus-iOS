@@ -37,7 +37,7 @@ internal final class FavoritesHeaderView: UITableViewHeaderFooterView {
     
     private let dividerLine: UIView = {
         let view = UIView()
-        view.backgroundColor = DesignSystemAsset.gray3.color
+        view.backgroundColor = DesignSystemAsset.gray5Minor.color
         return view
     }()
     
@@ -90,11 +90,11 @@ internal final class FavoritesHeaderView: UITableViewHeaderFooterView {
             
             dividerLine.leadingAnchor.constraint(
                 equalTo: contentView.leadingAnchor,
-                constant: 10
+                constant: 12
             ),
             dividerLine.trailingAnchor.constraint(
                 equalTo: contentView.trailingAnchor,
-                constant: -10
+                constant: -12
             ),
             dividerLine.heightAnchor.constraint(equalToConstant: 1),
             dividerLine.bottomAnchor.constraint(
