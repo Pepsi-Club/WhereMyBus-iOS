@@ -193,7 +193,8 @@ public final class SearchViewController: UIViewController {
             ),
             
             recentSearchTableView.topAnchor.constraint(
-                equalTo: recentSearchHeaderView.bottomAnchor
+                equalTo: recentSearchHeaderView.bottomAnchor,
+                constant: -10
             ),
             recentSearchTableView.leadingAnchor.constraint(
                 equalTo: safeArea.leadingAnchor

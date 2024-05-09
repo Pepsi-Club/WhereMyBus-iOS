@@ -48,7 +48,6 @@ final class EmptyFavoritesView: UIView {
         backgroundColor = DesignSystemAsset.cellColor.color
         [
             listLottieView,
-            messageLabel,
             starImageView
         ].forEach {
             addSubview($0)
@@ -77,15 +76,6 @@ final class EmptyFavoritesView: UIView {
             starImageView.heightAnchor.constraint(
                 equalToConstant: 40
             ),
-            
-            messageLabel.centerXAnchor.constraint(
-                equalTo: centerXAnchor
-            ),
-            messageLabel.bottomAnchor.constraint(
-                equalTo: listLottieView.bottomAnchor,
-                constant: 80
-            ),
-            
         ])
 //        exampleStackView.addDivider(
 //            color: DesignSystemAsset.gray6.color,
