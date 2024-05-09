@@ -13,7 +13,6 @@ public final class NearMapViewModel: LeafMarkerUpdater, ViewModel {
     @Injected(NearMapUseCase.self) var useCase: NearMapUseCase
     private let coordinator: NearMapCoordinator
     private(set) var viewMode: NearMapMode
-    
     private let disposeBag = DisposeBag()
 	
     public init(
