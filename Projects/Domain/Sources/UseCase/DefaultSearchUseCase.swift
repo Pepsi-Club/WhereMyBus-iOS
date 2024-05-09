@@ -110,7 +110,6 @@ public final class DefaultSearchUseCase: SearchUseCase {
         return locationService.locationStatus
             .withUnretained(self)
             .map { useCase, status in
-                print(status)
                 var response: BusStopInfoResponse
                 var distanceStr: String
                 let requestMessage = "확인하려면 위치사용을 허용해주세요"
