@@ -28,18 +28,18 @@ public final class SearchViewModel: ViewModel {
             recentSearchedResponse: useCase.recentSearchResult,
             nearByStopInfo: .init()
         )
-        
-        input.viewWillAppearEvent
-            .take(1)
-            .withUnretained(self)
-            .subscribe(
-                onNext: { vm, _ in
-                    vm.useCase.updateNearByStop()
-                        .bind(to: output.nearByStopInfo)
-                        .disposed(by: vm.disposeBag)
-                }
-            )
-            .disposed(by: disposeBag)
+        Observable.merge(
+            NotificationCenter.default.rx.notification(
+                UIApplication.willEnterForegroundNotification
+            ).map { _ in },
+            input.viewWillAppearEvent
+        )
+        .withUnretained(self)
+        .flatMapLatest { vm, _ in
+            vm.useCase.updateNearByStop()
+        }
+        .bind(to: output.nearByStopInfo)
+        .disposed(by: disposeBag)
         
         input.removeBtnTapEvent
             .withUnretained(self)

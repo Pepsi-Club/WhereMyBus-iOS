@@ -8,13 +8,11 @@
 
 import UIKit
 
-import DesignSystem
-
 public extension UIScrollView {
     func enableRefreshControl(
         refreshStr: String,
-        refreshMsgColor: UIColor = DesignSystemAsset.mainColor.color,
-        progressColor: UIColor = DesignSystemAsset.mainColor.color
+        refreshMsgColor: UIColor = .init(hex: "#959595"),
+        progressColor: UIColor = .init(hex: "#959595")
     ) -> UIRefreshControl {
         let refreshControl = UIRefreshControl()
         refreshControl.endRefreshing()

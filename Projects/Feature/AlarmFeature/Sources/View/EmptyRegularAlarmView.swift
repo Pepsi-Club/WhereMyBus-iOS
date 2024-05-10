@@ -11,11 +11,6 @@ import UIKit
 import DesignSystem
 
 final class EmptyRegularAlarmView: UIView {
-    private let imageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = DesignSystemAsset.bus.image
-        return imageView
-    }()
     
     private let messageLabel: UILabel = {
         let label = UILabel()
@@ -39,7 +34,7 @@ final class EmptyRegularAlarmView: UIView {
                 .font: DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(
                     size: 20
                 ),
-                .foregroundColor: DesignSystemAsset.bottonBtnColor.color
+                .foregroundColor: DesignSystemAsset.settingColor.color
             ]
         )
         let padding = NSAttributedString(
@@ -69,7 +64,7 @@ final class EmptyRegularAlarmView: UIView {
     }
     
     private func configureUI() {
-        backgroundColor = .white
+        backgroundColor = DesignSystemAsset.cellColor.color
         
         [messageLabel].forEach {
             addSubview($0)

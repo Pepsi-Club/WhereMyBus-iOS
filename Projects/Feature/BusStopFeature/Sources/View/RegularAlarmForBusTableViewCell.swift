@@ -61,7 +61,7 @@ public final class RegularAlarmForBusTableViewCell: UITableViewCell {
         reuseIdentifier: String?
     ) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        backgroundColor = .white
+        backgroundColor = .adaptiveWhite
         
         configureUI()
     }

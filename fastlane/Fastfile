@@ -111,7 +111,7 @@ platform :ios do
             type: "appstore",
             keychain_name: ENV["KEYCHAIN_NAME"],
             keychain_password: ENV["KEYCHAIN_PASSWORD"],
-            app_identifier: [
+            app_identifier: [+
                 "com.Pepsi-Club.WhereMyBus",
                 "com.Pepsi-Club.WhereMyBus.Widget"
             ],
@@ -119,7 +119,6 @@ platform :ios do
         )
         
         build_app(
-            clean: true,
             workspace: "#{APP_NAME}.xcworkspace",
             scheme: "#{SCHEME}",
             export_method: "app-store"

@@ -16,15 +16,17 @@ struct RefreshView: View {
     var entry: ArrivalInfoProvider.Entry
     
     var body: some View {
-        HStack {
+        HStack(spacing: 2) {
             Text(
                 entry.date.toString(
                     dateFormat: "HH:mm 업데이트"
                 )
             )
-            .font(.caption)
+            .font(.nanumBold(10))
             Button(intent: entry.configuration) {
                 Image(systemName: "arrow.clockwise")
+                    .fontWeight(.bold)
+                    .font(.system(size: 14))
             }
             .buttonStyle(.plain)
         }

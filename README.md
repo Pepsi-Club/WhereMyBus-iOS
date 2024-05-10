@@ -1,12 +1,10 @@
-# 버스어디 v 1.1.0
-![제목을-입력해주세요_-003 (5)](https://github.com/Pepsi-Club/BusComing/assets/65907001/bcb7300f-3f11-4dda-a7b7-3cfb111dc9c7)
+# 버스어디 v 1.2.1 
+![제목을-입력해주세요_-001 (1)](https://github.com/Pepsi-Club/WhereMyBus-iOS/assets/65907001/a97bb417-52b2-454b-9f79-7fb715b4d96c)
 
 ## 프로젝트 소개
->   서울 안 어디서나, **버스어디**로 간편하게 ! 버스 즐겨찾기와 정기알람으로 버스 사용을 더 간편하게 !
-    쉬운 사용성과 편리함을 갖춘 버스어디를 지금 만나보세요.
-> > [버스어디 앱 스토어 연결](https://apps.apple.com/kr/app/%EB%B2%84%EC%8A%A4%EC%96%B4%EB%94%94-%EC%8B%A4%EC%8B%9C%EA%B0%84-%EB%B2%84%EC%8A%A4-%EC%A0%95%EA%B8%B0-%EC%95%8C%EB%9E%8C-%EC%A6%90%EA%B2%A8%EC%B0%BE%EA%B8%B0/id6479689895)
-
- 펩시클럽 팀이 버스어디를 만든 과정이 궁금하다면 ? [펩시클럽 위키 보기](https://github.com/Pepsi-Club/WhereMyBus-iOS/wiki)
+**`서울 안 어디서나,버스어디로 간편하게 ! 버스 즐겨찾기와 정기알람으로 버스 사용을 더 간편하게 !
+    쉬운 사용성과 편리함을 갖춘 버스어디를 지금 만나보세요.`**
+    
 
 ### 💫주요 기능
 - **`홈`**
@@ -19,8 +17,6 @@
     - ex 출퇴근 버스) 월~금 오전 7시 30분, 은곡마을 741번 버스 
 - **`설정`** 
     - 앱 버전과 이용약관 확인 가능합니다.
-
-
 
 ### 📱구동화면
 
@@ -45,7 +41,6 @@
     - iOS 최소 버전 : 16.0
     - iPhone SE ~ iPhone 15 ProMax 호환
     - 다크모드 미지원
-    - 가로모드 미지원
 - 디자인 툴 : Figma
 - 협업 도구 : Github, Team Notion, Discord
 ```
@@ -64,10 +59,6 @@
 ##### Clean Architecture
 ![Group 1597880428 (1)](https://github.com/Pepsi-Club/WhereMyBus-iOS/assets/65907001/86490d53-d7a6-46a3-bc92-5ac60299cbe3)
 
-##### Coordinator
-
-// 추후 추가
-
 ##### Modular Architecture
 
 ![ModularArchitecture](https://github.com/Pepsi-Club/WhereByBus/assets/133845468/c444851f-c108-40a2-9566-d617316a685f)
@@ -85,6 +76,7 @@
 | :----------------------------------------------------------: | :---------------------------------------------: | :------: | :-------------------------------------------------: |
 |<img src = "https://github.com/isakatty/TIL/assets/133845468/dd5a38e0-2f11-4489-862d-2ddfe81d3666" width="150"> | <img src = "https://github.com/isakatty/TIL/assets/133845468/defeff23-b698-4144-809a-d00ebeade221" width="150"> | <img src = "https://github.com/isakatty/TIL/assets/133845468/c69e30b9-be85-457c-a381-5129029fc878" width="150">  | <img src = "https://github.com/isakatty/TIL/assets/133845468/bb2f4bcd-df40-4ba4-96c4-bce8e2bcda76" width="150"> |
 
+ 펩시클럽 팀이 버스어디를 만든 과정이 궁금하다면 ? [펩시클럽 위키 보기](https://github.com/Pepsi-Club/WhereMyBus-iOS/wiki)
 
 </div>
  

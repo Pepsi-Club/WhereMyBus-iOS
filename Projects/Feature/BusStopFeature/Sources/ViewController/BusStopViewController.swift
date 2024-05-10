@@ -30,14 +30,14 @@ public final class BusStopViewController: UIViewController {
         )
         table.delegate = self
         table.isScrollEnabled = false
-        table.backgroundColor = DesignSystemAsset.tableViewColor.color
+        table.backgroundColor = DesignSystemAsset.cellColor.color
         table.rowHeight = 60
         table.sectionHeaderHeight = 46
         table.sectionFooterHeight = 10
         table.accessibilityIdentifier = "정류장"
         return table
     }()
-    
+
     private var tableViewHeightConstraint = NSLayoutConstraint()
     
     public init(
@@ -54,12 +54,48 @@ public final class BusStopViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    private func setupGradientBackground() {
+        let upperView = UIView(
+            frame: CGRect(
+            x: 0,
+            y: 0,
+            width: view.bounds.width,
+            height: view.bounds.height * 0.35
+            )
+        )
+        
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.frame = upperView.bounds
+        
+        gradientLayer.colors = [
+            DesignSystemAsset.changeBlue.color.cgColor,
+            DesignSystemAsset.changeBlue.color.withAlphaComponent(0.3).cgColor
+        ]
+        
+        gradientLayer.startPoint = CGPoint(x: 0.5, y: 0.0)
+        gradientLayer.endPoint = CGPoint(x: 0.5, y: 1.0)
+        
+        upperView.layer.insertSublayer(gradientLayer, at: 0)
+        
+        let lowerView = UIView(
+            frame: CGRect(
+                x: 0,
+                y: view.bounds.height * 0.35,
+                width: view.bounds.width,
+                height: view.bounds.height * 0.65)
+        )
+        lowerView.backgroundColor = DesignSystemAsset.cellColor.color
+
+        view.addSubview(upperView)
+        view.addSubview(lowerView)
+    }
+
     public override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationController?
             .interactivePopGestureRecognizer?.delegate = nil
         
-        view.backgroundColor = .white
+        setupGradientBackground()
         configureUI()
         bind()
         configureDataSource()
@@ -74,9 +110,14 @@ public final class BusStopViewController: UIViewController {
         }
     }
     
+    public override func viewWillDisappear(_ animated: Bool) {
+    }
+    
     private func bind() {
         let refreshControl = scrollView.enableRefreshControl(
-            refreshStr: "당겨서 새로고침"
+            refreshStr: "당겨서 새로고침",
+            refreshMsgColor: .white,
+            progressColor: .white
         )
         
         let input = BusStopViewModel.Input(
@@ -180,7 +221,6 @@ public final class BusStopViewController: UIViewController {
                             response: response
                           )
                     else { return UITableViewCell() }
-                    
                     return cell
                 case .none:
                     return UITableViewCell()
@@ -268,12 +308,14 @@ public final class BusStopViewController: UIViewController {
 
 extension BusStopViewController {
     private func configureUI() {
+        
         [scrollView, contentView, headerView, busStopTableView]
             .forEach { components in
                 components.translatesAutoresizingMaskIntoConstraints = false
             }
         
         view.addSubview(scrollView)
+        view.backgroundColor = DesignSystemAsset.cellColor.color
         
         [headerView, busStopTableView]
             .forEach { components in
@@ -297,7 +339,8 @@ extension BusStopViewController {
             ),
             
             busStopTableView.topAnchor.constraint(
-                equalTo: headerView.bottomAnchor
+                equalTo: headerView.bottomAnchor,
+                constant: 20
             ),
             busStopTableView.leadingAnchor.constraint(
                 equalTo: contentView.leadingAnchor

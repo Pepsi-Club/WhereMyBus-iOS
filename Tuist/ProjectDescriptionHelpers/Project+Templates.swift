@@ -24,7 +24,8 @@ extension Project {
         appExtensionTarget: [Target] = [],
         packages: [Package] = [],
         dependencies: [TargetDependency],
-        coreDataModel: [CoreDataModel] = []
+        coreDataModel: [CoreDataModel] = [],
+        resourceSynthesizers: [ResourceSynthesizer] = []
     ) -> Self {
         var schemes = [Scheme]()
         var targets = [Target]()

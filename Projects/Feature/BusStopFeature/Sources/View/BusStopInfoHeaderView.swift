@@ -10,6 +10,8 @@ import UIKit
 
 import DesignSystem
 
+import Lottie
+
 public final class BusStopInfoHeaderView: UIView {
     
     public let navigationBtn: UIButton = {
@@ -46,8 +48,8 @@ public final class BusStopInfoHeaderView: UIView {
     private let nextStopNameLb: UILabel = {
         let label = UILabel()
         label.font = DesignSystemFontFamily.NanumSquareNeoOTF
-            .regular.font(size: 14)
-        label.textColor = .white
+            .bold.font(size: 14)
+        label.textColor = DesignSystemAsset.gray2.color
         return label
     }()
     
@@ -61,7 +63,7 @@ public final class BusStopInfoHeaderView: UIView {
             .regular.font(size: 10)
         config.attributedTitle = title
         config.baseBackgroundColor = .white
-        config.baseForegroundColor = DesignSystemAsset.favoritesOrange.color
+        config.baseForegroundColor = DesignSystemAsset.overnightBusColor.color
         config.imagePadding = 7
         let imgConfig = UIImage.SymbolConfiguration(
             font: .systemFont(ofSize: 11)
@@ -72,16 +74,20 @@ public final class BusStopInfoHeaderView: UIView {
         return btn
     }()
     
-    private let busStopIcon: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = DesignSystemAsset.busStop.image
-        return imageView
+    public let busStopIcon: LottieAnimationView = {
+        let imgView = LottieAnimationView(
+            name: "goingBus",
+            configuration: LottieConfiguration(renderingEngine: .mainThread)
+        )
+        imgView.contentMode = .scaleAspectFit
+        imgView.loopMode = .loop
+        imgView.animationSpeed = 0.5
+        imgView.play()
+        return imgView
     }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
-        backgroundColor = DesignSystemAsset.headerBlue.color
         configureUI()
     }
     
@@ -106,7 +112,7 @@ extension BusStopInfoHeaderView {
         addSubview(navigationBtn)
         navigationBtn.translatesAutoresizingMaskIntoConstraints = false
         
-        [busStopIcon, busStopNumLb, busStopNameLb,
+        [busStopNumLb, busStopNameLb,
          nextStopNameLb, mapBtn]
             .forEach {
                 $0.translatesAutoresizingMaskIntoConstraints = false
@@ -117,19 +123,10 @@ extension BusStopInfoHeaderView {
             }
         
         NSLayoutConstraint.activate([
-            busStopIcon.topAnchor.constraint(
-                equalTo: topAnchor,
-                constant: 15
-            ),
-            busStopIcon.widthAnchor.constraint(
-                equalToConstant: 60
-            ),
-            busStopIcon.heightAnchor.constraint(
-                equalToConstant: 60
-            ),
+           
             busStopNumLb.topAnchor.constraint(
-                equalTo: busStopIcon.bottomAnchor,
-                constant: 3
+                equalTo: topAnchor,
+                constant: 25
             ),
             busStopNumLb.heightAnchor.constraint(equalToConstant: 15),
             busStopNameLb.topAnchor.constraint(
@@ -152,21 +149,31 @@ extension BusStopInfoHeaderView {
             nextStopNameLb.heightAnchor.constraint(equalToConstant: 15),
             mapBtn.topAnchor.constraint(
                 equalTo: nextStopNameLb.bottomAnchor,
-                constant: 12
+                constant: 20
             ),
             mapBtn.bottomAnchor.constraint(
                 equalTo: bottomAnchor,
-                constant: -20
+                constant: -10
             ),
             mapBtn.heightAnchor.constraint(equalToConstant: 25),
             navigationBtn.topAnchor.constraint(
                 equalTo: topAnchor,
-                constant: 20
+                constant: 0
             ),
             navigationBtn.leadingAnchor.constraint(
                 equalTo: leadingAnchor,
-                constant: 15
-            )
+                constant: 0
+            ),
+//            busStopIcon.topAnchor.constraint(
+//                equalTo: mapBtn.topAnchor,
+//                constant: -50
+//            ),
+//            busStopIcon.widthAnchor.constraint(
+//                equalToConstant: busStopIcon.intrinsicContentSize.width
+//            ),
+//            busStopIcon.heightAnchor.constraint(
+//                equalToConstant: 100
+//            ),
         ])
     }
 }
