@@ -1,6 +1,9 @@
 name: UploadTestflight
 
 on:
+  push:
+    branches:
+      - releaseFix/**
   pull_request:
     branches:
       - main
