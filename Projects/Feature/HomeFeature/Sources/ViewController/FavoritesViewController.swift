@@ -176,7 +176,9 @@ public final class FavoritesViewController: UIViewController {
     
     private func bind() {
         let refreshControl = favoritesTableView.enableRefreshControl(
-            refreshStr: ""
+            refreshStr: "",
+            refreshMsgColor: DesignSystemAsset.mainColor.color,
+            progressColor: DesignSystemAsset.mainColor.color
         )
         
         let output = viewModel.transform(

@@ -116,9 +116,9 @@ public final class BusStopViewController: UIViewController {
     private func bind() {
         let refreshControl = scrollView.enableRefreshControl(
             refreshStr: "당겨서 새로고침",
-            refreshMsgColor: .white
+            refreshMsgColor: .white,
+            progressColor: .white
         )
-        refreshControl.tintColor = .white
         
         let input = BusStopViewModel.Input(
             viewWillAppearEvent: rx
