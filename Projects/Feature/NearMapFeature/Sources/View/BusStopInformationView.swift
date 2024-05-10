@@ -35,7 +35,7 @@ public final class BusStopInformationView: UIView {
     private let busStopDescription: UILabel = {
         let label = UILabel()
         label.font = .nanumRegular(size: 13)
-        label.adjustsFontForContentSizeCategory = true
+        label.adjustsFontSizeToFitWidth = true
         label.minimumScaleFactor = 0.8
         label.textColor = .adaptiveBlack.withAlphaComponent(0.8)
         return label
