@@ -103,9 +103,12 @@ public final class DefaultNearMapUseCase: NearMapUseCase {
                     }
                 }.first
             if let selectedBusStop {
-                let distance = locationService.getDistance(
+                var distance = locationService.getDistance(
                     response: selectedBusStop
                 )
+                if distance == "" {
+                    distance = "알수없음"
+                }
                 return (selectedBusStop, distance)
             } else {
                 return (errorResponse, errorDistance)
