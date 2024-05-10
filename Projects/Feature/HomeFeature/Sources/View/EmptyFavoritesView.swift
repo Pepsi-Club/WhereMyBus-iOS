@@ -23,6 +23,60 @@ final class EmptyFavoritesView: UIView {
         return imgView
     }()
     
+    private let messageLabel: UILabel = {
+            let label = UILabel()
+            label.font = DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(
+                size: 15
+            )
+            label.textColor = DesignSystemAsset.gray6.color
+            label.textAlignment = .center
+            label.numberOfLines = 3
+            let message1 = NSAttributedString(
+                string: "확인하고 싶은 버스 정보는\n",
+                attributes: [
+                    .font: DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(
+                        size: 15
+                    )
+                ]
+            )
+            let message2 = NSAttributedString(
+                string: "즐겨찾기로 등록하세요 ",
+                attributes: [
+                    .font: DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(
+                        size: 20
+                    ),
+                    .foregroundColor: DesignSystemAsset.bottonBtnColor.color
+                ]
+            )
+            let padding = NSAttributedString(
+                string: "\n",
+                attributes: [
+                    .font: DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(
+                        size: 6
+                    ),
+                    .foregroundColor: DesignSystemAsset.bottonBtnColor.color
+                ]
+            )
+            let attributedString = NSMutableAttributedString()
+            attributedString.append(message1)
+            attributedString.append(padding)
+            attributedString.append(message2)
+            label.attributedText = attributedString
+            return label
+        }()
+
+        private let exampleLabel: UILabel = {
+            let label = UILabel()
+            label.font = .systemFont(
+                ofSize: 20,
+                weight: .light
+            )
+            label.text = "ex"
+            label.textColor = DesignSystemAsset.blueGray.color
+            label.transform = CGAffineTransform(rotationAngle: -0.3)
+            return label
+        }()
+    
     private let starImageView: LottieAnimationView = {
         let imgView = LottieAnimationView(
             name: "star",
@@ -48,6 +102,7 @@ final class EmptyFavoritesView: UIView {
         backgroundColor = DesignSystemAsset.cellColor.color
         [
             listLottieView,
+            messageLabel,
             starImageView
         ].forEach {
             addSubview($0)
@@ -75,6 +130,13 @@ final class EmptyFavoritesView: UIView {
             ),
             starImageView.heightAnchor.constraint(
                 equalToConstant: 40
+            ),
+            messageLabel.centerXAnchor.constraint(
+                equalTo: centerXAnchor
+            ),
+            messageLabel.bottomAnchor.constraint(
+                equalTo: listLottieView.bottomAnchor,
+                constant: 80
             ),
         ])
     }
