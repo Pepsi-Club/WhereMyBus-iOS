@@ -182,12 +182,6 @@ public final class NearMapViewController: UIViewController {
             .subscribe(
                 onNext: { vc, tuple in
                     var (response, distance) = tuple
-                    switch vc.viewModel.viewMode {
-                    case .normal:
-                        break
-                    case .focused(let busStopId):
-                        distance = "알수없음"
-                    }
                     vc.busStopInformationView.updateUI(
                         response: response,
                         distance: distance
