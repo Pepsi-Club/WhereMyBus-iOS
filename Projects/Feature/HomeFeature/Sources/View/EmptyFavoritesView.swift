@@ -45,7 +45,7 @@ final class EmptyFavoritesView: UIView {
                     .font: DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(
                         size: 20
                     ),
-                    .foregroundColor: DesignSystemAsset.bottonBtnColor.color
+                    .foregroundColor: DesignSystemAsset.settingColor.color
                 ]
             )
             let padding = NSAttributedString(
