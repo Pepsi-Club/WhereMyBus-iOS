@@ -22,15 +22,13 @@
 
 | 즐겨찾기 | 검색 | 버스정류장 | 가까운 정류장 지도 |
 | --- | --- | --- | --- |
-|![Search](https://github.com/Pepsi-Club/BusComing/raw/dev/Document/ko/iPhone_15_Pro-1_Favorites.png)|![Search](https://github.com/Pepsi-Club/WhereMyBus-iOS/assets/65907001/db977cc0-42b9-48c5-b088-0802c3cf979e)|![BusStop](https://github.com/Pepsi-Club/BusComing/raw/dev/Document/ko/iPhone_15_Pro-4_BusStop.png)|![NearMap](https://github.com/Pepsi-Club/WhereMyBus-iOS/assets/65907001/781ca995-b5c6-4e5d-8556-d293359e3a7f)|
+|![Search](https://github.com/Pepsi-Club/WhereMyBus-iOS/assets/91649269/60245d90-b78e-4ea8-bc6b-48418e0a5d8f)|![Search](https://github.com/Pepsi-Club/WhereMyBus-iOS/assets/91649269/9f89c5c4-11f4-42e5-95de-c71ba1e07316)|![BusStop](https://github.com/Pepsi-Club/WhereMyBus-iOS/assets/91649269/551aa349-20f7-4183-b8f0-0d159cc02e66)|![NearMap](https://github.com/Pepsi-Club/WhereMyBus-iOS/assets/91649269/d5516f98-a3e3-4ee1-9e8d-731a71cd94e9)|
 
 | 즐겨찾기X | 최근검색어 | 정규알람 추가 | 정규알람 | 
 | --- | --- | --- | --- |
-| ![NonFavorites](https://github.com/Pepsi-Club/BusComing/raw/dev/Document/ko/iPhone_15_Pro-0_EmptyFavorites.png)|![RecentSearch](https://github.com/Pepsi-Club/BusComing/raw/dev/Document/ko/iPhone_15_Pro-2_RecentSearch.png)|![AddRegularAlarm](https://github.com/Pepsi-Club/BusComing/raw/dev/Document/ko/iPhone_15_Pro-6_RegularAlarm.png)|![Simulator Screenshot - iPhone 15 Pro - 2024-03-20 at 23 50 04](https://github.com/Pepsi-Club/BusComing/assets/133845468/6c930784-7de1-4940-a94a-3c65c17ca4fc) |
+| ![NonFavorites](https://github.com/Pepsi-Club/WhereMyBus-iOS/assets/91649269/938b5193-7f95-4050-afea-75a11ca7351c)|![RecentSearch](https://github.com/Pepsi-Club/WhereMyBus-iOS/assets/91649269/31e680db-c9a6-4485-bd75-c1a6f086c992)|![AddRegularAlarm](https://github.com/Pepsi-Club/WhereMyBus-iOS/assets/91649269/0fcb6763-3790-4545-8bfb-f4ff4839d92d)|![Simulator Screenshot - iPhone 15 Pro - 2024-03-20 at 23 50 04](https://github.com/Pepsi-Club/WhereMyBus-iOS/assets/91649269/214d4a6c-c079-4abd-827b-fe7432fb41d0)|
 
 <br>
-
-
 
 ### 💻 개발 환경, 기술스택, 아키텍처
 
