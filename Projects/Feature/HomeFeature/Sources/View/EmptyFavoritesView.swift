@@ -34,7 +34,7 @@ final class EmptyFavoritesView: UIView {
             let message1 = NSAttributedString(
                 string: "확인하고 싶은 버스 정보는\n",
                 attributes: [
-                    .font: DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(
+                .font: DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(
                         size: 15
                     )
                 ]
