@@ -71,7 +71,10 @@ public final class BusTableViewCell: UITableViewCell {
         return label
     }()
     
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+    override init(
+        style: UITableViewCell.CellStyle,
+        reuseIdentifier: String?
+    ) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         backgroundColor = .adaptiveWhite
         
@@ -104,7 +107,8 @@ public final class BusTableViewCell: UITableViewCell {
         firstArrivalRemaining: String
     ) {
         firstArrivalInfoView.updateUI(
-            time: firstArrivalTime, remainingStops: firstArrivalRemaining
+            time: firstArrivalTime,
+            remainingStops: firstArrivalRemaining
         )
     }
     
@@ -113,7 +117,8 @@ public final class BusTableViewCell: UITableViewCell {
         secondArrivalRemaining: String
     ) {
         secondArrivalInfoView.updateUI(
-            time: secondArrivalTime, remainingStops: secondArrivalRemaining
+            time: secondArrivalTime,
+            remainingStops: secondArrivalRemaining
         )
     }
     public override func prepareForReuse() {
@@ -200,9 +205,8 @@ extension BusTableViewCell {
             }
         
         NSLayoutConstraint.activate([
-            starBtn.topAnchor.constraint(
-                equalTo: contentView.topAnchor,
-                constant: 15
+            starBtn.centerYAnchor.constraint(
+                equalTo: contentView.centerYAnchor
             ),
             starBtn.leadingAnchor.constraint(
                 equalTo: contentView.leadingAnchor
