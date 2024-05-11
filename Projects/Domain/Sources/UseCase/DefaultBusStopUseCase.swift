@@ -17,7 +17,8 @@ public final class DefaultBusStopUseCase: BusStopUseCase {
     private let regularAlarmEditingService: RegularAlarmEditingService
     
     public let busStopSection = PublishSubject<BusStopArrivalInfoResponse>()
-    private var busStopFetchStatus: Bool = true
+    private var fetchThrottleStatus: FetchThrottleStatus =
+        .completed
     private let disposeBag = DisposeBag()
     
     public init(
@@ -45,12 +46,13 @@ public final class DefaultBusStopUseCase: BusStopUseCase {
         .disposed(by: disposeBag)
     }
     
-    public func fetchBusArrivalsBusStopViewRefresh(
+    public func throttlefetchBusArrivals(
             request: ArrivalInfoRequest
-        ) -> Bool {
-            guard busStopFetchStatus else { return false }
-            busStopFetchStatus = false
-
+        ) -> FetchThrottleStatus {
+            guard case .completed = fetchThrottleStatus else {
+                return .running
+            }
+            fetchThrottleStatus = .running
             Observable<Int>.timer(
                 .seconds(1),
                 period: .seconds(1),
@@ -62,7 +64,7 @@ public final class DefaultBusStopUseCase: BusStopUseCase {
                     #if DEBUG
                     print("BusStopView Throttle Refresh Ready")
                     #endif
-                    self?.busStopFetchStatus = true
+                    self?.fetchThrottleStatus = .completed
                 }
             )
             .disposed(by: disposeBag)
@@ -70,7 +72,7 @@ public final class DefaultBusStopUseCase: BusStopUseCase {
             print("BusStopView Throttle Refresh Start")
             #endif
             fetchBusArrivals(request: request)
-            return true
+            return .completed
         }
     
     // MARK: - 즐찾 추가 및 해제
@@ -97,4 +99,11 @@ public final class DefaultBusStopUseCase: BusStopUseCase {
             adirection: busInfo.adirection
         )
     }
+}
+
+// MARK: - 패치 쓰로틀 상태 값
+
+public enum FetchThrottleStatus {
+    case running
+    case completed
 }

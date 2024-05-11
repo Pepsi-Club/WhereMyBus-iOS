@@ -60,11 +60,15 @@ public final class BusStopViewModel: ViewModel {
         })
         .bind(
             onNext: { viewModel, _ in
-                _ = viewModel.useCase
-                    .fetchBusArrivalsBusStopViewRefresh(
+                switch viewModel.useCase
+                    .throttlefetchBusArrivals(
                         request: viewModel.fetchData
-                    ) ? output.isRefreshing.onNext(.fetching)
-                : output.isRefreshing.onNext(.fetchComplete)
+                    ) {
+                case .running:
+                    output.isRefreshing.onNext(.fetchComplete)
+                case .completed:
+                    output.isRefreshing.onNext(.fetching)
+                }
             }
         )
         .disposed(by: disposeBag)
@@ -87,10 +91,15 @@ public final class BusStopViewModel: ViewModel {
             .withUnretained(self)
             .subscribe(onNext: { viewModel, _ in
                 output.isRefreshing.onNext(.fetching)
-                _ = viewModel.useCase.fetchBusArrivalsBusStopViewRefresh(
-                    request: viewModel.fetchData
-                ) ? output.isRefreshing.onNext(.fetching)
-                : output.isRefreshing.onNext(.fetchComplete)
+                switch viewModel.useCase
+                    .throttlefetchBusArrivals(
+                        request: viewModel.fetchData
+                    ) {
+                case .running:
+                    output.isRefreshing.onNext(.fetchComplete)
+                case .completed:
+                    break
+                }
             })
             .disposed(by: disposeBag)
         
