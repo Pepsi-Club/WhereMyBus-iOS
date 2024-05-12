@@ -1,4 +1,4 @@
-import Foundation
+import UIKit
 
 import Core
 import Domain
@@ -39,29 +39,39 @@ public final class BusStopViewModel: ViewModel {
             .withUnretained(self)
             .bind(
                 onNext: { viewModel, _ in
-                    if viewModel.flow == .fromAlarm {
-                        output.isRefreshing.onNext(.fetching)
-                        viewModel.useCase.fetchBusArrivals(
-                            request: viewModel.fetchData
-                        )
-                    }
+                    output.isRefreshing.onNext(.fetching)
+                    viewModel.useCase.fetchBusArrivals(
+                        request: viewModel.fetchData
+                    )
                 }
             )
             .disposed(by: disposeBag)
         
-        input.viewWillAppearEvent
-            .withUnretained(self)
-            .bind(
-                onNext: { viewModel, _ in
-                    if viewModel.flow == .fromHome {
-                        output.isRefreshing.onNext(.fetching)
-                        viewModel.useCase.fetchBusArrivals(
-                            request: viewModel.fetchData
-                        )
-                    }
+        Observable.merge(
+            NotificationCenter.default.rx.notification(
+                UIApplication.willEnterForegroundNotification
+            ).map { _ in },
+            input.viewWillAppearEvent
+        )
+        .skip(1)
+        .withUnretained(self)
+        .filter({ viewModel, _ in
+            viewModel.flow == .fromHome
+        })
+        .bind(
+            onNext: { viewModel, _ in
+                switch viewModel.useCase
+                    .throttleFetchBusArrivals(
+                        request: viewModel.fetchData
+                    ) {
+                case .running:
+                    output.isRefreshing.onNext(.fetchComplete)
+                case .completed:
+                    output.isRefreshing.onNext(.fetching)
                 }
-            )
-            .disposed(by: disposeBag)
+            }
+        )
+        .disposed(by: disposeBag)
         
         input.mapBtnTapEvent
             .withLatestFrom(
@@ -81,9 +91,15 @@ public final class BusStopViewModel: ViewModel {
             .withUnretained(self)
             .subscribe(onNext: { viewModel, _ in
                 output.isRefreshing.onNext(.fetching)
-                viewModel.useCase.fetchBusArrivals(
-                    request: viewModel.fetchData
-                )
+                switch viewModel.useCase
+                    .throttleFetchBusArrivals(
+                        request: viewModel.fetchData
+                    ) {
+                case .running:
+                    output.isRefreshing.onNext(.fetchComplete)
+                case .completed:
+                    break
+                }
             })
             .disposed(by: disposeBag)
         
