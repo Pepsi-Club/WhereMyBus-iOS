@@ -37,8 +37,8 @@ public final class DefaultFavoritesUseCase: FavoritesUseCase {
             .flatMap { useCase, favoritesList in
                 let cachedStopId = useCase.cachedResponses.map { $0.busStopId }
                 let favoritesIds = favoritesList.toBusStopIds
-                let missedStopIds = Set(cachedStopId)
-                    .subtracting(Set(favoritesIds))
+                let missedStopIds = Set(favoritesIds)
+                    .subtracting(Set(cachedStopId))
                 guard missedStopIds.isEmpty
                 else {
                     return useCase.fetchFirstPage()
