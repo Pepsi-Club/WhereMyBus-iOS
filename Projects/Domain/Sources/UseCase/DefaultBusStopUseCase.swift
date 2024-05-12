@@ -46,7 +46,7 @@ public final class DefaultBusStopUseCase: BusStopUseCase {
         .disposed(by: disposeBag)
     }
     
-    public func throttlefetchBusArrivals(
+    public func throttleFetchBusArrivals(
             request: ArrivalInfoRequest
         ) -> FetchThrottleStatus {
             guard case .completed = fetchThrottleStatus else {

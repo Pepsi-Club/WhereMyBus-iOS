@@ -21,7 +21,7 @@ public protocol BusStopUseCase {
     /// - returns: 쓰로틀의 상태.
     ///     .running: 쓰로틀 제약이 걸려있는 상태
     ///     .completed: 쓰로틀 제약이 풀려있는 상태
-    func throttlefetchBusArrivals(
+    func throttleFetchBusArrivals(
             request: ArrivalInfoRequest
         ) -> FetchThrottleStatus
     

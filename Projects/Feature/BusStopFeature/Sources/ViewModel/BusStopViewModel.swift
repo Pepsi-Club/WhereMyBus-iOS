@@ -61,7 +61,7 @@ public final class BusStopViewModel: ViewModel {
         .bind(
             onNext: { viewModel, _ in
                 switch viewModel.useCase
-                    .throttlefetchBusArrivals(
+                    .throttleFetchBusArrivals(
                         request: viewModel.fetchData
                     ) {
                 case .running:
@@ -92,7 +92,7 @@ public final class BusStopViewModel: ViewModel {
             .subscribe(onNext: { viewModel, _ in
                 output.isRefreshing.onNext(.fetching)
                 switch viewModel.useCase
-                    .throttlefetchBusArrivals(
+                    .throttleFetchBusArrivals(
                         request: viewModel.fetchData
                     ) {
                 case .running:
