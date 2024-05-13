@@ -39,6 +39,6 @@ let project = Project.makeProject(
         .mainFeature,
         .data,
         .package(product: "FirebaseMessaging"),
-        .package(product: "FirebaseAnalytics")
+        .package(product: "FirebaseAnalytics"),
     ]
 )

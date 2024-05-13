@@ -14,7 +14,7 @@ let project = Project.makeProject(
     dependencies: [
         .networkService,
         .coreDataService,
-        .package(product: "FirebaseAnalytics")
+        .package(product: "FirebaseAnalytics"),
     ],
     coreDataModel: [
         .init(

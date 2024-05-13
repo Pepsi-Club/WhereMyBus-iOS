@@ -26,13 +26,7 @@ public final class DefaultBusStopArrivalInfoRepository:
     
     public func fetchArrivalList(busStopId: String) ->
                 Observable<BusStopArrivalInfoResponse> {
-        // Google Analytics 이벤트 로깅
-        Analytics.logEvent("api_use", parameters: [
-            "api_name": "fetchArrivalList" as NSObject,
-            "bus_stop_id": busStopId as NSObject
-        ])
-        
-        return networkService.request(
+        networkService.request(
             endPoint: BusStopArrivalInfoEndPoint(arsId: busStopId)
         )
         .decode(
