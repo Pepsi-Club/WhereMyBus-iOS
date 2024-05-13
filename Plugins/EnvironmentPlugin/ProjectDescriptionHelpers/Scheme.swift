@@ -43,4 +43,22 @@ public extension Scheme {
             archiveAction: .archiveAction(configuration: .release)
         )
     }
+    
+    static func appDebugScheme(name: String) -> Self {
+        Scheme(
+            name: "\(name)-FirebaseDebug",
+            shared: true,
+            buildAction: .buildAction(targets: ["\(name)-FirebaseDebug"]),
+            runAction: .runAction(
+                configuration: .debug, 
+                arguments: Arguments(
+                    launchArguments: [
+                        .init(name: "-FIRDebugEnabled", isEnabled: true)
+                    ]
+                )
+            ),
+            // TODO: 검토필요
+            archiveAction: .archiveAction(configuration: .debug)
+        )
+    }
 }

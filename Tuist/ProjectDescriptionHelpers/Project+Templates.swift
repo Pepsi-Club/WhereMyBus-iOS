@@ -9,10 +9,6 @@ import ProjectDescription
 import EnvironmentPlugin
 import DependencyPlugin
 
-import ProjectDescription
-import EnvironmentPlugin
-import DependencyPlugin
-
 extension Project {
     // MARK: Refact
     public static func makeProject(
@@ -53,6 +49,7 @@ extension Project {
             }
             schemes.append(.moduleScheme(name: name))
             schemes.append(.uiTestsScheme(name: name))
+            schemes.append(.appDebugScheme(name: name))
         case .dynamicFramework, .staticFramework:
             targetModule = frameworkTarget(
                 name: name,
