@@ -43,4 +43,31 @@ public extension Scheme {
             archiveAction: .archiveAction(configuration: .release)
         )
     }
+    
+    static func appDebugScheme(name: String) -> Self {
+        let debugLaunchArgument = LaunchArgument(name: "-FIRAnalyticsDebugEnabled", isEnabled: true)
+        
+        return Scheme(
+            name: "\(name)-Debug",
+            shared: true,
+            buildAction: .buildAction(targets: ["\(name)"]),
+            testAction: .targets(
+                ["\(name)Tests"],
+                configuration: .debug,
+                options: .options(
+                    coverage: true,
+                    codeCoverageTargets: ["\(name)"]
+                )
+            ),
+            runAction: .runAction(
+                configuration: .debug,
+                executable: TargetReference(
+                    projectPath: nil,
+                    target: name
+                ),
+                arguments: Arguments(launchArguments: [debugLaunchArgument])
+            ),
+            archiveAction: .archiveAction(configuration: .release)
+        )
+    }
 }
