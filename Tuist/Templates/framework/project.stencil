@@ -1,10 +1,13 @@
 import ProjectDescription
 import ProjectDescriptionHelpers
+import DependencyPlugin
 
 let project = Project.makeProject(
     name: "{{ name }}",
     moduleType: .dynamicFramework,
     isTestable: true,
     dependencies: [
+    ],
+    scheme: [
     ]
 )
