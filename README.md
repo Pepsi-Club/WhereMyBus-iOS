@@ -1,4 +1,4 @@
-# 버스어디 v 1.2.1 
+# 버스어디 v 1.2.2 
 ![제목을-입력해주세요_-001 (1)](https://github.com/Pepsi-Club/WhereMyBus-iOS/assets/65907001/a97bb417-52b2-454b-9f79-7fb715b4d96c)
 
 ## 프로젝트 소개
@@ -16,7 +16,7 @@
     - 특정 버스정류장의 버스에 정기알람을 설정하여 원하는 시간에 받을 알람을 설정할 수 있습니다.
     - ex 출퇴근 버스) 월~금 오전 7시 30분, 은곡마을 741번 버스 
 - **`설정`** 
-    - 앱 버전과 이용약관 확인 가능합니다.
+    - 앱 버전과 이용약관 확인 및 문의하기가 가능합니다.
 
 ### 📱구동화면
 
@@ -38,7 +38,7 @@
 - 개발 환경 : UIKit, Swift 5.0
     - iOS 최소 버전 : 16.0
     - iPhone SE ~ iPhone 15 ProMax 호환
-    - 다크모드 미지원
+    - 다크모드 지원
 - 디자인 툴 : Figma
 - 협업 도구 : Github, Team Notion, Discord
 ```
@@ -87,6 +87,7 @@
 - Fastlane
 - FirebaseMessaging - iOS
 - KakaoMapSDK_SPM
+- Lottie
 
 - 데이터: [서울특별시_정류소정보조회 서비스](https://www.data.go.kr/tcs/dss/selectApiDataDetailView.do?publicDataPk=15000303)
 
