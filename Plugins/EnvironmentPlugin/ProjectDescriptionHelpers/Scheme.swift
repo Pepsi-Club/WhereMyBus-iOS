@@ -45,9 +45,7 @@ public extension Scheme {
     }
     
     static func appDebugScheme(name: String) -> Self {
-        let debugLaunchArgument = LaunchArgument(name: "-FIRAnalyticsDebugEnabled", isEnabled: true)
-        
-        return Scheme(
+        Scheme(
             name: "\(name)-Debug",
             shared: true,
             buildAction: .buildAction(targets: ["\(name)"]),
@@ -60,14 +58,15 @@ public extension Scheme {
                 )
             ),
             runAction: .runAction(
-                configuration: .debug,
-                executable: TargetReference(
-                    projectPath: nil,
-                    target: name
-                ),
-                arguments: Arguments(launchArguments: [debugLaunchArgument])
+                configuration: .debug, 
+                arguments: Arguments(
+                    launchArguments: [
+                        .init(name: "-FIRDebugEnabled", isEnabled: true)
+                    ]
+                )
             ),
-            archiveAction: .archiveAction(configuration: .release)
+            // TODO: 검토필요
+            archiveAction: .archiveAction(configuration: .debug)
         )
     }
 }
