@@ -39,5 +39,19 @@ let project = Project.makeProject(
         .mainFeature,
         .data,
         .package(product: "FirebaseMessaging"),
+    ],
+    schemes: [
+        Scheme(
+            name: "firebaseDebugging",
+            shared: true,
+            buildAction: BuildAction(targets: ["App"]),
+            runAction: RunAction(
+                configurationName: "Debug",
+                executableName: "App",
+                arguments: Arguments(
+                    launch: ["-FIRAnalyticsDebugEnabled": true]
+                )
+            )
+        )
     ]
 )
