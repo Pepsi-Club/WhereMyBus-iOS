@@ -7,7 +7,8 @@ let project = Project.makeProject(
     moduleType: .dynamicFramework,
     dependencies: [
         .networkService,
-        .coreDataService
+        .coreDataService,
+        .package(product: "FirebaseAnalytics")
     ],
     coreDataModel: [
         .init(
