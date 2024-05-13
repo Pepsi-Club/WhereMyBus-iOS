@@ -7,6 +7,7 @@
 
 import ProjectDescription
 import EnvironmentPlugin
+import DependencyPlugin
 
 extension Project {
     // MARK: Refact
@@ -48,6 +49,7 @@ extension Project {
             }
             schemes.append(.moduleScheme(name: name))
             schemes.append(.uiTestsScheme(name: name))
+            schemes.append(.appDebugScheme(name: name))
         case .dynamicFramework, .staticFramework:
             targetModule = frameworkTarget(
                 name: name,
