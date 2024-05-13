@@ -46,17 +46,9 @@ public extension Scheme {
     
     static func appDebugScheme(name: String) -> Self {
         Scheme(
-            name: "\(name)-Debug",
+            name: "\(name)-FirebaseDebug",
             shared: true,
-            buildAction: .buildAction(targets: ["\(name)"]),
-            testAction: .targets(
-                ["\(name)Tests"],
-                configuration: .debug,
-                options: .options(
-                    coverage: true,
-                    codeCoverageTargets: ["\(name)"]
-                )
-            ),
+            buildAction: .buildAction(targets: ["\(name)-FirebaseDebug"]),
             runAction: .runAction(
                 configuration: .debug, 
                 arguments: Arguments(
