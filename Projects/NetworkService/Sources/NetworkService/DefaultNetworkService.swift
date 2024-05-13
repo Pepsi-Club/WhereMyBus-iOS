@@ -9,6 +9,7 @@
 import Foundation
 
 import RxSwift
+import FirebaseAnalytics
 
 public final class DefaultNetworkService: NetworkService {
     public init() { }
