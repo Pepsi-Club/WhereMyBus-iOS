@@ -21,13 +21,15 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         setupAppearance()
         registerDependencies()
         configureNotification(application: application)
-        configureFirebase(application: application)
         #if DEBUG
         configureDebuggingFB(application: application)
         var newArguments = ProcessInfo.processInfo.arguments
         newArguments.append("-FIRDebugEnabled")
         ProcessInfo.processInfo.setValue(newArguments, forKey: "arguments")
+        #else
+        configureFirebase(application: application)
         #endif
+        
         return true
     }
 
