@@ -21,7 +21,15 @@ public extension Scheme {
                     codeCoverageTargets: ["\(name)"]
                 )
             ),
-            runAction: .runAction(configuration: .debug),
+            runAction: .runAction(
+                configuration: .debug,
+                arguments: .init(launchArguments: [
+                    .init(
+                        name: "-FIRDebugEnabled",
+                        isEnabled: true
+                    )
+                ])
+            ),
             archiveAction: .archiveAction(configuration: .release)
         )
     }
@@ -41,24 +49,6 @@ public extension Scheme {
             ),
             runAction: .runAction(configuration: .debug),
             archiveAction: .archiveAction(configuration: .release)
-        )
-    }
-    
-    static func appDebugScheme(name: String) -> Self {
-        Scheme(
-            name: "\(name)-FirebaseDebug",
-            shared: true,
-            buildAction: .buildAction(targets: ["\(name)-FirebaseDebug"]),
-            runAction: .runAction(
-                configuration: .debug, 
-                arguments: Arguments(
-                    launchArguments: [
-                        .init(name: "-FIRDebugEnabled", isEnabled: true)
-                    ]
-                )
-            ),
-            // TODO: 검토필요
-            archiveAction: .archiveAction(configuration: .debug)
         )
     }
 }
