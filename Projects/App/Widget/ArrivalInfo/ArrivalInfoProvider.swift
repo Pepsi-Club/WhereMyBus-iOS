@@ -11,11 +11,13 @@ import WidgetKit
 
 import Core
 import Domain
+import NetworkService
+import CoreDataService
 
 @available(iOS 17.0, *)
 struct ArrivalInfoProvider: AppIntentTimelineProvider {
-    private let useCase = ArrivalInfoUseCase()
-
+    private let network: ArrivalNetworkService
+    
     func placeholder(in context: Context) -> ArrivalInfoEntry {
         ArrivalInfoEntry(
             date: Date(),
@@ -28,23 +30,17 @@ struct ArrivalInfoProvider: AppIntentTimelineProvider {
         for configuration: ArrivalInfoIntent,
         in context: Context
     ) -> ArrivalInfoEntry {
-        let _: () = useCase.loadBusStopArrivalInfo()
-        return ArrivalInfoEntry(
-            date: Date(),
-            configuration: configuration,
-            responses: useCase.responses
-        )
+        //미리보기 데이터
     }
 
     func timeline(
         for configuration: ArrivalInfoIntent,
         in context: Context
     ) -> Timeline<ArrivalInfoEntry> {
-        let _: () = useCase.loadBusStopArrivalInfo()
         let entry = ArrivalInfoEntry(
             date: Date(),
             configuration: configuration,
-            responses: useCase.responses
+            responses: network.fetchArrivalList(busStopId: <#T##String#>)
         )
         return Timeline(
             entries: [entry],

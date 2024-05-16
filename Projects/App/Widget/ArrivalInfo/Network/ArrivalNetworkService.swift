@@ -14,12 +14,8 @@ import NetworkService
 import RxSwift
 
 @available(iOS 17.0, *)
-final class ArrivalNetworkService {
+struct ArrivalNetworkService {
     private let networkService: NetworkService
-    
-    public init(networkService: NetworkService) {
-        self.networkService = networkService
-    }
     
     public func fetchArrivalList(
         busStopId: String
