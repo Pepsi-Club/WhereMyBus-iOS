@@ -122,6 +122,10 @@ public final class BusStopInformationView: UIView {
                 equalTo: leadingAnchor,
                 constant: 15
             ),
+            busStopNameLabel.trailingAnchor.constraint(
+                equalTo: trailingAnchor,
+                constant: -15
+            ),
             
             busStopDescription.leadingAnchor.constraint(
                 equalTo: busStopNameLabel.leadingAnchor
