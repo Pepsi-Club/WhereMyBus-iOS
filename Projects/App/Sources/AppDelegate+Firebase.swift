@@ -50,7 +50,7 @@ extension AppDelegate: MessagingDelegate {
 extension AppDelegate {
     func configureDebuggingFB(application: UIApplication) {
         guard let filePath = Bundle.main.path(
-            forResource: "GoogleService-debugging-Info",
+            forResource: "GoogleService-Info-debugging",
             ofType: "plist"
         ),
               let options = FirebaseOptions(contentsOfFile: filePath)
