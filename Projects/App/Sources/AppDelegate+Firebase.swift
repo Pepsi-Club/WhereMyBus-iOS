@@ -10,7 +10,6 @@ import UIKit
 
 import Firebase
 import FirebaseMessaging
-import FirebaseAnalytics
 
 extension AppDelegate {
     func configureFirebase(application: UIApplication) {
