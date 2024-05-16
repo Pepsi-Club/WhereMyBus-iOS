@@ -120,7 +120,7 @@ public final class FavoritesViewModel: ViewModel {
             )
             .disposed(by: disposeBag)
         
-        input.scrollReachedBtmEvent // nextFetch 상태 업데이트 및 이벤트 처리
+        input.scrollReachedBottomEvent // nextFetch 상태 업데이트 및 이벤트 처리
             .withLatestFrom(vmFetchStatus)
             .filter { status in
                 status == .fetchComplete
@@ -188,7 +188,7 @@ extension FavoritesViewModel {
         let refreshBtnTapEvent: Observable<Void>
         let alarmBtnTapEvent: Observable<IndexPath>
         let busStopTapEvent: Observable<String>
-        let scrollReachedBtmEvent: Observable<Void>
+        let scrollReachedBottomEvent: Observable<Void>
     }
     
     public struct Output {

@@ -12,7 +12,7 @@ public final class FavoritesViewController: UIViewController {
     
     private let headerTapEvent = PublishSubject<String>()
     private let alarmBtnTapEvent = PublishSubject<IndexPath>()
-    private let scrollReachedBtmEvent = PublishSubject<Int>()
+    private let scrollReachedBottomEvent = PublishSubject<Int>()
     private let isTableViewEditMode = BehaviorSubject(value: false)
     private let disposeBag = DisposeBag()
     
@@ -167,7 +167,7 @@ public final class FavoritesViewController: UIViewController {
                 ),
                 alarmBtnTapEvent: alarmBtnTapEvent.asObservable(),
                 busStopTapEvent: headerTapEvent,
-                scrollReachedBtmEvent: scrollReachedBtmEvent
+                scrollReachedBottomEvent: scrollReachedBottomEvent
                     .throttle(
                         .seconds(1),
                         latest: false,
@@ -301,7 +301,7 @@ extension FavoritesViewController: UITableViewDelegate {
             .map {
                 Int(scrollView.contentSize.height)
             }
-            .bind(to: scrollReachedBtmEvent)
+            .bind(to: scrollReachedBottomEvent)
             .disposed(by: disposeBag)
     }
     
