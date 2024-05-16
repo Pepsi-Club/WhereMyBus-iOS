@@ -9,18 +9,20 @@
 import Foundation
 
 public struct BusStopArrivalInfoResponse: Hashable {
-    public let generatedDate: Date = .now
+    public let generatedDate: Date
     public let busStopId: String
     public let busStopName: String
     public let direction: String
     public var buses: [BusArrivalInfoResponse]
     
     public init(
+        generatedDate: Date = .now,
         busStopId: String,
         busStopName: String,
         direction: String,
         buses: [BusArrivalInfoResponse]
     ) {
+        self.generatedDate = generatedDate
         self.busStopId = busStopId
         self.busStopName = busStopName
         self.direction = direction
@@ -29,9 +31,11 @@ public struct BusStopArrivalInfoResponse: Hashable {
 }
 
 public extension BusStopArrivalInfoResponse {
-    func replaceTime(timerSecond: Int) -> Self {
-        let distance = Int(generatedDate.distance(to: .now)) + timerSecond
+    func replaceTime() -> Self {
+        let distance = Int(generatedDate.distance(to: .now))
+        print(distance)
         return BusStopArrivalInfoResponse(
+            generatedDate: generatedDate,
             busStopId: busStopId,
             busStopName: busStopName,
             direction: direction,
@@ -88,6 +92,7 @@ public extension BusStopArrivalInfoResponse {
             return updatedBus
         }
         return .init(
+            generatedDate: generatedDate,
             busStopId: busStopId,
             busStopName: busStopName,
             direction: direction,
@@ -100,6 +105,7 @@ public extension BusStopArrivalInfoResponse {
             busResponse.isFavorites
         }
         return BusStopArrivalInfoResponse(
+            generatedDate: generatedDate,
             busStopId: busStopId,
             busStopName: busStopName,
             direction: direction,
@@ -137,6 +143,7 @@ public extension Array<BusStopArrivalInfoResponse> {
             }
             
             return BusStopArrivalInfoResponse(
+                generatedDate: busStop.generatedDate,
                 busStopId: busStop.busStopId,
                 busStopName: busStop.busStopName,
                 direction: busStop.direction,

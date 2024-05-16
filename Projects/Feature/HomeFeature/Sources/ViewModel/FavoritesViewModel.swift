@@ -170,7 +170,7 @@ public final class FavoritesViewModel: ViewModel {
             .map { tuple in
                 let (timerValue, responses) = tuple
                 return responses.map {
-                    return $0.replaceTime(timerSecond: timerValue)
+                    return $0.replaceTime()
                 }
             }
             .distinctUntilChanged()
