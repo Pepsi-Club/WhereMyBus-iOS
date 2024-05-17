@@ -31,7 +31,7 @@ endef
 
 .PHONY: download-privates
 
-download-privates: download-xcconfigs download-env download-googleinfo download-googleinfo2
+download-privates: download-xcconfigs download-env download-googleinfo
 
 download-xcconfigs:
 	$(call download_file, XCConfig, $(token),Secrets_Debug.xcconfig)
@@ -47,7 +47,6 @@ download-env:
 	
 download-googleinfo:
 	$(call download_file, Projects/App/Resources, $(token),GoogleService-Info.plist)
-
-download-googleinfo2:
 	$(call download_file, Projects/App/Resources, $(token),GoogleService-Info-debugging.plist)
+
 
