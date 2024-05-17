@@ -15,9 +15,9 @@ extension AppDelegate {
     func configureFirebase(application: UIApplication) {
         var googleInfoName: String
         #if DEBUG
-        googleInfoName = "GoogleService-Info"
-        #else
         googleInfoName = "GoogleService-Info-debugging"
+        #else
+        googleInfoName = "GoogleService-Info"
         #endif
         guard let filePath = Bundle.main.path(
             forResource: googleInfoName,
