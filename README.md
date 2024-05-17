@@ -1,4 +1,5 @@
-# 버스어디 v 1.2.2 
+# 버스어디 v 1.2.3
+
 ![제목을-입력해주세요_-001 (1)](https://github.com/Pepsi-Club/WhereMyBus-iOS/assets/65907001/a97bb417-52b2-454b-9f79-7fb715b4d96c)
 
 ## 프로젝트 소개
@@ -39,6 +40,7 @@
     - iOS 최소 버전 : 16.0
     - iPhone SE ~ iPhone 15 ProMax 호환
     - 다크모드 지원
+    
 - 디자인 툴 : Figma
 - 협업 도구 : Github, Team Notion, Discord
 ```
