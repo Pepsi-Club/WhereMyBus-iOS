@@ -33,7 +33,6 @@ public struct BusStopArrivalInfoResponse: Hashable {
 public extension BusStopArrivalInfoResponse {
     func replaceTime() -> Self {
         let distance = Int(generatedDate.distance(to: .now))
-        print(distance)
         return BusStopArrivalInfoResponse(
             generatedDate: generatedDate,
             busStopId: busStopId,
