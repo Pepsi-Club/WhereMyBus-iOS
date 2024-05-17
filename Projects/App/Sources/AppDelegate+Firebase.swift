@@ -13,15 +13,21 @@ import FirebaseMessaging
 
 extension AppDelegate {
     func configureFirebase(application: UIApplication) {
-        guard let filePath = Bundle.main.path(
-            forResource: "GoogleService-Info",
-            ofType: "plist"
-        ),
-              let options = FirebaseOptions(contentsOfFile: filePath)
-        else { return }
-        FirebaseApp.configure(options: options)
-        application.registerForRemoteNotifications()
-    }
+            var googleInfoName: String
+            #if DEBUG
+            googleInfoName = "GoogleService-Info"
+            #else
+            googleInfoName = "GoogleService-Info-debugging"
+            #endif
+            guard let filePath = Bundle.main.path(
+                forResource: googleInfoName,
+                ofType: "plist"
+            ),
+                  let options = FirebaseOptions(contentsOfFile: filePath)
+            else { return }
+            FirebaseApp.configure(options: options)
+            application.registerForRemoteNotifications()
+        }
 }
 
 extension AppDelegate {
