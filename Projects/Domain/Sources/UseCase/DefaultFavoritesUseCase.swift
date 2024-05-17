@@ -15,8 +15,9 @@ public final class DefaultFavoritesUseCase: FavoritesUseCase {
     private let busStopArrivalInfoRepository: BusStopArrivalInfoRepository
     private let favoritesRepository: FavoritesRepository
     
-    public let fetchedArrivalInfo 
-    = BehaviorSubject<[BusStopArrivalInfoResponse]>(value: [])
+    private var fetchItemLimit = 0
+    public private(set) var isFinalPage = false
+    private var cachedResponses = [BusStopArrivalInfoResponse]()
     private let disposeBag = DisposeBag()
     
     public init(
@@ -25,57 +26,98 @@ public final class DefaultFavoritesUseCase: FavoritesUseCase {
     ) {
         self.busStopArrivalInfoRepository = busStopArrivalInfoRepository
         self.favoritesRepository = favoritesRepository
-        bindFavorites()
     }
     
-    public func fetchFavoritesArrivals() {
-        favoritesRepository.fetchFavorites()
-    }
-    // TODO: 바인딩한다면 정류장 뷰에서 즐겨찾기가 수정될 때마다 API 호출되기 때문에 수정이 필요함
-    private func bindFavorites() {
-        favoritesRepository.favorites
+    public func fakeFetch() -> Observable<[BusStopArrivalInfoResponse]> {
+        fetchItemLimit = 5
+        isFinalPage = false
+        return favoritesRepository.fetchFavorites()
+            .take(1)
             .withUnretained(self)
-            .filter { useCase, favoritesList in
-                let shouldFetchFavorites = !favoritesList.isEmpty
-                if !shouldFetchFavorites {
-                    useCase.fetchedArrivalInfo.onNext([])
-                }
-                return shouldFetchFavorites
-            }
             .flatMap { useCase, favoritesList in
-                Observable.zip(
-                    favoritesList
-                        .map {
-                            $0.busStopId
-                        }
-                        .removeDuplicated()
-                        .map { busStopId in
-                            useCase.busStopArrivalInfoRepository
-                                .fetchArrivalList(
-                                    busStopId: busStopId
-                                )
-                        }
+                let cachedStopId = useCase.cachedResponses.map { $0.busStopId }
+                let favoritesIds = favoritesList.toBusStopIds
+                let missedStopIds = Set(favoritesIds)
+                    .subtracting(Set(cachedStopId))
+                guard missedStopIds.isEmpty
+                else {
+                    return useCase.fetchFirstPage()
+                }
+                let cachedResult = Array(
+                    useCase.cachedResponses
+                        .prefix(useCase.fetchItemLimit)
                 )
+                .filterUnfavorites(favoritesList: favoritesList)
+                useCase.cachedResponses = cachedResult
+                return Observable.just(cachedResult)
             }
-            .withLatestFrom(
-                favoritesRepository.favorites
-            ) { responses, favoritesList in
-                (responses, favoritesList)
+    }
+    
+    public func fetchFirstPage(
+    ) -> Observable<[BusStopArrivalInfoResponse]> {
+        cachedResponses.removeAll()
+        fetchItemLimit = 0
+        isFinalPage = false
+        return fetchNextPage()
+    }
+    
+    public func fetchNextPage(
+    ) -> Observable<[BusStopArrivalInfoResponse]> {
+        guard !isFinalPage
+        else { return .just(cachedResponses) }
+        fetchItemLimit += 5
+        
+        let fetchResult = favoritesRepository.fetchFavorites()
+            .take(1)
+            .withUnretained(self)
+            .flatMapLatest { useCase, favoritesList in
+                let emptyResult = Observable.just(
+                    ([BusStopArrivalInfoResponse](), favoritesList)
+                )
+                let favoritesIds = favoritesList.toBusStopIds
+                guard !favoritesIds.isEmpty
+                else {
+                    return emptyResult
+                }
+                let suffixCount = min(
+                    favoritesIds.count - (useCase.fetchItemLimit - 5),
+                    5
+                )
+                guard suffixCount > 0
+                else {
+                    useCase.isFinalPage = true
+                    return emptyResult
+                }
+                let idsToRequest = favoritesIds
+                    .prefix(useCase.fetchItemLimit)
+                    .suffix(suffixCount)
+                return Observable.zip(
+                    idsToRequest.map { busStopId in
+                        useCase.busStopArrivalInfoRepository.fetchArrivalList(
+                            busStopId: busStopId
+                        )
+                    }
+                )
+                .map { responses in
+                    (responses, favoritesList)
+                }
             }
+            .withUnretained(self)
+            .map { useCase, tuple in
+                let (responses, favoritesList) = tuple
+                let result = (useCase.cachedResponses + responses)
+                    .filterUnfavorites(favoritesList: favoritesList)
+                return result
+            }
+            .share()
+        fetchResult
             .withUnretained(self)
             .subscribe(
-                onNext: { useCase, tuple in
-                    let (responses, favoritesList) = tuple
-                    let result = responses
-                        .updateFavoritesStatus(
-                            favoritesList: favoritesList
-                        )
-                        .map { response in
-                            response.filterUnfavoritesBuses()
-                        }
-                    useCase.fetchedArrivalInfo.onNext(result)
+                onNext: { useCase, responses in
+                    useCase.cachedResponses = responses
                 }
             )
             .disposed(by: disposeBag)
+        return fetchResult
     }
 }

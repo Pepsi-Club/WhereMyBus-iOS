@@ -11,8 +11,8 @@ import Foundation
 import RxSwift
 
 public protocol FavoritesUseCase {
-    var fetchedArrivalInfo
-    : BehaviorSubject<[BusStopArrivalInfoResponse]> { get }
-    
-    func fetchFavoritesArrivals()
+    var isFinalPage: Bool { get }
+    func fakeFetch() -> Observable<[BusStopArrivalInfoResponse]>
+    func fetchFirstPage() -> Observable<[BusStopArrivalInfoResponse]>
+    func fetchNextPage() -> Observable<[BusStopArrivalInfoResponse]>
 }

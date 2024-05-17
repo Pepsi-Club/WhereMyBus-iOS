@@ -11,6 +11,8 @@ public final class FavoritesViewModel: ViewModel {
     private let coordinator: HomeCoordinator
     @Injected(FavoritesUseCase.self) var useCase: FavoritesUseCase
     
+    private let vmFetchStatus = PublishSubject<VMFetchStatus>()
+    private let fetchedResponse = PublishSubject<[BusStopArrivalInfoResponse]>()
     private let disposeBag = DisposeBag()
     private var timer: BCTimer
     
@@ -29,20 +31,119 @@ public final class FavoritesViewModel: ViewModel {
     public func transform(input: Input) -> Output {
         let output = Output(
             busStopArrivalInfoResponse: .init(),
-            favoritesState: .init(),
-            distanceFromTimerStart: .init(value: 0)
+            fetchStatus: .init()
         )
         
-        input.viewWillAppearEvent
+        vmFetchStatus // VMStatus, VCStatus 바인딩
+            .map { status in
+                status.toVC
+            }
+            .bind(to: output.fetchStatus)
+            .disposed(by: disposeBag)
+        /*
+         input의 fetchRequest 이벤트는 vmFetchStatus이 complete나 finalPage인 상태에서만
+         바인딩, PublishSubject이기 때문에 초기값이 없어 1번은 VM에서 수동 호출
+         */
+        useCase.fetchFirstPage()
             .withUnretained(self)
             .subscribe(
-                onNext: { viewModel, _ in
-                    viewModel.useCase.fetchFavoritesArrivals()
+                onNext: { vm, responses in
+                    vm.vmFetchStatus.onNext(.fetchComplete)
+                    vm.fetchedResponse.onNext(responses)
+                    vm.timer.start()
                 }
             )
             .disposed(by: disposeBag)
         
-        input.searchBtnTapEvent
+        vmFetchStatus.onNext(.firstFetching) // 상단의 수동 호출과 같은 맥락
+        
+        Observable.merge( // fakeFetching, firstFetching 상태 업데이트
+            input.viewWillAppearEvent,
+            input.refreshBtnTapEvent
+        )
+        .withLatestFrom(vmFetchStatus)
+        .filter { status in
+            status == .fetchComplete || status == .finalPage
+        }
+        .withLatestFrom(timer.distanceFromStart)
+        .map { timerValue in
+            if timerValue < 20 {
+                return VMFetchStatus.fakeFetching
+            } else {
+                return VMFetchStatus.firstFetching
+            }
+        }
+        .withUnretained(self)
+        .subscribe(
+            onNext: { vm, status in
+                if status == .firstFetching {
+                    vm.timer.stop()
+                }
+                vm.vmFetchStatus.onNext(status)
+            }
+        )
+        .disposed(by: disposeBag)
+        
+        vmFetchStatus // fakeFetcing 이벤트 처리
+            .filter { state in
+                state == .fakeFetching
+            }
+            .withUnretained(self)
+            .flatMapLatest { vm, _ in
+                vm.useCase.fakeFetch()
+            }
+            .withUnretained(self)
+            .observe(on: MainScheduler.asyncInstance)
+            .subscribe(
+                onNext: { vm, responses in
+                    vm.vmFetchStatus.onNext(.fetchComplete)
+                    vm.fetchedResponse.onNext(responses)
+                }
+            )
+            .disposed(by: disposeBag)
+        
+        vmFetchStatus // firstFetch 이벤트 처리
+            .filter { state in
+                state == .firstFetching
+            }
+            .withUnretained(self)
+            .flatMapLatest { vm, _ in
+                vm.useCase.fetchFirstPage()
+            }
+            .withUnretained(self)
+            .subscribe(
+                onNext: { vm, responses in
+                    vm.vmFetchStatus.onNext(.fetchComplete)
+                    vm.fetchedResponse.onNext(responses)
+                    vm.timer.start()
+                }
+            )
+            .disposed(by: disposeBag)
+        
+        input.scrollReachedBottomEvent // nextFetch 상태 업데이트 및 이벤트 처리
+            .withLatestFrom(vmFetchStatus)
+            .filter { status in
+                status == .fetchComplete
+            }
+            .withUnretained(self)
+            .flatMapLatest { vm, _ in
+                vm.vmFetchStatus.onNext(.nextFetching)
+                return vm.useCase.fetchNextPage()
+            }
+            .withUnretained(self)
+            .subscribe(
+                onNext: { vm, responses in
+                    if vm.useCase.isFinalPage {
+                        vm.vmFetchStatus.onNext(.finalPage)
+                    } else {
+                        vm.fetchedResponse.onNext(responses)
+                        vm.vmFetchStatus.onNext(.fetchComplete)
+                    }
+                }
+            )
+            .disposed(by: disposeBag)
+        
+        input.searchBtnTapEvent // 검색버튼 탭 이벤트 처리
             .withUnretained(self)
             .subscribe(
                 onNext: { viewModel, _ in
@@ -51,72 +152,29 @@ public final class FavoritesViewModel: ViewModel {
             )
             .disposed(by: disposeBag)
         
-        input.refreshBtnTapEvent
-            .withUnretained(self)
-            .subscribe(
-                onNext: { viewModel, _ in
-                    output.favoritesState.onNext(.fetching)
-                    viewModel.useCase.fetchFavoritesArrivals()
-                }
-            )
-            .disposed(by: disposeBag)
-        
-        input.busStopTapEvent
+        input.busStopTapEvent // 정류장(헤더) 탭 이벤트 처리
             .withUnretained(self)
             .subscribe(
                 onNext: { viewModel, selectedId in
-                    do {
-                        let responses = try viewModel.useCase
-                            .fetchedArrivalInfo.value()
-                        guard let selectedBusStop = responses.first(
-                            where: { response in
-                                response.busStopId == selectedId
-                            }
-                        )
-                        else { return }
-                        viewModel.coordinator.startBusStopFlow(
-                            stationId: selectedBusStop.busStopId
-                        )
-                    } catch {
-                        #if DEBUG
-                        print(error.localizedDescription)
-                        #endif
-                    }
+                    viewModel.coordinator.startBusStopFlow(
+                        stationId: selectedId
+                    )
                 }
             )
             .disposed(by: disposeBag)
-        
+        // fetch한 데이터를 타이머로 가공하여 시간 정보가 변경된 경우만 output 바인딩
         timer.distanceFromStart
-            .bind(to: output.distanceFromTimerStart)
-            .disposed(by: disposeBag)
-        
-        useCase.fetchedArrivalInfo
-            .subscribe(
-                onNext: { responses in
-                    output.busStopArrivalInfoResponse.onNext(responses)
-                    if responses.isEmpty {
-                        output.favoritesState.onNext(.emptyFavorites)
-                    } else {
-                        output.favoritesState.onNext(.fetchComplete)
-                    }
+            .withLatestFrom(fetchedResponse) { timerValue, responses in
+                (timerValue, responses)
+            }
+            .map { tuple in
+                let (timerValue, responses) = tuple
+                return responses.map {
+                    return $0.replaceTime()
                 }
-            )
-            .disposed(by: disposeBag)
-        
-        output.favoritesState
-            .withUnretained(self)
-            .subscribe(
-                onNext: { viewModel, state in
-                    switch state {
-                    case .emptyFavorites:
-                        break
-                    case .fetching:
-                        viewModel.timer.stop()
-                    case .fetchComplete:
-                        viewModel.timer.start()
-                    }
-                }
-            )
+            }
+            .distinctUntilChanged()
+            .bind(to: output.busStopArrivalInfoResponse)
             .disposed(by: disposeBag)
         
         return output        
@@ -130,16 +188,31 @@ extension FavoritesViewModel {
         let refreshBtnTapEvent: Observable<Void>
         let alarmBtnTapEvent: Observable<IndexPath>
         let busStopTapEvent: Observable<String>
+        let scrollReachedBottomEvent: Observable<Void>
     }
     
     public struct Output {
-        var busStopArrivalInfoResponse
+        let busStopArrivalInfoResponse
         : PublishSubject<[BusStopArrivalInfoResponse]>
-        var favoritesState: PublishSubject<FavoritesState>
-        var distanceFromTimerStart: BehaviorRelay<Int>
+        let fetchStatus: PublishSubject<VCFetchStatus>
     }
     
-    enum FavoritesState {
-        case emptyFavorites, fetching, fetchComplete
+    enum VMFetchStatus {
+        case firstFetching, nextFetching
+        case fakeFetching
+        case fetchComplete, finalPage
+        
+        var toVC: VCFetchStatus {
+            switch self {
+            case .firstFetching, .nextFetching, .fakeFetching:
+                return .fetching
+            case .fetchComplete, .finalPage:
+                return .fetchComplete
+            }
+        }
+    }
+    
+    enum VCFetchStatus {
+        case fetching, fetchComplete
     }
 }
