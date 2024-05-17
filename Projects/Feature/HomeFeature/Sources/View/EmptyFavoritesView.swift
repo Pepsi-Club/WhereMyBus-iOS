@@ -7,7 +7,7 @@
 //
 
 import UIKit
-
+import Lottie
 import DesignSystem
 
 import Lottie
