@@ -38,7 +38,6 @@ let project = Project.makeProject(
     dependencies: [
         .mainFeature,
         .data,
-        .package(product: "FirebaseMessaging"),
-        .package(product: "FirebaseAnalytics")
+        .package(product: "FirebaseMessaging")
     ]
 )

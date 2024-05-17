@@ -47,3 +47,6 @@ download-env:
 	
 download-googleinfo:
 	$(call download_file, Projects/App/Resources, $(token),GoogleService-Info.plist)
+	$(call download_file, Projects/App/Resources, $(token),GoogleService-Info-debugging.plist)
+
+

@@ -7,8 +7,10 @@
 //
 
 import UIKit
-import Lottie
+
 import DesignSystem
+
+import Lottie
 
 final class EmptyFavoritesView: UIView {
     private let listLottieView: LottieAnimationView = {

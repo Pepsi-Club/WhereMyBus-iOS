@@ -27,7 +27,7 @@ public final class SearchTextFieldView: UITextField {
     private func configureUI() {
         self.backgroundColor = .adaptiveWhite
         self.font =
-        DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(size: 15)
+        DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(size: 14)
         self.layer.cornerRadius = 15
         self.clipsToBounds = true
         self.contentVerticalAlignment = .center

@@ -10,16 +10,21 @@ import UIKit
 
 import Firebase
 import FirebaseMessaging
-import FirebaseAnalytics
 
 extension AppDelegate {
     func configureFirebase(application: UIApplication) {
+        var googleInfoName: String
+        #if DEBUG
+        googleInfoName = "GoogleService-Info-debugging"
+        #else
+        googleInfoName = "GoogleService-Info"
+        #endif
         guard let filePath = Bundle.main.path(
-            forResource: "GoogleService-Info",
+            forResource: googleInfoName,
             ofType: "plist"
         ),
-              let options = FirebaseOptions(contentsOfFile: filePath)
-        else { return }
+            let options = FirebaseOptions(contentsOfFile: filePath)
+            else { return }
         FirebaseApp.configure(options: options)
         application.registerForRemoteNotifications()
     }
@@ -45,18 +50,5 @@ extension AppDelegate: MessagingDelegate {
             fcmToken,
             forKey: "fcmToken"
         )
-    }
-}
-
-extension AppDelegate {
-    func configureDebuggingFB(application: UIApplication) {
-        guard let filePath = Bundle.main.path(
-            forResource: "GoogleService-debugging-Info",
-            ofType: "plist"
-        ),
-              let options = FirebaseOptions(contentsOfFile: filePath)
-        else { return }
-        FirebaseApp.configure(options: options)
-        application.registerForRemoteNotifications()
     }
 }
