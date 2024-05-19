@@ -38,10 +38,30 @@ public final class NearMapViewController: UIViewController {
     }()
     
     private let busStopInformationView: BusStopInformationView = {
-        let label = BusStopInformationView()
-        label.clipsToBounds = true
-        label.layer.cornerRadius = 15
-        return label
+        let view = BusStopInformationView()
+        view.clipsToBounds = false
+        view.layer.cornerRadius = 15
+        return view
+    }()
+    
+    private lazy var busStopInformationViewChevron: UIImageView = {
+        let configuration = UIImage.SymbolConfiguration(
+            pointSize: 16,
+            weight: .regular
+        )
+        let image = UIImage(
+            systemName: "chevron.right",
+            withConfiguration: configuration
+        )
+        var view = UIImageView(image: image)
+        view.tintColor = DesignSystemAsset.remainingColor.color
+        switch self.viewModel.viewMode {
+        case .normal:
+            break
+        case .focused(let busStopId):
+            view.isHidden = true
+        }
+        return view
     }()
     
     init(viewModel: NearMapViewModel) {
@@ -62,6 +82,7 @@ public final class NearMapViewController: UIViewController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
+
         configureUI()
         bind()
     }
@@ -85,8 +106,12 @@ public final class NearMapViewController: UIViewController {
     }
     
     private func configureUI() {
-        view.backgroundColor = .white
-        [busStopInformationView, naverMap].forEach {
+        view.backgroundColor = DesignSystemAsset.cellColor.color
+        [
+            busStopInformationView,
+            naverMap,
+            busStopInformationViewChevron
+        ].forEach {
             view.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
@@ -125,6 +150,15 @@ public final class NearMapViewController: UIViewController {
                 equalTo: busStopInformationView.topAnchor,
                 constant: -10
             ),
+            
+            busStopInformationViewChevron.centerYAnchor.constraint(
+                equalTo: busStopInformationView.centerYAnchor,
+                constant: 10
+            ),
+            busStopInformationViewChevron.trailingAnchor.constraint(
+                equalTo: busStopInformationView.trailingAnchor,
+                constant: -10
+            ),
         ])
     }
     
@@ -147,7 +181,7 @@ public final class NearMapViewController: UIViewController {
             .withUnretained(self)
             .subscribe(
                 onNext: { vc, tuple in
-                    let (response, distance) = tuple
+                    var (response, distance) = tuple
                     vc.busStopInformationView.updateUI(
                         response: response,
                         distance: distance

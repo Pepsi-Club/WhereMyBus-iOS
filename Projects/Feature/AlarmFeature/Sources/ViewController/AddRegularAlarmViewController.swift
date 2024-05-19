@@ -25,7 +25,7 @@ final class AddRegularAlarmViewController: UIViewController {
             size: 23
         )
         label.textAlignment = .left
-        label.textColor = .black
+        label.textColor = .adaptiveBlack
         return label
     }()
     
@@ -46,7 +46,7 @@ final class AddRegularAlarmViewController: UIViewController {
             font: DesignSystemFontFamily.NanumSquareNeoOTF.bold.font(
                 size: 14
             ),
-            color: .black
+            color: .adaptiveBlack
         )
         btn.accessibilityIdentifier = "알람에서 검색뷰로 네비게이션"
         return btn
@@ -67,7 +67,7 @@ final class AddRegularAlarmViewController: UIViewController {
         let picker = UIDatePicker()
         picker.datePickerMode = .time
         picker.preferredDatePickerStyle = .wheels
-        picker.setValue(UIColor.black, forKey: "textColor")
+        picker.setValue(UIColor.adaptiveBlack, forKey: "textColor")
         return picker
     }()
     
@@ -108,6 +108,7 @@ final class AddRegularAlarmViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+
         configureUI()
         setNavigation()
         bind()
@@ -132,7 +133,7 @@ final class AddRegularAlarmViewController: UIViewController {
     }
     
     private func configureUI() {
-        view.backgroundColor = .white
+        view.backgroundColor = DesignSystemAsset.cellColor.color
         [
             titleLabel,
             firstDescriptionLabel,
@@ -297,10 +298,10 @@ final class AddRegularAlarmViewController: UIViewController {
                         .forEach { btn in
                             var color: UIColor
                             if response.weekday.contains(btn.tag) {
-                                color = DesignSystemAsset.weekDayBlue.color
+                                color = DesignSystemAsset.changeBlue.color
                                 btn.setTitleColor(.white, for: .normal)
                             } else {
-                                color = DesignSystemAsset.weekDayGray.color
+                                color = DesignSystemAsset.gray3.color
                                 btn.setTitleColor(.black, for: .normal)
                             }
                             btn.backgroundColor = color

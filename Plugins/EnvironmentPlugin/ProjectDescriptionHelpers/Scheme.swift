@@ -21,7 +21,15 @@ public extension Scheme {
                     codeCoverageTargets: ["\(name)"]
                 )
             ),
-            runAction: .runAction(configuration: .debug),
+            runAction: .runAction(
+                configuration: .debug,
+                arguments: .init(launchArguments: [
+                    .init(
+                        name: "-FIRDebugEnabled",
+                        isEnabled: true
+                    )
+                ])
+            ),
             archiveAction: .archiveAction(configuration: .release)
         )
     }

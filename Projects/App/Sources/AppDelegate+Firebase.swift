@@ -13,12 +13,18 @@ import FirebaseMessaging
 
 extension AppDelegate {
     func configureFirebase(application: UIApplication) {
+        var googleInfoName: String
+        #if DEBUG
+        googleInfoName = "GoogleService-Info-debugging"
+        #else
+        googleInfoName = "GoogleService-Info"
+        #endif
         guard let filePath = Bundle.main.path(
-            forResource: "GoogleService-Info",
+            forResource: googleInfoName,
             ofType: "plist"
         ),
-              let options = FirebaseOptions(contentsOfFile: filePath)
-        else { return }
+            let options = FirebaseOptions(contentsOfFile: filePath)
+            else { return }
         FirebaseApp.configure(options: options)
         application.registerForRemoteNotifications()
     }

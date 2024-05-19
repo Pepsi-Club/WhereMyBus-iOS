@@ -93,12 +93,6 @@ public final class AlarmSettingViewController: UIViewController {
         return label
     }()
     
-    private let busIconView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = DesignSystemAsset.bus2.image
-        return imageView
-    }()
-    
     private let squareView: UIView = {
         let squareView = UIView()
         
@@ -111,7 +105,7 @@ public final class AlarmSettingViewController: UIViewController {
     private let endLabel: UILabel = {
         let label = UILabel()
         label.text = "완료"
-        label.textColor = .white
+        label.textColor = .adaptiveWhite
         label.textAlignment = .center
         label.font =
         DesignSystemFontFamily.NanumSquareNeoOTF.regular.font(size: 18)
@@ -126,11 +120,11 @@ public final class AlarmSettingViewController: UIViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = DesignSystemAsset.cellColor.color
         
         [settingAlarmViewCell, alarmStack, labelStack, labelStack2,
          labelImgStack, timeLabel, alarmSettingLabel, alarmSettingLabel2,
-         alarmSettingLabel3, busIconView, squareView, endLabel]
+         alarmSettingLabel3, squareView, endLabel]
             .forEach {
                 view.addSubview($0)
                 $0.translatesAutoresizingMaskIntoConstraints = false
@@ -146,7 +140,7 @@ public final class AlarmSettingViewController: UIViewController {
                 labelStack2.addArrangedSubview(components)
             }
         
-        [labelStack2, busIconView]
+        [labelStack2]
             .forEach { components in
                 labelImgStack.addArrangedSubview(components)
             }

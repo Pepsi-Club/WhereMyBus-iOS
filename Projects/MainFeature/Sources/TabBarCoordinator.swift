@@ -51,7 +51,7 @@ public final class TabBarCoordinator: Coordinator {
         let navigationController = UINavigationController()
         navigationController.tabBarItem = tabKind.tabItem
         navigationController.navigationBar.titleTextAttributes = [
-            .foregroundColor: UIColor.black
+            .foregroundColor: UIColor.adaptiveBlack
         ]
         setupChildCoordinators(
             tabKind: tabKind,

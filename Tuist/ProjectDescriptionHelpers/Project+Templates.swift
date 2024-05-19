@@ -9,10 +9,6 @@ import ProjectDescription
 import EnvironmentPlugin
 import DependencyPlugin
 
-import ProjectDescription
-import EnvironmentPlugin
-import DependencyPlugin
-
 extension Project {
     // MARK: Refact
     public static func makeProject(
@@ -24,7 +20,8 @@ extension Project {
         appExtensionTarget: [Target] = [],
         packages: [Package] = [],
         dependencies: [TargetDependency],
-        coreDataModel: [CoreDataModel] = []
+        coreDataModel: [CoreDataModel] = [],
+        resourceSynthesizers: [ResourceSynthesizer] = []
     ) -> Self {
         var schemes = [Scheme]()
         var targets = [Target]()

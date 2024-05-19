@@ -36,7 +36,7 @@ public final class FavoritesViewController: UIViewController {
     
     private lazy var refreshBtn: UIButton = {
         var config = UIButton.Configuration.plain()
-        config.baseForegroundColor = .black
+        config.baseForegroundColor = .adaptiveBlack
         config.imagePadding = 6
         // Image
         let image = UIImage(systemName: "arrow.triangle.2.circlepath")
@@ -57,10 +57,12 @@ public final class FavoritesViewController: UIViewController {
     
     private lazy var favoritesTableView: UITableView = {
         let tableView = UITableView()
-        tableView.backgroundColor = .white
+        tableView.backgroundColor =
+        DesignSystemAsset.cellColor.color
         tableView.register(FavoritesHeaderView.self)
         tableView.register(FavoritesTVCell.self)
         tableView.dataSource = dataSource
+        tableView.separatorColor = DesignSystemAsset.gray4Minor.color
         tableView.delegate = self
         tableView.sectionHeaderTopPadding = 0
         tableView.separatorInset = UIEdgeInsets(
@@ -83,6 +85,7 @@ public final class FavoritesViewController: UIViewController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
+
         configureDataSource()
         configureUI()
         bind()
@@ -97,7 +100,7 @@ public final class FavoritesViewController: UIViewController {
     }
     
     private func configureUI() {
-        view.backgroundColor = .white
+        view.backgroundColor = DesignSystemAsset.cellColor.color
         [
             searchBtn,
             refreshBtn,
@@ -112,7 +115,7 @@ public final class FavoritesViewController: UIViewController {
         NSLayoutConstraint.activate([
             searchBtn.topAnchor.constraint(
                 equalTo: safeArea.topAnchor,
-                constant: 10
+                constant: 7
             ),
             searchBtn.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
             searchBtn.widthAnchor.constraint(
@@ -149,7 +152,9 @@ public final class FavoritesViewController: UIViewController {
     
     private func bind() {
         let refreshControl = favoritesTableView.enableRefreshControl(
-            refreshStr: ""
+            refreshStr: "",
+            refreshMsgColor: DesignSystemAsset.mainColor.color,
+            progressColor: DesignSystemAsset.mainColor.color
         )
         
         let output = viewModel.transform(

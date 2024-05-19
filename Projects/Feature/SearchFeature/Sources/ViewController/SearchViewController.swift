@@ -43,7 +43,7 @@ public final class SearchViewController: UIViewController {
             style: .insetGrouped
         )
         table.register(SearchTVCell.self)
-        table.backgroundColor = DesignSystemAsset.tableViewColor.color
+        table.backgroundColor = DesignSystemAsset.cellColor.color
         table.dataSource = recentSearchDataSource
         table.delegate = self
         table.accessibilityIdentifier = "최근검색"
@@ -62,7 +62,7 @@ public final class SearchViewController: UIViewController {
             style: .insetGrouped
         )
         table.register(SearchTVMapCell.self)
-        table.backgroundColor = DesignSystemAsset.tableViewColor.color
+        table.backgroundColor = DesignSystemAsset.cellColor.color
         table.isHidden = true
         table.dataSource = searchedDataSource
         table.delegate = self
@@ -100,6 +100,7 @@ public final class SearchViewController: UIViewController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
+        
         configureUI()
         configureDataSource()
         bind()
@@ -109,6 +110,7 @@ public final class SearchViewController: UIViewController {
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         configureNavigation()
+        nearByStopView.busStopImage.play()
     }
     
     public override func viewWillDisappear(_ animated: Bool) {
@@ -136,7 +138,7 @@ public final class SearchViewController: UIViewController {
     }
     
     private func configureUI() {
-        view.backgroundColor = .white
+        view.backgroundColor = DesignSystemAsset.cellColor.color
         
         [
             recentSearchHeaderView,
@@ -191,7 +193,8 @@ public final class SearchViewController: UIViewController {
             ),
             
             recentSearchTableView.topAnchor.constraint(
-                equalTo: recentSearchHeaderView.bottomAnchor
+                equalTo: recentSearchHeaderView.bottomAnchor,
+                constant: -10
             ),
             recentSearchTableView.leadingAnchor.constraint(
                 equalTo: safeArea.leadingAnchor
@@ -235,7 +238,7 @@ public final class SearchViewController: UIViewController {
         NSLayoutConstraint.activate([
             searchTextFieldView.topAnchor.constraint(
                 equalTo: navigationView.topAnchor,
-                constant: 2.5
+                constant: 5
             ),
             searchTextFieldView.trailingAnchor.constraint(
                 equalTo: navigationView.trailingAnchor,
