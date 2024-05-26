@@ -48,4 +48,15 @@ public final class AppStoreCheck {
         
         task.resume()
     }
+    
+    /// URL을 통해 앱스토어 오픈
+    static public func openAppStore() {
+        guard let appleID,
+              let url = URL(string: AppStoreCheck.appStoreURLString + appleID)
+        else { return }
+        
+        if UIApplication.shared.canOpenURL(url) {
+            UIApplication.shared.open(url)
+        }
+    }
 }
