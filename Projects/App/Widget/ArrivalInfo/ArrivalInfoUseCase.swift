@@ -19,8 +19,8 @@ final class ArrivalInfoUseCase {
             forKey: "arrivalResponse"
         ) as? [Data]
         else { return }
-        responses = datas.compactMap {
-            return try? $0.decode(type: BusStopArrivalInfoResponse.self)
-        }
+//        responses = datas.compactMap {
+//            return try? $0.decode(type: BusStopArrivalInfoResponse.self)
+//        }
     }
 }

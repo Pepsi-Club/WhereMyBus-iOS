@@ -1,4 +1,4 @@
-import Foundation
+import UIKit
 
 import Core
 import Domain
@@ -12,13 +12,16 @@ public final class BusStopViewModel: ViewModel {
     private var useCase: BusStopUseCase
     private let disposeBag = DisposeBag()
     private var fetchData: ArrivalInfoRequest
+    private let flow: FlowState
     
     public init(
         coordinator: BusStopCoordinator,
-        fetchData: ArrivalInfoRequest
+        fetchData: ArrivalInfoRequest,
+        flow: FlowState
     ) {
         self.coordinator = coordinator
         self.fetchData = fetchData
+        self.flow = flow
     }
     
     deinit {
@@ -32,8 +35,9 @@ public final class BusStopViewModel: ViewModel {
         )
         
         input.viewWillAppearEvent
+            .take(1)
             .withUnretained(self)
-            .subscribe(
+            .bind(
                 onNext: { viewModel, _ in
                     output.isRefreshing.onNext(.fetching)
                     viewModel.useCase.fetchBusArrivals(
@@ -42,6 +46,32 @@ public final class BusStopViewModel: ViewModel {
                 }
             )
             .disposed(by: disposeBag)
+        
+        Observable.merge(
+            NotificationCenter.default.rx.notification(
+                UIApplication.willEnterForegroundNotification
+            ).map { _ in },
+            input.viewWillAppearEvent
+        )
+        .skip(1)
+        .withUnretained(self)
+        .filter({ viewModel, _ in
+            viewModel.flow == .fromHome
+        })
+        .bind(
+            onNext: { viewModel, _ in
+                switch viewModel.useCase
+                    .throttleFetchBusArrivals(
+                        request: viewModel.fetchData
+                    ) {
+                case .running:
+                    output.isRefreshing.onNext(.fetchComplete)
+                case .completed:
+                    output.isRefreshing.onNext(.fetching)
+                }
+            }
+        )
+        .disposed(by: disposeBag)
         
         input.mapBtnTapEvent
             .withLatestFrom(
@@ -61,10 +91,15 @@ public final class BusStopViewModel: ViewModel {
             .withUnretained(self)
             .subscribe(onNext: { viewModel, _ in
                 output.isRefreshing.onNext(.fetching)
-                
-                viewModel.useCase.fetchBusArrivals(
-                    request: viewModel.fetchData
-                )
+                switch viewModel.useCase
+                    .throttleFetchBusArrivals(
+                        request: viewModel.fetchData
+                    ) {
+                case .running:
+                    output.isRefreshing.onNext(.fetchComplete)
+                case .completed:
+                    break
+                }
             })
             .disposed(by: disposeBag)
         
@@ -134,6 +169,10 @@ public final class BusStopViewModel: ViewModel {
             .disposed(by: disposeBag)
         
         return output
+    }
+    
+    func getBusStopFlow() -> FlowState {
+        return flow
     }
 }
 

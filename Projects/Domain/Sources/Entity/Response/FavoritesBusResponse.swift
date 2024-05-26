@@ -33,3 +33,11 @@ public struct FavoritesBusResponse: CoreDataStorable, Equatable {
         self.adirection = adirection
     }
 }
+
+public extension Array<FavoritesBusResponse> {
+    var toBusStopIds: [String] {
+        map { $0.busStopId }
+            .removeDuplicated()
+            .sorted { $0 < $1 }
+    }
+}
