@@ -23,31 +23,6 @@ public final class AppStoreCheck {
     = "itms-apps://itunes.apple.com/app/apple-store/"
     
     /// 앱스토어에 등록된 최신 버전 가져오는 함수
-//    static public func latestVersion(completion: @escaping (String?) -> Void) {
-//        guard let appleID = AppStoreCheck.appleID,
-//              let url = URL(
-//                string: "https://itunes.apple.com/lookup?id=\(appleID)&country=kr"
-//              )
-//        else { return }
-//        
-//        let task = URLSession.shared.dataTask(with: url) { data, response, err in
-//            guard let data,
-//                  let json = try? JSONSerialization.jsonObject(
-//                    with: data,
-//                    options: .allowFragments
-//                  ) as? [String: Any],
-//                  let results = json["results"] as? [[String: Any]],
-//                  let appStoreVersion = results[0]["version"] as? String
-//            else {
-//                completion(nil)
-//                return
-//            }
-//            
-//            completion(appStoreVersion)
-//        }
-//        
-//        task.resume()
-//    }
     
     static public func latestVersion() async -> String? {
         guard let appleID = AppStoreCheck.appleID,
