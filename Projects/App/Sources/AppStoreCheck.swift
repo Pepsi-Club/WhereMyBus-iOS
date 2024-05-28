@@ -11,12 +11,8 @@ import UIKit
 import Core
 
 public final class AppStoreCheck {
-    
-    /// 프로젝트 버전
-    let appVersion = String.getCurrentVersion()
-    
     /// 앱스토어에 등록된 앱의 ID
-    static let appleID = Bundle.main.object(forInfoDictionaryKey: "APPLE_ID") as? String
+    static let appstoreID = Bundle.main.object(forInfoDictionaryKey: "APPSTORE_ID") as? String
     
     /// 앱스토어 연결 링크
     static let appStoreURLString
@@ -25,9 +21,9 @@ public final class AppStoreCheck {
     /// 앱스토어에 등록된 최신 버전 가져오는 함수
     
     static public func latestVersion() async -> String? {
-        guard let appleID = AppStoreCheck.appleID,
-              let url 
-                = URL(string: "https://itunes.apple.com/lookup?id=\(appleID)&country=kr")
+        guard let appstoreID = AppStoreCheck.appstoreID,
+              let url
+                = URL(string: "https://itunes.apple.com/lookup?id=\(appstoreID)&country=kr")
         else { return nil }
         
         do {
@@ -53,8 +49,8 @@ public final class AppStoreCheck {
     
     /// URL을 통해 앱스토어 오픈
     static public func openAppStore() {
-        guard let appleID,
-              let url = URL(string: AppStoreCheck.appStoreURLString + appleID)
+        guard let appstoreID,
+              let url = URL(string: AppStoreCheck.appStoreURLString + appstoreID)
         else { return }
         
         if UIApplication.shared.canOpenURL(url) {

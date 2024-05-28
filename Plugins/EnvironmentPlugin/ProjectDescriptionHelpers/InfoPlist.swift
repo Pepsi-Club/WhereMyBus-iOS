@@ -51,7 +51,7 @@ public extension [String: Plist.Value] {
         "TERMS_OF_PRIVACY_URL": "$(TERMS_OF_PRIVACY_URL)",
         "LOCATION_PRIVACY_URL": "$(LOCATION_PRIVACY_URL)",
         "INQURY_URL": "$(INQURY_URL)",
-        "APPLE_ID": "$(APPLE_ID)",
+        "APPSTORE_ID": "$(APPSTORE_ID)",
     ]
     
     static let additionalInfoPlist: Self = [
