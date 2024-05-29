@@ -121,6 +121,7 @@ public final class DefaultStationListRepository: StationListRepository {
             let seoul = try Data(contentsOf: seoulUrl)
                 .decode(type: BusStopListDTO.self)
                 .toDomain
+            
             regions.append(seoul)
             busStopRegions.onNext(regions)
         } catch {
