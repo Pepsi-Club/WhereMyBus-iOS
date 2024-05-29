@@ -65,3 +65,4 @@ jobs:
           APP_STORE_PRIVATE_KEY: ${{ secrets.APP_STORE_PRIVATE_KEY }}
           MATCH_URL: ${{ secrets.MATCH_URL }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: "120"
