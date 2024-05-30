@@ -17,7 +17,6 @@ public final class BusStopViewController: UIViewController {
     
     private var dataSource: BusStopDataSource!
     private var snapshot: BusStopSnapshot!
-    private var flow: FlowState
     
     private let headerView: BusStopInfoHeaderView = BusStopInfoHeaderView()
     private let scrollView: UIScrollView = UIScrollView()
@@ -30,22 +29,20 @@ public final class BusStopViewController: UIViewController {
         )
         table.delegate = self
         table.isScrollEnabled = false
-        table.backgroundColor = DesignSystemAsset.tableViewColor.color
+        table.backgroundColor = DesignSystemAsset.cellColor.color
         table.rowHeight = 60
         table.sectionHeaderHeight = 46
         table.sectionFooterHeight = 10
         table.accessibilityIdentifier = "정류장"
         return table
     }()
-    
+
     private var tableViewHeightConstraint = NSLayoutConstraint()
     
     public init(
-        viewModel: BusStopViewModel,
-        flow: FlowState
+        viewModel: BusStopViewModel
     ) {
         self.viewModel = viewModel
-        self.flow = flow
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -54,12 +51,48 @@ public final class BusStopViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    private func setupGradientBackground() {
+        let upperView = UIView(
+            frame: CGRect(
+            x: 0,
+            y: 0,
+            width: view.bounds.width,
+            height: view.bounds.height * 0.35
+            )
+        )
+        
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.frame = upperView.bounds
+        
+        gradientLayer.colors = [
+            DesignSystemAsset.changeBlue.color.cgColor,
+            DesignSystemAsset.changeBlue.color.withAlphaComponent(0.3).cgColor
+        ]
+        
+        gradientLayer.startPoint = CGPoint(x: 0.5, y: 0.0)
+        gradientLayer.endPoint = CGPoint(x: 0.5, y: 1.0)
+        
+        upperView.layer.insertSublayer(gradientLayer, at: 0)
+        
+        let lowerView = UIView(
+            frame: CGRect(
+                x: 0,
+                y: view.bounds.height * 0.35,
+                width: view.bounds.width,
+                height: view.bounds.height * 0.65)
+        )
+        lowerView.backgroundColor = DesignSystemAsset.cellColor.color
+
+        view.addSubview(upperView)
+        view.addSubview(lowerView)
+    }
+
     public override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationController?
             .interactivePopGestureRecognizer?.delegate = nil
         
-        view.backgroundColor = .white
+        setupGradientBackground()
         configureUI()
         bind()
         configureDataSource()
@@ -74,10 +107,20 @@ public final class BusStopViewController: UIViewController {
         }
     }
     
+    public override func viewWillDisappear(_ animated: Bool) {
+    }
+    
     private func bind() {
-        let refreshControl = scrollView.enableRefreshControl(
-            refreshStr: "당겨서 새로고침"
-        )
+        let refreshControl: UIRefreshControl? = {
+            switch viewModel.getBusStopFlow() {
+            case .fromHome:
+                return scrollView.enableRefreshControl(
+                    refreshStr: "당겨서 새로고침"
+                )
+            case .fromAlarm:
+                return nil
+            }
+        }()
         
         let input = BusStopViewModel.Input(
             viewWillAppearEvent: rx
@@ -86,10 +129,10 @@ public final class BusStopViewController: UIViewController {
             likeBusBtnTapEvent: likeBusBtnTapEvent.asObservable(),
             alarmBtnTapEvent: alarmBtnTapEvent.asObservable(),
             mapBtnTapEvent: headerView.mapBtn.rx.tap.asObservable(),
-            refreshLoading
-            : refreshControl.rx.controlEvent(.valueChanged).asObservable(),
-            navigationBackBtnTapEvent
-            : headerView.navigationBtn.rx.tap.asObservable(),
+            refreshLoading: refreshControl?.rx
+                .controlEvent(.valueChanged).asObservable() ?? .empty(),
+            navigationBackBtnTapEvent: headerView.navigationBtn.rx
+                .tap.asObservable(),
             cellSelectTapEvent: tableCellTapEvent.asObservable()
         )
         
@@ -101,7 +144,7 @@ public final class BusStopViewController: UIViewController {
             .subscribe(onNext: { refresh in
                 switch refresh {
                 case .fetchComplete:
-                    refreshControl.endRefreshing()
+                    refreshControl?.endRefreshing()
                 case .fetching:
                     break
                 }
@@ -152,7 +195,7 @@ public final class BusStopViewController: UIViewController {
         dataSource = .init(
             tableView: busStopTableView,
             cellProvider: { [weak self] tableView, indexPath, response in
-                switch self?.flow {
+                switch self?.viewModel.getBusStopFlow() {
                 case .fromHome:
                     tableView.register(
                         BusTableViewCell.self,
@@ -180,7 +223,6 @@ public final class BusStopViewController: UIViewController {
                             response: response
                           )
                     else { return UITableViewCell() }
-                    
                     return cell
                 case .none:
                     return UITableViewCell()
@@ -268,12 +310,14 @@ public final class BusStopViewController: UIViewController {
 
 extension BusStopViewController {
     private func configureUI() {
+        
         [scrollView, contentView, headerView, busStopTableView]
             .forEach { components in
                 components.translatesAutoresizingMaskIntoConstraints = false
             }
         
         view.addSubview(scrollView)
+        view.backgroundColor = DesignSystemAsset.cellColor.color
         
         [headerView, busStopTableView]
             .forEach { components in
@@ -297,7 +341,8 @@ extension BusStopViewController {
             ),
             
             busStopTableView.topAnchor.constraint(
-                equalTo: headerView.bottomAnchor
+                equalTo: headerView.bottomAnchor,
+                constant: 20
             ),
             busStopTableView.leadingAnchor.constraint(
                 equalTo: contentView.leadingAnchor

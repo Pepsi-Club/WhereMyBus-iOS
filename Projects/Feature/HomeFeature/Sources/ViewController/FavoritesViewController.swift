@@ -12,6 +12,7 @@ public final class FavoritesViewController: UIViewController {
     
     private let headerTapEvent = PublishSubject<String>()
     private let alarmBtnTapEvent = PublishSubject<IndexPath>()
+    private let scrollReachedBottomEvent = PublishSubject<Int>()
     private let isTableViewEditMode = BehaviorSubject(value: false)
     private let disposeBag = DisposeBag()
     
@@ -35,7 +36,7 @@ public final class FavoritesViewController: UIViewController {
     
     private lazy var refreshBtn: UIButton = {
         var config = UIButton.Configuration.plain()
-        config.baseForegroundColor = .black
+        config.baseForegroundColor = .adaptiveBlack
         config.imagePadding = 6
         // Image
         let image = UIImage(systemName: "arrow.triangle.2.circlepath")
@@ -54,27 +55,14 @@ public final class FavoritesViewController: UIViewController {
         return button
     }()
     
-    private let editBtn: UIButton = {
-        var config = UIButton.Configuration.plain()
-        config.baseForegroundColor = .black
-        config.imagePadding = 5
-        var titleContainer = AttributeContainer()
-        titleContainer.font = .systemFont(ofSize: 13)
-        config.attributedTitle = AttributedString(
-            "편집",
-            attributes: titleContainer
-        )
-        let button = UIButton(configuration: config)
-        button.isHidden = true
-        return button
-    }()
-    
     private lazy var favoritesTableView: UITableView = {
         let tableView = UITableView()
-        tableView.backgroundColor = .white
+        tableView.backgroundColor =
+        DesignSystemAsset.cellColor.color
         tableView.register(FavoritesHeaderView.self)
         tableView.register(FavoritesTVCell.self)
         tableView.dataSource = dataSource
+        tableView.separatorColor = DesignSystemAsset.gray4Minor.color
         tableView.delegate = self
         tableView.sectionHeaderTopPadding = 0
         tableView.separatorInset = UIEdgeInsets(
@@ -97,6 +85,7 @@ public final class FavoritesViewController: UIViewController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
+
         configureDataSource()
         configureUI()
         bind()
@@ -111,10 +100,9 @@ public final class FavoritesViewController: UIViewController {
     }
     
     private func configureUI() {
-        view.backgroundColor = .white
+        view.backgroundColor = DesignSystemAsset.cellColor.color
         [
             searchBtn,
-            editBtn,
             refreshBtn,
             favoritesTableView
         ].forEach {
@@ -127,7 +115,7 @@ public final class FavoritesViewController: UIViewController {
         NSLayoutConstraint.activate([
             searchBtn.topAnchor.constraint(
                 equalTo: safeArea.topAnchor,
-                constant: 10
+                constant: 7
             ),
             searchBtn.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
             searchBtn.widthAnchor.constraint(
@@ -142,15 +130,6 @@ public final class FavoritesViewController: UIViewController {
             refreshBtn.leadingAnchor.constraint(
                 equalTo: safeArea.leadingAnchor,
                 constant: 5
-            ),
-            
-            editBtn.topAnchor.constraint(
-                equalTo: searchBtn.bottomAnchor,
-                constant: 10
-            ),
-            editBtn.trailingAnchor.constraint(
-                equalTo: safeArea.trailingAnchor,
-                constant: -20
             ),
             
             favoritesTableView.topAnchor.constraint(
@@ -173,7 +152,9 @@ public final class FavoritesViewController: UIViewController {
     
     private func bind() {
         let refreshControl = favoritesTableView.enableRefreshControl(
-            refreshStr: ""
+            refreshStr: "",
+            refreshMsgColor: DesignSystemAsset.mainColor.color,
+            progressColor: DesignSystemAsset.mainColor.color
         )
         
         let output = viewModel.transform(
@@ -190,141 +171,54 @@ public final class FavoritesViewController: UIViewController {
                     refreshBtn.rx.tap.asObservable()
                 ),
                 alarmBtnTapEvent: alarmBtnTapEvent.asObservable(),
-                busStopTapEvent: headerTapEvent
+                busStopTapEvent: headerTapEvent,
+                scrollReachedBottomEvent: scrollReachedBottomEvent
+                    .throttle(
+                        .seconds(1),
+                        latest: false,
+                        scheduler: MainScheduler.asyncInstance
+                    )
+                    .map { _ in }
             )
         )
         
-        Observable.combineLatest(
-            output.distanceFromTimerStart,
-            output.busStopArrivalInfoResponse
-        )
-        .withUnretained(self)
-        .observe(on: MainScheduler.asyncInstance)
-        .subscribe(
-            onNext: { viewController, arg1 in
-                let (timerTime, responses) = arg1
-                let datas: [Data] = responses.compactMap { response in
-                    guard let data = response.encode()
-                    else { return nil }
-                    return data
-                }
-                UserDefaults.appGroup.set(
-                    datas,
-                    forKey: "arrivalResponse"
-                )
-                let newResponses = responses.map {
-                    return BusStopArrivalInfoResponse(
-                        busStopId: $0.busStopId,
-                        busStopName: $0.busStopName,
-                        direction: $0.direction,
-                        buses: $0.buses.map { busInfo in
-                            let newFirstArrivalState: ArrivalState
-                            let newSecondArrivalState: ArrivalState
-                            switch busInfo.firstArrivalState {
-                            case .soon, .pending, .finished:
-                                newFirstArrivalState = busInfo.firstArrivalState
-                            case .arrivalTime(let time):
-                                newFirstArrivalState = time - timerTime > 60 ?
-                                    .arrivalTime(time: time - timerTime):
-                                    .soon
-                            }
-                            switch busInfo.secondArrivalState {
-                            case .soon, .pending, .finished:
-                                newSecondArrivalState 
-                                = busInfo.secondArrivalState
-                            case .arrivalTime(let time):
-                                newSecondArrivalState = time - timerTime > 60 ?
-                                    .arrivalTime(time: time - timerTime):
-                                    .soon
-                            }
-                            let firstReaining = busInfo.firstArrivalRemaining
-                            let secondReaining = busInfo.secondArrivalRemaining
-                            return BusArrivalInfoResponse(
-                                busId: busInfo.busId,
-                                busName: busInfo.busName,
-                                busType: busInfo.busType.rawValue,
-                                nextStation: busInfo.nextStation,
-                                firstArrivalState: newFirstArrivalState,
-                                firstArrivalRemaining: firstReaining,
-                                secondArrivalState: newSecondArrivalState,
-                                secondArrivalRemaining: secondReaining,
-                                adirection: busInfo.adirection,
-                                isFavorites: busInfo.isFavorites,
-                                isAlarmOn: busInfo.isAlarmOn
-                            )
-                        }
-                    )
-                }
-                viewController.headerInfoList.removeAll()
-                newResponses.forEach { response in
-                    viewController.updateHeaderInfo(
-                        name: response.busStopName,
-                        direction: response.direction,
-                        busStopId: response.busStopId
-                    )
-                }
-                viewController.updateSnapshot(busStopResponse: newResponses)
-            }
-        )
-        .disposed(by: disposeBag)
-        
-        output.favoritesState
+        output.busStopArrivalInfoResponse
             .withUnretained(self)
             .observe(on: MainScheduler.asyncInstance)
             .subscribe(
-                onNext: { viewController, state in
-                    viewController.updateState(state: state)
+                onNext: { viewController, responses in
+                    viewController.headerInfoList.removeAll()
+                    responses.forEach { response in
+                        viewController.updateHeaderInfo(
+                            name: response.busStopName,
+                            direction: response.direction,
+                            busStopId: response.busStopId
+                        )
+                    }
+                    viewController.updateSnapshot(busStopResponse: responses)
+                }
+            )
+            .disposed(by: disposeBag)
+        
+        output.fetchStatus
+            .distinctUntilChanged()
+            .observe(on: MainScheduler.asyncInstance)
+            .withUnretained(self)
+            .subscribe(
+                onNext: { vc, state in
                     switch state {
                     case .fetching:
                         refreshControl.beginRefreshing()
-                    case .emptyFavorites, .fetchComplete:
-                        DispatchQueue.main.asyncAfter(
-                            deadline: .now() + 1,
-                            execute: .init(
-                                block: {
-                                    refreshControl.endRefreshing()
-                                    let timeStr = Date()
-                                        .toString(dateFormat: "HH:mm")
-                                    viewController.refreshBtn.configuration?
-                                        .attributedTitle = .init(
-                                            "\(timeStr) 업데이트",
-                                            attributes: viewController
-                                                .refreshAttribute
-                                        )
-                                }
-                            )
+                    case .fetchComplete:
+                        refreshControl.endRefreshing()
+                        vc.refreshBtn.configuration?.attributedTitle = .init(
+                            "\(Date.now.toString(dateFormat: "HH:mm")) 업데이트",
+                            attributes: vc.refreshAttribute
                         )
                     }
                 }
             )
             .disposed(by: disposeBag)
-        
-        editBtn.rx.tap
-            .asObservable()
-            .withUnretained(self)
-            .subscribe(
-                onNext: { viewController, _ in
-                    guard let isEditMode = try? viewController
-                        .isTableViewEditMode.value()
-                    else { return }
-                    viewController.isTableViewEditMode
-                        .onNext(!isEditMode)
-                }
-            )
-            .disposed(by: disposeBag)
-        
-//        isTableViewEditMode
-//            .withUnretained(self)
-//            .subscribe(
-//                onNext: { viewController, isEditMode in
-//                    viewController.editBtn.setTitle(
-//                        isEditMode ? "완료" : "편집",
-//                        for: .normal
-//                    )
-//                    viewController.favoritesTableView.isEditing = isEditMode
-//                }
-//            )
-//            .disposed(by: disposeBag)
     }
     
     private func configureDataSource() {
@@ -382,6 +276,13 @@ public final class FavoritesViewController: UIViewController {
     }
     
     private func updateSnapshot(busStopResponse: [BusStopArrivalInfoResponse]) {
+        if busStopResponse.isEmpty {
+            favoritesTableView.backgroundView = EmptyFavoritesView()
+            refreshBtn.isHidden = true
+        } else {
+            favoritesTableView.backgroundView = nil
+            refreshBtn.isHidden = false
+        }
         snapshot = .init()
         snapshot.appendSections(busStopResponse)
         busStopResponse.forEach { response in
@@ -392,25 +293,23 @@ public final class FavoritesViewController: UIViewController {
         }
         dataSource.apply(snapshot, animatingDifferences: false)
     }
-    
-    private func updateState(state: FavoritesViewModel.FavoritesState) {
-        switch state {
-        case .emptyFavorites:
-            favoritesTableView.backgroundView = EmptyFavoritesView()
-            refreshBtn.isHidden = true
-//            editBtn.isHidden = true
-        case .fetching:
-            favoritesTableView.loadingBackground()
-            refreshBtn.isHidden = false
-//            editBtn.isHidden = false
-        case .fetchComplete:
-            favoritesTableView.backgroundView = nil
-            refreshBtn.isHidden = false
-        }
-    }
 }
 
 extension FavoritesViewController: UITableViewDelegate {
+    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        scrollView.rx.didScroll
+            .filter { _ in
+                scrollView.contentOffset.y >=
+                    scrollView.contentSize.height -
+                scrollView.bounds.size.height
+            }
+            .map {
+                Int(scrollView.contentSize.height)
+            }
+            .bind(to: scrollReachedBottomEvent)
+            .disposed(by: disposeBag)
+    }
+    
     public func tableView(
         _ tableView: UITableView,
         viewForFooterInSection section: Int

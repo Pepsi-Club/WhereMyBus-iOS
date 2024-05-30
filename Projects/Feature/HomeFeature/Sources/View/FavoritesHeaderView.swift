@@ -31,13 +31,13 @@ internal final class FavoritesHeaderView: UITableViewHeaderFooterView {
             size: 13
         )
         label.textAlignment = .left
-        label.textColor = .gray
+        label.textColor = DesignSystemAsset.gray4.color
         return label
     }()
     
     private let dividerLine: UIView = {
         let view = UIView()
-        view.backgroundColor = DesignSystemAsset.gray4Minor.color
+        view.backgroundColor = DesignSystemAsset.gray5Minor.color
         return view
     }()
     
@@ -58,7 +58,8 @@ internal final class FavoritesHeaderView: UITableViewHeaderFooterView {
     }
     
     private func configureUI() {
-        contentView.backgroundColor = DesignSystemAsset.gray1.color
+        contentView.backgroundColor =
+            .adaptiveWhite
         
         [busStopNameLabel, directionLabel, dividerLine].forEach {
             contentView.addSubview($0)
@@ -89,11 +90,11 @@ internal final class FavoritesHeaderView: UITableViewHeaderFooterView {
             
             dividerLine.leadingAnchor.constraint(
                 equalTo: contentView.leadingAnchor,
-                constant: 10
+                constant: 12
             ),
             dividerLine.trailingAnchor.constraint(
                 equalTo: contentView.trailingAnchor,
-                constant: -10
+                constant: -12
             ),
             dividerLine.heightAnchor.constraint(equalToConstant: 1),
             dividerLine.bottomAnchor.constraint(

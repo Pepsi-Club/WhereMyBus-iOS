@@ -12,6 +12,7 @@ import Domain
 import NetworkService
 
 import RxSwift
+import FirebaseAnalytics
 
 public final class DefaultBusStopArrivalInfoRepository:
     NSObject, BusStopArrivalInfoRepository {
@@ -23,10 +24,10 @@ public final class DefaultBusStopArrivalInfoRepository:
         self.networkService = networkService
     }
     
-    public func fetchArrivalList(
-        busStopId: String
-    ) -> Observable<BusStopArrivalInfoResponse> {
-        networkService.request(
+    public func fetchArrivalList(busStopId: String) ->
+    Observable<BusStopArrivalInfoResponse> {
+        Analytics.logEvent("fetchArrivalEvent", parameters: nil)
+        return networkService.request(
             endPoint: BusStopArrivalInfoEndPoint(arsId: busStopId)
         )
         .decode(

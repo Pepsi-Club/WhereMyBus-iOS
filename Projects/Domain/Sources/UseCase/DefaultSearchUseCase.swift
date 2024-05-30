@@ -104,7 +104,8 @@ public final class DefaultSearchUseCase: SearchUseCase {
     
     public func updateNearByStop(
     ) -> Observable<(BusStopInfoResponse, String)> {
-        locationService.locationStatus
+        locationService.requestLocationOnce()
+        return locationService.locationStatus
             .withUnretained(self)
             .map { useCase, status in
                 var response: BusStopInfoResponse
