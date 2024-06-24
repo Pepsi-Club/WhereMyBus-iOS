@@ -18,6 +18,8 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
     var appCoordinator: AppCoordinator?
     var deeplinkHandler: DeeplinkHandler?
+    
+    let disposeBag = DisposeBag()
 
     func scene(
         _ scene: UIScene,
@@ -37,10 +39,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         )
         appCoordinator?.start()
         window?.makeKeyAndVisible()
-        
-        Task {
-            await self.checkAndUpdateIfNeeded()
-        }
+        checkAndUpdateIfNeeded()
         deeplinkHandler = .init(appCoordinator: appCoordinator)
         if let url = connectionOptions.urlContexts.first?.url {
             deeplinkHandler?.handleUrl(url: url)
@@ -58,9 +57,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     /// 앱이 Foreground로 전환될때 실행될 함수
     func sceneWillEnterForeground(_ scene: UIScene) {
-        Task {
-            await self.checkAndUpdateIfNeeded()
-        }
+        checkAndUpdateIfNeeded()
     }
 
     func sceneDidEnterBackground(_ scene: UIScene) {
@@ -75,26 +72,29 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         }
     }
     
-    private func checkAndUpdateIfNeeded() async {
-        guard let marketingVersion = await AppStoreCheck.latestVersion()
-        else { return }
-        
-        /// 현재 기기 버전
-        let currentProjectVersion = String.getCurrentVersion()
-        
-        /// .을 기준으로 나눔
-        let splitMarketingVersion = marketingVersion.split(separator: ".").map { $0 }
-        let splitCurrentProjectVersion = currentProjectVersion.split(separator: ".").map { $0 }
-        
-        if splitCurrentProjectVersion.count > 0 && splitMarketingVersion.count > 0 {
-            // Major 버전만을 비교
-            if splitCurrentProjectVersion[0] < splitMarketingVersion[0] {
-                self.showUpdateAlert(version: marketingVersion)
-            } else {
-                print("현재 최신 버전입니다.")
-            }
-            
-        }
+    private func checkAndUpdateIfNeeded() {
+        AppStoreCheck.latestVersion()
+            .observe(on: MainScheduler.instance)
+            .subscribe(onSuccess: { version in
+                let splitMarketingVersion = version.split(separator: ".")
+                    .map { $0 }
+                let splitCurrentVersion = String.getCurrentVersion()
+                    .split(separator: ".")
+                    .map { $0 }
+                
+                if splitCurrentVersion.count > 0 &&
+                    splitMarketingVersion.count > 0 {
+                    // Major 버전만을 비교
+                    if splitCurrentVersion[0] < splitMarketingVersion[0] {
+                        self.showUpdateAlert(version: version)
+                    } else {
+                        print("현재 최신 버전입니다.")
+                    }
+                }
+            }, onFailure: { err in
+                print(err, #function)
+            })
+            .disposed(by: disposeBag)
     }
     
     private func showUpdateAlert(version: String) {
@@ -111,8 +111,9 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             }
         
         alert.addAction(alertAction)
-        window?.rootViewController?.present(alert, animated: true)
-        
+        DispatchQueue.main.async {
+            self.window?.rootViewController?.present(alert, animated: true)
+        }
     }
 }
 
