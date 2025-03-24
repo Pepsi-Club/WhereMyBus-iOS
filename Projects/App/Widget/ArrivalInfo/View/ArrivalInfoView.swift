@@ -10,7 +10,7 @@ import SwiftUI
 import WidgetKit
 import DesignSystem
 
-@available (iOS 17.0, *)
+@available(iOS 17.0, *)
 struct ArrivalInfoView: View {
     var entry: ArrivalInfoProvider.Entry
     @Environment(\.widgetFamily) var widgetFamily
