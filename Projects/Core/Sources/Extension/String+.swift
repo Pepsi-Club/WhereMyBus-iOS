@@ -35,11 +35,12 @@ public extension String {
     }
     
     /// 프로젝트 버전
-    static func getCurrentVersion() -> String {
+    static func getCurrentVersion() -> [Int] {
         guard let dictionary = Bundle.main.infoDictionary,
               let version = dictionary["CFBundleShortVersionString"] as? String
-        else { return "1" }
-        return version
+        else { return [1, 0, 0] }
+        
+        return version.split(separator: ".").compactMap { Int($0) }
     }
     
     static func getDeviceIdentifier() -> String {
