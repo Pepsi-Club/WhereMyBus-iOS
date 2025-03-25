@@ -12,4 +12,8 @@ import RxSwift
 
 public protocol NetworkService {
     func request(endPoint: EndPoint) -> Observable<Data>
+    func request<T: Decodable>(
+        endPoint: EndPoint,
+        responseType: T.Type
+    ) -> Single<Result<T, Error>>
 }
