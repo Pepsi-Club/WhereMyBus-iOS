@@ -8,6 +8,7 @@
 
 import UIKit
 
+import Core
 import NetworkService
 import Domain
 import Data
@@ -20,6 +21,8 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var deeplinkHandler: DeeplinkHandler?
     
     let disposeBag = DisposeBag()
+    
+    @Injected(VersionCheckUseCase.self) var useCase: VersionCheckUseCase
 
     func scene(
         _ scene: UIScene,
@@ -39,6 +42,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         )
         appCoordinator?.start()
         window?.makeKeyAndVisible()
+        // 앱 진입할 때 확인
         checkAndUpdateIfNeeded()
         deeplinkHandler = .init(appCoordinator: appCoordinator)
         if let url = connectionOptions.urlContexts.first?.url {
@@ -73,31 +77,25 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     private func checkAndUpdateIfNeeded() {
-        DefaultAppStoreCheck.shared.latestVersion()
-            .observe(on: MainScheduler.instance)
-            .subscribe(onSuccess: { version in
-                let splitMarketingVersion = version.split(separator: ".")
-                    .map { $0 }
-                let splitCurrentVersion = String.getCurrentVersion()
-                    .split(separator: ".")
-                    .map { $0 }
-                
-                if splitCurrentVersion.count > 0 &&
-                    splitMarketingVersion.count > 0 {
-                    // Major 버전만을 비교
-                    if splitCurrentVersion[0] < splitMarketingVersion[0] {
-                        self.showUpdateAlert(version: version)
-                    } else {
-                        print("현재 최신 버전입니다.")
-                    }
-                }
-            }, onFailure: { err in
-                print(err, #function)
-            })
+        guard let appId = Bundle.main.object(
+            forInfoDictionaryKey: "APPSTORE_ID"
+        ) as? String
+        else { return }
+        
+        useCase.fetchAppStoreURL(appId: appId)
+            .subscribe { [weak self] str in
+                guard let self,
+                      let urlString = str
+                else { return }
+                self.showUpdateAlert(with: urlString)
+            } onFailure: { error in
+                print(error)
+            }
             .disposed(by: disposeBag)
+
     }
     
-    private func showUpdateAlert(version: String) {
+    private func showUpdateAlert(with urlString: String) {
         let alert = UIAlertController(
             title: "업데이트 알림",
             message: "더 나은 서비스를 위해 업데이트 되었어요 ! 업데이트 해주세요.",
@@ -107,13 +105,24 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let alertAction = UIAlertAction(
             title: "업데이트",
             style: .default
-        ) { _ in
-            DefaultAppStoreCheck.shared.openAppStore()
+        ) { [weak self] _ in
+            guard let self else { return }
+            
+            openAppStore(urlString)
         }
         
         alert.addAction(alertAction)
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
             self.window?.rootViewController?.present(alert, animated: true)
+        }
+    }
+    
+    private func openAppStore(_ str: String) {
+        guard let url = URL(string: str) else { return }
+        
+        if UIApplication.shared.canOpenURL(url) {
+            UIApplication.shared.open(url)
         }
     }
 }
