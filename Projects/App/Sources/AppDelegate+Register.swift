@@ -38,6 +38,8 @@ extension AppDelegate {
         = DefaultLocalNotificationService()
         let regularAlarmEditingService: RegularAlarmEditingService
         = DefaultRegularAlarmEditingService()
+        let versionCheckRepository: VersionCheckRepository
+        = DefaultVersionCheckRepository(networkService: networkService)
         
         DIContainer.register(
             type: FavoritesUseCase.self,
@@ -91,6 +93,13 @@ extension AppDelegate {
         DIContainer.register(
             type: RegularAlarmEditingService.self,
             regularAlarmEditingService
+        )
+        
+        DIContainer.register(
+            type: VersionCheckUseCase.self,
+            DefaultVersionCheckUseCase(
+                versionCheckRepository: versionCheckRepository
+            )
         )
     }
 }
