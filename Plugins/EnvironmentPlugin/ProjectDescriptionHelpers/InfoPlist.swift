@@ -50,7 +50,7 @@ public extension [String: Plist.Value] {
         "NMFClientId": "$(NAVERMAP_CLIENT_ID)",
         "TERMS_OF_PRIVACY_URL": "$(TERMS_OF_PRIVACY_URL)",
         "LOCATION_PRIVACY_URL": "$(LOCATION_PRIVACY_URL)",
-        "INQURY_URL": "$(INQURY_URL)",
+        "INQUIRY_URL": "$(INQUIRY_URL)",
         "APPSTORE_ID": "$(APPSTORE_ID)",
     ]
     
