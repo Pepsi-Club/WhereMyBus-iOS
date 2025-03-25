@@ -31,9 +31,9 @@ public final class DefaultBusStopCoordinator: BusStopCoordinator {
         let busStopViewController = BusStopViewController(
             viewModel: BusStopViewModel(
                 coordinator: self,
-                fetchData: fetchData
-            ),
-            flow: flow
+                fetchData: fetchData,
+                flow: flow
+            )
         )
         navigationController.pushViewController(
             busStopViewController,

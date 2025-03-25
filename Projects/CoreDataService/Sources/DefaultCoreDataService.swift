@@ -74,7 +74,7 @@ public final class DefaultCoreDataService: CoreDataService {
             #if DEBUG
             print(
                 "💾 CoreData 저장소: \(String(describing: migrationStatus))",
-                "[applicationSupport(마이그레이션 필요) / appGroup(마이그레이션 완)]"
+                "\(migrationStatus.description)"
             )
             #endif
             loadStore()
@@ -117,19 +117,22 @@ public final class DefaultCoreDataService: CoreDataService {
     public func fetch<T: CoreDataStorable>(
         type: T.Type
     ) -> Observable<[T]> {
-        Observable.create { observer in
-            do {
-                let result = try self.fetchMO(type: type)
-                    .compactMap { $0 as? CoreDataModelObject }
-                    .compactMap { $0.toDomain as? T }
-                observer.onNext(result)
-                observer.onCompleted()
-                return Disposables.create()
-            } catch {
-                observer.onError(error)
-                return Disposables.create()
+        return storeStatus
+            .filter { status in
+                status == .loaded
             }
-        }
+            .take(1)
+            .withUnretained(self)
+            .flatMap { coreDataService, _ in
+                do {
+                    let result = try coreDataService.fetchMO(type: type)
+                        .compactMap { $0 as? CoreDataModelObject }
+                        .compactMap { $0.toDomain as? T }
+                    return Observable.just(result)
+                } catch {
+                    return Observable.error(error)
+                }
+            }
     }
     
     public func fetch<T: CoreDataStorable>(type: T.Type) throws -> [T] {

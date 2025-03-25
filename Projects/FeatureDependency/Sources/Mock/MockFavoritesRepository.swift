@@ -14,6 +14,7 @@ import RxSwift
 
 #if DEBUG
 public final class MockFavoritesRepository: FavoritesRepository {
+    
     public var favorites = BehaviorSubject<[FavoritesBusResponse]>(
         value: []
     )
@@ -23,6 +24,10 @@ public final class MockFavoritesRepository: FavoritesRepository {
     }
     public func fetchFavorites() {
         
+    }
+    public func fetchFavorites(
+    ) -> RxSwift.Observable<[Domain.FavoritesBusResponse]> {
+        .empty()
     }
     public func addFavorites(favorites: FavoritesBusResponse) throws {
         

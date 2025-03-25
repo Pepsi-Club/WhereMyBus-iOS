@@ -76,7 +76,7 @@ struct ArrivalInfoSmallView: View {
                             .foregroundColor(.green)
                         Spacer()
                         VStack(spacing: 6) {
-                            HStack(spacing:3) {
+                            HStack(spacing: 3) {
                                 Spacer()
                                 Text(bus.firstArrivalState.toString)
                                     .font(.nanumHeavy(13))

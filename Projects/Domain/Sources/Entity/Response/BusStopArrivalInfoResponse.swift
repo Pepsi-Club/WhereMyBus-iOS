@@ -8,18 +8,21 @@
 
 import Foundation
 
-public struct BusStopArrivalInfoResponse: Codable, Hashable {
+public struct BusStopArrivalInfoResponse: Hashable {
+    public let generatedDate: Date
     public let busStopId: String
     public let busStopName: String
     public let direction: String
     public var buses: [BusArrivalInfoResponse]
     
     public init(
+        generatedDate: Date = .now,
         busStopId: String,
         busStopName: String,
         direction: String,
         buses: [BusArrivalInfoResponse]
     ) {
+        self.generatedDate = generatedDate
         self.busStopId = busStopId
         self.busStopName = busStopName
         self.direction = direction
@@ -28,6 +31,52 @@ public struct BusStopArrivalInfoResponse: Codable, Hashable {
 }
 
 public extension BusStopArrivalInfoResponse {
+    func replaceTime() -> Self {
+        let distance = Int(generatedDate.distance(to: .now))
+        return BusStopArrivalInfoResponse(
+            generatedDate: generatedDate,
+            busStopId: busStopId,
+            busStopName: busStopName,
+            direction: direction,
+            buses: buses.map { busInfo in
+                let newFirstArrivalState: ArrivalState
+                let newSecondArrivalState: ArrivalState
+                switch busInfo.firstArrivalState {
+                case .soon, .pending, .finished:
+                    newFirstArrivalState = busInfo.firstArrivalState
+                case .arrivalTime(let time):
+                    newFirstArrivalState = time - distance > 60 ?
+                        .arrivalTime(time: time - distance):
+                        .soon
+                }
+                switch busInfo.secondArrivalState {
+                case .soon, .pending, .finished:
+                    newSecondArrivalState
+                    = busInfo.secondArrivalState
+                case .arrivalTime(let time):
+                    newSecondArrivalState = time - distance > 60 ?
+                        .arrivalTime(time: time - distance):
+                        .soon
+                }
+                let firstReaining = busInfo.firstArrivalRemaining
+                let secondReaining = busInfo.secondArrivalRemaining
+                return BusArrivalInfoResponse(
+                    busId: busInfo.busId,
+                    busName: busInfo.busName,
+                    busType: busInfo.busType.rawValue,
+                    nextStation: busInfo.nextStation,
+                    firstArrivalState: newFirstArrivalState,
+                    firstArrivalRemaining: firstReaining,
+                    secondArrivalState: newSecondArrivalState,
+                    secondArrivalRemaining: secondReaining,
+                    adirection: busInfo.adirection,
+                    isFavorites: busInfo.isFavorites,
+                    isAlarmOn: busInfo.isAlarmOn
+                )
+            }
+        )
+    }
+    
     func updateFavoritesStatus(
         favoritesList: [FavoritesBusResponse]
     ) -> Self {
@@ -42,6 +91,7 @@ public extension BusStopArrivalInfoResponse {
             return updatedBus
         }
         return .init(
+            generatedDate: generatedDate,
             busStopId: busStopId,
             busStopName: busStopName,
             direction: direction,
@@ -54,6 +104,7 @@ public extension BusStopArrivalInfoResponse {
             busResponse.isFavorites
         }
         return BusStopArrivalInfoResponse(
+            generatedDate: generatedDate,
             busStopId: busStopId,
             busStopName: busStopName,
             direction: direction,
@@ -63,6 +114,12 @@ public extension BusStopArrivalInfoResponse {
 }
 
 public extension Array<BusStopArrivalInfoResponse> {
+    func filterUnfavorites(favoritesList: [FavoritesBusResponse]) -> Self {
+        updateFavoritesStatus(favoritesList: favoritesList)
+        .map { $0.filterUnfavoritesBuses() }
+        .filter { !$0.buses.isEmpty }
+    }
+    
     func updateFavoritesStatus(
         favoritesList: [FavoritesBusResponse]
     ) -> Self {
@@ -79,10 +136,13 @@ public extension Array<BusStopArrivalInfoResponse> {
                 let key = "\(busStop.busStopId)\(bus.busId)\(bus.adirection)"
                 if let isFavorites = favoritesDic[key] {
                     updatedBuses[index].isFavorites = isFavorites
+                } else {
+                    updatedBuses[index].isFavorites = false
                 }
             }
             
             return BusStopArrivalInfoResponse(
+                generatedDate: busStop.generatedDate,
                 busStopId: busStop.busStopId,
                 busStopName: busStop.busStopName,
                 direction: busStop.direction,

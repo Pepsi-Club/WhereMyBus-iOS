@@ -36,7 +36,8 @@ public final class DefaultFavoritesRepository: FavoritesRepository {
             data: favorites,
             uniqueKeyPath: \.identifier
         )
-        fetchFavorites()
+        let currentFavorites = try self.favorites.value()
+        self.favorites.onNext(currentFavorites + [favorites])
     }
     
     public func removeFavorites(favorites: FavoritesBusResponse) throws {
@@ -44,7 +45,10 @@ public final class DefaultFavoritesRepository: FavoritesRepository {
             data: favorites,
             uniqueKeyPath: \.identifier
         )
-        fetchFavorites()
+        let currentFavorites = try self.favorites.value()
+        self.favorites.onNext(
+            currentFavorites.filter { $0 != favorites }
+        )
     }
     
     private func bindStoreStatus() {
@@ -60,29 +64,28 @@ public final class DefaultFavoritesRepository: FavoritesRepository {
             .disposed(by: disposeBag)
     }
     
-    public func fetchFavorites() {
-        coreDataService.fetch(
+    public func fetchFavorites() -> Observable<[FavoritesBusResponse]> {
+        let fetchResult = coreDataService.fetch(
             type: FavoritesBusResponse.self
         )
-        .withUnretained(self)
-        .subscribe(
-            onNext: { repository, favoritesList in
-                repository.favorites.onNext(favoritesList)
-            }
-        )
-        .disposed(by: disposeBag)
+        .share()
+        fetchResult
+            .withUnretained(self)
+            .subscribe(
+                onNext: { repository, favoritesList in
+                    repository.favorites.onNext(favoritesList)
+                }
+            )
+            .disposed(by: disposeBag)
+        return fetchResult
     }
     
     private func migrateFavorites() {
         coreDataService.fetch(type: FavoritesBusStopResponse.self)
-            .withUnretained(self)
-            .filter { repository, legacyFavoritesList in
-                let needMigration = !legacyFavoritesList.isEmpty
-                if !needMigration {
-                    repository.fetchFavorites()
-                }
-                return needMigration
+            .filter { legacyFavoritesList in
+                !legacyFavoritesList.isEmpty
             }
+            .withUnretained(self)
             .flatMap { repository, legacyFavoritesList in
                 repository.fetchLegacyFavoritesToBusStop(
                     legacyFavoritesList: legacyFavoritesList.filterDuplicated()
@@ -96,10 +99,10 @@ public final class DefaultFavoritesRepository: FavoritesRepository {
                         busStopList: tuple.0,
                         legacyFavoritesList: tuple.1
                     )
-                    repository.fetchFavorites()
+                    _ = repository.fetchFavorites()
                 },
                 onError: { [weak self] _ in
-                    self?.fetchFavorites()
+                    _ = self?.fetchFavorites()
                 }
             )
             .disposed(by: disposeBag)
