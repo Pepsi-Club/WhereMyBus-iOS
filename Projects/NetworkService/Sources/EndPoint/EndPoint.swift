@@ -60,7 +60,6 @@ extension EndPoint {
             }
         }
         return urlRequest
-        
     }
     
     public var toURLString: String? {
