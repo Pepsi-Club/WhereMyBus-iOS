@@ -24,8 +24,8 @@ public final class DefaultVersionCheckRepository: VersionCheckRepository {
     public func getAppVersion(appId: String) 
     -> Single<Result<AppVersionInfoResponse?, Error>> {
         return networkService.request(
-            endPoint: AppStoreEndPoint(appStoreID: appId),
-            responseType: AppInfoDTO.self
+            endPoint: MinVersionEndpoint(domain: getDomainURL()),
+            responseType: MinVersionDTO.self
         )
         .map { result in
             switch result {
@@ -39,5 +39,14 @@ public final class DefaultVersionCheckRepository: VersionCheckRepository {
     
     public func getStoreLink(appId: String) -> String? {
         return OpenStoreEndpoint(appStoreID: appId).toURLString
+    }
+    
+    private func getDomainURL() -> String {
+        guard let domainURL = Bundle.main.object(
+            forInfoDictionaryKey: "DOMAIN_URL"
+        ) as? String
+        else { fatalError("Can't Find Domain URL") }
+        
+        return domainURL
     }
 }
