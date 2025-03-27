@@ -58,4 +58,59 @@ public final class DefaultNetworkService: NetworkService {
             }
         }
     }
+    
+    public func request<T: Decodable>(
+        endPoint: any EndPoint,
+        responseType: T.Type
+    ) -> Single<Result<T, Error>> {
+        return Single.create { observer -> Disposable in
+            do {
+                let urlReqeust = try endPoint.toURLRequest()
+                URLSession.shared.dataTask(
+                    with: urlReqeust
+                ) { data, response, error in
+                    if let error {
+                        return observer(.success(
+                            .failure(NetworkError.transportError(error))
+                        ))
+                    }
+                    
+                    guard let httpURLResponse = response as? HTTPURLResponse
+                    else {
+                        observer(.success(
+                            .failure(NetworkError.invalidResponse)
+                        ))
+                        return
+                    }
+                    
+                    guard 200..<300 ~= httpURLResponse.statusCode
+                    else {
+                        return observer(.success(.failure(
+                            NetworkError.invalidStatusCode(
+                                httpURLResponse.statusCode
+                            )
+                        )))
+                    }
+                    
+                    guard let data
+                    else { return observer(.success(
+                        .failure(NetworkError.invalidData)
+                    ))}
+                    
+                    do {
+                        let decoded = try JSONDecoder().decode(
+                            responseType,
+                            from: data
+                        )
+                        observer(.success(.success(decoded))) // 성공적으로 디코딩한 경우
+                    } catch {
+                        observer(.success(.failure(NetworkError.parseError)))
+                    }
+                }.resume()
+            } catch {
+                observer(.success(.failure(NetworkError.invalidURL)))
+            }
+            return Disposables.create()
+        }
+    }
 }

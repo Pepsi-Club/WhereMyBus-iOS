@@ -8,6 +8,7 @@
 
 import UIKit
 
+import Core
 import NetworkService
 import Domain
 import Data
@@ -18,9 +19,20 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
     var appCoordinator: AppCoordinator?
     var deeplinkHandler: DeeplinkHandler?
+    
+    let disposeBag = DisposeBag()
+    
+    // MARK: 추후 구체타입이 아닌 형태로 변경
+    private var useCase: VersionCheckUseCase
+    = DefaultVersionCheckUseCase(
+        versionCheckRepository: DefaultVersionCheckRepository(
+            networkService: DefaultNetworkService()
+        ),
+        forceUpdateService: DefaultForceUpdateService()
+    )
 
     func scene(
-        _ scene: UIScene, 
+        _ scene: UIScene,
         willConnectTo session: UISceneSession,
         options connectionOptions: UIScene.ConnectionOptions
     ) {
@@ -37,6 +49,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         )
         appCoordinator?.start()
         window?.makeKeyAndVisible()
+        // 앱 진입할 때 확인
         deeplinkHandler = .init(appCoordinator: appCoordinator)
         if let url = connectionOptions.urlContexts.first?.url {
             deeplinkHandler?.handleUrl(url: url)
@@ -52,7 +65,9 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func sceneWillResignActive(_ scene: UIScene) {
     }
 
+    /// 앱이 Foreground로 전환될때 실행될 함수
     func sceneWillEnterForeground(_ scene: UIScene) {
+        checkAndUpdateIfNeeded()
     }
 
     func sceneDidEnterBackground(_ scene: UIScene) {
@@ -64,6 +79,48 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     ) {
         if let url = URLContexts.first?.url {
             deeplinkHandler?.handleUrl(url: url)
+        }
+    }
+    
+    private func checkAndUpdateIfNeeded() {
+        useCase.fetchAppStoreURL()
+            .subscribe(with: self) { owner, str in
+                guard let str else { return }
+                owner.showUpdateAlert(with: str)
+            } onFailure: { _, error in
+                print(error)
+            }
+            .disposed(by: disposeBag)
+    }
+    
+    private func showUpdateAlert(with urlString: String) {
+        let alert = UIAlertController(
+            title: "업데이트 알림",
+            message: "더 나은 서비스를 위해 업데이트 되었어요 ! 업데이트 해주세요.",
+            preferredStyle: .alert
+        )
+        
+        let alertAction = UIAlertAction(
+            title: "업데이트",
+            style: .default
+        ) { [weak self] _ in
+            guard let self else { return }
+            
+            openAppStore(urlString)
+        }
+        
+        alert.addAction(alertAction)
+        
+        Task { @MainActor in
+            window?.rootViewController?.present(alert, animated: true)
+        }
+    }
+    
+    private func openAppStore(_ str: String) {
+        guard let url = URL(string: str) else { return }
+        
+        if UIApplication.shared.canOpenURL(url) {
+            UIApplication.shared.open(url)
         }
     }
 }
