@@ -34,18 +34,12 @@ public extension String {
         return serverKey
     }
     
-    static var alarmServerURL: Self {
-        guard let any = Bundle.main.object(forInfoDictionaryKey: "ALARM_API"),
-              let alarmURL = any as? String
-        else { fatalError("Can't Find Alarm API URL")}
-        return alarmURL
-    }
-    
-    static func getCurrentVersion() -> String {
+    static func getCurrentVersion() -> [Int] {
         guard let dictionary = Bundle.main.infoDictionary,
               let version = dictionary["CFBundleShortVersionString"] as? String
-        else { return "" }
-        return version
+        else { return [1, 0, 0] }
+        
+        return version.split(separator: ".").compactMap { Int($0) }
     }
     
     static func getDeviceIdentifier() -> String {
