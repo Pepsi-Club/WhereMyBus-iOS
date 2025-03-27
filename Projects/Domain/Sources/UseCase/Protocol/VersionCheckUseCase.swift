@@ -11,5 +11,5 @@ import Foundation
 import RxSwift
 
 public protocol VersionCheckUseCase {
-    func fetchAppStoreURL(appId: String) -> Single<String?>
+    func fetchAppStoreURL() -> Single<String?>
 }

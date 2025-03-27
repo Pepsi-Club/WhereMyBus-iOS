@@ -12,55 +12,80 @@ import RxSwift
 
 public final class DefaultVersionCheckUseCase: VersionCheckUseCase {
     private let versionCheckRepository: VersionCheckRepository
-    private let disposeBag = DisposeBag()
+    private let forceUpdateService: ForceUpdateService
     
-    public init(versionCheckRepository: VersionCheckRepository) {
+    public init(
+        versionCheckRepository: VersionCheckRepository,
+        forceUpdateService: ForceUpdateService
+    ) {
         self.versionCheckRepository = versionCheckRepository
+        self.forceUpdateService = forceUpdateService
     }
     
-    public func fetchAppStoreURL(appId: String) -> Single<String?> {
-        return versionCheckRepository.getAppVersion(appId: appId)
+    public func fetchAppStoreURL() -> Single<String?> {
+        if hasToFetchVersion() {
+            return fetchAndUpdateVersion()
+        } else {
+            let forceUpdateInfo = versionCheckRepository.getForceUpdateInfo()
+            return .just(getStoreLink(forceUpdateInfo.version))
+        }
+    }
+}
+extension DefaultVersionCheckUseCase {
+    /// 호출하는 시점과 UserDefaults에 저장된 Date를 기준으로 4시간이 넘는지를 확인하는 method
+    private func hasToFetchVersion() -> Bool {
+        let fourHour: TimeInterval = 4 * 60 * 60
+        
+        return Date().timeIntervalSince(
+            versionCheckRepository.getForceUpdateInfo().date
+        ) >= fourHour
+    }
+    
+    private func fetchAndUpdateVersion() -> Single<String?> {
+        return versionCheckRepository.fetchRequiredVersion()
+            .do(onSuccess: { [weak self] result in
+                guard let self else { return }
+                saveForceVersionInfo(result)
+            })
             .map { [weak self] result in
-                guard let self else { return nil}
-                switch result {
-                case .success(let version):
-                    return fetchURLString(
-                        needsToUpdate(version),
-                        appId: appId
-                    )
-                case .failure(let error):
-                    print(error, #function)
-                    return nil
-                }
+                guard let self else { return nil }
+                return handleFetchedResult(result)
             }
     }
     
-    /// 업데이트가 필요하다면 urlString return
-    private func fetchURLString(
-        _ isNeeded: Bool,
-        appId: String
+    /// 서버 통신의 결과 상태를 기반으로 app store Link 반환
+    private func handleFetchedResult(
+        _ result: Result<AppVersionInfoResponse, Error>
     ) -> String? {
-        if isNeeded {
-            return versionCheckRepository.getStoreLink(appId: appId)
-        } else {
+        switch result {
+        case .success(let version):
+            return getStoreLink(version)
+        case .failure:
             return nil
         }
     }
     
-    /// 앱스토어의 버전과 과 유저의 앱 버전의 major만을 비교하여 Bool 값을 return
-    private func needsToUpdate(_ version: AppVersionInfoResponse?) -> Bool {
-        guard let version else { return false }
-        print(version.major, getUserVersion().major)
-        return version.major > getUserVersion().major ? true : false
+    /// 결과값에 따라 ForceUpdate 타입의 info들을 UserDefaults에 저장
+    private func saveForceVersionInfo(
+        _ result: Result<AppVersionInfoResponse, Error>
+    ) {
+        switch result {
+        case .success(let version):
+            let forceUpdate = ForceUpdate(
+                version: version,
+                date: Date()
+            )
+            versionCheckRepository.saveForceUpdateInfo(forceUpdate)
+        case .failure(let error):
+            print(error)
+        }
     }
     
-    /// User가 사용하는 현재 앱 버전을 확인하기 위한 method
-    private func getUserVersion() -> AppVersionInfoResponse {
-        let splitCurrentVersion = String.getCurrentVersion()
-        return AppVersionInfoResponse(
-            major: splitCurrentVersion[0],
-            minor: splitCurrentVersion[1],
-            patch: splitCurrentVersion[2]
-        )
+    /// Get app store url after comparing version
+    private func getStoreLink(_ required: AppVersionInfoResponse) -> String? {
+        return forceUpdateService.compareVersion(
+            user: versionCheckRepository.getUserAppVersion(),
+            required: required
+        ) ? versionCheckRepository.getStoreLink() : nil
     }
 }
