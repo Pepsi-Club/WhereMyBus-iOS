@@ -11,7 +11,11 @@ import Foundation
 import RxSwift
 
 public protocol VersionCheckRepository: AnyObject {
-    func getAppVersion(appId: String)
-    -> Single<Result<AppVersionInfoResponse?, Error>>
-    func getStoreLink(appId: String) -> String?
+    func fetchRequiredVersion()
+    -> Single<Result<AppVersionInfoResponse, Error>>
+    func getStoreLink() -> String?
+    func getAppStoreID() -> String
+    func getUserAppVersion() -> AppVersionInfoResponse
+    func saveForceUpdateInfo(_ info: ForceUpdate)
+    func getForceUpdateInfo() -> ForceUpdate
 }

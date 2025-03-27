@@ -8,6 +8,7 @@
 
 import UIKit
 
+import Core
 import Domain
 import NetworkService
 
@@ -15,14 +16,23 @@ import RxSwift
 
 public final class DefaultVersionCheckRepository: VersionCheckRepository {
     private let networkService: NetworkService
-    private let disposeBag: DisposeBag = DisposeBag()
+    
+    @UserDefaultsWrapper(
+        key: "ForceUpdate",
+        defaultValue: ForceUpdate(
+            version: AppVersionInfoResponse(major: 1, minor: 2, patch: 4),
+            date: Date(timeIntervalSince1970: 0)
+        )
+    )
+    private var forceUpdateInfo: ForceUpdate
     
     public init(networkService: NetworkService) {
         self.networkService = networkService
     }
     
-    public func getAppVersion(appId: String) 
-    -> Single<Result<AppVersionInfoResponse?, Error>> {
+    /// 서버로 부터 받은 App의 최소 지원 버전
+    public func fetchRequiredVersion()
+    -> Single<Result<AppVersionInfoResponse, Error>> {
         return networkService.request(
             endPoint: MinVersionEndpoint(domain: getDomainURL()),
             responseType: MinVersionDTO.self
@@ -37,15 +47,49 @@ public final class DefaultVersionCheckRepository: VersionCheckRepository {
         }
     }
     
-    public func getStoreLink(appId: String) -> String? {
-        return OpenStoreEndpoint(appStoreID: appId).toURLString
+    public func getStoreLink() -> String? {
+        return OpenStoreEndpoint(appStoreID: getAppStoreID()).toURLString
+    }
+    
+    public func getAppStoreID() -> String {
+        guard let appId = Bundle.main.object(
+            forInfoDictionaryKey: "APPSTORE_ID"
+        ) as? String
+        else { return "" }
+        
+        return appId
+    }
+    
+    public func getUserAppVersion() -> AppVersionInfoResponse {
+        guard let dictionary = Bundle.main.infoDictionary,
+              let version = dictionary["CFBundleShortVersionString"] as? String
+        else { return AppVersionInfoResponse(major: 1, minor: 0, patch: 0) }
+        
+        let splitedVersion = version.split(separator: ".")
+            .compactMap { Int($0) }
+        
+        return AppVersionInfoResponse(
+            major: splitedVersion[0],
+            minor: splitedVersion[1],
+            patch: splitedVersion[2]
+        )
+    }
+    
+    /// 최소 요구 버전, fetch 받은 날짜를 UserDefaults 저장
+    public func saveForceUpdateInfo(_ newValue: ForceUpdate) {
+        forceUpdateInfo = newValue
+    }
+    
+    /// UserDefaults 저장된 최소 요구 버전, fetch 받은 날짜
+    public func getForceUpdateInfo() -> ForceUpdate {
+        return forceUpdateInfo
     }
     
     private func getDomainURL() -> String {
         guard let domainURL = Bundle.main.object(
             forInfoDictionaryKey: "DOMAIN_URL"
         ) as? String
-        else { fatalError("Can't Find Domain URL") }
+        else { return "" }
         
         return domainURL
     }
