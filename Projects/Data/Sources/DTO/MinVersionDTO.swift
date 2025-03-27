@@ -19,12 +19,12 @@ public struct MinVersionDTO: Decodable {
 }
 
 extension MinVersionDTO {
-    var toDomain: AppVersionInfoResponse? {
+    var toDomain: AppVersionInfoResponse {
         let versionComponents = version.split(separator: ".")
             .compactMap { Int($0) }
         
         guard versionComponents.count == 3
-        else { return nil }
+        else { return AppVersionInfoResponse(major: 1, minor: 2, patch: 5) }
         
         return AppVersionInfoResponse(
             major: versionComponents[0],
