@@ -35,7 +35,7 @@ public final class DefaultVersionCheckRepository: VersionCheckRepository {
     -> Single<Result<AppVersionInfoResponse, Error>> {
         return networkService.request(
             endPoint: MinVersionEndpoint(domain: getDomainURL()),
-            responseType: MinVersionDTO.self
+            responseType: RequiredVersionDTO.self
         )
         .map { result in
             switch result {

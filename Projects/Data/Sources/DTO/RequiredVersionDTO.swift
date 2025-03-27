@@ -1,5 +1,5 @@
 //
-//  MinVersionDTO.swift
+//  RequiredVersionDTO.swift
 //  Data
 //
 //  Created by Jisoo Ham on 3/26/25.
@@ -10,7 +10,7 @@ import Foundation
 
 import Domain
 
-public struct MinVersionDTO: Decodable {
+public struct RequiredVersionDTO: Decodable {
     let version: String
     
     enum CodingKeys: String, CodingKey {
@@ -18,7 +18,7 @@ public struct MinVersionDTO: Decodable {
     }
 }
 
-extension MinVersionDTO {
+extension RequiredVersionDTO {
     var toDomain: AppVersionInfoResponse {
         let versionComponents = version.split(separator: ".")
             .compactMap { Int($0) }
