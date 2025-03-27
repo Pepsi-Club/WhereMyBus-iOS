@@ -22,7 +22,14 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     let disposeBag = DisposeBag()
     
-    @Injected(VersionCheckUseCase.self) var useCase: VersionCheckUseCase
+    // MARK: 추후 구체타입이 아닌 형태로 변경
+    private var useCase: VersionCheckUseCase
+    = DefaultVersionCheckUseCase(
+        versionCheckRepository: DefaultVersionCheckRepository(
+            networkService: DefaultNetworkService()
+        ),
+        forceUpdateService: DefaultForceUpdateService()
+    )
 
     func scene(
         _ scene: UIScene,
@@ -43,7 +50,6 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         appCoordinator?.start()
         window?.makeKeyAndVisible()
         // 앱 진입할 때 확인
-        checkAndUpdateIfNeeded()
         deeplinkHandler = .init(appCoordinator: appCoordinator)
         if let url = connectionOptions.urlContexts.first?.url {
             deeplinkHandler?.handleUrl(url: url)
@@ -77,22 +83,14 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     private func checkAndUpdateIfNeeded() {
-        guard let appId = Bundle.main.object(
-            forInfoDictionaryKey: "APPSTORE_ID"
-        ) as? String
-        else { return }
-        
-        useCase.fetchAppStoreURL(appId: appId)
-            .subscribe { [weak self] str in
-                guard let self,
-                      let urlString = str
-                else { return }
-                self.showUpdateAlert(with: urlString)
-            } onFailure: { error in
+        useCase.fetchAppStoreURL()
+            .subscribe(with: self) { owner, str in
+                guard let str else { return }
+                owner.showUpdateAlert(with: str)
+            } onFailure: { _, error in
                 print(error)
             }
             .disposed(by: disposeBag)
-
     }
     
     private func showUpdateAlert(with urlString: String) {
@@ -112,9 +110,9 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         }
         
         alert.addAction(alertAction)
-        DispatchQueue.main.async { [weak self] in
-            guard let self else { return }
-            self.window?.rootViewController?.present(alert, animated: true)
+        
+        Task { @MainActor in
+            window?.rootViewController?.present(alert, animated: true)
         }
     }
     
