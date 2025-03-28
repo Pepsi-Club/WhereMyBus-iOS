@@ -16,7 +16,7 @@ public extension RegularAlarmEndPoint {
     }
     
     var host: String {
-        return .alarmServerURL
+        return .domainURL
     }
     
     var path: String {
