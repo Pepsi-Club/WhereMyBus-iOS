@@ -6,6 +6,7 @@ let project = Project.makeProject(
     name: "Core",
     moduleType: .dynamicFramework,
     dependencies: [
-        .thirdPartyLibs
+        .thirdPartyLibs,
+        .package(product: "FirebaseAnalytics")
     ]
 )

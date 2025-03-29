@@ -8,19 +8,24 @@
 
 import Foundation
 
-public final class DIContainer {
-    static var storage: [String: Any] = [:]
+import FirebaseAnalytics
+
+public enum DIContainer {
+    private static var storage: [String: Any] = [:]
     
-    private init() { }
-    
-    public static func register<T>(type: T.Type, _ object: T) {
-        storage["\(type)"] = object
+    public static func register<Dependency>(
+        type: Dependency.Type,
+        _ instance: Dependency
+    ) {
+        storage[String(describing: Dependency.self)] = instance
     }
     
-    static func resolve<T>(type: T.Type) -> T {
-        guard let object = storage["\(type)"] as? T else {
+    static func resolve<Dependency>(type: Dependency.Type) -> Dependency {
+        let typeName = String(describing: Dependency.self)
+        guard let savedInstance = storage[typeName] as? Dependency else {
+            Analytics.logEvent("DependencyCrash", parameters: ["type": typeName])
             fatalError("register 되지 않은 객체 호출: \(type)")
         }
-        return object
+        return savedInstance
     }
 }
