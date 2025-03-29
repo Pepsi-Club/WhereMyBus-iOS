@@ -8,28 +8,22 @@
 
 import Foundation
 
+import Core
+
 import RxSwift
 import RxCocoa
 
 public final class DefaultBusStopUseCase: BusStopUseCase {
-    private let busStopArrivalInfoRepository: BusStopArrivalInfoRepository
-    private let favoritesRepository: FavoritesRepository
-    private let regularAlarmEditingService: RegularAlarmEditingService
+    @Injected private var busStopArrivalInfoRepository: BusStopArrivalInfoRepository
+    @Injected private var favoritesRepository: FavoritesRepository
+    @Injected private var regularAlarmEditingService: RegularAlarmEditingService
     
     public let busStopSection = PublishSubject<BusStopArrivalInfoResponse>()
     private var fetchThrottleStatus: FetchThrottleStatus =
         .completed
     private let disposeBag = DisposeBag()
     
-    public init(
-        busStopArrivalInfoRepository: BusStopArrivalInfoRepository,
-        favoritesRepository: FavoritesRepository,
-        regularAlarmEditingService: RegularAlarmEditingService
-    ) {
-        self.busStopArrivalInfoRepository = busStopArrivalInfoRepository
-        self.favoritesRepository = favoritesRepository
-        self.regularAlarmEditingService = regularAlarmEditingService
-    }
+    public init() { }
     
     public func fetchBusArrivals(request: ArrivalInfoRequest) {
         let busStops = busStopArrivalInfoRepository.fetchArrivalList(

@@ -10,19 +10,16 @@ import Foundation
 
 import Domain
 import NetworkService
+import Core
 
 import RxSwift
 import FirebaseAnalytics
 
 public final class DefaultBusStopArrivalInfoRepository:
     NSObject, BusStopArrivalInfoRepository {
-    private let networkService: NetworkService
+    @Injected private var networkService: NetworkService
     
     private let disposeBag = DisposeBag()
-    
-    public init(networkService: NetworkService) {
-        self.networkService = networkService
-    }
     
     public func fetchArrivalList(busStopId: String) ->
     Observable<BusStopArrivalInfoResponse> {

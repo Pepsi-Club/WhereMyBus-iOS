@@ -16,12 +16,11 @@ import RxSwift
 import RxRelay
 
 final class AddRegularAlarmViewModel: ViewModel {
+    @Injected private var regularAlarmEditingService: RegularAlarmEditingService
+    @Injected private var useCase: AddRegularAlarmUseCase
+
     private let alarmToEdit: RegularAlarmResponse?
     private let coordinator: AddRegularAlarmCoordinator
-    @Injected(RegularAlarmEditingService.self) 
-    private var regularAlarmEditingService: RegularAlarmEditingService
-    @Injected(AddRegularAlarmUseCase.self) 
-    private var useCase: AddRegularAlarmUseCase
     
     private let disposeBag = DisposeBag()
     

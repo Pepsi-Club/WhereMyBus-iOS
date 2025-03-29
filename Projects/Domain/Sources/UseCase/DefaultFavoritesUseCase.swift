@@ -8,25 +8,21 @@
 
 import Foundation
 
+import Core
+
 import RxSwift
 import RxCocoa
 
 public final class DefaultFavoritesUseCase: FavoritesUseCase {
-    private let busStopArrivalInfoRepository: BusStopArrivalInfoRepository
-    private let favoritesRepository: FavoritesRepository
+    @Injected private var busStopArrivalInfoRepository: BusStopArrivalInfoRepository
+    @Injected private var favoritesRepository: FavoritesRepository
     
     private var fetchItemLimit = 0
     public private(set) var isFinalPage = false
     private var cachedResponses = [BusStopArrivalInfoResponse]()
     private let disposeBag = DisposeBag()
     
-    public init(
-        busStopArrivalInfoRepository: BusStopArrivalInfoRepository,
-        favoritesRepository: FavoritesRepository
-    ) {
-        self.busStopArrivalInfoRepository = busStopArrivalInfoRepository
-        self.favoritesRepository = favoritesRepository
-    }
+    public init() { }
     
     public func fakeFetch() -> Observable<[BusStopArrivalInfoResponse]> {
         fetchItemLimit = 5

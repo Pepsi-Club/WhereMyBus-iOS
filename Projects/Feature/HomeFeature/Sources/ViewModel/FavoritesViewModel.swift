@@ -8,9 +8,9 @@ import RxSwift
 import RxRelay
 
 public final class FavoritesViewModel: ViewModel {
-    private let coordinator: HomeCoordinator
-    @Injected(FavoritesUseCase.self) var useCase: FavoritesUseCase
+    @Injected var useCase: FavoritesUseCase
     
+    private let coordinator: HomeCoordinator
     private let vmFetchStatus = PublishSubject<VMFetchStatus>()
     private let fetchedResponse = PublishSubject<[BusStopArrivalInfoResponse]>()
     private let disposeBag = DisposeBag()
