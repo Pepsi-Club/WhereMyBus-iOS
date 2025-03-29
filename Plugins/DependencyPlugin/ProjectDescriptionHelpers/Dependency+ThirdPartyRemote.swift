@@ -26,7 +26,7 @@ public extension Array<Package>.ThirdPartyRemote {
         public var upToNextMajor: Version {
             switch self {
             case .rxSwift:
-                return "6.0.0"
+                return "6.8.0"
             }
         }
     }
