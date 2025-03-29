@@ -8,7 +8,7 @@ import RxSwift
 import RxRelay
 
 public final class FavoritesViewModel: ViewModel {
-    @Injected var useCase: FavoritesUseCase
+    @Injected private var useCase: FavoritesUseCase
     
     private let coordinator: HomeCoordinator
     private let vmFetchStatus = PublishSubject<VMFetchStatus>()
