@@ -1,15 +1,28 @@
-update_tuist:
-	sh ./Scripts/update_tuist.sh
-
-open_plist:
-	open -a Xcode Plugins/EnvironmentPlugin/ProjectDescriptionHelpers/InfoPlist.swift
-
-open_config:
-	open -a Xcode Plugins/EnvironmentPlugin/ProjectDescriptionHelpers/XCConfig.swift
-
-clean_xcode:
-	rm -rf ~/Library/Developer/Xcode/DerivedData/*
+init: fetch gen
 	
+fetch:
+	tuist clean
+	tuist install
+gen:
+	tuist generate --no-open
+
+getig:
+	@echo "Select config source:"
+	@echo " 1) global"
+	@echo " 2) local"
+	@read -p "Enter choice [1 or 2]: " choice; \
+	if [ "$$choice" = "1" ]; then \
+	  echo "Using GITHUB_ACCESS_TOKEN from global config"; \
+	  GITHUB_ACCESS_TOKEN=$$(git config --global user.password); \
+	elif [ "$$choice" = "2" ]; then \
+	  echo "Using GITHUB_ACCESS_TOKEN from local config"; \
+	  GITHUB_ACCESS_TOKEN=$$(git config user.password); \
+	else \
+	  echo "Invalid choice: $$choice. Aborting..."; \
+	  exit 1; \
+	fi; \
+	$(MAKE) download-privates token=$$GITHUB_ACCESS_TOKEN
+
 clean:
 	rm -rf **/**/**/*.xcodeproj
 	rm -rf **/**/*.xcodeproj
@@ -20,10 +33,18 @@ clean:
 	rm -rf **/Derived/
 	rm -rf Derived/
 	
-clean_all:
-	make clean
-	make clean_xcode
+update_tuist:
+	sh ./Scripts/update_tuist.sh
 
+open_plist:
+	open -a Xcode Plugins/EnvironmentPlugin/ProjectDescriptionHelpers/InfoPlist.swift
+
+open_config:
+	open -a Xcode Plugins/EnvironmentPlugin/ProjectDescriptionHelpers/XCConfig.swift
+
+clean_xcode_cache:
+	rm -rf ~/Library/Developer/Xcode/DerivedData/*
+	
 BASE_URL = https://raw.githubusercontent.com/Pepsi-Club/WhereMyBus-ignored/main
 
 define download_file
