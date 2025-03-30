@@ -6,6 +6,6 @@
 //  Copyright © 2023 https://github.com/gnksbm/Clone_AppStore. All rights reserved.
 //
 
-import ProjectDescription
+@preconcurrency import ProjectDescription
 
 let EnvironmentPlugin = Plugin(name: "EnvironmentPlugin")

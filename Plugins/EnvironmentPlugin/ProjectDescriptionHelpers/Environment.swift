@@ -42,11 +42,8 @@ extension SettingValue {
     static let currentProjectVersion: Self = .string(.buildVersion)
 }
 
-public extension DeploymentTarget {
-    static let deploymentTarget: Self = .iOS(
-        targetVersion: .targetVersion,
-        devices: .iphone
-    )
+public extension DeploymentTargets {
+    static let deploymentTarget: Self = .iOS(.targetVersion)
 }
 
 public extension Platform {

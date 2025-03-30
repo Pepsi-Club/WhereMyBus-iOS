@@ -9,7 +9,7 @@ import ProjectDescription
 
 public extension Scheme {
     static func moduleScheme(name: String) -> Self {
-        Scheme(
+        Scheme.scheme(
             name: name,
             shared: true,
             buildAction: .buildAction(targets: ["\(name)"]),
@@ -23,19 +23,21 @@ public extension Scheme {
             ),
             runAction: .runAction(
                 configuration: .debug,
-                arguments: .init(launchArguments: [
-                    .init(
-                        name: "-FIRDebugEnabled",
-                        isEnabled: true
-                    )
-                ])
+                arguments: .arguments(
+                    launchArguments: [
+                        .launchArgument(
+                            name: "-FIRDebugEnabled",
+                            isEnabled: true
+                        )
+                    ]
+                )
             ),
             archiveAction: .archiveAction(configuration: .release)
         )
     }
     
     static func uiTestsScheme(name: String) -> Self {
-        Scheme(
+        Scheme.scheme(
             name: "\(name)UITests",
             shared: true,
             buildAction: .buildAction(targets: ["\(name)"]),

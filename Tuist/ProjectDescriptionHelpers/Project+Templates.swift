@@ -7,11 +7,10 @@
 
 import ProjectDescription
 import EnvironmentPlugin
-import DependencyPlugin
 
-extension Project {
+public extension Project {
     // MARK: Refact
-    public static func makeProject(
+    static func makeProject(
         name: String,
         moduleType: ModuleType,
         entitlementsPath: Path? = nil,
@@ -97,12 +96,12 @@ extension Project {
         entitlements: Entitlements?,
         dependencies: [TargetDependency]
     ) -> Target {
-        Target(
+        Target.target(
             name: name,
-            platform: .iOS,
+            destinations: .iOS,
             product: .app,
             bundleId: .bundleID,
-            deploymentTarget: .deploymentTarget,
+            deploymentTargets: .deploymentTarget,
             infoPlist: .appInfoPlist,
             sources: ["Sources/**"],
             resources: ["Resources/**"],
@@ -118,16 +117,14 @@ extension Project {
         entitlements: Entitlements? = nil,
         dependencies: [TargetDependency]
     ) -> Target {
-        Target(
+        Target.target(
             name: "\(name)Demo",
-            platform: .iOS,
+            destinations: .iOS,
             product: .app,
             bundleId: "\(String.bundleID).\(name)Demo",
-            deploymentTarget: .deploymentTarget,
+            deploymentTargets: .deploymentTarget,
             infoPlist: .demoAppInfoPlist(name: name),
-            sources: [
-                "Demo/**",
-            ],
+            sources: ["Demo/**"],
             entitlements: entitlements,
             scripts: [.featureSwiftLint],
             dependencies: dependencies,
@@ -146,12 +143,12 @@ extension Project {
     ) -> Target {
         let scripts: [TargetScript] = isPresentation ?
         [.featureSwiftLint] : [.swiftLint]
-        return Target(
+        return Target.target(
             name: name,
-            platform: .iOS,
-            product: .framework,
+            destinations: .iOS,
+            product: productType,
             bundleId: .bundleID + ".\(name)",
-            deploymentTarget: .deploymentTarget,
+            deploymentTargets: .deploymentTarget,
             infoPlist: .frameworkInfoPlist,
             sources: ["Sources/**"],
             resources: hasResource ? ["Resources/**"] : nil,
@@ -163,19 +160,19 @@ extension Project {
         )
     }
     
-    public static func appExtensionTarget(
+    static func appExtensionTarget(
         name: String,
         plist: InfoPlist?,
         resources: ResourceFileElements? = nil,
         entitlements: Entitlements? = nil,
         dependencies: [TargetDependency]
     ) -> Target {
-        return Target(
+        Target.target(
             name: name,
-            platform: .iOS,
+            destinations: .iOS,
             product: .appExtension,
             bundleId: .bundleID + ".\(name)",
-            deploymentTarget: .deploymentTarget,
+            deploymentTargets: .deploymentTarget,
             infoPlist: plist,
             sources: ["\(name)/**"],
             resources: resources,
@@ -205,12 +202,12 @@ extension Project {
         isFeature: Bool = false,
         dependencies: [TargetDependency]
     ) -> Target {
-        Target(
+        Target.target(
             name: "\(name)Tests",
-            platform: .iOS,
+            destinations: .iOS,
             product: .unitTests,
             bundleId: .bundleID + ".\(name)Test",
-            deploymentTarget: .deploymentTarget,
+            deploymentTargets: .deploymentTarget,
             infoPlist: .frameworkInfoPlist,
             sources: ["Tests/**"],
             scripts: isFeature ? [.featureSwiftLint] : [.swiftLint],
@@ -224,12 +221,12 @@ extension Project {
         isFeature: Bool = false,
         dependencies: [TargetDependency]
     ) -> Target {
-        Target(
+        Target.target(
             name: "\(name)UITests",
-            platform: .iOS,
+            destinations: .iOS,
             product: .uiTests,
-            bundleId: .bundleID + ".\(name)UITest",
-            deploymentTarget: .deploymentTarget,
+            bundleId: .bundleID + ".\(name)Test",
+            deploymentTargets: .deploymentTarget,
             infoPlist: .frameworkInfoPlist,
             sources: ["Tests/**"],
             scripts: isFeature ? [.featureSwiftLint] : [.swiftLint],
