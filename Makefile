@@ -1,3 +1,6 @@
+update_tuist:
+	sh ./Scripts/update_tuist.sh
+
 open_plist:
 	open -a Xcode Plugins/EnvironmentPlugin/ProjectDescriptionHelpers/InfoPlist.swift
 
@@ -48,5 +51,3 @@ download-env:
 download-googleinfo:
 	$(call download_file, Projects/App/Resources, $(token),GoogleService-Info.plist)
 	$(call download_file, Projects/App/Resources, $(token),GoogleService-Info-debugging.plist)
-
-
