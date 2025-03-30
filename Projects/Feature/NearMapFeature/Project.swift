@@ -5,6 +5,6 @@ let project = Project.makeProject(
     name: "NearMapFeature",
     moduleType: .feature,
     dependencies: [
-        .featureDependency
+        .FeatureDependency
     ]
 )

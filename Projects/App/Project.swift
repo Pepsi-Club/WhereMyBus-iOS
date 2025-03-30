@@ -1,5 +1,4 @@
 import ProjectDescription
-import DependencyPlugin
 import ProjectDescriptionHelpers
 
 let project = Project.makeProject(
@@ -30,8 +29,8 @@ let project = Project.makeProject(
 //        )
     ],
     dependencies: [
-        .mainFeature,
-        .data,
-        .package(product: "FirebaseMessaging")
+        .MainFeature,
+        .Data,
+        .FirebaseModule
     ]
 )

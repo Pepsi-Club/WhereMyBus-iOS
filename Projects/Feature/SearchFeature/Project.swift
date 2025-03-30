@@ -5,6 +5,6 @@ let project = Project.makeProject(
     name: "SearchFeature",
     moduleType: .feature,
     dependencies: [
-        .featureDependency
+        .FeatureDependency
     ]
 )

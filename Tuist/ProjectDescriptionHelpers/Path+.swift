@@ -17,6 +17,6 @@ extension Path  {
     }
     
     static func relativeToFeature(_ name: String) -> Path {
-        .relativeToRoot("Projects/Features/\(name)")
+        .relativeToRoot("Projects/Feature/\(name)Feature")
     }
 }

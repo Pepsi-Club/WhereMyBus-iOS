@@ -5,7 +5,7 @@ let project = Project.makeProject(
     name: "FeatureDependency",
     moduleType: .dynamicFramework,
     dependencies: [
-        .designSystem,
-        .domain
+        .DesignSystem,
+        .Domain
     ]
 )
