@@ -13,6 +13,8 @@ public extension String {
     static let displayName: Self = "버스어디"
     static let organizationName = "Pepsi-Club"
     static let teamId = "T4W7695R5C"
+    static let targetVersion: Self = "16.0"
+    static let bundleID: Self = "com.\(organizationName).\(appName)"
     /// 앱스토어에 게시할 때마다 증가해줘야 하는 버전
     static let marketingVersion: Self = "1.3.0"
     /// 개발자가 내부적으로 확인하기 위한 용도 (날짜를 사용하기도 함 - 2023.12.8.1 )
@@ -24,28 +26,4 @@ public extension String {
         formatter.timeZone = TimeZone(identifier: "Asia/Seoul")
         return formatter.string(from: date)
     }
-}
-
-public extension String {
-    static let bundleID: Self = "com.\(organizationName).\(appName)"
-    static let targetVersion: Self = "16.0"
-}
-
-extension Plist.Value {
-    static let bundleDisplayName: Self = .string(.displayName)
-    static let bundleShortVersionString: Self = .string(.marketingVersion)
-    static let bundleVersion: Self = .string(.buildVersion)
-}
-
-extension SettingValue {
-    static let marketingVersion: Self = .string(.marketingVersion)
-    static let currentProjectVersion: Self = .string(.buildVersion)
-}
-
-public extension DeploymentTargets {
-    static let deploymentTargets: Self = .iOS(.targetVersion)
-}
-
-public extension Platform {
-    static let platform: Self = .iOS
 }

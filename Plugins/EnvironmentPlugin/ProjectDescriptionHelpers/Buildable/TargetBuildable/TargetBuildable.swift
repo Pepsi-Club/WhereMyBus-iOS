@@ -32,7 +32,7 @@ public protocol TargetBuildable {
 public extension TargetBuildable {
     var destinations: Destinations { .iOS }
     var productName: String? { nil }
-    var deploymentTargets: DeploymentTargets? { .deploymentTargets }
+    var deploymentTargets: DeploymentTargets? { .iOS(.targetVersion) }
     var infoPlist: InfoPlist? { .default }
     var sources: SourceFilesList? { nil }
     var resources: ResourceFileElements? { nil }

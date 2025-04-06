@@ -44,6 +44,12 @@ public extension InfoPlist {
     )
 }
 
+extension Plist.Value {
+    static let bundleDisplayName: Self = .string(.displayName)
+    static let bundleShortVersionString: Self = .string(.marketingVersion)
+    static let bundleVersion: Self = .string(.buildVersion)
+}
+
 public extension [String: Plist.Value] {
     static let secrets: Self = [
         "DATA_GO_KR_API_KEY": "$(DATA_GO_KR_API_KEY)",
