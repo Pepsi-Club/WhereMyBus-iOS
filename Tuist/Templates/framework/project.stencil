@@ -1,10 +1,15 @@
-import ProjectDescription
-import ProjectDescriptionHelpers
+let project = Project(name: "{{ name }}") {
+    {{ name }}() {
+    }
+}
 
-let project = Project.makeProject(
-    name: "{{ name }}",
-    moduleType: .dynamicFramework,
-    isTestable: true,
-    dependencies: [
-    ]
-)
+// Tuist/ProjectDescriptionHelpers/Local로 이동
+// 추후 자동화 예정
+public struct {{ name }}: FrameworkTarget {
+    public let product: Product = .framework
+    public let dependencies: [TargetDependency]
+    
+    public init(@TargetDependencyBuilder dependencies builder: () -> TargetDependencyBuilder = { .init() }) {
+        self.dependencies = builder().buildTargetDependency()
+    }
+}
