@@ -8,10 +8,6 @@
 import ProjectDescription
 import ProjectDescriptionHelpers
 
-let project = Project.makeProject(
-    name: "FirebaseInterface",
-    moduleType: .dynamicFramework,
-    dependencies: [
-    ]
-)
-
+let project = Project(name: "FirebaseInterface") {
+    FirebaseInterface()
+}

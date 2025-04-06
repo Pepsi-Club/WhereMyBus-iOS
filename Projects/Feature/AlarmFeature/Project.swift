@@ -1,10 +1,15 @@
 import ProjectDescription
 import ProjectDescriptionHelpers
 
-let project = Project.makeProject(
+let project = Project(
     name: "AlarmFeature",
-    moduleType: .feature,
-    dependencies: [
-        .FeatureDependency
-    ]
-)
+    options: .options(automaticSchemesOptions: .disabled)
+) {
+    Feature(name: "AlarmFeature") {
+        FeatureDependency()
+    }
+    SampleApp(name: "AlarmFeature") {
+        Feature(name: "AlarmFeature")
+    }
+    SampleAppScheme(name: "AlarmFeature")
+}

@@ -8,12 +8,10 @@
 import ProjectDescription
 import ProjectDescriptionHelpers
 
-let project = Project.makeProject(
-    name: "FirebaseModule",
-    moduleType: .staticFramework,
-    dependencies: [
-        .FirebaseInterface,
-        .SPM.FirebaseAnalytics,
-        .SPM.FirebaseMessaging
-    ]
-)
+let project = Project(name: "FirebaseModule") {
+    FirebaseModule {
+        FirebaseInterface()
+        FirebaseAnalytics()
+        FirebaseMessaging()
+    }
+}

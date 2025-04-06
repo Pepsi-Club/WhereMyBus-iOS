@@ -1,10 +1,15 @@
 import ProjectDescription
 import ProjectDescriptionHelpers
 
-let project = Project.makeProject(
+let project = Project(
     name: "NearMapFeature",
-    moduleType: .feature,
-    dependencies: [
-        .FeatureDependency
-    ]
-)
+    options: .options(automaticSchemesOptions: .disabled)
+) {
+    Feature(name: "NearMapFeature") {
+        FeatureDependency()
+    }
+    SampleApp(name: "NearMapFeature") {
+        Feature(name: "NearMapFeature")
+    }
+    SampleAppScheme(name: "NearMapFeature")
+}

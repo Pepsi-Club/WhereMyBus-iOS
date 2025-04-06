@@ -1,36 +1,17 @@
 import ProjectDescription
 import ProjectDescriptionHelpers
 
-let project = Project.makeProject(
-    name: "App",
-    moduleType: .app,
-    entitlementsPath: .relativeToManifest("App.entitlements"),
-    hasResource: true,
-    appExtensionTarget: [
-//        Project.appExtensionTarget(
-//            name: "Widget",
-//            plist: .extendingDefault(
-//                with: .widgetInfoPlist
-//            ),
-//            resources: [
-//                "Resources/Model.xcdatamodeld",
-//                "Resources/total_stationList.json",
-//                "Widget/Resources/**",
-//            ],
-//            entitlements: .file(
-//                path: .relativeToRoot(
-//                    "Projects/App/Widget.entitlements"
-//                )
-//            ),
-//            dependencies: [
-//                .mainFeature,
-//                .data,
-//            ]
-//        )
-    ],
-    dependencies: [
-        .MainFeature,
-        .Data,
-        .FirebaseModule
-    ]
-)
+let project = Project(name: "App") {
+    App(name: "App") {
+        MainFeature()
+        Data()
+        FirebaseModule()
+    }
+//    WidgetExtension(name: "Widget") {
+//        MainFeature()
+//        Data()
+//    }
+    AppScheme(name: "App")
+    UnitTestsScheme(targetName: "App")
+    UITestsScheme(targetName: "App")
+}

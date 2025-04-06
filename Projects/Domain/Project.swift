@@ -1,10 +1,8 @@
 import ProjectDescription
 import ProjectDescriptionHelpers
 
-let project = Project.makeProject(
-    name: "Domain",
-    moduleType: .dynamicFramework,
-    dependencies: [
-        .Core
-    ]
-)
+let project = Project(name: "Domain") {
+    Domain {
+        Core()
+    }
+}
