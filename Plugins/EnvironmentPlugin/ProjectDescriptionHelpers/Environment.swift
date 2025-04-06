@@ -43,7 +43,7 @@ extension SettingValue {
 }
 
 public extension DeploymentTargets {
-    static let deploymentTarget: Self = .iOS(.targetVersion)
+    static let deploymentTargets: Self = .iOS(.targetVersion)
 }
 
 public extension Platform {
