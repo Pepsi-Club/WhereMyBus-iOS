@@ -41,7 +41,7 @@ jobs:
             swift-version: "5.10"
             
       - name: Mise
-        use: jdx/mise-action@v2
+        uses: jdx/mise-action@v2
 
       - name: Install Tuist
         run: mise install tuist@4.33.0
