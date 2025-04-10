@@ -10,7 +10,7 @@ public struct FirebaseInterface: FrameworkTarget {
     
     public let dependencies: [TargetDependency]
     
-    public init(@TargetDependencyBuilder dependencies builder: () -> TargetDependencyBuilder = { .init() }) {
+    public init(@TargetComponentBuilder dependencies builder: () -> TargetComponentBuilder = { .init() }) {
         self.dependencies = builder().buildTargetDependency()
     }
 }
@@ -20,7 +20,7 @@ public struct FirebaseModule: FrameworkTarget {
     
     public let dependencies: [TargetDependency]
     
-    public init(@TargetDependencyBuilder dependencies builder: () -> TargetDependencyBuilder = { .init() }) {
+    public init(@TargetComponentBuilder dependencies builder: () -> TargetComponentBuilder = { .init() }) {
         self.dependencies = builder().buildTargetDependency()
     }
 }

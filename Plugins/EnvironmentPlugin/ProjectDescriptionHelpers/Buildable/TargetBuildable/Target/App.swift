@@ -14,7 +14,7 @@ public struct App: TargetBuildable {
     public let infoPlist: InfoPlist?  = .appInfoPlist
     public let sources: SourceFilesList?  = ["Sources/**"]
     public let resources: ResourceFileElements? = ["Resources/**"]
-    public let scripts: [TargetScript] = [.swiftLint]
+    public let scripts: [TargetScript]
     public let settings: Settings? = .appDebug
 
     public var entitlements: Entitlements? {
@@ -23,9 +23,11 @@ public struct App: TargetBuildable {
     
     public init(
         name: String,
-        @TargetDependencyBuilder dependencies builder: () -> TargetDependencyBuilder
+        @TargetComponentBuilder dependencies builder: () -> TargetComponentBuilder
     ) {
+        let builder = builder()
         self.name = name
-        self.dependencies = builder().buildTargetDependency()
+        self.dependencies = builder.buildTargetDependency()
+        self.scripts = builder.buildTargetScript()
     }
 }

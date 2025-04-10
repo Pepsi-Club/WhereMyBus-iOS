@@ -8,6 +8,14 @@
 public protocol FrameworkTarget: ImplementTarget, TypeNameContains { }
 
 public extension FrameworkTarget {
-    var scripts: [TargetScript] { [.swiftLint] }
+    var scripts: [TargetScript] {
+        [
+            TargetScript.pre(
+                path: .relativeToRoot("Scripts/SwiftLintRunScript.sh"),
+                name: "SwiftLintShell",
+                basedOnDependencyAnalysis: false
+            )
+        ]
+    }
     var targetDependencyPath: Path { .relativeToRoot("Projects/\(name)") }
 }

@@ -13,7 +13,7 @@ public struct Feature: ImplementTarget {
     public let product: Product = .staticFramework
     public let infoPlist: InfoPlist = .frameworkInfoPlist
     public let settings: Settings = .frameworkDebug
-    public var scripts: [TargetScript] = [.featureSwiftLint]
+    public let scripts: [TargetScript]
     
     public var resources: ResourceFileElements? { hasResource ? ["Resources/**"] : nil }
     public var targetDependencyPath: Path {
@@ -23,10 +23,12 @@ public struct Feature: ImplementTarget {
     public init(
         name: String,
         hasResource: Bool = false,
-        @TargetDependencyBuilder dependencies builder: () -> TargetDependencyBuilder = { .init() }
+        @TargetComponentBuilder dependencies builder: () -> TargetComponentBuilder = { .init() }
     ) {
+        let builder = builder()
         self.name = name
         self.hasResource = hasResource
-        self.dependencies = builder().buildTargetDependency()
+        self.dependencies = builder.buildTargetDependency()
+        self.scripts = builder.buildTargetScript()
     }
 }

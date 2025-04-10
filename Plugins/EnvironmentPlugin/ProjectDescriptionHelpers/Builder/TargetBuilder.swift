@@ -7,8 +7,16 @@
 
 @resultBuilder
 public struct TargetBuilder {
-    var dependencyBuildable: [TargetDependencyBuildable] = .init()
-    var targetBuildable: [TargetBuildable] = .init()
+    let dependencyBuildable: [TargetDependencyBuildable]
+    let targetBuildable: [TargetBuildable]
+    
+    init(
+        dependencyBuildable: [TargetDependencyBuildable] = [],
+        targetBuildable: [TargetBuildable] = []
+    ) {
+        self.dependencyBuildable = dependencyBuildable
+        self.targetBuildable = targetBuildable
+    }
 }
 
 // MARK: TargetBuilder

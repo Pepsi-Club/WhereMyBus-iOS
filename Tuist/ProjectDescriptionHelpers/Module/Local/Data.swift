@@ -15,7 +15,7 @@ public struct Data: FrameworkTarget {
         )
     ]
     
-    public init(@TargetDependencyBuilder dependencies builder: () -> TargetDependencyBuilder = { .init() }) {
+    public init(@TargetComponentBuilder dependencies builder: () -> TargetComponentBuilder = { .init() }) {
         self.dependencies = builder().buildTargetDependency()
     }
 }

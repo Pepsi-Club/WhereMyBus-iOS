@@ -10,7 +10,7 @@ public struct WidgetExtension: AppExtensionTarget {
     public let dependencies: [TargetDependency]
     
     public let infoPlist: InfoPlist? = .extendingDefault(with: .widgetInfoPlist)
-    public let scripts: [TargetScript] = [.swiftLint]
+    public let scripts: [TargetScript]
     
     public var sources: SourceFilesList? { ["\(name)/**"] }
     public var resources: ResourceFileElements? {
@@ -44,9 +44,11 @@ public struct WidgetExtension: AppExtensionTarget {
     
     public init(
         name: String,
-        @TargetDependencyBuilder dependencies builder: () -> TargetDependencyBuilder
+        @TargetComponentBuilder dependencies builder: () -> TargetComponentBuilder
     ) {
+        let builder = builder()
         self.name = name
-        self.dependencies = builder().buildTargetDependency()
+        self.dependencies = builder.buildTargetDependency()
+        self.scripts = builder.buildTargetScript()
     }
 }

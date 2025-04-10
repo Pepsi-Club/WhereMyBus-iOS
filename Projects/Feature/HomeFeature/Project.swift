@@ -7,6 +7,7 @@ let project = Project(
 ) {
     Feature(name: "HomeFeature") {
         FeatureDependency()
+        FeatureSwiftLintScript()
     }
     SampleApp(name: "HomeFeature") {
         Feature(name: "HomeFeature")

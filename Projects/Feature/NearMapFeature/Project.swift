@@ -7,6 +7,7 @@ let project = Project(
 ) {
     Feature(name: "NearMapFeature") {
         FeatureDependency()
+        FeatureSwiftLintScript()
     }
     SampleApp(name: "NearMapFeature") {
         Feature(name: "NearMapFeature")

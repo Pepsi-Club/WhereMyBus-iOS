@@ -10,7 +10,7 @@ public struct DesignSystem: FrameworkTarget {
     public let dependencies: [TargetDependency]
     public let resources: ResourceFileElements? = ["Resources/**"]
     
-    public init(@TargetDependencyBuilder dependencies builder: () -> TargetDependencyBuilder = { .init() }) {
+    public init(@TargetComponentBuilder dependencies builder: () -> TargetComponentBuilder = { .init() }) {
         self.dependencies = builder().buildTargetDependency()
     }
 }
