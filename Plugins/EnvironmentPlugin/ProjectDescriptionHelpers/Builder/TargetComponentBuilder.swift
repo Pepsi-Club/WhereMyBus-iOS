@@ -80,6 +80,6 @@ extension TargetComponentBuilder: InfoPlistBuildable {
     }
     
     public func buildInfoPlist() -> InfoPlist {
-        buildInfoPlist()
+        infoPlistBuildables.buildInfoPlist()
     }
 }
