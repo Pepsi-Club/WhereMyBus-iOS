@@ -4,5 +4,6 @@ import ProjectDescriptionHelpers
 let project = Project(name: "Domain") {
     Domain {
         Core()
+        FrameworkInfoPlist(marketingVersion: .marketingVersion)
     }
 }

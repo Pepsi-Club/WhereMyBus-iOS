@@ -7,6 +7,9 @@ let project = Project(name: "App") {
         Data()
         FirebaseModule()
         SwiftLintScript()
+        UIKitInfoPlist()
+        AppInfoPlist(displayName: .displayName, marketingVersion: .marketingVersion, buildVersion: .buildVersion)
+        SecretInfoPlist()
     }
 //    WidgetExtension(name: "Widget") {
 //        MainFeature()

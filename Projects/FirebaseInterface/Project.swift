@@ -9,5 +9,7 @@ import ProjectDescription
 import ProjectDescriptionHelpers
 
 let project = Project(name: "FirebaseInterface") {
-    FirebaseInterface()
+    FirebaseInterface {
+        FrameworkInfoPlist(marketingVersion: .marketingVersion)
+    }
 }

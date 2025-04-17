@@ -8,6 +8,5 @@
 public protocol TestingTarget: TargetBuildable { }
 
 public extension TestingTarget {
-    var infoPlist: InfoPlist? { .frameworkInfoPlist }
     var sources: SourceFilesList? { ["Testing/**"] }
 }

@@ -7,10 +7,13 @@
 
 public struct DesignSystem: FrameworkTarget {
     public let product: Product = .framework
+    public let infoPlist: InfoPlist?
     public let dependencies: [TargetDependency]
     public let resources: ResourceFileElements? = ["Resources/**"]
     
     public init(@TargetComponentBuilder dependencies builder: () -> TargetComponentBuilder = { .init() }) {
-        self.dependencies = builder().buildTargetDependency()
+        let builder = builder()
+        self.dependencies = builder.buildTargetDependency()
+        self.infoPlist = builder.buildInfoPlist()
     }
 }

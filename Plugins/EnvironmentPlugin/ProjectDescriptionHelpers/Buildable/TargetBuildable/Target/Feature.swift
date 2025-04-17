@@ -11,7 +11,7 @@ public struct Feature: ImplementTarget {
     public let dependencies: [TargetDependency]
     
     public let product: Product = .staticFramework
-    public let infoPlist: InfoPlist = .frameworkInfoPlist
+    public let infoPlist: InfoPlist?
     public let settings: Settings = .frameworkDebug
     public let scripts: [TargetScript]
     
@@ -30,5 +30,6 @@ public struct Feature: ImplementTarget {
         self.hasResource = hasResource
         self.dependencies = builder.buildTargetDependency()
         self.scripts = builder.buildTargetScript()
+        self.infoPlist = builder.buildInfoPlist()
     }
 }

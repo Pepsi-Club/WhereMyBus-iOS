@@ -5,5 +5,6 @@ let project = Project(name: "FeatureDependency") {
     FeatureDependency() {
         DesignSystem()
         Domain()
+        FrameworkInfoPlist(marketingVersion: .marketingVersion)
     }
 }

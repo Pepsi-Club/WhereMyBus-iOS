@@ -7,5 +7,6 @@ let project = Project(name: "Data") {
         NetworkService()
         CoreDataService()
         FirebaseInterface()
+        FrameworkInfoPlist(marketingVersion: .marketingVersion)
     }
 }

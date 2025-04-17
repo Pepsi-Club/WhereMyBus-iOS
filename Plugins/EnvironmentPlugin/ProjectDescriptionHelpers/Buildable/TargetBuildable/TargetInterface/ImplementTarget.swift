@@ -9,6 +9,5 @@ public protocol ImplementTarget: BundleIDSuffixTarget, LocalDependency { }
 
 public extension ImplementTarget {
     var sources: SourceFilesList? { ["Sources/**"] }
-    var infoPlist: InfoPlist { .frameworkInfoPlist }
     var settings: Settings { .frameworkDebug }
 }

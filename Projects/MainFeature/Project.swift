@@ -9,5 +9,6 @@ let project = Project(name: "MainFeature") {
         Feature(name: "BusStopFeature")
         Feature(name: "SearchFeature")
         Feature(name: "NearMapFeature")
+        FrameworkInfoPlist(marketingVersion: .marketingVersion)
     }
 }

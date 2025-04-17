@@ -9,13 +9,16 @@
 public struct TargetComponentBuilder {
     let dependencyBuildables: [TargetDependencyBuildable]
     let targetScriptBuildables: [TargetScriptBuildable]
+    let infoPlistBuildables: [InfoPlistBuildable]
     
     public init(
         dependencyBuildables: [TargetDependencyBuildable] = [],
-        targetScriptBuildables: [TargetScriptBuildable] = []
+        targetScriptBuildables: [TargetScriptBuildable] = [],
+        infoPlistBuildables: [InfoPlistBuildable] = []
     ) {
         self.dependencyBuildables = dependencyBuildables
         self.targetScriptBuildables = targetScriptBuildables
+        self.infoPlistBuildables = infoPlistBuildables
     }
 }
 
@@ -61,5 +64,22 @@ public extension TargetComponentBuilder {
 extension TargetComponentBuilder: TargetScriptBuildable {
     public func buildTargetScript() -> [TargetScript] {
         targetScriptBuildables.flatMap { $0.buildTargetScript() }
+    }
+}
+
+// MARK: InfoPlistBuildable
+public extension TargetComponentBuilder {
+    static func buildExpression(_ expression: InfoPlistBuildable) -> TargetComponentBuilder {
+        .init(infoPlistBuildables: [expression])
+    }
+}
+
+extension TargetComponentBuilder: InfoPlistBuildable {
+    public var dictionary: [String : ProjectDescription.Plist.Value] {
+        [:]
+    }
+    
+    public func buildInfoPlist() -> InfoPlist {
+        buildInfoPlist()
     }
 }

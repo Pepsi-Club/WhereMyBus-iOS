@@ -8,9 +8,14 @@ let project = Project(
     Feature(name: "BusStopFeature") {
         FeatureDependency()
         FeatureSwiftLintScript()
+        FrameworkInfoPlist(marketingVersion: .marketingVersion)
+        SecretInfoPlist()
     }
     SampleApp(name: "BusStopFeature") {
         Feature(name: "BusStopFeature")
+        UIKitInfoPlist()
+        AppInfoPlist(displayName: "BusStopFeatureSampleApp", marketingVersion: .marketingVersion, buildVersion: .buildVersion)
+        SecretInfoPlist()
     }
     SampleAppScheme(name: "BusStopFeature")
 }

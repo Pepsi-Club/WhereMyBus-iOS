@@ -11,7 +11,7 @@ public struct App: TargetBuildable {
     
     public let product: Product = .app
     public let bundleId: String = .bundleID
-    public let infoPlist: InfoPlist?  = .appInfoPlist
+    public let infoPlist: InfoPlist?
     public let sources: SourceFilesList?  = ["Sources/**"]
     public let resources: ResourceFileElements? = ["Resources/**"]
     public let scripts: [TargetScript]
@@ -29,5 +29,6 @@ public struct App: TargetBuildable {
         self.name = name
         self.dependencies = builder.buildTargetDependency()
         self.scripts = builder.buildTargetScript()
+        self.infoPlist = builder.buildInfoPlist()
     }
 }

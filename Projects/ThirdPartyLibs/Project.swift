@@ -8,5 +8,6 @@ let project = Project(name: "ThirdPartyLibs") {
         NMapsMap()
         RxSwift()
         RxCocoa()
+        FrameworkInfoPlist(marketingVersion: .marketingVersion)
     }
 }

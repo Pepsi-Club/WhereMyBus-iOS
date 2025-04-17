@@ -14,13 +14,15 @@ public struct SampleApp: BundleIDSuffixTarget {
     public let sources: SourceFilesList?  = ["Demo/**"]
     public let settings: Settings? = .appDebug
 
-    public var infoPlist: InfoPlist? { .demoAppInfoPlist(name: name) }
+    public var infoPlist: InfoPlist?
     
     public init(
         name: String,
         @TargetComponentBuilder dependencies builder: () -> TargetComponentBuilder
     ) {
+        let builder = builder()
         self.name = name + "SampleApp"
-        self.dependencies = builder().buildTargetDependency()
+        self.dependencies = builder.buildTargetDependency()
+        self.infoPlist = builder.buildInfoPlist()
     }
 }

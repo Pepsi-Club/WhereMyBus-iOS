@@ -8,9 +8,14 @@ let project = Project(
     Feature(name: "SettingsFeature") {
         FeatureDependency()
         FeatureSwiftLintScript()
+        FrameworkInfoPlist(marketingVersion: .marketingVersion)
+        SecretInfoPlist()
     }
     SampleApp(name: "SettingsFeature") {
         Feature(name: "SettingsFeature")
+        UIKitInfoPlist()
+        AppInfoPlist(displayName: "SettingsFeatureSampleApp", marketingVersion: .marketingVersion, buildVersion: .buildVersion)
+        SecretInfoPlist()
     }
     SampleAppScheme(name: "SettingsFeature")
 }

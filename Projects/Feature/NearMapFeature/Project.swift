@@ -8,9 +8,14 @@ let project = Project(
     Feature(name: "NearMapFeature") {
         FeatureDependency()
         FeatureSwiftLintScript()
+        FrameworkInfoPlist(marketingVersion: .marketingVersion)
+        SecretInfoPlist()
     }
     SampleApp(name: "NearMapFeature") {
         Feature(name: "NearMapFeature")
+        UIKitInfoPlist()
+        AppInfoPlist(displayName: "NearMapFeatureSampleApp", marketingVersion: .marketingVersion, buildVersion: .buildVersion)
+        SecretInfoPlist()
     }
     SampleAppScheme(name: "NearMapFeature")
 }
