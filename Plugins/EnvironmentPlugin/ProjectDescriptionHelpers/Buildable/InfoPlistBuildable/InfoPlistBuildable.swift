@@ -11,18 +11,16 @@ public protocol InfoPlistBuildable {
     var dictionary: [String: Plist.Value] { get }
 }
 
-extension InfoPlistBuildable {
+public extension InfoPlistBuildable {
     func buildInfoPlist() -> InfoPlist {
         .dictionary(dictionary)
     }
 }
 
-extension Array where Element == any InfoPlistBuildable {
-    func buildInfoPlist() -> InfoPlist {
-        .dictionary(
-            reduce([String: Plist.Value]()) { partialResult, next in
-                partialResult.merging(next.dictionary) { _, new in new }
-            }
-        )
+extension Array: InfoPlistBuildable where Element == any InfoPlistBuildable {
+    public var dictionary: [String : Plist.Value] {
+        reduce([String : Plist.Value]()) { partialResult, next in
+            partialResult.merging(next.dictionary) { _, new in new }
+        }
     }
 }

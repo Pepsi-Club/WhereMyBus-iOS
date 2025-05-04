@@ -29,7 +29,11 @@ public extension TargetComponentBuilder {
     }
     
     static func buildExpression(_ expression: TargetComponentBuilder...) -> TargetComponentBuilder {
-        .init(dependencyBuildables: expression.flatMap { $0.dependencyBuildables })
+        .init(
+            dependencyBuildables: expression.flatMap { $0.dependencyBuildables },
+            targetScriptBuildables: expression.flatMap { $0.targetScriptBuildables },
+            infoPlistBuildables: expression.flatMap { $0.infoPlistBuildables }
+        )
     }
     
     static func buildPartialBlock(first: TargetComponentBuilder) -> TargetComponentBuilder {
@@ -37,7 +41,11 @@ public extension TargetComponentBuilder {
     }
     
     static func buildPartialBlock(accumulated: TargetComponentBuilder, next: TargetComponentBuilder) -> TargetComponentBuilder {
-        .init(dependencyBuildables: accumulated.dependencyBuildables + next.dependencyBuildables)
+        .init(
+            dependencyBuildables: accumulated.dependencyBuildables + next.dependencyBuildables,
+            targetScriptBuildables: accumulated.targetScriptBuildables + next.targetScriptBuildables,
+            infoPlistBuildables: accumulated.infoPlistBuildables + next.infoPlistBuildables
+        )
     }
 }
 
