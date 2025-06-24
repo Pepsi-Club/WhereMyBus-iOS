@@ -24,6 +24,12 @@ public final class DefaultBusStopArrivalInfoRepository:
         self.networkService = networkService
     }
     
+    public func fetchArrivalList(busStopId: String) async throws -> BusStopArrivalInfoResponse {
+        try await networkService.request(endPoint: BusStopArrivalInfoEndPoint(arsId: busStopId))
+            .decode(type: BusStopArrivalInfoDTO.self)
+            ._toDomain
+    }
+    
     public func fetchArrivalList(busStopId: String) ->
     Observable<BusStopArrivalInfoResponse> {
         Analytics.logEvent("fetchArrivalEvent", parameters: nil)

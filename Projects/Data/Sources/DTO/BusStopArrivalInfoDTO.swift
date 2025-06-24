@@ -16,6 +16,24 @@ public struct BusStopArrivalInfoDTO: Codable {
 }
 
 public extension BusStopArrivalInfoDTO {
+    enum BusStopArrivalInfoDTOError: Error {
+        case invalidResponse(message: String)
+    }
+    
+    var _toDomain: BusStopArrivalInfoResponse {
+        get throws {
+            guard msgHeader.headerCD == "0" else {
+                throw BusStopArrivalInfoDTOError.invalidResponse(message: msgHeader.headerCodeMessage)
+            }
+            return .init(
+                busStopId: getBusStopId ?? "정류장 ID 없음",
+                busStopName: getBusStopName ?? "정류장 이름 없음",
+                direction: getDirection ?? "정류장 방면 없음",
+                buses: getBuses
+            )
+        }
+    }
+    
     var toDomain: BusStopArrivalInfoResponse? {
         guard msgHeader.headerCD == "0"
         else { return nil }

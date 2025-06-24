@@ -11,6 +11,8 @@ import Foundation
 import RxSwift
 
 public protocol BusStopArrivalInfoRepository {
+    func fetchArrivalList(busStopId: String) async throws -> BusStopArrivalInfoResponse
+    
     func fetchArrivalList(
         busStopId: String
     ) -> Observable<BusStopArrivalInfoResponse>
