@@ -11,6 +11,8 @@ import Foundation
 import RxSwift
 
 public protocol NetworkService {
+    func request(endPoint: EndPoint) async throws -> Data
+    
     func request(endPoint: EndPoint) -> Observable<Data>
     func request<T: Decodable>(
         endPoint: EndPoint,
