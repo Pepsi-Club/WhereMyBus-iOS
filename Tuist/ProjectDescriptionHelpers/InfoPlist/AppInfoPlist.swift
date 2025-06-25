@@ -15,6 +15,21 @@ public struct AppInfoPlist: InfoPlistBuildable {
             "CFBundleDisplayName": .string(displayName),
             "CFBundleShortVersionString": .string(marketingVersion),
             "CFBundleVersion": .string(.buildVersion),
+            "CFBundleExecutable": "$(EXECUTABLE_NAME)",
+            "CFBundleIdentifier": "$(PRODUCT_BUNDLE_IDENTIFIER)",
+            "UILaunchStoryboardName": "LaunchScreen.storyboard",
+            "UIApplicationSceneManifest": [
+                "UIApplicationSupportsMultipleScenes": false,
+                "UISceneConfigurations": [
+                    "UIWindowSceneSessionRoleApplication": [
+                        [
+                            "UISceneConfigurationName": "Default Configuration",
+                            "UISceneDelegateClassName": "$(PRODUCT_MODULE_NAME).SceneDelegate"
+                        ],
+                    ]
+                ]
+            ],
+            "UISupportedInterfaceOrientations": ["UIInterfaceOrientationPortrait"],
             "FirebaseAppDelegateProxyEnabled": false,
             "ITSAppUsesNonExemptEncryption": "NO",
             "NSAppTransportSecurity": [
