@@ -19,16 +19,13 @@ public final class FirebaseSDK {
         guard let options = FirebaseOptions(contentsOfFile: plistFilePath) else {
             throw FirebaseSDKError.invalidFilePath
         }
+        FirebaseConfiguration.shared.setLoggerLevel(.min)
         FirebaseApp.configure(options: options)
         application.registerForRemoteNotifications()
     }
     
-    public static func didRegisterForRemoteNotificationsWithDeviceToken(
-        deviceToken: Data
-    ) async -> String? {
-        Messaging.messaging().delegate = proxy
-        Messaging.messaging().apnsToken = deviceToken
-        return await proxy.requestFCMToken()
+    public static func didRegisterForRemoteNotificationsWithDeviceToken(deviceToken: Data) async -> String? {
+        await proxy.requestFCMToken(deviceToken: deviceToken)
     }
     
     enum FirebaseSDKError: Error {

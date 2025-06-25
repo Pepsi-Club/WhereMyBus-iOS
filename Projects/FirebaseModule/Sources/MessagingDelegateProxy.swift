@@ -6,13 +6,16 @@
 //  Copyright © 2025 Pepsi-Club. All rights reserved.
 //
 
+import Firebase
 import FirebaseMessaging
 
 final class MessagingDelegateProxy: NSObject, MessagingDelegate {
     private var continuation: CheckedContinuation<String?, Never>?
     
-    func requestFCMToken() async -> String? {
+    func requestFCMToken(deviceToken: Data) async -> String? {
         await withCheckedContinuation { continuation in
+            Messaging.messaging().delegate = self
+            Messaging.messaging().apnsToken = deviceToken
             self.continuation = continuation
         }
     }
