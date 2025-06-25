@@ -8,8 +8,7 @@
 
 import UIKit
 
-import Firebase
-import FirebaseMessaging
+import FirebaseModule
 
 extension AppDelegate {
     func configureFirebase(application: UIApplication) {
@@ -19,14 +18,12 @@ extension AppDelegate {
         #else
         googleInfoName = "GoogleService-Info"
         #endif
-        guard let filePath = Bundle.main.path(
-            forResource: googleInfoName,
-            ofType: "plist"
-        ),
-            let options = FirebaseOptions(contentsOfFile: filePath)
-            else { return }
-        FirebaseApp.configure(options: options)
-        application.registerForRemoteNotifications()
+        let filePath = Bundle.main.path(forResource: "\(googleInfoName).plist", ofType: nil) ?? ""
+        do {
+            try FirebaseSDK.configureFirebase(plistFilePath: filePath, application: application)
+        } catch {
+            dump(error)
+        }
     }
 }
 
@@ -35,20 +32,13 @@ extension AppDelegate {
         _ application: UIApplication,
         didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
     ) {
-        Messaging.messaging().delegate = self
-        Messaging.messaging().apnsToken = deviceToken
-    }
-}
-
-extension AppDelegate: MessagingDelegate {
-    func messaging(
-        _ messaging: Messaging,
-        didReceiveRegistrationToken fcmToken: String?
-    ) {
-        guard let fcmToken else { return }
-        UserDefaults.standard.setValue(
-            fcmToken,
-            forKey: "fcmToken"
-        )
+        Task {
+            let fcmToken = await FirebaseSDK.didRegisterForRemoteNotificationsWithDeviceToken(deviceToken: deviceToken)
+            guard let fcmToken else { return }
+            UserDefaults.standard.setValue(
+                fcmToken,
+                forKey: "fcmToken"
+            )
+        }
     }
 }

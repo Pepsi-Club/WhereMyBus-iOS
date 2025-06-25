@@ -13,6 +13,7 @@ import CoreDataService
 import Data
 import Domain
 import NetworkService
+import FirebaseModule
 
 extension AppDelegate {
     func registerDependencies() {
@@ -102,5 +103,6 @@ extension AppDelegate {
 //                versionCheckRepository: versionCheckRepository
 //            )
 //        )
+        DIContainer.register(type: FirebaseLogger.self, FirebaseLoggerImpl())
     }
 }
