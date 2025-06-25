@@ -15,29 +15,13 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 ## iOS
 
-### ios regenerate
+### ios sync
 
 ```sh
-[bundle exec] fastlane ios regenerate
+[bundle exec] fastlane ios sync
 ```
 
-Regenerate
-
-### ios getig
-
-```sh
-[bundle exec] fastlane ios getig
-```
-
-Download Ignored
-
-### ios setpj
-
-```sh
-[bundle exec] fastlane ios setpj
-```
-
-Set Project
+인증서 가져오기
 
 ### ios tf_local
 
