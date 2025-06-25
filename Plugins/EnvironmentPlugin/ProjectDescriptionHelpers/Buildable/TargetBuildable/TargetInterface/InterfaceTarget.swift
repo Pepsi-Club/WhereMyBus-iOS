@@ -7,7 +7,7 @@
 
 public protocol InterfaceTarget: BundleIDSuffixTarget, LocalDependency { }
 
-extension InterfaceTarget {
+public extension InterfaceTarget {
     var product: Product { .framework }
     var settings: Settings { .frameworkDebug }
 }
