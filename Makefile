@@ -6,25 +6,14 @@ fetch:
 gen:
 	tuist generate --no-open
 
-sign: getig
-	fastlane sync
-	
-getig:
-	@echo "Git 토큰을 어디서 불러올까요?"
-	@echo " 1) global"
-	@echo " 2) local"
-	@read -p "Enter choice [1 or 2]: " choice; \
-	if [ "$$choice" = "1" ]; then \
-	  echo "Using GITHUB_ACCESS_TOKEN from global config"; \
-	  GITHUB_ACCESS_TOKEN=$$(git config --global user.password); \
-	elif [ "$$choice" = "2" ]; then \
-	  echo "Using GITHUB_ACCESS_TOKEN from local config"; \
-	  GITHUB_ACCESS_TOKEN=$$(git config user.password); \
-	else \
-	  echo "Invalid choice: $$choice. Aborting..."; \
-	  exit 1; \
+sign:
+	@GIT_TOKEN=$$(git config user.password || git config --global user.password); \
+	if [ -z "$$GIT_TOKEN" ]; then \
+		echo "❌ Git token not found."; \
+		exit 1; \
 	fi; \
-	$(MAKE) download-privates token=$$GITHUB_ACCESS_TOKEN
+	$(MAKE) download-privates token=$$GIT_TOKEN && \
+	fastlane sync
 
 clean:
 	rm -rf **/**/**/*.xcodeproj
@@ -51,9 +40,9 @@ clean_xcode_cache:
 BASE_URL = https://raw.githubusercontent.com/Pepsi-Club/WhereMyBus-ignored/main
 
 define download_file
-	@echo "Downloading $(3) to $(1) using token: $(2)"
+	@echo "📥 Downloading $(3) to $(1)"
 	mkdir -p $(1)
-	curl -H "Authorization: token $(2)" -o $(1)/$(3) $(BASE_URL)/$(3)
+	curl -sS -H "Authorization: token $(2)" -o $(1)/$(3) $(BASE_URL)/$(3)
 endef
 
 .PHONY: download-privates
