@@ -6,8 +6,11 @@ fetch:
 gen:
 	tuist generate --no-open
 
+sign: getig
+	fastlane sync
+	
 getig:
-	@echo "Select config source:"
+	@echo "Git 토큰을 어디서 불러올까요?"
 	@echo " 1) global"
 	@echo " 2) local"
 	@read -p "Enter choice [1 or 2]: " choice; \
