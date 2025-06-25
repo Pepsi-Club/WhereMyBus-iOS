@@ -27,10 +27,8 @@ public struct AppScheme: SchemeBuildable {
             configuration: .debug,
             arguments: .arguments(
                 launchArguments: [
-                    .launchArgument(
-                        name: "-FIRDebugEnabled",
-                        isEnabled: true
-                    )
+                    .launchArgument(name: "-FIRDebugDisabled", isEnabled: true),
+                    .launchArgument(name: "-noFIRAnalyticsDebugEnabled", isEnabled: true)
                 ]
             )
         )
