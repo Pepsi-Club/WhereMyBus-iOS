@@ -1,8 +1,14 @@
 import ProjectDescription
 import ProjectDescriptionHelpers
 
-let project = Project.makeProject(
-    name: "MainFeature",
-    moduleType: .dynamicFramework,
-    dependencies: .Presentation.allCases.map { $0.dependency }
-)
+let project = Project(name: "MainFeature") {
+    MainFeature {
+        Feature(name: "HomeFeature")
+        Feature(name: "AlarmFeature")
+        Feature(name: "SettingsFeature")
+        Feature(name: "BusStopFeature")
+        Feature(name: "SearchFeature")
+        Feature(name: "NearMapFeature")
+        FrameworkInfoPlist(marketingVersion: .marketingVersion)
+    }
+}

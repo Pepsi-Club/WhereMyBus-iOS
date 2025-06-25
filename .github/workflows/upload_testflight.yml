@@ -39,21 +39,21 @@ jobs:
         uses: swift-actions/setup-swift@v2
         with:
             swift-version: "5.10"
+            
+      - name: Mise
+        uses: jdx/mise-action@v2
 
       - name: Install Tuist
-        run: curl -Ls https://install.tuist.io|bash
-
+        run: mise install tuist@4.33.0
+ 
+      - name: Tuist version
+        run: mise use -g tuist@4.33.0
+        
+      - name: Setup Project
+        run: make init
+        
       - name: Install Fastlane
         run: brew install fastlane
-
-      - name: Tuist clean
-        run: tuist clean
-
-      - name: Tuist fetch
-        run: tuist fetch
-
-      - name: Tuist generate
-        run: tuist generate
 
       - name: Fastlane Upload Testflight
         run: fastlane tf_remote
