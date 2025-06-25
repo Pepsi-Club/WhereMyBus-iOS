@@ -18,6 +18,7 @@ let packageSettings = PackageSettings(
         "RxSwift": .framework,
         "RxCocoa": .framework,
         "RxCocoaRuntime": .framework,
+        "Lottie": .framework,
     ],
     targetSettings: [:]
 )
