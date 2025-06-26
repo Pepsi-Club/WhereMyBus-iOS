@@ -1,12 +1,9 @@
 import ProjectDescription
-import DependencyPlugin
 import ProjectDescriptionHelpers
 
-let project = Project.makeProject(
-    name: "Core",
-    moduleType: .dynamicFramework,
-    dependencies: [
-        .thirdPartyLibs,
-        .package(product: "FirebaseAnalytics")
-    ]
-)
+let project = Project(name: "Core") {
+    Core {
+        ThirdPartyLibs()
+        FrameworkInfoPlist(marketingVersion: .marketingVersion)
+    }
+}

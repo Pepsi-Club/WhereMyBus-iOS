@@ -1,12 +1,20 @@
-open_plist:
-	open -a Xcode Plugins/EnvironmentPlugin/ProjectDescriptionHelpers/InfoPlist.swift
-
-open_config:
-	open -a Xcode Plugins/EnvironmentPlugin/ProjectDescriptionHelpers/XCConfig.swift
-
-clean_xcode:
-	rm -rf ~/Library/Developer/Xcode/DerivedData/*
+init: fetch gen
 	
+fetch:
+	tuist clean
+	tuist install
+gen:
+	tuist generate --no-open
+
+sign:
+	@GIT_TOKEN=$$(git config user.password || git config --global user.password); \
+	if [ -z "$$GIT_TOKEN" ]; then \
+		echo "❌ Git token not found."; \
+		exit 1; \
+	fi; \
+	$(MAKE) download-privates token=$$GIT_TOKEN && \
+	fastlane sync
+
 clean:
 	rm -rf **/**/**/*.xcodeproj
 	rm -rf **/**/*.xcodeproj
@@ -17,16 +25,24 @@ clean:
 	rm -rf **/Derived/
 	rm -rf Derived/
 	
-clean_all:
-	make clean
-	make clean_xcode
+update_tuist:
+	sh ./Scripts/update_tuist.sh
 
+open_plist:
+	open -a Xcode Plugins/EnvironmentPlugin/ProjectDescriptionHelpers/InfoPlist.swift
+
+open_config:
+	open -a Xcode Plugins/EnvironmentPlugin/ProjectDescriptionHelpers/XCConfig.swift
+
+clean_xcode_cache:
+	rm -rf ~/Library/Developer/Xcode/DerivedData/*
+	
 BASE_URL = https://raw.githubusercontent.com/Pepsi-Club/WhereMyBus-ignored/main
 
 define download_file
-	@echo "Downloading $(3) to $(1) using token: $(2)"
+	@echo "📥 Downloading $(3) to $(1)"
 	mkdir -p $(1)
-	curl -H "Authorization: token $(2)" -o $(1)/$(3) $(BASE_URL)/$(3)
+	curl -sS -H "Authorization: token $(2)" -o $(1)/$(3) $(BASE_URL)/$(3)
 endef
 
 .PHONY: download-privates
@@ -48,5 +64,3 @@ download-env:
 download-googleinfo:
 	$(call download_file, Projects/App/Resources, $(token),GoogleService-Info.plist)
 	$(call download_file, Projects/App/Resources, $(token),GoogleService-Info-debugging.plist)
-
-

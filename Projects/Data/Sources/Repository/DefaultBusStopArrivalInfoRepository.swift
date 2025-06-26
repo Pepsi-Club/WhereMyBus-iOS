@@ -9,21 +9,20 @@
 import Foundation
 
 import Domain
+import Core
 import NetworkService
 import Core
 
 import RxSwift
-import FirebaseAnalytics
+import FirebaseInterface
 
-public final class DefaultBusStopArrivalInfoRepository:
-    NSObject, BusStopArrivalInfoRepository {
+public final class DefaultBusStopArrivalInfoRepository: NSObject, BusStopArrivalInfoRepository {
     @Injected private var networkService: NetworkService
+    private let networkService: NetworkService
+    @Injected(FirebaseLogger.self) private var logger: FirebaseLogger
     
-    private let disposeBag = DisposeBag()
-    
-    public func fetchArrivalList(busStopId: String) ->
-    Observable<BusStopArrivalInfoResponse> {
-        Analytics.logEvent("fetchArrivalEvent", parameters: nil)
+    public func fetchArrivalList(busStopId: String) -> Observable<BusStopArrivalInfoResponse> {
+        logger.log(name: "fetchArrivalEvent")
         return networkService.request(
             endPoint: BusStopArrivalInfoEndPoint(arsId: busStopId)
         )

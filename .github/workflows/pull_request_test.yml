@@ -30,18 +30,21 @@ jobs:
         
       - name: Get swift version
         run: swift --version
-        
-      - name: Install Tuist
-        run: curl -Ls https://install.tuist.io|bash
+                    
+      - name: Mise
+        uses: jdx/mise-action@v2
 
+      - name: Install Tuist
+        run: mise install tuist@4.33.0
+ 
+      - name: Tuist version
+        run: mise use -g tuist@4.33.0
+        
+      - name: Setup Project
+        run: make init
+                
       - name: Install SwiftLint
         run: brew install swiftlint
-
-      - name: Tuist Clean
-        run: tuist clean
-
-      - name: Tuist Fetch
-        run: tuist fetch
 
       - name: Tuist Build Test
         run: tuist build App

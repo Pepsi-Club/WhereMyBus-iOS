@@ -13,6 +13,7 @@ import CoreDataService
 import Data
 import Domain
 import NetworkService
+import FirebaseModule
 
 extension AppDelegate {
     func registerDependencies() {
@@ -26,8 +27,7 @@ extension AppDelegate {
         DIContainer.register(type: RegularAlarmRepository.self, DefaultRegularAlarmRepository())
         DIContainer.register(type: LocalNotificationService.self, DefaultLocalNotificationService())
         DIContainer.register(type: RegularAlarmEditingService.self, DefaultRegularAlarmEditingService())
-        // TODO: 추후 의존 주입 형태 변경
-//        DIContainer.register(type: VersionCheckRepository.self, DefaultVersionCheckRepository())
+        DIContainer.register(type: VersionCheckRepository.self, DefaultVersionCheckRepository())
         
         DIContainer.register(type: FavoritesUseCase.self, DefaultFavoritesUseCase())
         DIContainer.register(type: RegularAlarmUseCase.self, DefaultRegularAlarmUseCase())
@@ -35,8 +35,7 @@ extension AppDelegate {
         DIContainer.register(type: SearchUseCase.self, DefaultSearchUseCase())
         DIContainer.register(type: BusStopUseCase.self, DefaultBusStopUseCase())
         DIContainer.register(type: NearMapUseCase.self, DefaultNearMapUseCase())
-        DIContainer.register(type: RegularAlarmEditingService.self, DefaultRegularAlarmEditingService())
-        // TODO: 추후 의존 주입 형태 변경
-//        DIContainer.register(type: VersionCheckUseCase.self, DefaultVersionCheckUseCase())
+        DIContainer.register(type: FirebaseLogger.self, FirebaseLoggerImpl())
+        DIContainer.register(type: VersionCheckUseCase.self, DefaultVersionCheckUseCase())
     }
 }

@@ -1,10 +1,9 @@
 import ProjectDescription
 import ProjectDescriptionHelpers
 
-let project = Project.makeProject(
-    name: "CoreDataService",
-    moduleType: .dynamicFramework,
-    dependencies: [
-        .domain
-    ]
-)
+let project = Project(name: "CoreDataService") {
+    CoreDataService {
+        Domain()
+        FrameworkInfoPlist(marketingVersion: .marketingVersion)
+    }
+}
