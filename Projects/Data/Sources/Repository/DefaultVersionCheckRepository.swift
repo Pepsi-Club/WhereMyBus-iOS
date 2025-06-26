@@ -31,6 +31,12 @@ public final class DefaultVersionCheckRepository: VersionCheckRepository {
     }
     
     /// 서버로 부터 받은 App의 최소 지원 버전
+    public func fetchRequiredVersion() async throws -> AppVersionInfoResponse {
+        try await networkService.request(endPoint: MinVersionEndpoint(domain: getDomainURL()))
+            .decode(type: RequiredVersionDTO.self)
+            .toDomain
+    }
+    
     public func fetchRequiredVersion()
     -> Single<Result<AppVersionInfoResponse, Error>> {
         return networkService.request(
