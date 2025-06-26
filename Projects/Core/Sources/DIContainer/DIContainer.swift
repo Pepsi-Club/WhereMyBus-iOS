@@ -8,11 +8,15 @@
 
 import Foundation
 
-import FirebaseAnalytics
+import FirebaseInterface
 
 public enum DIContainer {
     private static var storage: [String: Any] = [:]
     private static var lock: NSLock = .init()
+    private static var firebaseLogger: FirebaseLogger?
+    public static func setLogger(_ logger: FirebaseLogger) {
+        firebaseLogger = logger
+    }
     
     public static func register<Dependency>(
         type: Dependency.Type,
@@ -28,7 +32,7 @@ public enum DIContainer {
         lock.lock()
         defer { lock.unlock() }
         guard let savedInstance = storage[typeName] as? Dependency else {
-            Analytics.logEvent("DependencyCrash", parameters: ["type": typeName])
+            firebaseLogger?.log(name: "DependencyCrash", parameter: ["type": typeName])
             fatalError("register 되지 않은 객체 호출: \(type)")
         }
         return savedInstance

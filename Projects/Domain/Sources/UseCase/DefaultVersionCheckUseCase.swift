@@ -8,19 +8,15 @@
 
 import Foundation
 
+import Core
+
 import RxSwift
 
 public final class DefaultVersionCheckUseCase: VersionCheckUseCase {
-    private let versionCheckRepository: VersionCheckRepository
-    private let forceUpdateService: ForceUpdateService
+    @Injected private var versionCheckRepository: VersionCheckRepository
+    @Injected private var forceUpdateService: ForceUpdateService
     
-    public init(
-        versionCheckRepository: VersionCheckRepository,
-        forceUpdateService: ForceUpdateService
-    ) {
-        self.versionCheckRepository = versionCheckRepository
-        self.forceUpdateService = forceUpdateService
-    }
+    public init() { }
     
     public func fetchAppStoreURL() -> Single<String?> {
         if hasToFetchVersion() {
