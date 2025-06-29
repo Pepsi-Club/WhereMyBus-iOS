@@ -11,7 +11,6 @@ import Foundation
 import Domain
 
 public final class DefaultForceUpdateService: ForceUpdateService {
-    
     public init() { }
     
     public func compareVersion(

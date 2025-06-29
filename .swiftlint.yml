@@ -1,5 +1,6 @@
 excluded: # 린트 과정에서 무시할 파일 경로. `included`보다 우선순위 높음
     - Projects/App/Sources/AppDelegate.swift
+    - Projects/App/Sources/AppDelegate+Register.swift
     - Projects/App/Sources/SceneDelegate.swift
     - Projects/App/Tests/**
     - Projects/Core/Sources/Extension/String+.swift
@@ -29,7 +30,7 @@ file_length:
     warning: 1000
     error: 2000
 line_length:
-    warning: 80
+    warning: 90
     error: 400
 disabled_rules: # 제외하고 싶은 룰
     - trailing_whitespace

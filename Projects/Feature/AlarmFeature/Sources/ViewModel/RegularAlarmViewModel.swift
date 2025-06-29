@@ -7,8 +7,9 @@ import FeatureDependency
 import RxSwift
 
 public final class RegularAlarmViewModel: ViewModel {
+    @Injected var useCase: RegularAlarmUseCase
+    
     private let coordinator: RegularAlarmCoordinator
-    @Injected(RegularAlarmUseCase.self) var useCase: RegularAlarmUseCase
     
     private let disposeBag = DisposeBag()
     

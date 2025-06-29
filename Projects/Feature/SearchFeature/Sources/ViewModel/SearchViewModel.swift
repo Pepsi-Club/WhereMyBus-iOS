@@ -8,9 +8,9 @@ import RxSwift
 import RxRelay
 
 public final class SearchViewModel: ViewModel {
+    @Injected var useCase: SearchUseCase
+
     private let coordinator: SearchCoordinator
-    
-    @Injected(SearchUseCase.self) var useCase: SearchUseCase
     
     private let disposeBag = DisposeBag()
 

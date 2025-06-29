@@ -15,7 +15,7 @@ import NetworkService
 import RxSwift
 
 public final class DefaultVersionCheckRepository: VersionCheckRepository {
-    private let networkService: NetworkService
+    @Injected private var networkService: NetworkService
     
     @UserDefaultsWrapper(
         key: "ForceUpdate",
@@ -26,9 +26,7 @@ public final class DefaultVersionCheckRepository: VersionCheckRepository {
     )
     private var forceUpdateInfo: ForceUpdate
     
-    public init(networkService: NetworkService) {
-        self.networkService = networkService
-    }
+    public init() { }
     
     /// 서버로 부터 받은 App의 최소 지원 버전
     public func fetchRequiredVersion() async throws -> AppVersionInfoResponse {

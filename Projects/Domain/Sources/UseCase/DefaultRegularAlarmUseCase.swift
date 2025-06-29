@@ -8,22 +8,18 @@
 
 import Foundation
 
+import Core
+
 import RxSwift
 
 public class DefaultRegularAlarmUseCase: RegularAlarmUseCase {
-    private let localNotificationService: LocalNotificationService
-    private let regularAlarmRepository: RegularAlarmRepository
+    @Injected private var localNotificationService: LocalNotificationService
+    @Injected private var regularAlarmRepository: RegularAlarmRepository
     
     public let fetchedAlarm = PublishSubject<[RegularAlarmResponse]>()
     private let disposeBag = DisposeBag()
     
-    public init(
-        localNotificationService: LocalNotificationService,
-        regularAlarmRepository: RegularAlarmRepository
-    ) {
-        self.localNotificationService = localNotificationService
-        self.regularAlarmRepository = regularAlarmRepository
-    }
+    public init() { }
     
     public func fetchAlarm() {
         regularAlarmRepository.currentRegularAlarm

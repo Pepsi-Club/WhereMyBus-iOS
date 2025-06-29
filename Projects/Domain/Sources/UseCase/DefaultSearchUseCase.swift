@@ -9,12 +9,14 @@
 import CoreLocation
 import Foundation
 
+import Core
+
 import RxSwift
 import RxCocoa
 
 public final class DefaultSearchUseCase: SearchUseCase {
-    private let stationListRepository: StationListRepository
-    private let locationService: LocationService
+    @Injected private var stationListRepository: StationListRepository
+    @Injected private var locationService: LocationService
     
     public var locationStatus = BehaviorSubject<LocationStatus>(
         value: .notDetermined
@@ -26,12 +28,7 @@ public final class DefaultSearchUseCase: SearchUseCase {
     )
     private let disposeBag = DisposeBag()
     
-    public init(
-        stationListRepository: StationListRepository,
-        locationService: LocationService
-    ) {
-        self.stationListRepository = stationListRepository
-        self.locationService = locationService
+    public init() {
         bindLocationStatus()
         bindRecentSearchList()
     }

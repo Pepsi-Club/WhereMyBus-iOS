@@ -11,23 +11,19 @@ import Foundation
 import CoreDataService
 import Domain
 import NetworkService
+import Core
 
 import RxSwift
 
 public final class DefaultFavoritesRepository: FavoritesRepository {
-    private let coreDataService: CoreDataService
-    private let networkService: NetworkService
+    @Injected private var coreDataService: CoreDataService
+    @Injected private var networkService: NetworkService    
     
     public var favorites = BehaviorSubject<[FavoritesBusResponse]>(value: [])
     
     private let disposeBag = DisposeBag()
     
-    public init(
-        coreDataService: CoreDataService,
-        networkService: NetworkService
-    ) {
-        self.coreDataService = coreDataService
-        self.networkService = networkService
+    public init() {
         bindStoreStatus()
     }
     
