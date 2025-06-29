@@ -69,22 +69,11 @@ extension CoreDataStorageImpl: CoreDataStorage {
         try await saveContext()
     }
     
-    public func read<T: CoreDataModel>(type: T.Type, by sortOrder: CoreDataSortOrder) async throws -> [T] {
+    public func read<T: CoreDataModel>(type: T.Type) async throws -> [T] {
         let managedObjects = try await context.perform { [self] in
             let request = NSFetchRequest<T.ManagedObject>(entityName: String(describing: T.ManagedObject.self))
             request.fetchLimit = 0
             request.fetchBatchSize = batchSize
-            let sortDescriptor = switch sortOrder {
-            case .idAscending:
-                NSSortDescriptor(key: "id", ascending: false)
-            case .idDescending:
-                NSSortDescriptor(key: "id", ascending: true)
-            case .dateAscending:
-                NSSortDescriptor(key: "date", ascending: false)
-            case .dateDescending:
-                NSSortDescriptor(key: "date", ascending: true)
-            }
-            request.sortDescriptors = [sortDescriptor]
             
             return try context.fetch(request)
         }
