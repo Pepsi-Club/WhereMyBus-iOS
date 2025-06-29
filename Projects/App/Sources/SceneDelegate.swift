@@ -16,20 +16,14 @@ import Data
 import RxSwift
 
 final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+    @Injected private var useCase: VersionCheckUseCase
+    
     var window: UIWindow?
     var appCoordinator: AppCoordinator?
     var deeplinkHandler: DeeplinkHandler?
     
     let disposeBag = DisposeBag()
     
-    // MARK: 추후 구체타입이 아닌 형태로 변경
-    private var useCase: VersionCheckUseCase
-    = DefaultVersionCheckUseCase(
-        versionCheckRepository: DefaultVersionCheckRepository(
-            networkService: DefaultNetworkService()
-        ),
-        forceUpdateService: DefaultForceUpdateService()
-    )
 
     func scene(
         _ scene: UIScene,

@@ -9,24 +9,21 @@
 import CoreLocation
 import Foundation
 
+import Core
+
 import RxSwift
 import RxCocoa
 
 public final class DefaultNearMapUseCase: NearMapUseCase {
-    private let stationListRepository: StationListRepository
-    private let locationService: LocationService
+    @Injected private var locationService: LocationService
+    @Injected private var stationListRepository: StationListRepository
     
     public let locationStatus = BehaviorSubject<LocationStatus>(
         value: .notDetermined
     )
     private let disposeBag = DisposeBag()
     
-    public init(
-        stationListRepository: StationListRepository,
-        locationService: LocationService
-    ) {
-        self.stationListRepository = stationListRepository
-        self.locationService = locationService
+    public init() {
         bindLocationStatus()
     }
     

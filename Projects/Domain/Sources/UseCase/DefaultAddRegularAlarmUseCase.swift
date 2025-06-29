@@ -8,19 +8,15 @@
 
 import Foundation
 
+import Core
+
 import RxSwift
 
 public final class DefaultAddRegularAlarmUseCase: AddRegularAlarmUseCase {
-    private let localNotificationService: LocalNotificationService
-    private let regularAlarmRepository: RegularAlarmRepository
+    @Injected private var localNotificationService: LocalNotificationService
+    @Injected private var regularAlarmRepository: RegularAlarmRepository
     
-    public init(
-        localNotificationService: LocalNotificationService,
-        regularAlarmRepository: RegularAlarmRepository
-    ) {
-        self.localNotificationService = localNotificationService
-        self.regularAlarmRepository = regularAlarmRepository
-    }
+    public init() { }
     
     public func checkNotificationAuth() {
         localNotificationService.authorize()
