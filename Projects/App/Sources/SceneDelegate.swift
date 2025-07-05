@@ -15,15 +15,41 @@ import Data
 
 import RxSwift
 
-final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+final class SceneDelegate: UIResponder,
+                           UIWindowSceneDelegate,
+                           AppCoordinatorDependency {
     @Injected private var useCase: VersionCheckUseCase
     
     var window: UIWindow?
     var appCoordinator: AppCoordinator?
     var deeplinkHandler: DeeplinkHandler?
     
-    let disposeBag = DisposeBag()
+    let _sceneWillEnterForeground = AsyncStream<UIScene>.makeStream(bufferingPolicy: .bufferingNewest(1))
+    var sceneWillEnterForeground: AsyncStream<UIScene> {
+        _sceneWillEnterForeground.stream
+    }
     
+    var appVersion: AppVersionInfoResponse {
+        guard let dictionary = Bundle.main.infoDictionary,
+              let version = dictionary["CFBundleShortVersionString"] as? String
+        else { return .defaultVersion }
+        
+        let splitedVersion = version.split(separator: ".").compactMap { Int($0) }
+        
+        return AppVersionInfoResponse(
+            major: splitedVersion[0],
+            minor: splitedVersion[1],
+            patch: splitedVersion[2]
+        )
+    }
+    
+    var appStoreID: String {
+        Bundle.main.object(forInfoDictionaryKey: "APPSTORE_ID") as? String ?? ""
+    }
+    
+    var domainURL: String {
+        Bundle.main.object(forInfoDictionaryKey: "DOMAIN_URL") as? String ?? ""
+    }
 
     func scene(
         _ scene: UIScene,
@@ -39,7 +65,8 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         window?.rootViewController = navigationController
         appCoordinator = AppCoordinator(
-            navigationController: navigationController
+            navigationController: navigationController,
+            dependency: self
         )
         appCoordinator?.start()
         window?.makeKeyAndVisible()
@@ -61,7 +88,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     /// 앱이 Foreground로 전환될때 실행될 함수
     func sceneWillEnterForeground(_ scene: UIScene) {
-        checkAndUpdateIfNeeded()
+        _sceneWillEnterForeground.continuation.yield(scene)
     }
 
     func sceneDidEnterBackground(_ scene: UIScene) {
@@ -73,48 +100,6 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     ) {
         if let url = URLContexts.first?.url {
             deeplinkHandler?.handleUrl(url: url)
-        }
-    }
-    
-    private func checkAndUpdateIfNeeded() {
-        useCase.fetchAppStoreURL()
-            .subscribe(with: self) { owner, str in
-                guard let str else { return }
-                owner.showUpdateAlert(with: str)
-            } onFailure: { _, error in
-                print(error)
-            }
-            .disposed(by: disposeBag)
-    }
-    
-    private func showUpdateAlert(with urlString: String) {
-        let alert = UIAlertController(
-            title: "업데이트 알림",
-            message: "더 나은 서비스를 위해 업데이트 되었어요 ! 업데이트 해주세요.",
-            preferredStyle: .alert
-        )
-        
-        let alertAction = UIAlertAction(
-            title: "업데이트",
-            style: .default
-        ) { [weak self] _ in
-            guard let self else { return }
-            
-            openAppStore(urlString)
-        }
-        
-        alert.addAction(alertAction)
-        
-        Task { @MainActor in
-            window?.rootViewController?.present(alert, animated: true)
-        }
-    }
-    
-    private func openAppStore(_ str: String) {
-        guard let url = URL(string: str) else { return }
-        
-        if UIApplication.shared.canOpenURL(url) {
-            UIApplication.shared.open(url)
         }
     }
 }

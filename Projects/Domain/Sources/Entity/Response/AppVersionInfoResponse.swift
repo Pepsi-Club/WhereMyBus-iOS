@@ -9,6 +9,8 @@
 import Foundation
 
 public struct AppVersionInfoResponse: Codable, Comparable {
+    public static let defaultVersion: Self = .init(major: 1, minor: 0, patch: 0)
+    
     let major: Int
     let minor: Int
     let patch: Int

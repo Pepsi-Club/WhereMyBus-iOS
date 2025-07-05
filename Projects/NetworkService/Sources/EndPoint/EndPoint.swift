@@ -62,20 +62,22 @@ extension EndPoint {
         return urlRequest
     }
     
-    public var toURLString: String? {
-        var urlComponent = URLComponents()
-        urlComponent.scheme = scheme.toString
-        urlComponent.host = host
-        urlComponent.port = Int(port)
-        urlComponent.path = path
-        if !query.isEmpty {
-            urlComponent.queryItems = query.map {
-                .init(name: $0.key, value: $0.value)
+    public var toURL: URL {
+        get throws {
+            var urlComponent = URLComponents()
+            urlComponent.scheme = scheme.toString
+            urlComponent.host = host
+            urlComponent.port = Int(port)
+            urlComponent.path = path
+            if !query.isEmpty {
+                urlComponent.queryItems = query.map {
+                    .init(name: $0.key, value: $0.value)
+                }
             }
+            guard let url = urlComponent.url else {
+                throw URLError(.badURL)
+            }
+            return url
         }
-        let urlStr = urlComponent.url?.absoluteString
-            .replacingOccurrences(of: "%25", with: "%")
-        
-        return urlStr
     }
 }

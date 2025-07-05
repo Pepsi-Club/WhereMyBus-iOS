@@ -8,14 +8,9 @@
 
 import Foundation
 
-import RxSwift
-
 public protocol VersionCheckRepository: AnyObject {
-    func fetchRequiredVersion()
-    -> Single<Result<AppVersionInfoResponse, Error>>
-    func getStoreLink() -> String?
-    func getAppStoreID() -> String
-    func getUserAppVersion() -> AppVersionInfoResponse
-    func saveForceUpdateInfo(_ info: ForceUpdate)
-    func getForceUpdateInfo() -> ForceUpdate
+    func getCachedVersionCheckInfo() -> VersionCheckInfo?
+    func fetchRequiredVersion() async throws -> AppVersionInfoResponse
+    func saveVersionCheckInfoCache(_ versionCheckInfo: VersionCheckInfo)
+    func getAppStoreURL() throws -> URL
 }

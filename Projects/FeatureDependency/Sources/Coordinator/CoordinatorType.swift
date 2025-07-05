@@ -10,6 +10,7 @@ import UIKit
 
 public enum CoordinatorType {
     case app
+    case splash
     case tab
     case addAlarm
     case home

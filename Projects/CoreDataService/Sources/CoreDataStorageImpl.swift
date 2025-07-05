@@ -96,3 +96,15 @@ extension CoreDataStorageImpl: CoreDataStorage {
         try await saveContext()
     }
 }
+
+//let apiConfig: Data = {
+//    "busStopList": {
+//        "version": { // currentVersion? requiredVersion?
+//            "major": 1,
+//            "minor": 0,
+//            "patch": 0
+//            "updateAt": // Date 자료형,
+//            "seoulUpdateAt": // Date 자료형
+//        }
+//    }
+//}

@@ -17,3 +17,20 @@ public protocol FavoritesRepository {
     func addFavorites(favorites: FavoritesBusResponse) throws
     func removeFavorites(favorites: FavoritesBusResponse) throws
 }
+
+public protocol AsyncFavoritesRepository {
+    var favoritesStream: AsyncStream<[FavoritesBusResponse]> { get }
+    
+    func fetchFavorites() async throws -> [FavoritesBusResponse]
+    func addFavorites(favorite: FavoritesBusResponse) async throws
+    func removeFavorites(favorite: FavoritesBusResponse) async throws
+}
+
+extension AsyncFavoritesRepository {
+    func fetchFavorites() -> Observable<[FavoritesBusResponse]> {
+        Single.create {
+            try await fetchFavorites()
+        }
+        .asObservable()
+    }
+}

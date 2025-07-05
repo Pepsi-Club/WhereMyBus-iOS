@@ -18,6 +18,7 @@ public protocol Coordinator: AnyObject {
     
     func start()
     func finish()
+    func openURL(_ url: URL)
 }
 
 public extension Coordinator {
@@ -48,5 +49,9 @@ public extension Coordinator {
         // TODO: 재사용 로직으로 수정
         (currentCoordinator as? AddRegularAlarmCoordinator)?
             .removeChildViewController()
+    }
+    
+    func openURL(_ url: URL) {
+        parent?.openURL(url)
     }
 }

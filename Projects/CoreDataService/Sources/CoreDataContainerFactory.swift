@@ -16,6 +16,7 @@ public final class CoreDataContainerFactory {
         static let containerIdentifier: String = "iCloud.Pepsi-Club.WhereMyBus"
     }
     
+    public init() { }
     // 에러가 방출될 때 처리 방식을 고민해야 한다.
     // 1. appGroupStoreUrl, 2. CKContainer.default().accountStatus(), 3. loadPersistentStores
     public func buildContainer() async -> NSPersistentContainer {

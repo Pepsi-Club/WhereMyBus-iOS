@@ -15,6 +15,44 @@ import Core
 
 import RxSwift
 
+public final actor AsyncFavoritesRepositoryImpl: AsyncFavoritesRepository {
+    @Injected private var coreDataStorage: CoreDataStorage
+    @Injected private var networkService: NetworkService
+    
+    public nonisolated let favoritesStream: AsyncStream<[FavoritesBusResponse]>
+    private let favoritesContinuation: AsyncStream<[FavoritesBusResponse]>.Continuation
+    
+    private var currentFavorites: [FavoritesBusResponse] = []
+    
+    public init() {
+        let (stream, continuation) = AsyncStream<[FavoritesBusResponse]>.makeStream(
+            of: [FavoritesBusResponse].self,
+            bufferingPolicy: .bufferingNewest(1)
+        )
+        self.favoritesStream = stream
+        self.favoritesContinuation = continuation
+    }
+    
+    public func fetchFavorites() async throws -> [FavoritesBusResponse] {
+        let favorites = try await coreDataStorage.read(type: FavoritesBusResponse.self)
+        currentFavorites = favorites
+        favoritesContinuation.yield(favorites)
+        return favorites
+    }
+    
+    public func addFavorites(favorite: FavoritesBusResponse) async throws {
+        try await coreDataStorage.create(data: favorite)
+        currentFavorites.append(favorite)
+        favoritesContinuation.yield(currentFavorites)
+    }
+    
+    public func removeFavorites(favorite: FavoritesBusResponse) async throws {
+        try await coreDataStorage.delete(data: favorite)
+        currentFavorites = currentFavorites.filter({ $0 != favorite })
+        favoritesContinuation.yield(currentFavorites)
+    }
+}
+
 public final class DefaultFavoritesRepository: FavoritesRepository {
     @Injected private var coreDataService: CoreDataService
     @Injected private var networkService: NetworkService    

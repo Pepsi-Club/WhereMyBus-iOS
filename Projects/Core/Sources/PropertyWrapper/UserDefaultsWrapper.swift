@@ -46,6 +46,15 @@ public struct UserDefaultsWrapper<T: Codable> {
     }
 }
 
+public extension UserDefaultsWrapper {
+    init<Wrapped: Codable>(
+        key: String,
+        kind: UserDefaultsKind = .appGroup
+    ) where T == Wrapped? {
+        self.init(key: key, defaultValue: nil, kind: kind)
+    }
+}
+
 public enum UserDefaultsKind {
     case appGroup, standard
     

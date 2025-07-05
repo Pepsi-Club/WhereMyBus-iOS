@@ -32,8 +32,10 @@ public class FavoritesBusResponseMO: NSManagedObject, CoreDataModelObject {
     }
 }
 
-extension FavoritesBusResponse {
-    static func toDataModel(_ object: FavoritesBusResponseMO) -> FavoritesBusResponse {
+extension FavoritesBusResponse: CoreDataModel {
+    public var id: String { identifier }
+    
+    public static func toDataModel(_ object: FavoritesBusResponseMO) -> FavoritesBusResponse {
         guard let busStopId = object.busStopId,
               let busStopName = object.busStopName,
               let busId = object.busId,
@@ -49,7 +51,7 @@ extension FavoritesBusResponse {
         )
     }
     
-    func sync(for managedObject: FavoritesBusResponseMO) {
+    public func sync(for managedObject: FavoritesBusResponseMO) {
         managedObject.identifier = identifier
         managedObject.busStopId = busStopId
         managedObject.busStopName = busStopName

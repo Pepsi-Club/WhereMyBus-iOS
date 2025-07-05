@@ -9,8 +9,15 @@
 import UIKit
 
 import FeatureDependency
-import MainFeature
 import BusStopFeature
+import Domain
+
+protocol AppCoordinatorDependency: AnyObject, SplashViewModelDependency {
+    var sceneWillEnterForeground: AsyncStream<UIScene> { get }
+    var appVersion: AppVersionInfoResponse { get }
+    var appStoreID: String { get }
+    var domainURL: String { get }
+}
 
 final class AppCoordinator: Coordinator {
     var parent: Coordinator?
@@ -18,18 +25,25 @@ final class AppCoordinator: Coordinator {
     var navigationController: UINavigationController
     public var coordinatorType: CoordinatorType = .app
     private let coordinatorProvider = DefaultCoordinatorProvider()
+    private let dependency: AppCoordinatorDependency
     
-    init(navigationController: UINavigationController) {
+    init(
+        navigationController: UINavigationController,
+        dependency: AppCoordinatorDependency
+    ) {
         self.navigationController = navigationController
+        self.dependency = dependency
     }
     
     func start() {
-        let tabBarCoordinator = TabBarCoordinator(
-            navigationController: navigationController, 
-            coordinatorProvider: coordinatorProvider
+        let splashCoordinator = SplashCoordinatorImpl(
+            parent: self,
+            navigationController: navigationController,
+            coordinatorProvider: coordinatorProvider,
+            viewModelDependency: dependency
         )
-        childs.append(tabBarCoordinator)
-        tabBarCoordinator.start()
+        childs.append(splashCoordinator)
+        splashCoordinator.start()
     }
     
     func startBusStopFlow(busStopId: String) {
@@ -42,5 +56,11 @@ final class AppCoordinator: Coordinator {
         )
         childs.append(busStopCoordinator)
         busStopCoordinator.start()
+    }
+    
+    func openURL(_ url: URL) {
+        if UIApplication.shared.canOpenURL(url) {
+            UIApplication.shared.open(url)
+        }
     }
 }

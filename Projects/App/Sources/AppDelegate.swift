@@ -19,7 +19,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         : [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
         setupAppearance()
-        registerDependencies()
         configureNotification(application: application)
         configureFirebase(application: application)
     

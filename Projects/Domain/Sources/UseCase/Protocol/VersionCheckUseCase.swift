@@ -11,5 +11,5 @@ import Foundation
 import RxSwift
 
 public protocol VersionCheckUseCase {
-    func fetchAppStoreURL() -> Single<String?>
+    func checkForceUpdateNeeded() async throws -> ForceUpdate
 }
