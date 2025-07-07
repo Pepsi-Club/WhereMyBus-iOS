@@ -12,6 +12,7 @@ import Core
 
 import RxSwift
 
+@available(*, deprecated, renamed: "CoreDataStorage", message: "이 객체는 제거될 예정입니다. CoreDataStorage를 사용하세요.")
 public protocol CoreDataService {
     var storeStatus: BehaviorSubject<StoreStatus> { get }
     
