@@ -9,7 +9,6 @@
 import UIKit
 
 class SettingButtonView: UIView {
-    
     public let basicAlarmSetting: SettingButton = {
         let view = SettingButton(
             iconName: "alarm",
@@ -19,16 +18,18 @@ class SettingButtonView: UIView {
         )
         return view
     }()
-    public lazy var developVersion: SettingButton = {
+    
+    public let developVersion: SettingButton = {
         let view = SettingButton(
             iconName: "exclamationmark.circle",
             title: "프로그램 정보",
-            rightTitle: "v \(String.getCurrentVersion())",
+            rightTitle: "v \(String.currentVersion)",
             isHiddenArrowRight: true
         )
         return view
     }()
-    public lazy var termsPrivacyBtn: SettingButton = {
+    
+    public let termsPrivacyBtn: SettingButton = {
         let view = SettingButton(
             iconName: "lock.shield",
             title: "서비스 이용약관",
@@ -37,7 +38,8 @@ class SettingButtonView: UIView {
         )
         return view
     }()
-    public lazy var locationPrivacyBtn: SettingButton = {
+    
+    public let locationPrivacyBtn: SettingButton = {
         let btn = SettingButton(
             iconName: "location.circle",
             title: "개인정보처리방침",
@@ -46,7 +48,8 @@ class SettingButtonView: UIView {
         )
         return btn
     }()
-    public lazy var inquryBtn: SettingButton = {
+    
+    public let inquryBtn: SettingButton = {
         let btn = SettingButton(
             iconName: "questionmark.circle",
             title: "문의하기",

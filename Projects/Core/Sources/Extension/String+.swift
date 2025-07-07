@@ -24,34 +24,18 @@ public extension String {
         else { return .now }
         return date
     }
+    
     /// 공공 버스 API Key
-    static var serverKey: Self {
-        guard let any = Bundle.main.object(
-            forInfoDictionaryKey: "DATA_GO_KR_API_KEY"
-        ),
-              let serverKey = any as? String
-        else { fatalError("Can't Not Find Server Key") }
-        return serverKey
-    }
+    @InfoPlistWrapper(key: "DATA_GO_KR_API_KEY", defaultValue: "")
+    static var serverKey: Self
     
     /// domain url
-    static var domainURL: Self {
-        guard let any = Bundle.main.object(
-            forInfoDictionaryKey: "DOMAIN_URL"
-        ),
-              let domain = any as? String
-        else { return "" }
-        return domain
-    }
+    @InfoPlistWrapper(key: "DOMAIN_URL", defaultValue: "")
+    static var domainURL: Self
     
     /// 프로젝트 버전
-    static func getCurrentVersion() -> Self {
-        guard let dictionary = Bundle.main.infoDictionary,
-              let version = dictionary["CFBundleShortVersionString"] as? String
-        else { return "1.0.0" }
-        
-        return version
-    }
+    @InfoPlistWrapper(key: "CFBundleShortVersionString", defaultValue: "1.0.0")
+    static var currentVersion: Self
     
     static func getDeviceIdentifier() -> String {
         var systemInfo = utsname()

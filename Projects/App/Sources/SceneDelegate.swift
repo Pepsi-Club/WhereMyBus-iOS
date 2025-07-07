@@ -29,27 +29,17 @@ final class SceneDelegate: UIResponder,
         _sceneWillEnterForeground.stream
     }
     
-    var appVersion: AppVersionInfoResponse {
-        guard let dictionary = Bundle.main.infoDictionary,
-              let version = dictionary["CFBundleShortVersionString"] as? String
-        else { return .defaultVersion }
-        
-        let splitedVersion = version.split(separator: ".").compactMap { Int($0) }
-        
-        return AppVersionInfoResponse(
-            major: splitedVersion[0],
-            minor: splitedVersion[1],
-            patch: splitedVersion[2]
-        )
-    }
+    @InfoPlistWrapper(
+        key: "CFBundleShortVersionString",
+        defaultValue: .defaultVersion
+    )
+    var appVersion: AppVersionInfoResponse
     
-    var appStoreID: String {
-        Bundle.main.object(forInfoDictionaryKey: "APPSTORE_ID") as? String ?? ""
-    }
+    @InfoPlistWrapper(key: "APPSTORE_ID", defaultValue: "")
+    var appStoreID: String
     
-    var domainURL: String {
-        Bundle.main.object(forInfoDictionaryKey: "DOMAIN_URL") as? String ?? ""
-    }
+    @InfoPlistWrapper(key: "DOMAIN_URL", defaultValue: "")
+    var domainURL: String
 
     func scene(
         _ scene: UIScene,
