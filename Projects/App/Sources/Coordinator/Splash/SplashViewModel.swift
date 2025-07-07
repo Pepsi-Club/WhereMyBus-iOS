@@ -41,30 +41,36 @@ final class SplashViewModel: ViewModel {
         Task {
             try await input.viewDidLoad.value
             await registerDependency()
-            
-            let forceUpdate = try await versionCheckUseCase.checkForceUpdateNeeded()
-            switch forceUpdate {
-            case .notNeeded:
+            do {
+                let forceUpdate = try await versionCheckUseCase.checkForceUpdateNeeded()
+                switch forceUpdate {
+                case .notNeeded:
+                    await MainActor.run {
+                        coordinator?.startTabFlow()
+                    }
+                case .needed(let appStoreURL):
+                    let alert = Alert(
+                        title: "업데이트 알림",
+                        message: "더 나은 서비스를 위해 업데이트 되었어요 ! 업데이트 해주세요."
+                    ) {
+                        AlertAction(title: "업데이트") { [weak self] in
+                            self?.coordinator?.openURL(appStoreURL)
+                        }
+                    }
+                    alertRelay.accept(alert)
+                }
+            } catch {
+                // TODO: 에러 케이스의 처리 고민
                 await MainActor.run {
                     coordinator?.startTabFlow()
                 }
-            case .needed(let appStoreURL):
-                let alert = Alert(
-                    title: "업데이트 알림",
-                    message: "더 나은 서비스를 위해 업데이트 되었어요 ! 업데이트 해주세요."
-                ) {
-                    AlertAction(title: "업데이트") { [weak self] in
-                        self?.coordinator?.openURL(appStoreURL)
-                    }
-                }
-                alertRelay.accept(alert)
             }
         }
         return .init(alert: alertRelay.asObservable())
     }
     
     private func registerDependency() async {
-        let coreDataContainer = await CoreDataContainerFactory().buildContainer()
+        let coreDataContainer = await CoreDataContainerBuilder().buildContainer()
         let firebaseLogger = FirebaseLoggerImpl()
         
         DIContainer.setLogger(firebaseLogger)

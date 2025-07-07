@@ -1,5 +1,5 @@
 //
-//  CoreDataContainerFactory.swift
+//  CoreDataContainerBuilder.swift
 //  CoreDataService
 //
 //  Created by Logan on 6/21/25.
@@ -9,7 +9,7 @@
 import CoreData
 import CloudKit
 
-public final class CoreDataContainerFactory {
+public final class CoreDataContainerBuilder {
     private enum Constants {
         static let fileName: String = "Model"
         static let appGroupName: String = "group.Pepsi-Club.WhereMyBus"
