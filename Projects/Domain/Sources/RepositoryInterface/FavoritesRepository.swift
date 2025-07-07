@@ -11,10 +11,14 @@ import Foundation
 import RxSwift
 
 public protocol FavoritesRepository {
+    @available(*, deprecated, message: "이 변수는 제거될 예정입니다.")
     var favorites: BehaviorSubject<[FavoritesBusResponse]> { get }
     
+    @available(*, deprecated, message: "이 메서드는 제거될 예정입니다.")
     func fetchFavorites() -> Observable<[FavoritesBusResponse]>
+    @available(*, deprecated, message: "이 메서드는 제거될 예정입니다.")
     func addFavorites(favorites: FavoritesBusResponse) throws
+    @available(*, deprecated, message: "이 메서드는 제거될 예정입니다.")
     func removeFavorites(favorites: FavoritesBusResponse) throws
 }
 

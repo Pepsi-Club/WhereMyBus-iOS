@@ -10,7 +10,8 @@ import Foundation
 
 public protocol VersionCheckRepository: AnyObject {
     func getCachedVersionCheckInfo() -> VersionCheckInfo?
-    func fetchRequiredVersion() async throws -> AppVersionInfoResponse
     func saveVersionCheckInfoCache(_ versionCheckInfo: VersionCheckInfo)
     func getAppStoreURL() throws -> URL
+    
+    func fetchRequiredVersion() async throws -> AppVersionInfoResponse
 }

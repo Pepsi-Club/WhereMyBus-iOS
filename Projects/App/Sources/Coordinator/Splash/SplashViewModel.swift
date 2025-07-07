@@ -77,7 +77,6 @@ final class SplashViewModel: ViewModel {
         DIContainer.setLogger(firebaseLogger)
         
         DIContainer.register(type: CoreDataStorage.self, CoreDataStorageImpl(container: coreDataContainer))
-        DIContainer.register(type: ForceUpdateService.self, DefaultForceUpdateService())
         DIContainer.register(type: CoreDataService.self, DefaultCoreDataService())
         DIContainer.register(type: NetworkService.self, DefaultNetworkService())
         DIContainer.register(type: LocationService.self, DefaultLocationService())

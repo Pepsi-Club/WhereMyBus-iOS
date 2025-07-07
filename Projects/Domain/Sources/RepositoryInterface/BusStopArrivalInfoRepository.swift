@@ -13,7 +13,7 @@ import RxSwift
 public protocol BusStopArrivalInfoRepository {
     func fetchArrivalList(busStopId: String) async throws -> BusStopArrivalInfoResponse
     
-    @available(*, deprecated, message: "")
+    @available(*, deprecated, message: "이 메서드는 제거될 예정입니다.")
     func fetchArrivalList(
         busStopId: String
     ) -> Observable<BusStopArrivalInfoResponse>
