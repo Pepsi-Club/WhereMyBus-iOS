@@ -14,7 +14,11 @@ let project = Project(
     SampleApp(name: "HomeFeature") {
         Feature(name: "HomeFeature")
         UIKitInfoPlist()
-        AppInfoPlist(displayName: "HomeFeatureSampleApp", marketingVersion: .marketingVersion, buildVersion: .buildVersion)
+        AppInfoPlist(
+            displayName: "HomeFeatureSampleApp",
+            marketingVersion: .marketingVersion,
+            buildVersion: .buildVersion
+        )
         SecretInfoPlist()
     }
     SampleAppScheme(name: "HomeFeature")

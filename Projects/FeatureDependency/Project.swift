@@ -2,7 +2,7 @@ import ProjectDescription
 import ProjectDescriptionHelpers
 
 let project = Project(name: "FeatureDependency") {
-    FeatureDependency() {
+    FeatureDependency {
         DesignSystem()
         Domain()
         FrameworkInfoPlist(marketingVersion: .marketingVersion)

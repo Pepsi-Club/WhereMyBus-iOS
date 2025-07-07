@@ -17,8 +17,6 @@ final class SplashViewController: UIViewController {
     
     private let disposeBag: DisposeBag = .init()
     
-    private let iconImageView: UIImageView = .init()
-    
     init(viewModel: SplashViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -33,7 +31,6 @@ final class SplashViewController: UIViewController {
         
         view.backgroundColor = DesignSystemAsset.changeBlue.color
         
-        iconImageView.translatesAutoresizingMaskIntoConstraints = false
         let output = viewModel.transform(
             input: .init(
                 viewDidLoad: .just(())

@@ -28,7 +28,9 @@ public final class CoreDataContainerBuilder {
             let persistentStoreDescription = NSPersistentStoreDescription(url: appGroupStoreUrl)
             if await CKContainer.shouldUseCloudKit {
                 container = NSPersistentCloudKitContainer(name: Constants.fileName)
-                persistentStoreDescription.cloudKitContainerOptions = .init(containerIdentifier: Constants.containerIdentifier)
+                persistentStoreDescription.cloudKitContainerOptions = .init(
+                    containerIdentifier: Constants.containerIdentifier
+                )
             } else {
                 container = NSPersistentContainer(name: Constants.fileName)
             }
@@ -37,7 +39,7 @@ public final class CoreDataContainerBuilder {
             return container
         }()
         let _: Void = await withCheckedContinuation { continuation in
-            container.loadPersistentStores { _, error in
+            container.loadPersistentStores { _, _ in
                 continuation.resume()
             }
         }

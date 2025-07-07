@@ -168,7 +168,7 @@ public final class FavoritesViewModel: ViewModel {
                 (timerValue, responses)
             }
             .map { tuple in
-                let (timerValue, responses) = tuple
+                let (_, responses) = tuple
                 return responses.map {
                     return $0.replaceTime()
                 }

@@ -181,7 +181,7 @@ public final class NearMapViewController: UIViewController {
             .withUnretained(self)
             .subscribe(
                 onNext: { vc, tuple in
-                    var (response, distance) = tuple
+                    let (response, distance) = tuple
                     vc.busStopInformationView.updateUI(
                         response: response,
                         distance: distance
