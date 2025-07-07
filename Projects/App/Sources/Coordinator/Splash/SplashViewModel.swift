@@ -26,6 +26,7 @@ protocol SplashViewModelDependency {
 final class SplashViewModel: ViewModel {
     private weak var coordinator: SplashCoordinator?
     @Injected private var versionCheckUseCase: VersionCheckUseCase
+    @Injected private var firebaseLogger: FirebaseLogger
     private let dependency: SplashViewModelDependency
     
     init(
@@ -60,7 +61,7 @@ final class SplashViewModel: ViewModel {
                     alertRelay.accept(alert)
                 }
             } catch {
-                // TODO: 에러 케이스의 처리 고민
+                firebaseLogger.log(name: "강제 업데이트 실패: \(error.localizedDescription)")
                 await MainActor.run {
                     coordinator?.startTabFlow()
                 }
@@ -81,6 +82,7 @@ final class SplashViewModel: ViewModel {
         DIContainer.register(type: NetworkService.self, DefaultNetworkService())
         DIContainer.register(type: LocationService.self, DefaultLocationService())
         
+        DIContainer.register(type: AsyncFavoritesRepository.self, AsyncFavoritesRepositoryImpl())
         DIContainer.register(type: FavoritesRepository.self, DefaultFavoritesRepository())
         DIContainer.register(type: BusStopArrivalInfoRepository.self, DefaultBusStopArrivalInfoRepository())
         DIContainer.register(type: StationListRepository.self, DefaultStationListRepository())
