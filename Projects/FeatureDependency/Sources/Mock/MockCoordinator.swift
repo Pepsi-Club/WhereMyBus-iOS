@@ -130,14 +130,4 @@ extension MockCoordinator: AddRegularAlarmCoordinator {
     }
 }
 
-extension MockCoordinator: NearMapCoordinator {
-    public func startBusStopFlow(busStopId: String) {
-        let coordinator = MockCoordinator(
-            testMessage: "BusStopFlow - busStopId: \(busStopId)",
-            navigationController: navigationController
-        )
-        coordinator.start()
-        childs.append(coordinator)
-    }
-}
 #endif

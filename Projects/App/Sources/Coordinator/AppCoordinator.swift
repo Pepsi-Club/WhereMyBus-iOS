@@ -52,7 +52,8 @@ final class AppCoordinator: Coordinator {
             navigationController: navigationController,
             busStopId: busStopId,
             coordinatorProvider: coordinatorProvider,
-            flow: .fromHome
+            flow: .fromHome,
+            nearMapCoordinatorBuilder: coordinatorProvider
         )
         childs.append(busStopCoordinator)
         busStopCoordinator.start()

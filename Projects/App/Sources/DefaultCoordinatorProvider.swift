@@ -14,6 +14,7 @@ import SearchFeature
 import AlarmFeature
 import BusStopFeature
 import NearMapFeature
+import NearMapFeatureInterface
 import Domain
 
 final class DefaultCoordinatorProvider: CoordinatorProvider {
@@ -39,7 +40,8 @@ final class DefaultCoordinatorProvider: CoordinatorProvider {
             navigationController: navigationController,
             busStopId: busStopId,
             coordinatorProvider: self,
-            flow: flow
+            flow: flow,
+            nearMapCoordinatorBuilder: self
         )
     }
     
@@ -52,6 +54,7 @@ final class DefaultCoordinatorProvider: CoordinatorProvider {
             parent: parent,
             navigationController: navigationController,
             coordinatorProvider: self,
+            nearMapCoordinatorBuilder: self,
             flow: flow
         )
     }
@@ -68,18 +71,20 @@ final class DefaultCoordinatorProvider: CoordinatorProvider {
             flow: .fromAlarm
         )
     }
-    
-    func makeNearMapCoordinator(
-        parent: Coordinator,
+}
+
+extension DefaultCoordinatorProvider: NearMapCoordinatorBuilder {
+    func build(
+        parent: any Coordinator,
         navigationController: UINavigationController,
         flow: FlowState,
         busStopId: String?
-    ) -> NearMapCoordinator {
+    ) -> NearMapFeatureInterface.NearMapCoordinator {
         DefaultNearMapCoordinator(
             parent: parent,
-			navigationController: navigationController,
+            navigationController: navigationController,
             coordinatorProvider: self,
-            flow: flow, 
+            flow: flow,
             busStopId: busStopId
         )
     }

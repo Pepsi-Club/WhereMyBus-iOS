@@ -6,6 +6,7 @@ let project = Project(
     options: .options(automaticSchemesOptions: .disabled)
 ) {
     Feature(name: "BusStopFeature") {
+        FeatureInterface(name: "NearMapFeature")
         FeatureDependency()
         FeatureSwiftLintScript()
         FrameworkInfoPlist(marketingVersion: .marketingVersion)

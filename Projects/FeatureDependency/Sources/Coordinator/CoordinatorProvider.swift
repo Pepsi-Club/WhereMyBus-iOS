@@ -29,11 +29,4 @@ public protocol CoordinatorProvider {
         navigationController: UINavigationController,
         flow: FlowState
     ) -> AddRegularAlarmCoordinator
-    
-    func makeNearMapCoordinator(
-        parent: Coordinator,
-        navigationController: UINavigationController,
-        flow: FlowState,
-        busStopId: String?
-    ) -> NearMapCoordinator
 }

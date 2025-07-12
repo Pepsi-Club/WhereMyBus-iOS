@@ -47,17 +47,5 @@ public final class MockCoordinatorProvider: CoordinatorProvider {
             navigationController: navigationController
         )
     }
-    
-    public func makeNearMapCoordinator(
-        parent: Coordinator,
-        navigationController: UINavigationController,
-        flow: FlowState,
-        busStopId: String? = nil
-    ) -> NearMapCoordinator {
-        MockCoordinator(
-            testMessage: "NearMap - busStopId: \(busStopId ?? "nil")",
-            navigationController: navigationController
-        )
-    }
 }
 #endif
