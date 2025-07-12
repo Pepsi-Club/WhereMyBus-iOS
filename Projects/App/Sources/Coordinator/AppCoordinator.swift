@@ -8,9 +8,12 @@
 
 import UIKit
 
+import Core
+import Domain
 import FeatureDependency
 import MainFeature
 import BusStopFeature
+import RxSwift
 
 final class AppCoordinator: Coordinator {
     var parent: Coordinator?
@@ -18,14 +21,17 @@ final class AppCoordinator: Coordinator {
     var navigationController: UINavigationController
     public var coordinatorType: CoordinatorType = .app
     private let coordinatorProvider = DefaultCoordinatorProvider()
+    private let disposeBag = DisposeBag()
     
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
     }
     
     func start() {
+        checkAndDownloadBusStationList()
+        
         let tabBarCoordinator = TabBarCoordinator(
-            navigationController: navigationController, 
+            navigationController: navigationController,
             coordinatorProvider: coordinatorProvider
         )
         childs.append(tabBarCoordinator)
@@ -42,5 +48,20 @@ final class AppCoordinator: Coordinator {
         )
         childs.append(busStopCoordinator)
         busStopCoordinator.start()
+    }
+    
+    private func checkAndDownloadBusStationList() {
+        @Injected var useCase: UpdateBusStationListUseCase
+        
+        useCase.execute()
+            .subscribe(
+                onError: { error in
+                    print("🚏❌ bus_station_list.json 업데이트 실패: \(error)")
+                },
+                onCompleted: {
+                    print("🚏✅ bus_station_list.json 업데이트 확인 및 처리 완료")
+                }
+            )
+            .disposed(by: disposeBag)
     }
 }
