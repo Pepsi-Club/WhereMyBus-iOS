@@ -43,6 +43,8 @@ extension AppVersionInfoResponse: InfoPlistLoadable {
         
         let splitedVersion = stringData.split(separator: ".").compactMap { Int($0) }
         
+        guard splitedVersion.count == 3 else { return nil }
+        
         self = AppVersionInfoResponse(
             major: splitedVersion[0],
             minor: splitedVersion[1],
