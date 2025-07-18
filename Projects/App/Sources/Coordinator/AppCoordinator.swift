@@ -40,6 +40,7 @@ final class AppCoordinator: Coordinator {
             parent: self,
             navigationController: navigationController,
             coordinatorProvider: coordinatorProvider,
+            homeCoordinatorBuilder: coordinatorProvider,
             viewModelDependency: dependency
         )
         childs.append(splashCoordinator)

@@ -11,7 +11,7 @@ import UIKit
 import DesignSystem
 
 import FeatureDependency
-import HomeFeature
+import HomeFeatureInterface
 import AlarmFeature
 import SettingsFeature
 
@@ -20,14 +20,17 @@ public final class TabBarCoordinator: Coordinator {
     public var childs: [Coordinator] = []
     public var navigationController: UINavigationController
     public let coordinatorProvider: CoordinatorProvider
+    public let homeCoordinatorBuilder: HomeCoordinatorBuilder
     public var coordinatorType: CoordinatorType = .tab
     
     public init(
         navigationController: UINavigationController,
-        coordinatorProvider: CoordinatorProvider
+        coordinatorProvider: CoordinatorProvider,
+        homeCoordinatorBuilder: HomeCoordinatorBuilder
     ) {
         self.navigationController = navigationController
         self.coordinatorProvider = coordinatorProvider
+        self.homeCoordinatorBuilder = homeCoordinatorBuilder
     }
     
     public func start() {
@@ -69,10 +72,9 @@ public final class TabBarCoordinator: Coordinator {
         var coordinator: Coordinator
         switch tabKind {
         case .home:
-            coordinator = DefaultHomeCoordinator(
-                parent: self, 
-                navigationController: navigationController,
-                coordinatorProvider: coordinatorProvider
+            coordinator = homeCoordinatorBuilder.build(
+                parent: self,
+                navigationController: navigationController
             )
         case .settings:
             coordinator = DefaultSettingsCoordinator(

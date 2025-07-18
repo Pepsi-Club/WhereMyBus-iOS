@@ -15,20 +15,10 @@ import AlarmFeature
 import BusStopFeature
 import NearMapFeature
 import NearMapFeatureInterface
+import HomeFeatureInterface
 import Domain
 
 final class DefaultCoordinatorProvider: CoordinatorProvider {
-    func makeHomeCoordinator(
-        parent: Coordinator,
-        navigationController: UINavigationController
-    ) -> HomeCoordinator {
-        DefaultHomeCoordinator(
-            parent: parent,
-            navigationController: navigationController,
-            coordinatorProvider: self
-        )
-    }
-    
     func makeBusStopCoordinator(
         parent: Coordinator,
         navigationController: UINavigationController,
@@ -73,13 +63,23 @@ final class DefaultCoordinatorProvider: CoordinatorProvider {
     }
 }
 
+extension DefaultCoordinatorProvider: HomeCoordinatorBuilder {
+    func build(parent: any Coordinator, navigationController: UINavigationController) -> HomeCoordinator {
+        DefaultHomeCoordinator(
+            parent: parent,
+            navigationController: navigationController,
+            coordinatorProvider: self
+        )
+    }
+}
+
 extension DefaultCoordinatorProvider: NearMapCoordinatorBuilder {
     func build(
         parent: any Coordinator,
         navigationController: UINavigationController,
         flow: FlowState,
         busStopId: String?
-    ) -> NearMapFeatureInterface.NearMapCoordinator {
+    ) -> NearMapCoordinator {
         DefaultNearMapCoordinator(
             parent: parent,
             navigationController: navigationController,

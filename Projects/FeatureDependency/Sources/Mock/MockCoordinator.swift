@@ -51,21 +51,6 @@ public final class MockCoordinator: Coordinator {
     }
 }
 
-extension MockCoordinator: HomeCoordinator {
-    public func updateFavoritesState(isEmpty: Bool) {
-        
-    }
-    
-    public func startBusStopFlow(stationId: String) {
-        let coordinator = MockCoordinator(
-            testMessage: "BusStopFlow - busStopId: \(stationId)",
-            navigationController: navigationController
-        )
-        coordinator.start()
-        childs.append(coordinator)
-    }
-}
-
 extension MockCoordinator: SearchCoordinator {
     public func startNearMapFlow(busStopId: String) {
         let coordinator = MockCoordinator(
@@ -77,6 +62,15 @@ extension MockCoordinator: SearchCoordinator {
     }
     
     public func startNearMapFlow() {
+        let coordinator = MockCoordinator(
+            testMessage: "\(#function)",
+            navigationController: navigationController
+        )
+        coordinator.start()
+        childs.append(coordinator)
+    }
+    
+    public func startBusStopFlow(stationId: String) {
         let coordinator = MockCoordinator(
             testMessage: "\(#function)",
             navigationController: navigationController

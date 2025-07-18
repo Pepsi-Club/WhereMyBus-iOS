@@ -49,10 +49,6 @@ public final class DefaultHomeCoordinator {
 }
 
 extension DefaultHomeCoordinator: HomeCoordinator {
-    public func updateFavoritesState(isEmpty: Bool) {
-        favoritesStatus.onNext(isEmpty ? .empty : .nonEmpty)
-    }
-    
     public func startSearchFlow() {
         let searchCoordinator = coordinatorProvider.makeSearchCoordinator(
             parent: self,
