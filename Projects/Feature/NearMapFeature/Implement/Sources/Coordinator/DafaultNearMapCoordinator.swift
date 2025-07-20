@@ -49,7 +49,8 @@ extension DefaultNearMapCoordinator {
             parent: self,
             navigationController: navigationController,
             busStopId: busStopId,
-            flow: flow
+            flow: flow,
+            delegate: nil
         )
         childs.append(busStopCoordinator)
         busStopCoordinator.start()

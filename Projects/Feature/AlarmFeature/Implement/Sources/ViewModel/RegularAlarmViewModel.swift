@@ -3,6 +3,7 @@ import Foundation
 import Core
 import Domain
 import FeatureDependency
+import AlarmFeatureInterface
 
 import RxSwift
 

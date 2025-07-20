@@ -16,6 +16,12 @@ let project = Project(
         FrameworkInfoPlist(marketingVersion: .marketingVersion)
         SecretInfoPlist()
     }
+    FeatureTesting(name: "NearMapFeature") {
+        FeatureImplement(name: "NearMapFeature")
+        FeatureSwiftLintScript()
+        FrameworkInfoPlist(marketingVersion: .marketingVersion)
+        SecretInfoPlist()
+    }
     SampleApp(name: "NearMapFeature") {
         Feature(name: "NearMapFeature")
         UIKitInfoPlist()

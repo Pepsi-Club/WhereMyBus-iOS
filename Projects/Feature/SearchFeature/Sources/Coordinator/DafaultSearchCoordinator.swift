@@ -9,6 +9,7 @@ public final class DefaultSearchCoordinator: SearchCoordinator {
     public var childs: [Coordinator] = []
     public let navigationController: UINavigationController
     public var coordinatorType: CoordinatorType = .search
+    public weak var busStopCoordinatorDelegate: BusStopCoordinatorDelegate?
     
     private let coordinatorProvider: CoordinatorProvider
     private let nearMapCoordinatorBuilder: NearMapCoordinatorBuilder
@@ -19,12 +20,14 @@ public final class DefaultSearchCoordinator: SearchCoordinator {
         navigationController: UINavigationController,
         coordinatorProvider: CoordinatorProvider,
         nearMapCoordinatorBuilder: NearMapCoordinatorBuilder,
+        busStopCoordinatorDelegate: BusStopCoordinatorDelegate?,
         flow: FlowState
     ) {
         self.parent = parent
         self.navigationController = navigationController
         self.coordinatorProvider = coordinatorProvider
         self.nearMapCoordinatorBuilder = nearMapCoordinatorBuilder
+        self.busStopCoordinatorDelegate = busStopCoordinatorDelegate
         self.flow = flow
     }
     
@@ -40,12 +43,13 @@ public final class DefaultSearchCoordinator: SearchCoordinator {
 }
 
 extension DefaultSearchCoordinator {
-    public func startBusStopFlow(stationId: String) {
+    public func startBusStopFlow(busStopID: String) {
         let busStopCoordinator = coordinatorProvider.makeBusStopCoordinator(
             parent: self,
             navigationController: navigationController,
-            busStopId: stationId,
-            flow: flow
+            busStopId: busStopID,
+            flow: flow,
+            delegate: busStopCoordinatorDelegate
         )
         childs.append(busStopCoordinator)
         busStopCoordinator.start()
@@ -62,12 +66,12 @@ extension DefaultSearchCoordinator {
         nearMapCoordinator.start()
     }
     
-    public func startNearMapFlow(busStopId: String) {
+    public func startNearMapFlow(busStopID: String) {
         let nearMapCoordinator = nearMapCoordinatorBuilder.build(
             parent: self,
             navigationController: navigationController,
             flow: flow, 
-            busStopId: busStopId
+            busStopId: busStopID
         )
         childs.append(nearMapCoordinator)
         nearMapCoordinator.start()

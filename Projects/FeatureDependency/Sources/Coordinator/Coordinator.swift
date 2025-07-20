@@ -35,22 +35,6 @@ public extension Coordinator {
         parent?.childDidFinish(self)
     }
     
-    func finishFlow(
-        upTo coordinatorKind: CoordinatorType
-    ) {
-        var currentCoordinator: Coordinator = self
-        var isRoot = false
-        while !isRoot {
-            guard let nextCoordinator = currentCoordinator.parent else { break }
-            currentCoordinator.finish()
-            currentCoordinator = nextCoordinator
-            isRoot = currentCoordinator.coordinatorType == coordinatorKind
-        }
-        // TODO: 재사용 로직으로 수정
-        (currentCoordinator as? AddRegularAlarmCoordinator)?
-            .removeChildViewController()
-    }
-    
     func openURL(_ url: URL) {
         parent?.openURL(url)
     }

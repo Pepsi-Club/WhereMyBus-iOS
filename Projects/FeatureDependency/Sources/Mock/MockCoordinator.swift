@@ -15,6 +15,7 @@ public final class MockCoordinator: Coordinator {
     public var parent: Coordinator?
     public var childs: [Coordinator] = []
     public var coordinatorType: CoordinatorType = .home
+    public var busStopCoordinatorDelegate: BusStopCoordinatorDelegate?
     
     private let testMessage: String
     public var navigationController: UINavigationController
@@ -52,7 +53,7 @@ public final class MockCoordinator: Coordinator {
 }
 
 extension MockCoordinator: SearchCoordinator {
-    public func startNearMapFlow(busStopId: String) {
+    public func startNearMapFlow(busStopID: String) {
         let coordinator = MockCoordinator(
             testMessage: "\(#function)",
             navigationController: navigationController
@@ -70,7 +71,7 @@ extension MockCoordinator: SearchCoordinator {
         childs.append(coordinator)
     }
     
-    public func startBusStopFlow(stationId: String) {
+    public func startBusStopFlow(busStopID: String) {
         let coordinator = MockCoordinator(
             testMessage: "\(#function)",
             navigationController: navigationController
@@ -87,6 +88,8 @@ extension MockCoordinator: SearchCoordinator {
 
 
 extension MockCoordinator: BusStopCoordinator {
+    public var delegate: BusStopCoordinatorDelegate? { busStopCoordinatorDelegate }
+    
     public func example() {
         
     }
@@ -107,20 +110,6 @@ extension MockCoordinator: BusStopCoordinator {
         )
         coordinator.start()
         childs.append(coordinator)
-    }
-}
-
-extension MockCoordinator: AddRegularAlarmCoordinator {
-    public func start(with: RegularAlarmResponse) {
-        
-    }
-    
-    public func startSearchFlow() {
-        
-    }
-    
-    public func removeChildViewController() {
-        
     }
 }
 

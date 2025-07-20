@@ -14,19 +14,15 @@ public protocol CoordinatorProvider {
     func makeSearchCoordinator(
         parent: Coordinator,
         navigationController: UINavigationController,
-        flow: FlowState
+        flow: FlowState,
+        busStopCoordinatorDelegate: BusStopCoordinatorDelegate?
     ) -> SearchCoordinator
     
     func makeBusStopCoordinator(
         parent: Coordinator,
         navigationController: UINavigationController,
         busStopId: String,
-        flow: FlowState
+        flow: FlowState,
+        delegate: BusStopCoordinatorDelegate?
     ) -> BusStopCoordinator
-
-    func makeAddRegularAlarmCoordinator(
-        parent: Coordinator,
-        navigationController: UINavigationController,
-        flow: FlowState
-    ) -> AddRegularAlarmCoordinator
 }

@@ -1,19 +1,21 @@
 //
-//  FeatureInterface.swift
+//  FeatureTesting.swift
 //  EnvironmentPlugin
 //
-//  Created by gnksbm on 7/12/25.
+//  Created by gnksbm on 7/19/25.
 //
 
-public struct FeatureInterface: BundleIDSuffixTarget, LocalDependency {
+import Foundation
+
+public struct FeatureTesting: BundleIDSuffixTarget, LocalDependency {
     public var projectName: String
     public let dependencies: [TargetDependency]
     public let infoPlist: InfoPlist?
     public let scripts: [TargetScript]
     
-    public var name: String { projectName + "Interface" }
+    public var name: String { projectName + "Testing" }
     public var product: Product { .framework }
-    public var sources: SourceFilesList? { ["Interface/Sources/**"] }
+    public var sources: SourceFilesList? { ["Testing/Sources/**"] }
     public var targetDependencyPath: Path {
         .relativeToRoot("Projects/Feature/\(projectName)")
     }

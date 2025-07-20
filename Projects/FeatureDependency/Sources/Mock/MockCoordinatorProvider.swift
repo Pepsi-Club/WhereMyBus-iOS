@@ -17,7 +17,8 @@ public final class MockCoordinatorProvider: CoordinatorProvider {
     public func makeSearchCoordinator(
         parent: Coordinator,
         navigationController: UINavigationController,
-        flow: FlowState
+        flow: FlowState,
+        busStopCoordinatorDelegate: BusStopCoordinatorDelegate?
     ) -> SearchCoordinator {
         MockCoordinator(
             testMessage: "Search",
@@ -29,23 +30,14 @@ public final class MockCoordinatorProvider: CoordinatorProvider {
         parent: Coordinator,
         navigationController: UINavigationController,
         busStopId: String,
-        flow: FlowState
+        flow: FlowState,
+        delegate: BusStopCoordinatorDelegate?
     ) -> BusStopCoordinator {
         MockCoordinator(
             testMessage: "BusStop - busStopId: \(busStopId)",
             navigationController: navigationController
         )
     }
-    
-    public func makeAddRegularAlarmCoordinator(
-        parent: Coordinator,
-        navigationController: UINavigationController,
-        flow: FlowState
-    ) -> AddRegularAlarmCoordinator {
-        MockCoordinator(
-            testMessage: "AddRegularAlarm",
-            navigationController: navigationController
-        )
-    }
 }
+
 #endif

@@ -18,7 +18,7 @@ public struct FeatureImplement: ImplementTarget {
     public var sources: SourceFilesList? { ["Implement/Sources/**"] }
     public var resources: ResourceFileElements? { hasResource ? ["Implement/Resources/**"] : nil }
     public var targetDependencyPath: Path {
-        .relativeToRoot("Projects/Feature/\(name)/Implement")
+        .relativeToRoot("Projects/Feature/\(name)")
     }
     
     public init(

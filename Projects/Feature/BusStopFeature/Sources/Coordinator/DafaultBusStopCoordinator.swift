@@ -3,17 +3,20 @@ import UIKit
 import Domain
 import FeatureDependency
 import NearMapFeatureInterface
+import AlarmFeatureInterface
 
 public final class DefaultBusStopCoordinator: BusStopCoordinator {
     public var parent: Coordinator?
     public var childs: [Coordinator] = []
     public var navigationController: UINavigationController
     public var coordinatorType: CoordinatorType = .busStop
+    public weak var delegate: BusStopCoordinatorDelegate?
     
     private let coordinatorProvider: CoordinatorProvider
     private let busStopId: String
     private let flow: FlowState
     private let nearMapCoordinatorBuilder: NearMapCoordinatorBuilder
+    private let addRegularAlarmCoordinatorBuilder: AddRegularAlarmCoordinatorBuilder
     
     public init(
         parent: Coordinator?,
@@ -21,7 +24,9 @@ public final class DefaultBusStopCoordinator: BusStopCoordinator {
         busStopId: String,
         coordinatorProvider: CoordinatorProvider,
         flow: FlowState,
-        nearMapCoordinatorBuilder: NearMapCoordinatorBuilder
+        nearMapCoordinatorBuilder: NearMapCoordinatorBuilder,
+        addRegularAlarmCoordinatorBuilder: AddRegularAlarmCoordinatorBuilder,
+        delegate: BusStopCoordinatorDelegate?
     ) {
         self.parent = parent
         self.navigationController = navigationController
@@ -29,6 +34,8 @@ public final class DefaultBusStopCoordinator: BusStopCoordinator {
         self.coordinatorProvider = coordinatorProvider
         self.flow = flow
         self.nearMapCoordinatorBuilder = nearMapCoordinatorBuilder
+        self.addRegularAlarmCoordinatorBuilder = addRegularAlarmCoordinatorBuilder
+        self.delegate = delegate
     }
     
     public func start() {
@@ -61,14 +68,12 @@ extension DefaultBusStopCoordinator {
     }
     
     public func moveToRegualrAlarm() {
-        let alarmCoordinator = coordinatorProvider
-            .makeAddRegularAlarmCoordinator(
-                parent: self,
-                navigationController: navigationController,
-                flow: .fromAlarm
-            )
+        let alarmCoordinator = addRegularAlarmCoordinatorBuilder.build(
+            parent: self,
+            navigationController: navigationController,
+            flow: .fromAlarm
+        )
         childs.append(alarmCoordinator)
         alarmCoordinator.start()
     }
-    
 }

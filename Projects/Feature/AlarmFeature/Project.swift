@@ -5,8 +5,18 @@ let project = Project(
     name: "AlarmFeature",
     options: .options(automaticSchemesOptions: .disabled)
 ) {
-    Feature(name: "AlarmFeature") {
+    FeatureInterface(name: "AlarmFeature") {
         FeatureDependency()
+        FeatureSwiftLintScript()
+        FrameworkInfoPlist(marketingVersion: .marketingVersion)
+    }
+    FeatureImplement(name: "AlarmFeature") {
+        FeatureInterface(name: "AlarmFeature")
+        FeatureSwiftLintScript()
+        FrameworkInfoPlist(marketingVersion: .marketingVersion)
+    }
+    FeatureTesting(name: "AlarmFeature") {
+        FeatureImplement(name: "AlarmFeature")
         FeatureSwiftLintScript()
         FrameworkInfoPlist(marketingVersion: .marketingVersion)
         SecretInfoPlist()

@@ -54,7 +54,9 @@ final class AppCoordinator: Coordinator {
             busStopId: busStopId,
             coordinatorProvider: coordinatorProvider,
             flow: .fromHome,
-            nearMapCoordinatorBuilder: coordinatorProvider
+            nearMapCoordinatorBuilder: coordinatorProvider,
+            addRegularAlarmCoordinatorBuilder: coordinatorProvider,
+            delegate: nil
         )
         childs.append(busStopCoordinator)
         busStopCoordinator.start()
