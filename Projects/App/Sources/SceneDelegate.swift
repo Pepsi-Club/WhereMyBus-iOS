@@ -18,7 +18,7 @@ import RxSwift
 final class SceneDelegate: UIResponder,
                            UIWindowSceneDelegate,
                            AppCoordinatorDependency {
-    @Injected private var useCase: VersionCheckUseCase
+    @Injected private var useCase: AppVersionCheckUseCase
     
     var window: UIWindow?
     var appCoordinator: AppCoordinator?

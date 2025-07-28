@@ -25,7 +25,7 @@ protocol SplashViewModelDependency {
 
 final class SplashViewModel: ViewModel {
     private weak var coordinator: SplashCoordinator?
-    @Injected private var versionCheckUseCase: VersionCheckUseCase
+    @Injected private var versionCheckUseCase: AppVersionCheckUseCase
     @Injected private var firebaseLogger: FirebaseLogger
     private let dependency: SplashViewModelDependency
     
@@ -104,7 +104,7 @@ final class SplashViewModel: ViewModel {
         DIContainer.register(type: NearMapUseCase.self, DefaultNearMapUseCase())
         DIContainer.register(type: FirebaseLogger.self, firebaseLogger)
         DIContainer.register(
-            type: VersionCheckUseCase.self,
+            type: AppVersionCheckUseCase.self,
             VersionCheckUseCaseImpl(
                 currentVersion: dependency.appVersion
             )

@@ -12,7 +12,7 @@ import Core
 
 import RxSwift
 
-public final class VersionCheckUseCaseImpl: VersionCheckUseCase {
+public final class VersionCheckUseCaseImpl: AppVersionCheckUseCase {
     @Injected private var versionCheckRepository: VersionCheckRepository
     private let currentVersion: AppVersionInfoResponse
 

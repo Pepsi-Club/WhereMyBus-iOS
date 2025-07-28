@@ -1,5 +1,5 @@
 //
-//  VersionCheckUseCase.swift
+//  AppVersionCheckUseCase.swift
 //  Domain
 //
 //  Created by Jisoo Ham on 3/25/25.
@@ -10,6 +10,6 @@ import Foundation
 
 import RxSwift
 
-public protocol VersionCheckUseCase {
+public protocol AppVersionCheckUseCase {
     func checkForceUpdateNeeded() async throws -> ForceUpdate
 }
