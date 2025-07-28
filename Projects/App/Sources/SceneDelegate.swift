@@ -13,8 +13,6 @@ import NetworkService
 import Domain
 import Data
 
-import RxSwift
-
 final class SceneDelegate: UIResponder,
                            UIWindowSceneDelegate,
                            AppCoordinatorDependency {

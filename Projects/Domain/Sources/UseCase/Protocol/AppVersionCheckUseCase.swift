@@ -8,8 +8,6 @@
 
 import Foundation
 
-import RxSwift
-
 public protocol AppVersionCheckUseCase {
     func checkForceUpdateNeeded() async throws -> ForceUpdate
 }
