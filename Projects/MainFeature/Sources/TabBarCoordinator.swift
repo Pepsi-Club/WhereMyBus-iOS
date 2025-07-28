@@ -21,7 +21,6 @@ public final class TabBarCoordinator: Coordinator {
     public var navigationController: UINavigationController
     public let coordinatorProvider: CoordinatorProvider
     public let homeCoordinatorBuilder: HomeCoordinatorBuilder
-    public var coordinatorType: CoordinatorType = .tab
     
     public init(
         navigationController: UINavigationController,

@@ -21,7 +21,7 @@ final class SplashCoordinatorImpl: SplashCoordinator {
     var parent: Coordinator?
     var childs: [Coordinator] = []
     var navigationController: UINavigationController
-    public var coordinatorType: CoordinatorType = .splash
+    
     private let coordinatorProvider: CoordinatorProvider
     private let homeCoordinatorBuilder: HomeCoordinatorBuilder
     private let viewModelDependency: SplashViewModelDependency

@@ -23,7 +23,7 @@ final class AppCoordinator: Coordinator {
     var parent: Coordinator?
     var childs: [Coordinator] = []
     var navigationController: UINavigationController
-    public var coordinatorType: CoordinatorType = .app
+    
     private let coordinatorProvider = DefaultCoordinatorProvider()
     private let dependency: AppCoordinatorDependency
     

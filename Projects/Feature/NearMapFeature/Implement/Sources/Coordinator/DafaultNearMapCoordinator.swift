@@ -11,7 +11,6 @@ public final class DefaultNearMapCoordinator: NearMapCoordinator {
     public var coordinatorProvider: CoordinatorProvider
     public let flow: FlowState
     public let busStopId: String?
-    public var coordinatorType: CoordinatorType = .nearMap
     
     public init(
         parent: Coordinator?,

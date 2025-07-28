@@ -17,7 +17,6 @@ public final class DefaultAddRegularAlarmCoordinator {
     public var navigationController: UINavigationController
     public let coordinatorProvider: CoordinatorProvider
     private let flow: FlowState
-    public var coordinatorType: CoordinatorType = .addAlarm
     
     private var vcForFinishFlow: UIViewController?
     private weak var viewModel: AddRegularAlarmViewModel?

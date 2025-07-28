@@ -10,7 +10,6 @@ public final class DefaultHomeCoordinator {
     public var childs: [Coordinator] = []
     public var navigationController: UINavigationController
     public let coordinatorProvider: CoordinatorProvider
-    public var coordinatorType: CoordinatorType = .home
     
     private let favoritesStatus = PublishSubject<FavoritesStatus>()
     private let disposeBag = DisposeBag()

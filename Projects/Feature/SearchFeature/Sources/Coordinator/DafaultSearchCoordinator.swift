@@ -8,7 +8,6 @@ public final class DefaultSearchCoordinator: SearchCoordinator {
     public var parent: Coordinator?
     public var childs: [Coordinator] = []
     public let navigationController: UINavigationController
-    public var coordinatorType: CoordinatorType = .search
     public weak var busStopCoordinatorDelegate: BusStopCoordinatorDelegate?
     
     private let coordinatorProvider: CoordinatorProvider

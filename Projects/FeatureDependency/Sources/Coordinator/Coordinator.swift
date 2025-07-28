@@ -14,7 +14,6 @@ public protocol Coordinator: AnyObject {
     var parent: Coordinator? { get set }
     var childs: [Coordinator] { get set }
     var navigationController: UINavigationController { get }
-    var coordinatorType: CoordinatorType { get }
     
     func start()
     func finish()

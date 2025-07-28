@@ -14,7 +14,7 @@ import Domain
 public final class MockCoordinator: Coordinator {
     public var parent: Coordinator?
     public var childs: [Coordinator] = []
-    public var coordinatorType: CoordinatorType = .home
+    
     public var busStopCoordinatorDelegate: BusStopCoordinatorDelegate?
     
     private let testMessage: String

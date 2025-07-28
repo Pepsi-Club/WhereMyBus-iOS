@@ -9,7 +9,6 @@ public final class DefaultBusStopCoordinator: BusStopCoordinator {
     public var parent: Coordinator?
     public var childs: [Coordinator] = []
     public var navigationController: UINavigationController
-    public var coordinatorType: CoordinatorType = .busStop
     public weak var delegate: BusStopCoordinatorDelegate?
     
     private let coordinatorProvider: CoordinatorProvider
