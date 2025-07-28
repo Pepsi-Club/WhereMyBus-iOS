@@ -75,7 +75,7 @@ extension DefaultCoordinatorProvider: AddRegularAlarmCoordinatorBuilder {
             parent: parent,
             navigationController: navigationController,
             coordinatorProvider: self,
-            flow: .fromAlarm
+            flow: flow
         )
     }
 }

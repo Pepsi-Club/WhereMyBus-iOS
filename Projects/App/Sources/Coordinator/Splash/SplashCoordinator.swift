@@ -14,7 +14,6 @@ import HomeFeatureInterface
 
 protocol SplashCoordinator: Coordinator {
     func startTabFlow()
-    func openURL(_ url: URL)
 }
 
 final class SplashCoordinatorImpl: SplashCoordinator {
