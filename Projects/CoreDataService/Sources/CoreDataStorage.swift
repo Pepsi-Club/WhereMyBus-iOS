@@ -7,8 +7,8 @@
 //
 
 public protocol CoreDataStorage {
-    func create<T: CoreDataModel>(data: T) async throws
-    func read<T: CoreDataModel>(type: T.Type) async throws -> [T]
-    func update<T: CoreDataModel>(data: T) async throws
-    func delete<T: CoreDataModel>(data: T) async throws
+    func create<T: CoreDataRepresentable>(data: T) async throws
+    func read<T: CoreDataRepresentable>(type: T.Type) async throws -> [T]
+    func update<T: CoreDataRepresentable>(data: T) async throws
+    func delete<T: CoreDataRepresentable>(data: T) async throws
 }

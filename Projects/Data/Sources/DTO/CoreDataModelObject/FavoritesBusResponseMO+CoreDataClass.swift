@@ -1,6 +1,6 @@
 //
 //  FavoritesBusResponseMO+CoreDataClass.swift
-//  
+//
 //
 //  Created by gnksbm on 4/16/24.
 //
@@ -14,7 +14,7 @@ import Domain
 import CoreDataService
 
 @objc(FavoritesBusResponseMO)
-public class FavoritesBusResponseMO: NSManagedObject, CoreDataModelObject {
+public class FavoritesBusResponseMO: NSManagedObject, CoreDataModelObject, DTOParsable {
     public var toDomain: CoreDataStorable {
         guard let busStopId,
               let busStopName,
@@ -32,17 +32,23 @@ public class FavoritesBusResponseMO: NSManagedObject, CoreDataModelObject {
     }
 }
 
-extension FavoritesBusResponse: CoreDataModel {
+extension FavoritesBusResponse: CoreDataRepresentable {
+    private func requiredValue<T>(_ value: T?, forKey key: String) throws -> T {
+        guard let value = value else {
+            throw CocoaError(.validationMissingMandatoryProperty, userInfo: [NSValidationKeyErrorKey: key])
+        }
+        return value
+    }
+
     public var id: String { identifier }
     
-    public static func toDataModel(_ object: FavoritesBusResponseMO) -> FavoritesBusResponse {
-        guard let busStopId = object.busStopId,
-              let busStopName = object.busStopName,
-              let busId = object.busId,
-              let busName = object.busName,
-              let adirection = object.adirection
-        else { fatalError() }
-        return FavoritesBusResponse(
+    public init(_ managedObject: FavoritesBusResponseMO) throws {
+        let busStopId = try managedObject.unwrap(\.busStopId)
+        let busStopName = try managedObject.unwrap(\.busStopName)
+        let busId = try managedObject.unwrap(\.busId)
+        let busName = try managedObject.unwrap(\.busName)
+        let adirection = try managedObject.unwrap(\.adirection)
+        self.init(
             busStopId: busStopId,
             busStopName: busStopName,
             busId: busId,
@@ -51,7 +57,7 @@ extension FavoritesBusResponse: CoreDataModel {
         )
     }
     
-    public func sync(for managedObject: FavoritesBusResponseMO) {
+    public func apply(to managedObject: FavoritesBusResponseMO) {
         managedObject.identifier = identifier
         managedObject.busStopId = busStopId
         managedObject.busStopName = busStopName

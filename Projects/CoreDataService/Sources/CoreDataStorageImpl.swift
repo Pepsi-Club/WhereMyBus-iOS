@@ -26,7 +26,7 @@ public final class CoreDataStorageImpl {
         self.batchSize = batchSize
     }
     
-    private func readManagedObject<T: CoreDataModel>(for data: T) async throws -> T.ManagedObject {
+    private func readManagedObject<T: CoreDataRepresentable>(for data: T) async throws -> T.ManagedObject {
         try await context.perform { [self] in
             let request = NSFetchRequest<T.ManagedObject>(entityName: String(describing: T.ManagedObject.self))
             request.predicate = NSPredicate(format: "id == %@", data.id as CVarArg)
@@ -55,7 +55,7 @@ public final class CoreDataStorageImpl {
 }
 
 extension CoreDataStorageImpl: CoreDataStorage {
-    public func create<T: CoreDataModel>(data: T) async throws {
+    public func create<T: CoreDataRepresentable>(data: T) async throws {
         try await context.perform { [self] in
             let object = NSEntityDescription.insertNewObject(
                 forEntityName: String(describing: T.ManagedObject.self),
@@ -66,12 +66,12 @@ extension CoreDataStorageImpl: CoreDataStorage {
                     "타입 불일치: \(type(of: object)) != \(T.ManagedObject.self)"
                 )
             }
-            data.sync(for: coreDataManagedObject)
+            data.apply(to: coreDataManagedObject)
         }
         try await saveContext()
     }
     
-    public func read<T: CoreDataModel>(type: T.Type) async throws -> [T] {
+    public func read<T: CoreDataRepresentable>(type: T.Type) async throws -> [T] {
         let managedObjects = try await context.perform { [self] in
             let request = NSFetchRequest<T.ManagedObject>(entityName: String(describing: T.ManagedObject.self))
             request.fetchLimit = 0
@@ -79,18 +79,18 @@ extension CoreDataStorageImpl: CoreDataStorage {
             
             return try context.fetch(request)
         }
-        return managedObjects.map { T.toDataModel($0) }
+        return try managedObjects.map { try T.init($0) }
     }
     
-    public func update<T: CoreDataModel>(data: T) async throws {
+    public func update<T: CoreDataRepresentable>(data: T) async throws {
         let managedObject = try await readManagedObject(for: data)
         await context.perform {
-            data.sync(for: managedObject)
+            data.apply(to: managedObject)
         }
         try await saveContext()
     }
     
-    public func delete<T: CoreDataModel>(data: T) async throws {
+    public func delete<T: CoreDataRepresentable>(data: T) async throws {
         let managedObject = try await readManagedObject(for: data)
         await context.perform { [self] in
             context.delete(managedObject)
