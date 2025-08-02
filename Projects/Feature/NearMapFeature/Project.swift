@@ -5,8 +5,19 @@ let project = Project(
     name: "NearMapFeature",
     options: .options(automaticSchemesOptions: .disabled)
 ) {
-    Feature(name: "NearMapFeature") {
+    FeatureInterface(name: "NearMapFeature") {
         FeatureDependency()
+        FeatureSwiftLintScript()
+        FrameworkInfoPlist(marketingVersion: .marketingVersion)
+    }
+    FeatureImplement(name: "NearMapFeature") {
+        FeatureInterface(name: "NearMapFeature")
+        FeatureSwiftLintScript()
+        FrameworkInfoPlist(marketingVersion: .marketingVersion)
+        SecretInfoPlist()
+    }
+    FeatureTesting(name: "NearMapFeature") {
+        FeatureImplement(name: "NearMapFeature")
         FeatureSwiftLintScript()
         FrameworkInfoPlist(marketingVersion: .marketingVersion)
         SecretInfoPlist()

@@ -3,6 +3,8 @@ import UIKit
 import FeatureDependency
 import Domain
 import BusStopFeature
+import NearMapFeature
+import AlarmFeatureTesting
 
 final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
@@ -17,13 +19,16 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let navigationController = UINavigationController()
         window?.rootViewController = navigationController
         window?.makeKeyAndVisible()
-                
+        let coordinatorProvider = MockCoordinatorProvider()
         let busstopCoordinator = DefaultBusStopCoordinator(
             parent: nil,
             navigationController: navigationController,
             busStopId: "",
             coordinatorProvider: MockCoordinatorProvider(),
-            flow: .fromHome
+            flow: .fromHome,
+            nearMapCoordinatorBuilder: MockNearMapCoordinatorBuilder(),
+            addRegularAlarmCoordinatorBuilder: MockAddRegularAlarmCoordinatorBuilder(),
+            delegate: nil
         )
         busstopCoordinator.start()
     }

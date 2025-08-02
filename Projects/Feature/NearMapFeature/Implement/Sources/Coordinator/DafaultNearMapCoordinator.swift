@@ -1,6 +1,6 @@
 import UIKit
 
-import FeatureDependency
+import NearMapFeatureInterface
 
 import RxSwift
 
@@ -11,7 +11,6 @@ public final class DefaultNearMapCoordinator: NearMapCoordinator {
     public var coordinatorProvider: CoordinatorProvider
     public let flow: FlowState
     public let busStopId: String?
-    public var coordinatorType: CoordinatorType = .nearMap
     
     public init(
         parent: Coordinator?,
@@ -49,7 +48,8 @@ extension DefaultNearMapCoordinator {
             parent: self,
             navigationController: navigationController,
             busStopId: busStopId,
-            flow: flow
+            flow: flow,
+            delegate: nil
         )
         childs.append(busStopCoordinator)
         busStopCoordinator.start()

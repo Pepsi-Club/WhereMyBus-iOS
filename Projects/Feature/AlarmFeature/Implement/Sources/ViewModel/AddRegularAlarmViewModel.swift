@@ -139,3 +139,16 @@ extension AddRegularAlarmViewModel {
         let regularAlarm: BehaviorRelay<RegularAlarmResponse>
     }
 }
+
+extension AddRegularAlarmViewModel: BusStopCoordinatorDelegate {
+    func didSelect(busStopInfo: BusStopArrivalInfoResponse, busInfo: BusArrivalInfoResponse) {
+        regularAlarmEditingService.update(
+            busStopId: busStopInfo.busStopId,
+            busStopName: busStopInfo.busStopName,
+            busId: busInfo.busId,
+            busName: busInfo.busName,
+            adirection: busInfo.adirection
+        )
+        coordinator.removeChildViewController()
+    }
+}

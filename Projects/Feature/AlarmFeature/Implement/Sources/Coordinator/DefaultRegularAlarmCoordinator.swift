@@ -8,7 +8,6 @@ public final class DefaultRegularAlarmCoordinator: RegularAlarmCoordinator {
     public var childs: [Coordinator] = []
     public var navigationController: UINavigationController
     public var coordinatorProvider: CoordinatorProvider
-    public var coordinatorType: CoordinatorType = .regularAlarm
     
     public init(
         navigationController: UINavigationController,

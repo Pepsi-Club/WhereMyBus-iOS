@@ -6,9 +6,15 @@
 //  Copyright © 2024 Pepsi-Club. All rights reserved.
 //
 
-import Foundation
+import Domain
 
 public protocol BusStopCoordinator: Coordinator {
+    var delegate: BusStopCoordinatorDelegate? { get }
+    
     func busStopMapLocation(busStopId: String)
     func moveToRegualrAlarm()
+}
+
+public protocol BusStopCoordinatorDelegate: AnyObject {
+    func didSelect(busStopInfo: BusStopArrivalInfoResponse, busInfo: BusArrivalInfoResponse)
 }

@@ -40,6 +40,7 @@ final class SplashViewController: UIViewController {
         output.alert
             .observe(on: MainScheduler.instance)
             .bind(with: self) { owner, alert in
+                guard !alert.actions.isEmpty else { return }
                 let alertController = UIAlertController(
                     title: alert.title,
                     message: alert.message,

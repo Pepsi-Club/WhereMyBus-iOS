@@ -10,29 +10,32 @@ import UIKit
 
 import MainFeature
 import FeatureDependency
+import HomeFeatureInterface
 
 protocol SplashCoordinator: Coordinator {
     func startTabFlow()
-    func openURL(_ url: URL)
 }
 
 final class SplashCoordinatorImpl: SplashCoordinator {
     var parent: Coordinator?
     var childs: [Coordinator] = []
     var navigationController: UINavigationController
-    public var coordinatorType: CoordinatorType = .splash
+    
     private let coordinatorProvider: CoordinatorProvider
+    private let homeCoordinatorBuilder: HomeCoordinatorBuilder
     private let viewModelDependency: SplashViewModelDependency
     
     init(
         parent: Coordinator,
         navigationController: UINavigationController,
         coordinatorProvider: CoordinatorProvider,
+        homeCoordinatorBuilder: HomeCoordinatorBuilder,
         viewModelDependency: SplashViewModelDependency
     ) {
         self.parent = parent
         self.navigationController = navigationController
         self.coordinatorProvider = coordinatorProvider
+        self.homeCoordinatorBuilder = homeCoordinatorBuilder
         self.viewModelDependency = viewModelDependency
     }
     
@@ -46,7 +49,8 @@ final class SplashCoordinatorImpl: SplashCoordinator {
     func startTabFlow() {
         let tabBarCoordinator = TabBarCoordinator(
             navigationController: navigationController,
-            coordinatorProvider: coordinatorProvider
+            coordinatorProvider: coordinatorProvider,
+            homeCoordinatorBuilder: homeCoordinatorBuilder
         )
         childs.append(tabBarCoordinator)
         tabBarCoordinator.start()

@@ -65,7 +65,7 @@ public final class SearchViewModel: ViewModel {
                 onNext: { viewModel, response in
                     viewModel.useCase.saveRecentSearch(response: response)
                     viewModel.coordinator.startBusStopFlow(
-                        stationId: response.busStopId
+                        busStopID: response.busStopId
                     )
                 }
             )
@@ -90,7 +90,7 @@ public final class SearchViewModel: ViewModel {
             .withUnretained(self)
             .subscribe(
                 onNext: { vm, busStopId in
-                    vm.coordinator.startNearMapFlow(busStopId: busStopId)
+                    vm.coordinator.startNearMapFlow(busStopID: busStopId)
                 }
             )
             .disposed(by: disposeBag)

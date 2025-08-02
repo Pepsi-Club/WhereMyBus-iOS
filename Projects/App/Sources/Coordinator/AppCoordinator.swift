@@ -23,7 +23,7 @@ final class AppCoordinator: Coordinator {
     var parent: Coordinator?
     var childs: [Coordinator] = []
     var navigationController: UINavigationController
-    public var coordinatorType: CoordinatorType = .app
+    
     private let coordinatorProvider = DefaultCoordinatorProvider()
     private let dependency: AppCoordinatorDependency
     
@@ -40,6 +40,7 @@ final class AppCoordinator: Coordinator {
             parent: self,
             navigationController: navigationController,
             coordinatorProvider: coordinatorProvider,
+            homeCoordinatorBuilder: coordinatorProvider,
             viewModelDependency: dependency
         )
         childs.append(splashCoordinator)
@@ -52,7 +53,10 @@ final class AppCoordinator: Coordinator {
             navigationController: navigationController,
             busStopId: busStopId,
             coordinatorProvider: coordinatorProvider,
-            flow: .fromHome
+            flow: .fromHome,
+            nearMapCoordinatorBuilder: coordinatorProvider,
+            addRegularAlarmCoordinatorBuilder: coordinatorProvider,
+            delegate: nil
         )
         childs.append(busStopCoordinator)
         busStopCoordinator.start()

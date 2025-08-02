@@ -17,9 +17,9 @@ public final class DefaultAddRegularAlarmCoordinator {
     public var navigationController: UINavigationController
     public let coordinatorProvider: CoordinatorProvider
     private let flow: FlowState
-    public var coordinatorType: CoordinatorType = .addAlarm
     
     private var vcForFinishFlow: UIViewController?
+    private weak var viewModel: AddRegularAlarmViewModel?
     
     public init(
         parent: Coordinator,
@@ -34,11 +34,7 @@ public final class DefaultAddRegularAlarmCoordinator {
     }
     
     public func start() {
-        let addRegularAlarmViewController = AddRegularAlarmViewController(
-            viewModel: .init(
-                coordinator: self
-            )
-        )
+        let addRegularAlarmViewController = AddRegularAlarmViewController(viewModel: .init(coordinator: self))
         vcForFinishFlow = addRegularAlarmViewController
         navigationController.pushViewController(
             addRegularAlarmViewController,
@@ -49,12 +45,9 @@ public final class DefaultAddRegularAlarmCoordinator {
 
 extension DefaultAddRegularAlarmCoordinator: AddRegularAlarmCoordinator {
     public func start(with: RegularAlarmResponse) {
-        let addRegularAlarmViewController = AddRegularAlarmViewController(
-            viewModel: .init(
-                alarmToEdit: with,
-                coordinator: self
-            )
-        )
+        let viewModel = AddRegularAlarmViewModel(alarmToEdit: with, coordinator: self)
+        let addRegularAlarmViewController = AddRegularAlarmViewController(viewModel: viewModel)
+        self.viewModel = viewModel
         vcForFinishFlow = addRegularAlarmViewController
         navigationController.pushViewController(
             addRegularAlarmViewController,
@@ -66,7 +59,8 @@ extension DefaultAddRegularAlarmCoordinator: AddRegularAlarmCoordinator {
         let searchCoordinator = coordinatorProvider.makeSearchCoordinator(
             parent: self,
             navigationController: navigationController,
-            flow: .fromAlarm
+            flow: .fromAlarm,
+            busStopCoordinatorDelegate: viewModel
         )
         childs.append(searchCoordinator)
         searchCoordinator.start()

@@ -2,24 +2,31 @@ import UIKit
 
 import Domain
 import FeatureDependency
+import NearMapFeatureInterface
 
 public final class DefaultSearchCoordinator: SearchCoordinator {
     public var parent: Coordinator?
     public var childs: [Coordinator] = []
     public let navigationController: UINavigationController
-    public let coordinatorProvider: CoordinatorProvider
+    public weak var busStopCoordinatorDelegate: BusStopCoordinatorDelegate?
+    
+    private let coordinatorProvider: CoordinatorProvider
+    private let nearMapCoordinatorBuilder: NearMapCoordinatorBuilder
     private let flow: FlowState
-    public var coordinatorType: CoordinatorType = .search
     
     public init(
         parent: Coordinator?,
         navigationController: UINavigationController,
         coordinatorProvider: CoordinatorProvider,
+        nearMapCoordinatorBuilder: NearMapCoordinatorBuilder,
+        busStopCoordinatorDelegate: BusStopCoordinatorDelegate?,
         flow: FlowState
     ) {
         self.parent = parent
         self.navigationController = navigationController
         self.coordinatorProvider = coordinatorProvider
+        self.nearMapCoordinatorBuilder = nearMapCoordinatorBuilder
+        self.busStopCoordinatorDelegate = busStopCoordinatorDelegate
         self.flow = flow
     }
     
@@ -35,19 +42,20 @@ public final class DefaultSearchCoordinator: SearchCoordinator {
 }
 
 extension DefaultSearchCoordinator {
-    public func startBusStopFlow(stationId: String) {
+    public func startBusStopFlow(busStopID: String) {
         let busStopCoordinator = coordinatorProvider.makeBusStopCoordinator(
             parent: self,
             navigationController: navigationController,
-            busStopId: stationId,
-            flow: flow
+            busStopId: busStopID,
+            flow: flow,
+            delegate: busStopCoordinatorDelegate
         )
         childs.append(busStopCoordinator)
         busStopCoordinator.start()
     }
     
     public func startNearMapFlow() {
-        let nearMapCoordinator = coordinatorProvider.makeNearMapCoordinator(
+        let nearMapCoordinator = nearMapCoordinatorBuilder.build(
             parent: self,
             navigationController: navigationController,
             flow: flow, 
@@ -57,12 +65,12 @@ extension DefaultSearchCoordinator {
         nearMapCoordinator.start()
     }
     
-    public func startNearMapFlow(busStopId: String) {
-        let nearMapCoordinator = coordinatorProvider.makeNearMapCoordinator(
+    public func startNearMapFlow(busStopID: String) {
+        let nearMapCoordinator = nearMapCoordinatorBuilder.build(
             parent: self,
             navigationController: navigationController,
             flow: flow, 
-            busStopId: busStopId
+            busStopId: busStopID
         )
         childs.append(nearMapCoordinator)
         nearMapCoordinator.start()

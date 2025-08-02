@@ -152,11 +152,7 @@ public final class BusStopViewModel: ViewModel {
             .withUnretained(self)
             .subscribe(onNext: { viewModel, arg1 in
                 let (busInfo, busStopInfo) = arg1
-                viewModel.useCase.update(
-                    busStopInfo: busStopInfo,
-                    busInfo: busInfo
-                )
-                viewModel.coordinator.finishFlow(upTo: .addAlarm)
+                viewModel.coordinator.delegate?.didSelect(busStopInfo: busStopInfo, busInfo: busInfo)
             })
             .disposed(by: disposeBag)
         

@@ -2,28 +2,39 @@ import UIKit
 
 import Domain
 import FeatureDependency
+import NearMapFeatureInterface
+import AlarmFeatureInterface
 
 public final class DefaultBusStopCoordinator: BusStopCoordinator {
     public var parent: Coordinator?
     public var childs: [Coordinator] = []
     public var navigationController: UINavigationController
-    public var coordinatorProvider: CoordinatorProvider
-    private var busStopId: String
+    public weak var delegate: BusStopCoordinatorDelegate?
+    
+    private let coordinatorProvider: CoordinatorProvider
+    private let busStopId: String
     private let flow: FlowState
-    public var coordinatorType: CoordinatorType = .busStop
+    private let nearMapCoordinatorBuilder: NearMapCoordinatorBuilder
+    private let addRegularAlarmCoordinatorBuilder: AddRegularAlarmCoordinatorBuilder
     
     public init(
         parent: Coordinator?,
         navigationController: UINavigationController,
         busStopId: String,
         coordinatorProvider: CoordinatorProvider,
-        flow: FlowState
+        flow: FlowState,
+        nearMapCoordinatorBuilder: NearMapCoordinatorBuilder,
+        addRegularAlarmCoordinatorBuilder: AddRegularAlarmCoordinatorBuilder,
+        delegate: BusStopCoordinatorDelegate?
     ) {
         self.parent = parent
         self.navigationController = navigationController
         self.busStopId = busStopId
         self.coordinatorProvider = coordinatorProvider
         self.flow = flow
+        self.nearMapCoordinatorBuilder = nearMapCoordinatorBuilder
+        self.addRegularAlarmCoordinatorBuilder = addRegularAlarmCoordinatorBuilder
+        self.delegate = delegate
     }
     
     public func start() {
@@ -45,7 +56,7 @@ public final class DefaultBusStopCoordinator: BusStopCoordinator {
 extension DefaultBusStopCoordinator {
     // 정류장 위치뷰로 이동하기 위한
     public func busStopMapLocation(busStopId: String) {
-        let nearMapCoordinator = coordinatorProvider.makeNearMapCoordinator(
+        let nearMapCoordinator = nearMapCoordinatorBuilder.build(
             parent: self,
             navigationController: navigationController,
             flow: flow,
@@ -56,14 +67,12 @@ extension DefaultBusStopCoordinator {
     }
     
     public func moveToRegualrAlarm() {
-        let alarmCoordinator = coordinatorProvider
-            .makeAddRegularAlarmCoordinator(
-                parent: self,
-                navigationController: navigationController,
-                flow: .fromAlarm
-            )
+        let alarmCoordinator = addRegularAlarmCoordinatorBuilder.build(
+            parent: self,
+            navigationController: navigationController,
+            flow: .fromAlarm
+        )
         childs.append(alarmCoordinator)
         alarmCoordinator.start()
     }
-    
 }

@@ -10,7 +10,7 @@ import Foundation
 import Domain
 
 public protocol SearchCoordinator: Coordinator {
-    func startBusStopFlow(stationId: String)
+    func startBusStopFlow(busStopID: String)
     func startNearMapFlow()
-    func startNearMapFlow(busStopId: String)
+    func startNearMapFlow(busStopID: String)
 }
