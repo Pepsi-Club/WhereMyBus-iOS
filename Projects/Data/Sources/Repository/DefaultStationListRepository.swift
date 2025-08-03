@@ -112,7 +112,7 @@ public final class DefaultStationListRepository: StationListRepository {
     
     private func fetchStationList() {
         guard let seoulUrl = Bundle.main.url(
-            forResource: "total_stationList",
+            forResource: "bus_station_list",
             withExtension: "json"
         )
         else { return }

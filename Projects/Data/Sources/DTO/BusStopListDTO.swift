@@ -31,7 +31,7 @@ extension BusStopListDTO {
                     .init(
                         busStopName: $0.stopNm,
                         busStopId: $0.stopNo,
-                        direction: $0.nxtStn,
+                        direction: $0.nxtStn ?? "",
                         longitude: $0.xcode,
                         latitude: $0.ycode
                     )
@@ -41,7 +41,8 @@ extension BusStopListDTO {
     }
     
     struct BusStopInfo: Codable {
-        let stopNm, ycode, stopNo, xcode, nxtStn: String
+        let stopNm, ycode, stopNo, xcode: String
+        let nxtStn: String?
         // stopType
         // "가로변시간", "가로변전일", "가상정류장", "마을버스", "일반차로", "중앙차로"
         let stopType: String
