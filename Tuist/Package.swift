@@ -19,8 +19,7 @@ let packageSettings = PackageSettings(
         "RxCocoa": .framework,
         "RxCocoaRuntime": .framework,
         "Lottie": .framework,
-    ],
-    targetSettings: [:]
+    ]
 )
 
 #endif
