@@ -1,11 +1,10 @@
 import ProjectDescription
 import ProjectDescriptionHelpers
 
-let project = Project.makeProject(
-    name: "FeatureDependency",
-    moduleType: .dynamicFramework,
-    dependencies: [
-        .designSystem,
-        .domain
-    ]
-)
+let project = Project(name: "FeatureDependency") {
+    FeatureDependency() {
+        DesignSystem()
+        Domain()
+        FrameworkInfoPlist(marketingVersion: .marketingVersion)
+    }
+}

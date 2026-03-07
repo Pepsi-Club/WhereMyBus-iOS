@@ -34,10 +34,22 @@ public extension String {
         return serverKey
     }
     
-    static func getCurrentVersion() -> String {
+    /// domain url
+    static var domainURL: Self {
+        guard let any = Bundle.main.object(
+            forInfoDictionaryKey: "DOMAIN_URL"
+        ),
+              let domain = any as? String
+        else { return "" }
+        return domain
+    }
+    
+    /// 프로젝트 버전
+    static func getCurrentVersion() -> Self {
         guard let dictionary = Bundle.main.infoDictionary,
               let version = dictionary["CFBundleShortVersionString"] as? String
-        else { return "" }
+        else { return "1.0.0" }
+        
         return version
     }
     

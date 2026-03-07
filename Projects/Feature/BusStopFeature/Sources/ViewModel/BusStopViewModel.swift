@@ -7,9 +7,9 @@ import FeatureDependency
 import RxSwift
 
 public final class BusStopViewModel: ViewModel {
+    @Injected private var useCase: BusStopUseCase
+    
     private let coordinator: BusStopCoordinator
-    @Injected(BusStopUseCase.self)
-    private var useCase: BusStopUseCase
     private let disposeBag = DisposeBag()
     private var fetchData: ArrivalInfoRequest
     private let flow: FlowState

@@ -14,67 +14,102 @@ public final class DefaultNetworkService: NetworkService {
     public init() { }
     
     public func request(endPoint: EndPoint) -> Observable<Data> {
-        .create { observer in
-            guard let urlRequest = endPoint.toURLRequest
-            else {
+        Observable.create { observer in
+            do {
+                let urlRequest = try endPoint.toURLRequest()
+                let task = URLSession.shared.dataTask(
+                    with: urlRequest
+                ) { data, response, error in
+                    if let error {
+                        observer.onError(NetworkError.transportError(error))
+                        return
+                    }
+                    guard let httpURLResponse = response as? HTTPURLResponse
+                    else {
+                        observer.onError(
+                            NetworkError.invalidResponse
+                        )
+                        return
+                    }
+                    guard 200..<300 ~= httpURLResponse.statusCode
+                    else {
+                        observer.onError(
+                            NetworkError.invalidStatusCode(
+                                httpURLResponse.statusCode
+                            )
+                        )
+                        return
+                    }
+                    guard let data
+                    else {
+                        observer.onError(NetworkError.invalidData)
+                        return
+                    }
+                    observer.onNext(data)
+                    observer.onCompleted()
+                }
+                task.resume()
+                return Disposables.create {
+                    task.cancel()
+                }
+            } catch {
                 observer.onError(NetworkError.invalidURL)
                 return Disposables.create()
             }
-            
-            URLSession.shared.dataTask(
-                with: urlRequest
-            ) { data, response, error in
-                if let error {
-                    observer.onError(NetworkError.transportError(error))
-                    return
-                }
-                
-                guard let httpURLResponse = response as? HTTPURLResponse
-                else { return }
-                guard 200..<300 ~= httpURLResponse.statusCode
-                else {
-                    observer.onError(
-                        NetworkError.invalidStatusCode(
-                            httpURLResponse.statusCode
-                        )
-                    )
-                    #if DEBUG
-                    if let url = urlRequest.url,
-                       let httpMethod = urlRequest.httpMethod,
-                       let data = urlRequest.httpBody,
-                       let httpBody = String(
-                        data: data,
-                        encoding: .utf8
-                       ) {
-                        print(
-                            url,
-                            httpMethod,
-                            httpBody,
-                            separator: "\n"
-                        )
+        }
+    }
+    
+    public func request<T: Decodable>(
+        endPoint: any EndPoint,
+        responseType: T.Type
+    ) -> Single<Result<T, Error>> {
+        return Single.create { observer -> Disposable in
+            do {
+                let urlReqeust = try endPoint.toURLRequest()
+                URLSession.shared.dataTask(
+                    with: urlReqeust
+                ) { data, response, error in
+                    if let error {
+                        return observer(.success(
+                            .failure(NetworkError.transportError(error))
+                        ))
                     }
-                    if let data,
-                    let json = String(
-                        data: data,
-                        encoding: .utf8
-                    ) {
-                        print(
-                            json
-                        )
+                    
+                    guard let httpURLResponse = response as? HTTPURLResponse
+                    else {
+                        observer(.success(
+                            .failure(NetworkError.invalidResponse)
+                        ))
+                        return
                     }
-                    #endif
-                    return
-                }
-                
-                guard let data
-                else {
-                    observer.onError(NetworkError.invalidData)
-                    return
-                }
-                observer.onNext(data)
-                observer.onCompleted()
-            }.resume()
-            
+                    
+                    guard 200..<300 ~= httpURLResponse.statusCode
+                    else {
+                        return observer(.success(.failure(
+                            NetworkError.invalidStatusCode(
+                                httpURLResponse.statusCode
+                            )
+                        )))
+                    }
+                    
+                    guard let data
+                    else { return observer(.success(
+                        .failure(NetworkError.invalidData)
+                    ))}
+                    
+                    do {
+                        let decoded = try JSONDecoder().decode(
+                            responseType,
+                            from: data
+                        )
+                        observer(.success(.success(decoded))) // 성공적으로 디코딩한 경우
+                    } catch {
+                        observer(.success(.failure(NetworkError.parseError)))
+                    }
+                }.resume()
+            } catch {
+                observer(.success(.failure(NetworkError.invalidURL)))
+            }
             return Disposables.create()
         }
     }

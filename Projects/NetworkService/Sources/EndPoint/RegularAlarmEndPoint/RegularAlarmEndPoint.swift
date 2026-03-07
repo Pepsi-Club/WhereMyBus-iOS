@@ -16,7 +16,7 @@ public extension RegularAlarmEndPoint {
     }
     
     var host: String {
-        "api.wherebybus.shop"
+        return .domainURL
     }
     
     var path: String {

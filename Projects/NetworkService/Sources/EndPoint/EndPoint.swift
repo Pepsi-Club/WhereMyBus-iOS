@@ -20,13 +20,22 @@ public protocol EndPoint {
 }
 
 public enum Scheme: String {
-    case http, https
+    case http, https, itms
+    
+    var toString: String {
+        switch self {
+        case .itms:
+            "itms-apps"
+        default:
+            self.rawValue
+        }
+    }
 }
 
 extension EndPoint {
-    public var toURLRequest: URLRequest? {
+    public func toURLRequest() throws -> URLRequest {
         var urlComponent = URLComponents()
-        urlComponent.scheme = scheme.rawValue
+        urlComponent.scheme = scheme.toString
         urlComponent.host = host
         urlComponent.port = Int(port)
         urlComponent.path = path
@@ -38,7 +47,7 @@ extension EndPoint {
         guard let urlStr = urlComponent.url?.absoluteString
             .replacingOccurrences(of: "%25", with: "%"),
               let url = URL(string: urlStr)
-        else { return nil }
+        else { throw NetworkError.invalidURL }
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = method.toString
         urlRequest.allHTTPHeaderFields = header
@@ -47,11 +56,26 @@ extension EndPoint {
                 let httpBody = try JSONSerialization.data(withJSONObject: body)
                 urlRequest.httpBody = httpBody
             } catch {
-                #if DEBUG
-                print(error.localizedDescription)
-                #endif
+                throw NetworkError.jsonSerializationError(error)
             }
         }
         return urlRequest
+    }
+    
+    public var toURLString: String? {
+        var urlComponent = URLComponents()
+        urlComponent.scheme = scheme.toString
+        urlComponent.host = host
+        urlComponent.port = Int(port)
+        urlComponent.path = path
+        if !query.isEmpty {
+            urlComponent.queryItems = query.map {
+                .init(name: $0.key, value: $0.value)
+            }
+        }
+        let urlStr = urlComponent.url?.absoluteString
+            .replacingOccurrences(of: "%25", with: "%")
+        
+        return urlStr
     }
 }

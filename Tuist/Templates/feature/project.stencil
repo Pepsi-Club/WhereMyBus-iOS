@@ -8,3 +8,16 @@ let project = Project.makeProject(
         .featureDependency
     ]
 )
+
+let project = Project(
+    name: "{{ name }}",
+    options: .options(automaticSchemesOptions: .disabled)
+) {
+    Feature(name: "{{ name }}Feature") {
+        FeatureDependency()
+    }
+    SampleApp(name: "{{ name }}Feature") {
+        Feature(name: "{{ name }}Feature")
+    }
+    SampleAppScheme(name: "{{ name }}Feature")
+}
