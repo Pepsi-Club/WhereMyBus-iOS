@@ -30,7 +30,7 @@ public protocol TargetBuildable {
 }
 
 public extension TargetBuildable {
-    var destinations: Destinations { .iPhone }
+    var destinations: Destinations { [.iPhone] }
     var productName: String? { nil }
     var deploymentTargets: DeploymentTargets? { .iOS(.targetVersion) }
     var infoPlist: InfoPlist? { .default }
