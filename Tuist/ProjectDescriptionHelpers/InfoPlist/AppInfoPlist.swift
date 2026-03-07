@@ -30,7 +30,6 @@ public struct AppInfoPlist: InfoPlistBuildable {
                 ]
             ],
             "CFBundlePackageType": "APPL",
-            "UIRequiresFullScreen": true,
             "UISupportedInterfaceOrientations": ["UIInterfaceOrientationPortrait"],
             "FirebaseAppDelegateProxyEnabled": false,
             "ITSAppUsesNonExemptEncryption": "NO",
