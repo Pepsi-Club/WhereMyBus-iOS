@@ -19,6 +19,12 @@ public final class DefaultBusStopArrivalInfoRepository: NSObject, BusStopArrival
     @Injected private var networkService: NetworkService
     @Injected private var logger: FirebaseLogger
     
+    public func fetchArrivalList(busStopId: String) async throws -> BusStopArrivalInfoResponse {
+        try await networkService.request(endPoint: BusStopArrivalInfoEndPoint(arsId: busStopId))
+            .decode(type: BusStopArrivalInfoDTO.self)
+            ._toDomain
+    }
+    
     public func fetchArrivalList(busStopId: String) -> Observable<BusStopArrivalInfoResponse> {
         logger.log(name: "fetchArrivalEvent")
         return networkService.request(

@@ -15,7 +15,7 @@ public final class FirebaseLoggerImpl: FirebaseLogger {
         Analytics.logEvent(name, parameters: nil)
     }
     
-    public func log(name: String, parameter: [String : String]) {
+    public func log(name: String, parameter: [String: String]) {
         Analytics.logEvent(name, parameters: parameter)
     }
 }

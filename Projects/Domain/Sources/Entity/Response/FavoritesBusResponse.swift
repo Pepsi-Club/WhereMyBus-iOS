@@ -8,6 +8,8 @@
 
 import Foundation
 
+import CoreData
+
 import Core
 
 public struct FavoritesBusResponse: CoreDataStorable, Equatable {

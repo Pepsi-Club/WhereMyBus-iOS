@@ -8,15 +8,7 @@
 
 import Foundation
 
-public struct ForceUpdate: Codable {
-    let version: AppVersionInfoResponse
-    let date: Date
-    
-    public init(
-        version: AppVersionInfoResponse,
-        date: Date
-    ) {
-        self.version = version
-        self.date = date
-    }
+public enum ForceUpdate {
+    case notNeeded
+    case needed(appStoreURL: URL)
 }

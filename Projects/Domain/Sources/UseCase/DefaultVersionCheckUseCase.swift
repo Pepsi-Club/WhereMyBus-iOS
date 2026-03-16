@@ -10,78 +10,30 @@ import Foundation
 
 import Core
 
-import RxSwift
-
-public final class DefaultVersionCheckUseCase: VersionCheckUseCase {
+public final class VersionCheckUseCaseImpl: AppVersionCheckUseCase {
     @Injected private var versionCheckRepository: VersionCheckRepository
-    @Injected private var forceUpdateService: ForceUpdateService
-    
-    public init() { }
-    
-    public func fetchAppStoreURL() -> Single<String?> {
-        if hasToFetchVersion() {
-            return fetchAndUpdateVersion()
-        } else {
-            let forceUpdateInfo = versionCheckRepository.getForceUpdateInfo()
-            return .just(getStoreLink(forceUpdateInfo.version))
-        }
-    }
-}
-extension DefaultVersionCheckUseCase {
-    /// 호출하는 시점과 UserDefaults에 저장된 Date를 기준으로 4시간이 넘는지를 확인하는 method
-    private func hasToFetchVersion() -> Bool {
-        let fourHour: TimeInterval = 4 * 60 * 60
-        
-        return Date().timeIntervalSince(
-            versionCheckRepository.getForceUpdateInfo().date
-        ) >= fourHour
+    private let currentVersion: AppVersionInfoResponse
+
+    public init(currentVersion: AppVersionInfoResponse) {
+        self.currentVersion = currentVersion
     }
     
-    private func fetchAndUpdateVersion() -> Single<String?> {
-        return versionCheckRepository.fetchRequiredVersion()
-            .do(onSuccess: { [weak self] result in
-                guard let self else { return }
-                saveForceVersionInfo(result)
-            })
-            .map { [weak self] result in
-                guard let self else { return nil }
-                return handleFetchedResult(result)
+    public func checkForceUpdateNeeded() async throws -> ForceUpdate {
+        if let cachedInfo = versionCheckRepository.getCachedVersionCheckInfo() {
+            if cachedInfo.requiredVersion > currentVersion {
+                return .needed(appStoreURL: try versionCheckRepository.getAppStoreURL())
             }
-    }
-    
-    /// 서버 통신의 결과 상태를 기반으로 app store Link 반환
-    private func handleFetchedResult(
-        _ result: Result<AppVersionInfoResponse, Error>
-    ) -> String? {
-        switch result {
-        case .success(let version):
-            return getStoreLink(version)
-        case .failure:
-            return nil
+            if cachedInfo.updatedAt.distance(to: .now) < .hour(4) {
+                return .notNeeded
+            }
         }
-    }
-    
-    /// 결과값에 따라 ForceUpdate 타입의 info들을 UserDefaults에 저장
-    private func saveForceVersionInfo(
-        _ result: Result<AppVersionInfoResponse, Error>
-    ) {
-        switch result {
-        case .success(let version):
-            let forceUpdate = ForceUpdate(
-                version: version,
-                date: Date()
-            )
-            versionCheckRepository.saveForceUpdateInfo(forceUpdate)
-        case .failure(let error):
-            print(error)
+        let fetchedRequiredVersion = try await versionCheckRepository.fetchRequiredVersion()
+        versionCheckRepository.saveVersionCheckInfoCache(
+            VersionCheckInfo(requiredVersion: fetchedRequiredVersion, updatedAt: .now)
+        )
+        if fetchedRequiredVersion > currentVersion {
+            return .needed(appStoreURL: try versionCheckRepository.getAppStoreURL())
         }
-    }
-    
-    /// Get app store url after comparing version
-    private func getStoreLink(_ required: AppVersionInfoResponse) -> String? {
-        return forceUpdateService.compareVersion(
-            user: versionCheckRepository.getUserAppVersion(),
-            required: required
-        ) ? versionCheckRepository.getStoreLink() : nil
+        return .notNeeded
     }
 }

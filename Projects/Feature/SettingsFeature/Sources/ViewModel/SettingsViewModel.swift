@@ -1,5 +1,6 @@
 import Foundation
 
+import Core
 import Domain
 import FeatureDependency
 
@@ -31,24 +32,22 @@ public final class SettingsViewModel
         input.termsTapEvent
             .withUnretained(self)
             .subscribe(onNext: { viewModel, _ in
-                guard let termsPrivacyURL
-                        = Bundle.main.object(
-                            forInfoDictionaryKey: "TERMS_OF_PRIVACY_URL"
-                        ) as? String
-                else { return }
-                viewModel.coordinator.presentPrivacy(url: termsPrivacyURL)
+                @InfoPlistWrapper(key: "TERMS_OF_PRIVACY_URL")
+                var termsPrivacyURL: String?
+                if let termsPrivacyURL {
+                    viewModel.coordinator.presentPrivacy(url: termsPrivacyURL)
+                }
             })
             .disposed(by: disposeBag)
         
         input.locationTapEvent
             .withUnretained(self)
             .subscribe(onNext: { viewModel, _ in
-                guard let locationURL = Bundle.main.object(
-                    forInfoDictionaryKey: "LOCATION_PRIVACY_URL"
-                ) as? String
-                else { return }
-                viewModel.coordinator.presentPrivacy(url: locationURL)
-                
+                @InfoPlistWrapper(key: "LOCATION_PRIVACY_URL")
+                var locationURL: String?
+                if let locationURL {
+                    viewModel.coordinator.presentPrivacy(url: locationURL)
+                }
             })
             .disposed(by: disposeBag)
         
@@ -68,7 +67,7 @@ public final class SettingsViewModel
                              
                              Device Model : \(String.getDeviceIdentifier())
                              Device OS : \(UIDevice.current.systemVersion)
-                             App Version : \(String.getCurrentVersion())
+                             App Version : \(String.currentVersion)
                              
                              ------------
                              """
@@ -79,10 +78,8 @@ public final class SettingsViewModel
                     
                     viewModel.coordinator.presentMail(vc: mailViewController)
                 } else {
-                    guard let inquryURL = Bundle.main.object(
-                        forInfoDictionaryKey: "INQURY_URL"
-                    ) as? String
-                    else { return }
+                    @InfoPlistWrapper(key: "INQURY_URL", defaultValue: "")
+                    var inquryURL: String
                     viewModel.coordinator.presentPrivacy(url: inquryURL)
                 }
             })

@@ -35,14 +35,16 @@ public final class TabBarCoordinator: Coordinator {
     }
     
     private func setupTabBarController() {
-        let tabBarController = TabBarViewController()
-        navigationController.setViewControllers(
-            [tabBarController], animated: true
-        )
-        let viewControllers = MainTab.allCases.map {
-            makeNavigationController(tabKind: $0)
+        Task { @MainActor in
+            let tabBarController = TabBarViewController()
+            navigationController.setViewControllers(
+                [tabBarController], animated: true
+            )
+            let viewControllers = MainTab.allCases.map {
+                makeNavigationController(tabKind: $0)
+            }
+            tabBarController.viewControllers = viewControllers
         }
-        tabBarController.viewControllers = viewControllers
     }
     
     private func makeNavigationController(

@@ -13,6 +13,18 @@ import RxSwift
 public final class DefaultNetworkService: NetworkService {
     public init() { }
     
+    public func request(endPoint: any EndPoint) async throws -> Data {
+        let urlRequest = try endPoint.toURLRequest()
+        let (data, response) = try await URLSession.shared.data(for: urlRequest)
+        guard let httpURLResponse = response as? HTTPURLResponse else {
+            throw NetworkError.invalidResponse
+        }
+        guard 200..<300 ~= httpURLResponse.statusCode else {
+            throw NetworkError.invalidStatusCode(httpURLResponse.statusCode)
+        }
+        return data
+    }
+    
     public func request(endPoint: EndPoint) -> Observable<Data> {
         Observable.create { observer in
             do {

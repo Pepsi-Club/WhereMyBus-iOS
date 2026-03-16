@@ -14,7 +14,11 @@ let project = Project(
     SampleApp(name: "NearMapFeature") {
         Feature(name: "NearMapFeature")
         UIKitInfoPlist()
-        AppInfoPlist(displayName: "NearMapFeatureSampleApp", marketingVersion: .marketingVersion, buildVersion: .buildVersion)
+        AppInfoPlist(
+            displayName: "NearMapFeatureSampleApp",
+            marketingVersion: .marketingVersion,
+            buildVersion: .buildVersion
+        )
         SecretInfoPlist()
     }
     SampleAppScheme(name: "NearMapFeature")

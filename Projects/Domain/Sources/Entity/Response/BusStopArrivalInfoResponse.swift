@@ -124,9 +124,8 @@ public extension Array<BusStopArrivalInfoResponse> {
         favoritesList: [FavoritesBusResponse]
     ) -> Self {
         let favoritesDic = Dictionary(
-            uniqueKeysWithValues: favoritesList.map { favorites in
-                (favorites.identifier, true)
-            }
+            favoritesList.map { ($0.identifier, true) },
+            uniquingKeysWith: { first, _ in first }
         )
         return map { busStop in
             var updatedBuses: [BusArrivalInfoResponse] = busStop.buses

@@ -2,7 +2,7 @@ import ProjectDescription
 import ProjectDescriptionHelpers
 
 let project = Project(name: "DesignSystem") {
-    DesignSystem() {
+    DesignSystem {
         Lottie()
         FrameworkInfoPlist(marketingVersion: .marketingVersion)
     }
