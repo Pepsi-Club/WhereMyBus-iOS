@@ -15,6 +15,7 @@ public struct SecretInfoPlist: InfoPlistBuildable {
             "INQUIRY_URL": "$(INQUIRY_URL)",
             "APPSTORE_ID": "$(APPSTORE_ID)",
             "DOMAIN_URL": "$(DOMAIN_URL)",
+            "GITHUB_ACCESS_TOKEN": "$(GITHUB_ACCESS_TOKEN)",
         ]
     }
     

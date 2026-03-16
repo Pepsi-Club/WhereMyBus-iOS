@@ -6,6 +6,7 @@ let project = Project(name: "App") {
         MainFeature()
         Data()
         FirebaseModule()
+        FileManagerService()
         SwiftLintScript()
         UIKitInfoPlist()
         AppInfoPlist(displayName: .displayName, marketingVersion: .marketingVersion, buildVersion: .buildVersion)

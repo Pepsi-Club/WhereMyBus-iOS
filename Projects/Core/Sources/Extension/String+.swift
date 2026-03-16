@@ -34,6 +34,15 @@ public extension String {
         return serverKey
     }
     
+    static var githubAccessToken: Self {
+        guard let any = Bundle.main.object(forInfoDictionaryKey: "GITHUB_ACCESS_TOKEN"),
+              let githubAccessToken = any as? String
+        else {
+            return ""
+        }
+        return githubAccessToken
+    }
+    
     /// domain url
     static var domainURL: Self {
         guard let any = Bundle.main.object(
