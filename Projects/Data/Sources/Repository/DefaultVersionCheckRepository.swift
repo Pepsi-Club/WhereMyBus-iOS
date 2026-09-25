@@ -10,12 +10,14 @@ import UIKit
 
 import Core
 import Domain
+import FirebaseInterface
 import NetworkService
 
 import RxSwift
 
 public final class DefaultVersionCheckRepository: VersionCheckRepository {
     @Injected private var networkService: NetworkService
+    @Injected private var crashReporter: CrashReporter
     
     @UserDefaultsWrapper(
         key: "ForceUpdate",
@@ -35,11 +37,12 @@ public final class DefaultVersionCheckRepository: VersionCheckRepository {
             endPoint: MinVersionEndpoint(domain: getDomainURL()),
             responseType: RequiredVersionDTO.self
         )
-        .map { result in
+        .map { [weak self] result in
             switch result {
             case .success(let value):
                 return .success(value.toDomain)
             case .failure(let error):
+                self?.crashReporter.recordFatal(error)
                 return .failure(error)
             }
         }
