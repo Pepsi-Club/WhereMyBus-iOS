@@ -32,6 +32,6 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/ReactiveX/RxSwift.git", .exactItem("6.10.2")),
         .package(url: "https://github.com/firebase/firebase-ios-sdk.git", .exactItem("11.12.0")),
-        .package(url: "https://github.com/airbnb/lottie-ios", .exactItem("4.6.1")),
+        .package(url: "https://github.com/airbnb/lottie-ios", .exactItem("4.5.1")),
     ]
 )
