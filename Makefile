@@ -45,7 +45,7 @@ BASE_URL = https://raw.githubusercontent.com/Pepsi-Club/WhereMyBus-ignored/main
 define download_file
 	@echo "📥 Downloading $(3) to $(1)"
 	mkdir -p $(1)
-	curl -sS -H "Authorization: token $(2)" -o $(1)/$(3) $(BASE_URL)/$(3)
+	@curl -fsS -H "Authorization: token $(2)" -o $(1)/$(3) $(BASE_URL)/$(3)
 endef
 
 .PHONY: download-privates
