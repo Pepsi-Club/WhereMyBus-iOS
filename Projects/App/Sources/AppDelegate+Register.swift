@@ -6,7 +6,7 @@
 //  Copyright © 2023 gnksbm All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 import Core
 import CoreDataService
@@ -18,8 +18,14 @@ import FirebaseModule
 extension AppDelegate {
     func registerDependencies() {
         let firebaseLogger = FirebaseLoggerImpl()
+        let crashReporter = CrashReporterImpl(
+            deviceModel: String.getDeviceIdentifier(),
+            osVersion: UIDevice.current.systemVersion,
+            appVersion: String.getCurrentVersion()
+        )
         DIContainer.setLogger(firebaseLogger)
-        
+        DIContainer.register(type: CrashReporter.self, crashReporter)
+
         DIContainer.register(type: ForceUpdateService.self, DefaultForceUpdateService())
         DIContainer.register(type: CoreDataService.self, DefaultCoreDataService())
         DIContainer.register(type: NetworkService.self, DefaultNetworkService())

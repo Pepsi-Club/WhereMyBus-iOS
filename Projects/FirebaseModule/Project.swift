@@ -13,6 +13,7 @@ let project = Project(name: "FirebaseModule") {
         FirebaseInterface()
         FirebaseAnalytics()
         FirebaseMessaging()
+        FirebaseCrashlytics()
         FrameworkInfoPlist(marketingVersion: .marketingVersion)
     }
 }

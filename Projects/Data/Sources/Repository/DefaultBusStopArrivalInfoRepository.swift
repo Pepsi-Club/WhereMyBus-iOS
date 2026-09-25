@@ -18,7 +18,8 @@ import FirebaseInterface
 public final class DefaultBusStopArrivalInfoRepository: NSObject, BusStopArrivalInfoRepository {
     @Injected private var networkService: NetworkService
     @Injected private var logger: FirebaseLogger
-    
+    @Injected private var crashReporter: CrashReporter
+
     public func fetchArrivalList(busStopId: String) -> Observable<BusStopArrivalInfoResponse> {
         logger.log(name: "fetchArrivalEvent")
         return networkService.request(
@@ -31,5 +32,8 @@ public final class DefaultBusStopArrivalInfoRepository: NSObject, BusStopArrival
         .compactMap {
             $0.toDomain
         }
+        .do(onError: { [weak self] error in
+            self?.crashReporter.recordFatal(error)
+        })
     }
 }

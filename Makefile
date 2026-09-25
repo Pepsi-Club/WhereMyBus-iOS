@@ -5,6 +5,9 @@ fetch:
 	tuist install
 gen:
 	tuist generate --no-open
+	@find Tuist/.build/tuist-derived -name "project.pbxproj" -exec sed -i '' \
+		's/IPHONEOS_DEPLOYMENT_TARGET = 12\.0/IPHONEOS_DEPLOYMENT_TARGET = 16.0/g; s/IPHONEOS_DEPLOYMENT_TARGET = 13\.0/IPHONEOS_DEPLOYMENT_TARGET = 16.0/g' {} \;
+	@echo "✅ Deployment target patched (Xcode 27 fix)"
 
 sign:
 	@GIT_TOKEN=$$(git config user.password || git config --global user.password); \

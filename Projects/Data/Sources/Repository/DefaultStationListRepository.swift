@@ -9,12 +9,15 @@
 import Foundation
 import CoreLocation
 
+import Core
 import Domain
+import FirebaseInterface
 
 import RxSwift
 import RxRelay
 
 public final class DefaultStationListRepository: StationListRepository {
+    @Injected private var crashReporter: CrashReporter
     public let busStopRegions = BehaviorSubject<[BusStopRegion]>(value: [])
     public let recentlySearchedStation = BehaviorRelay<[BusStopInfoResponse]>(
         value: []
@@ -125,6 +128,7 @@ public final class DefaultStationListRepository: StationListRepository {
             regions.append(seoul)
             busStopRegions.onNext(regions)
         } catch {
+            crashReporter.recordFatal(error)
             busStopRegions.onError(error)
         }
     }
@@ -139,7 +143,7 @@ public final class DefaultStationListRepository: StationListRepository {
                 .decode(type: [BusStopInfoResponse].self)
             recentlySearchedStation.accept(fetchedResponses)
         } catch {
-            print(error.localizedDescription)
+            crashReporter.recordFatal(error)
         }
     }
 }

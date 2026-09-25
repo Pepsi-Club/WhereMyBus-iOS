@@ -10,6 +10,7 @@ import Foundation
 
 import CoreDataService
 import Domain
+import FirebaseInterface
 import NetworkService
 import Core
 
@@ -18,6 +19,7 @@ import RxSwift
 public final class DefaultRegularAlarmRepository: RegularAlarmRepository {
     @Injected private var coreDataService: CoreDataService
     @Injected private var networkService: NetworkService
+    @Injected private var crashReporter: CrashReporter
     
     public let currentRegularAlarm = BehaviorSubject<[RegularAlarmResponse]>(
         value: []
@@ -60,20 +62,16 @@ public final class DefaultRegularAlarmRepository: RegularAlarmRepository {
                     )
                     completion()
                 } catch {
-                    #if DEBUG
-                    print(error.localizedDescription)
-                    #endif
+                    repository.crashReporter.recordFatal(error)
                 }
             },
-            onError: { error in
-                #if DEBUG
-                print(error.localizedDescription)
-                #endif
+            onError: { [weak self] error in
+                self?.crashReporter.recordFatal(error)
             }
         )
         .disposed(by: disposeBag)
     }
-    
+
     public func updateRegularAlarm(
         response: RegularAlarmResponse,
         completion: @escaping () -> Void
@@ -121,15 +119,11 @@ public final class DefaultRegularAlarmRepository: RegularAlarmRepository {
                     )
                     completion()
                 } catch {
-                    #if DEBUG
-                    print(error.localizedDescription)
-                    #endif
+                    repository.crashReporter.recordFatal(error)
                 }
             },
-            onError: { error in
-                #if DEBUG
-                print(error.localizedDescription)
-                #endif
+            onError: { [weak self] error in
+                self?.crashReporter.recordFatal(error)
             }
         )
         .disposed(by: disposeBag)
@@ -241,16 +235,11 @@ extension DefaultRegularAlarmRepository {
                         print("⏰ 서버에 없는 알람 등록 후 새로운 ID 로컬 저장 성공")
                         #endif
                     } catch {
-                        #if DEBUG
-                        print("⏰ 서버에 없는 알람 등록 후 새로운 ID 로컬 저장 실패")
-                        print(error.localizedDescription)
-                        #endif
+                        repository.crashReporter.recordFatal(error)
                     }
                 },
-                onError: { error in
-                    #if DEBUG
-                    print(error.localizedDescription)
-                    #endif
+                onError: { [weak self] error in
+                    self?.crashReporter.recordFatal(error)
                 }
             )
             .disposed(by: disposeBag)
@@ -274,11 +263,8 @@ extension DefaultRegularAlarmRepository {
                     print("⏰ 로컬에 없는 알람 제거 결과: \(dto)")
                     #endif
                 },
-                onError: { error in
-                    #if DEBUG
-                    print("⏰ 로컬에 없는 알람 제거 실패")
-                    print(error.localizedDescription)
-                    #endif
+                onError: { [weak self] error in
+                    self?.crashReporter.recordFatal(error)
                 }
             )
             .disposed(by: disposeBag)
