@@ -8,6 +8,7 @@
 
 import UIKit
 
+import Core
 import FirebaseModule
 
 extension AppDelegate {
@@ -22,7 +23,8 @@ extension AppDelegate {
         do {
             try FirebaseSDK.configureFirebase(plistFilePath: filePath, application: application)
         } catch {
-            dump(error)
+            @Injected var crashReporter: CrashReporter
+            crashReporter.recordFatal(error)
         }
     }
 }
