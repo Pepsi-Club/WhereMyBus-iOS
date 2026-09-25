@@ -1,6 +1,7 @@
 import Foundation
 
 import FirebaseCrashlytics
+import FirebaseInterface
 
 public final class CrashReporterImpl: CrashReporter {
     private let webhookURL: String?
@@ -31,10 +32,17 @@ public final class CrashReporterImpl: CrashReporter {
     }
 
     private func record(error: Error, file: String, line: Int, isFatal: Bool) {
-        let crashlytics = Crashlytics.crashlytics()
-        crashlytics.setCustomValue(file, forKey: "file")
-        crashlytics.setCustomValue(line, forKey: "line")
-        crashlytics.record(error: error)
+        let fileName = (file as NSString).lastPathComponent
+        let userInfo: [String: Any] = [
+            "file": fileName,
+            "line": line
+        ]
+        let nsError = NSError(
+            domain: (error as NSError).domain,
+            code: (error as NSError).code,
+            userInfo: (error as NSError).userInfo.merging(userInfo) { _, new in new }
+        )
+        Crashlytics.crashlytics().record(error: nsError)
 
         sendDiscordWebhook(error: error, file: file, line: line, isFatal: isFatal)
     }

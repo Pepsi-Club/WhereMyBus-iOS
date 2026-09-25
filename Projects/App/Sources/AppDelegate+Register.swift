@@ -24,7 +24,8 @@ extension AppDelegate {
             appVersion: String.getCurrentVersion()
         )
         DIContainer.setLogger(firebaseLogger)
-        
+        DIContainer.register(type: CrashReporter.self, crashReporter)
+
         DIContainer.register(type: ForceUpdateService.self, DefaultForceUpdateService())
         DIContainer.register(type: CoreDataService.self, DefaultCoreDataService())
         DIContainer.register(type: NetworkService.self, DefaultNetworkService())
@@ -45,7 +46,6 @@ extension AppDelegate {
         DIContainer.register(type: BusStopUseCase.self, DefaultBusStopUseCase())
         DIContainer.register(type: NearMapUseCase.self, DefaultNearMapUseCase())
         DIContainer.register(type: FirebaseLogger.self, firebaseLogger)
-        DIContainer.register(type: CrashReporter.self, crashReporter)
         DIContainer.register(type: VersionCheckUseCase.self, DefaultVersionCheckUseCase())
     }
 }

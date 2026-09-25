@@ -8,7 +8,6 @@
 
 import UIKit
 
-import Core
 import FirebaseModule
 
 extension AppDelegate {
@@ -23,8 +22,9 @@ extension AppDelegate {
         do {
             try FirebaseSDK.configureFirebase(plistFilePath: filePath, application: application)
         } catch {
-            @Injected var crashReporter: CrashReporter
-            crashReporter.recordFatal(error)
+            #if DEBUG
+            print("⚠️ Firebase 초기화 실패: \(error.localizedDescription)")
+            #endif
         }
     }
 }

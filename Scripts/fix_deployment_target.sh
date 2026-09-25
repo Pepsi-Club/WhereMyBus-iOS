@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 # tuist generate + Xcode 27 deployment target 패치
 
 tuist generate
