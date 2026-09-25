@@ -43,9 +43,9 @@ clean_xcode_cache:
 BASE_URL = https://raw.githubusercontent.com/Pepsi-Club/WhereMyBus-ignored/main
 
 define download_file
-	@echo "📥 Downloading $(3) to $(1)"
-	mkdir -p $(1)
-	@curl -fsS -H "Authorization: token $(2)" -o $(1)/$(3) $(BASE_URL)/$(3)
+	@echo "📥 Downloading $(strip $(3)) to $(strip $(1))"
+	mkdir -p $(strip $(1))
+	@curl -fsS -H "Authorization: token $(strip $(2))" -o $(strip $(1))/$(strip $(3)) $(BASE_URL)/$(strip $(3))
 endef
 
 .PHONY: download-privates
