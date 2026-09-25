@@ -10,7 +10,7 @@ on:
       
 jobs:
   upload_testflight:
-    runs-on: macos-14
+    runs-on: macos-15
     steps:
       - uses: actions/checkout@v2
 
@@ -33,13 +33,8 @@ jobs:
       - name: Setup Xcode version
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: "16.2"
+          xcode-version: "26.0.1"
 
-      - name: Setup Swift Version
-        uses: swift-actions/setup-swift@v2
-        with:
-            swift-version: "6.0"
-            
       - name: Mise
         uses: jdx/mise-action@v2
 

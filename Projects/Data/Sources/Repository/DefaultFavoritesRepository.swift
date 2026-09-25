@@ -10,6 +10,7 @@ import Foundation
 
 import CoreDataService
 import Domain
+import FirebaseInterface
 import NetworkService
 import Core
 
@@ -17,7 +18,8 @@ import RxSwift
 
 public final class DefaultFavoritesRepository: FavoritesRepository {
     @Injected private var coreDataService: CoreDataService
-    @Injected private var networkService: NetworkService    
+    @Injected private var networkService: NetworkService
+    @Injected private var crashReporter: CrashReporter
     
     public var favorites = BehaviorSubject<[FavoritesBusResponse]>(value: [])
     
@@ -139,9 +141,7 @@ public final class DefaultFavoritesRepository: FavoritesRepository {
                     )
                     successedMigratedBusId.append(newData.busId)
                 } catch {
-                    #if DEBUG
-                    print(error.localizedDescription)
-                    #endif
+                    self.crashReporter.recordFatal(error)
                 }
             }
             if legacyFavorites.busIds == successedMigratedBusId {

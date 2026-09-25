@@ -18,6 +18,17 @@ public final class SearchViewController: UIViewController {
     private var recentSearchDataSource: RecentSearchDataSource!
     private var searchedDataSource: SearchedDataSource!
     
+    private let backBtn: UIButton = {
+        var config = UIButton.Configuration.plain()
+        config.image = UIImage(systemName: "chevron.left")
+        config.baseForegroundColor = .adaptiveBlack
+        config.preferredSymbolConfigurationForImage =
+        UIImage.SymbolConfiguration(pointSize: 18, weight: .semibold)
+        let btn = UIButton(configuration: config)
+        btn.accessibilityLabel = "뒤로가기"
+        return btn
+    }()
+    
     private let searchTextFieldView: SearchTextFieldView = {
         let textFieldView = SearchTextFieldView()
         textFieldView.accessibilityIdentifier = "정류장 검색"
@@ -100,6 +111,7 @@ public final class SearchViewController: UIViewController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
+        navigationController?.interactivePopGestureRecognizer?.delegate = nil
         
         configureUI()
         configureDataSource()
@@ -109,17 +121,11 @@ public final class SearchViewController: UIViewController {
     
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        configureNavigation()
-        nearByStopView.busStopImage.play()
-    }
-    
-    public override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
         navigationController?.setNavigationBarHidden(
             true,
-            animated: true
+            animated: animated
         )
-        searchTextFieldView.removeFromSuperview()
+        nearByStopView.busStopImage.play()
     }
     
     private func hideKeyboardOnTapOrDrag() {
@@ -141,6 +147,8 @@ public final class SearchViewController: UIViewController {
         view.backgroundColor = DesignSystemAsset.cellColor.color
         
         [
+            backBtn,
+            searchTextFieldView,
             recentSearchHeaderView,
             nearByStopView,
             recentSearchTableView,
@@ -154,6 +162,30 @@ public final class SearchViewController: UIViewController {
         let safeArea = view.safeAreaLayoutGuide
         
         NSLayoutConstraint.activate([
+            backBtn.leadingAnchor.constraint(
+                equalTo: safeArea.leadingAnchor,
+                constant: 5
+            ),
+            backBtn.centerYAnchor.constraint(
+                equalTo: searchTextFieldView.centerYAnchor
+            ),
+            backBtn.widthAnchor.constraint(equalToConstant: 44),
+            backBtn.heightAnchor.constraint(equalToConstant: 44),
+            
+            searchTextFieldView.topAnchor.constraint(
+                equalTo: safeArea.topAnchor,
+                constant: 5
+            ),
+            searchTextFieldView.leadingAnchor.constraint(
+                equalTo: backBtn.trailingAnchor,
+                constant: 5
+            ),
+            searchTextFieldView.trailingAnchor.constraint(
+                equalTo: safeArea.trailingAnchor,
+                constant: -15
+            ),
+            searchTextFieldView.heightAnchor.constraint(equalToConstant: 44),
+            
             nearBusStopHeaderLabel.bottomAnchor.constraint(
                 equalTo: safeArea.bottomAnchor,
                 constant: -200
@@ -180,7 +212,7 @@ public final class SearchViewController: UIViewController {
             ),
             
             recentSearchHeaderView.topAnchor.constraint(
-                equalTo: safeArea.topAnchor,
+                equalTo: searchTextFieldView.bottomAnchor,
                 constant: 10
             ),
             recentSearchHeaderView.leadingAnchor.constraint(
@@ -208,7 +240,7 @@ public final class SearchViewController: UIViewController {
             ),
             
             searchedStopTableView.topAnchor.constraint(
-                equalTo: safeArea.topAnchor,
+                equalTo: searchTextFieldView.bottomAnchor,
                 constant: 10
             ),
             searchedStopTableView.leadingAnchor.constraint(
@@ -223,39 +255,16 @@ public final class SearchViewController: UIViewController {
         ])
     }
     
-    private func configureNavigation() {
-        if navigationController?.isNavigationBarHidden == true {
-            navigationController?.setNavigationBarHidden(
-                false,
-                animated: true
-            )
-        }
-        
-        guard let navigationView = navigationController?.navigationBar
-        else { return }
-        navigationView.addSubview(searchTextFieldView)
-        searchTextFieldView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            searchTextFieldView.topAnchor.constraint(
-                equalTo: navigationView.topAnchor,
-                constant: 5
-            ),
-            searchTextFieldView.trailingAnchor.constraint(
-                equalTo: navigationView.trailingAnchor,
-                constant: -10
-            ),
-            searchTextFieldView.widthAnchor.constraint(
-                equalTo: navigationView.widthAnchor,
-                multiplier: 0.85
-            ),
-            searchTextFieldView.heightAnchor.constraint(
-                equalTo: navigationView.heightAnchor,
-                multiplier: 0.9
-            )
-        ])
-    }
-    
     private func bind() {
+        backBtn.rx.tap
+            .withUnretained(self)
+            .subscribe(
+                onNext: { vc, _ in
+                    vc.navigationController?.popViewController(animated: true)
+                }
+            )
+            .disposed(by: disposeBag)
+        
         let nearByStopTapGesture = UITapGestureRecognizer()
         nearByStopView.addGestureRecognizer(nearByStopTapGesture)
         

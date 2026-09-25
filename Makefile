@@ -5,6 +5,9 @@ fetch:
 	tuist install
 gen:
 	tuist generate --no-open
+	@find Tuist/.build/tuist-derived -name "project.pbxproj" -exec sed -i '' \
+		's/IPHONEOS_DEPLOYMENT_TARGET = 12\.0/IPHONEOS_DEPLOYMENT_TARGET = 16.0/g; s/IPHONEOS_DEPLOYMENT_TARGET = 13\.0/IPHONEOS_DEPLOYMENT_TARGET = 16.0/g' {} \;
+	@echo "✅ Deployment target patched (Xcode 27 fix)"
 
 sign:
 	@GIT_TOKEN=$$(git config user.password || git config --global user.password); \
@@ -40,9 +43,9 @@ clean_xcode_cache:
 BASE_URL = https://raw.githubusercontent.com/Pepsi-Club/WhereMyBus-ignored/main
 
 define download_file
-	@echo "📥 Downloading $(3) to $(1)"
-	mkdir -p $(1)
-	curl -sS -H "Authorization: token $(2)" -o $(1)/$(3) $(BASE_URL)/$(3)
+	@echo "📥 Downloading $(strip $(3)) to $(strip $(1))"
+	mkdir -p $(strip $(1))
+	@curl -fsS -H "Authorization: token $(strip $(2))" -o $(strip $(1))/$(strip $(3)) $(BASE_URL)/$(strip $(3))
 endef
 
 .PHONY: download-privates

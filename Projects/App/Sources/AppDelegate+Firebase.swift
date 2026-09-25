@@ -22,7 +22,9 @@ extension AppDelegate {
         do {
             try FirebaseSDK.configureFirebase(plistFilePath: filePath, application: application)
         } catch {
-            dump(error)
+            #if DEBUG
+            print("⚠️ Firebase 초기화 실패: \(error.localizedDescription)")
+            #endif
         }
     }
 }

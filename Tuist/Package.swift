@@ -20,7 +20,9 @@ let packageSettings = PackageSettings(
         "RxCocoaRuntime": .framework,
         "Lottie": .framework,
     ],
-    targetSettings: [:]
+    baseSettings: .settings(
+        base: ["IPHONEOS_DEPLOYMENT_TARGET": "16.0"]
+    )
 )
 
 #endif
@@ -28,8 +30,8 @@ let packageSettings = PackageSettings(
 let package = Package(
     name: "Packages",
     dependencies: [
-        .package(url: "https://github.com/ReactiveX/RxSwift.git", .exactItem("6.8.0")),
-        .package(url: "https://github.com/firebase/firebase-ios-sdk.git", .exactItem("11.4.0")),
-        .package(url: "https://github.com/airbnb/lottie-ios", .exactItem("4.4.3")),
+        .package(url: "https://github.com/ReactiveX/RxSwift.git", .exactItem("6.10.2")),
+        .package(url: "https://github.com/firebase/firebase-ios-sdk.git", .exactItem("11.12.0")),
+        .package(url: "https://github.com/airbnb/lottie-ios", .exactItem("4.6.1")),
     ]
 )
