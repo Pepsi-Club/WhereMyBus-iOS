@@ -1,5 +1,7 @@
 APP_NAME = "WhereMyBus"
 SCHEME = "App"
+GOOGLE_SERVICE_INFO_PATH = "Projects/App/Resources/GoogleService-Info.plist"
+CRASHLYTICS_UPLOAD_SYMBOLS_PATH = "Tuist/.build/checkouts/firebase-ios-sdk/Crashlytics/upload-symbols"
 
 default_platform(:ios)
 
@@ -53,6 +55,8 @@ platform :ios do
         )
         
         upload_to_testflight(skip_waiting_for_build_processing: true)
+        
+        upload_dsym_to_crashlytics
     end
     
     desc "Remote Push to TestFlight"
@@ -103,5 +107,16 @@ platform :ios do
         )
         
         upload_to_testflight(skip_waiting_for_build_processing: true)
+        
+        upload_dsym_to_crashlytics
+    end
+    
+    desc "Crashlytics에 dSYM 업로드 (build_app 이후 호출)"
+    private_lane :upload_dsym_to_crashlytics do
+        upload_symbols_to_crashlytics(
+            dsym_path: lane_context[SharedValues::DSYM_OUTPUT_PATH],
+            gsp_path: GOOGLE_SERVICE_INFO_PATH,
+            binary_path: CRASHLYTICS_UPLOAD_SYMBOLS_PATH
+        )
     end
 end
