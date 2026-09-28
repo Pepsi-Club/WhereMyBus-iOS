@@ -1,5 +1,6 @@
 import Foundation
 
+import FirebaseCore
 import FirebaseCrashlytics
 import FirebaseInterface
 
@@ -55,8 +56,14 @@ public final class CrashReporterImpl: CrashReporter {
     ) {
         guard let webhookURL,
               !webhookURL.isEmpty,
-              let url = URL(string: webhookURL)
-        else { return }
+              let url = URL(string: webhookURL),
+              url.host != nil
+        else {
+            #if DEBUG
+            print("⚠️ Discord webhook URL이 올바르지 않습니다: \(webhookURL ?? "nil")")
+            #endif
+            return
+        }
 
         let now = Date()
         guard now.timeIntervalSince(lastReportTime) >= reportInterval else { return }
@@ -65,7 +72,7 @@ public final class CrashReporterImpl: CrashReporter {
         let fileName = (file as NSString).lastPathComponent
         let severity = isFatal ? "Fatal" : "Non-Fatal"
 
-        let embed: [String: Any] = [
+        var embed: [String: Any] = [
             "title": "[\(severity)] \(fileName):\(line)",
             "description": String(error.localizedDescription.prefix(1024)),
             "color": isFatal ? 16711680 : 16744448,
@@ -73,8 +80,16 @@ public final class CrashReporterImpl: CrashReporter {
                 ["name": "Device", "value": deviceModel, "inline": true],
                 ["name": "OS", "value": "iOS \(osVersion)", "inline": true],
                 ["name": "App Version", "value": appVersion, "inline": true],
+                [
+                    "name": "User ID",
+                    "value": FirebaseSDK.installationID ?? "-",
+                    "inline": false
+                ],
             ]
         ]
+        if let consoleURL = crashlyticsConsoleURL() {
+            embed["url"] = consoleURL
+        }
 
         let body: [String: Any] = ["embeds": [embed]]
 
@@ -85,6 +100,24 @@ public final class CrashReporterImpl: CrashReporter {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = jsonData
 
-        URLSession.shared.dataTask(with: request).resume()
+        URLSession.shared.dataTask(with: request) { _, response, error in
+            #if DEBUG
+            if let error {
+                print("⚠️ Discord webhook 전송 실패: \(error.localizedDescription)")
+            } else if let httpResponse = response as? HTTPURLResponse,
+                      !(200..<300 ~= httpResponse.statusCode) {
+                print("⚠️ Discord webhook 전송 실패: status \(httpResponse.statusCode)")
+            }
+            #endif
+        }.resume()
+    }
+    
+    /// 현재 빌드가 사용하는 Firebase 프로젝트의 Crashlytics 이슈 목록 URL
+    private func crashlyticsConsoleURL() -> String? {
+        guard let projectID = FirebaseApp.app()?.options.projectID,
+              let bundleID = Bundle.main.bundleIdentifier
+        else { return nil }
+        return "https://console.firebase.google.com/project/\(projectID)"
+        + "/crashlytics/app/ios:\(bundleID)/issues"
     }
 }
