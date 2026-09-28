@@ -57,10 +57,11 @@ public final class CrashReporterImpl: CrashReporter {
         guard let webhookURL,
               !webhookURL.isEmpty,
               let url = URL(string: webhookURL),
+              url.scheme?.lowercased() == "https",
               url.host != nil
         else {
             #if DEBUG
-            print("⚠️ Discord webhook URL이 올바르지 않습니다: \(webhookURL ?? "nil")")
+            print("⚠️ Discord webhook URL이 올바르지 않습니다 (누락 또는 https 아님)")
             #endif
             return
         }
