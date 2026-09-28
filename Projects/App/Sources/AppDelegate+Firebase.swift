@@ -20,16 +20,12 @@ extension AppDelegate {
         googleInfoName = "GoogleService-Info"
         #endif
         let filePath = Bundle.main.path(forResource: "\(googleInfoName).plist", ofType: nil) ?? ""
-        var onUserIDRegistered: (() -> Void)?
-        #if DEBUG
-        onUserIDRegistered = { [weak self] in self?.sendCrashReporterTestIfNeeded() }
-        #endif
         do {
             try FirebaseSDK.configureFirebase(
                 plistFilePath: filePath,
-                application: application,
-                onUserIDRegistered: onUserIDRegistered
+                application: application
             )
+            registerCrashReporterUserID()
         } catch {
             #if DEBUG
             print("⚠️ Firebase 초기화 실패: \(error.localizedDescription)")
@@ -39,6 +35,18 @@ extension AppDelegate {
 }
 
 extension AppDelegate {
+    /// Crashlytics 콘솔에서 User ID(Installation ID)로 기기별 이벤트를 검색할 수 있도록 등록
+    private func registerCrashReporterUserID() {
+        Task {
+            guard let installationID = await FirebaseSDK.installationID() else { return }
+            @Injected var crashReporter: CrashReporter
+            crashReporter.setUserID(installationID)
+            #if DEBUG
+            sendCrashReporterTestIfNeeded()
+            #endif
+        }
+    }
+
     func application(
         _ application: UIApplication,
         didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
