@@ -8,6 +8,7 @@
 
 import UIKit
 
+import Core
 import FirebaseModule
 
 extension AppDelegate {
@@ -44,3 +45,25 @@ extension AppDelegate {
         }
     }
 }
+
+#if DEBUG
+extension AppDelegate {
+    /// 스킴 Arguments에 `-CrashReporterTest`를 넣고 실행하면 Crashlytics / Discord로 테스트 이벤트를 보낸다.
+    func sendCrashReporterTestIfNeeded() {
+        guard ProcessInfo.processInfo.arguments.contains("-CrashReporterTest")
+        else { return }
+        // Installation ID(User ID) 조회가 끝난 뒤 기록되도록 지연
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            @Injected var crashReporter: CrashReporter
+            crashReporter.recordNonFatal(
+                NSError(
+                    domain: "CrashReporterTest",
+                    code: 1,
+                    userInfo: [NSLocalizedDescriptionKey: "CrashReporter 연동 테스트"]
+                )
+            )
+            print("✅ CrashReporter 테스트 이벤트 기록")
+        }
+    }
+}
+#endif

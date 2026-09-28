@@ -22,6 +22,9 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         registerDependencies()
         configureNotification(application: application)
         configureFirebase(application: application)
+        #if DEBUG
+        sendCrashReporterTestIfNeeded()
+        #endif
     
         return true
     }
