@@ -1,5 +1,7 @@
 APP_NAME = "WhereMyBus"
 SCHEME = "App"
+GOOGLE_SERVICE_INFO_PATH = "Projects/App/Resources/GoogleService-Info.plist"
+CRASHLYTICS_UPLOAD_SYMBOLS_PATH = "Tuist/.build/checkouts/firebase-ios-sdk/Crashlytics/upload-symbols"
 
 default_platform(:ios)
 
@@ -30,6 +32,8 @@ platform :ios do
     
     desc "local Push to TestFlight"
     lane :tf_local do |options|
+        verify_crashlytics_upload_tool
+        
         match(
             type: "appstore",
             app_identifier: [
@@ -53,10 +57,14 @@ platform :ios do
         )
         
         upload_to_testflight(skip_waiting_for_build_processing: true)
+        
+        upload_dsym_to_crashlytics
     end
     
     desc "Remote Push to TestFlight"
     lane :tf_remote do |options|
+        verify_crashlytics_upload_tool
+        
         create_keychain(
             name: ENV["KEYCHAIN_NAME"],
             password: ENV["KEYCHAIN_PASSWORD"],
@@ -103,5 +111,27 @@ platform :ios do
         )
         
         upload_to_testflight(skip_waiting_for_build_processing: true)
+        
+        upload_dsym_to_crashlytics
+    end
+    
+    desc "빌드 전에 Crashlytics upload-symbols 존재 확인 (tuist install 필요)"
+    private_lane :verify_crashlytics_upload_tool do
+        unless File.exist?(File.expand_path("../#{CRASHLYTICS_UPLOAD_SYMBOLS_PATH}", FastlaneCore::FastlaneFolder.path))
+            UI.user_error!("#{CRASHLYTICS_UPLOAD_SYMBOLS_PATH}가 없습니다. `tuist install`을 먼저 실행하세요.")
+        end
+    end
+    
+    desc "Crashlytics에 dSYM 업로드 (build_app 이후 호출)"
+    private_lane :upload_dsym_to_crashlytics do
+        dsym_path = lane_context[SharedValues::DSYM_OUTPUT_PATH]
+        UI.user_error!("build_app에서 생성된 dSYM이 없습니다.") unless dsym_path
+        
+        upload_symbols_to_crashlytics(
+            dsym_path: dsym_path,
+            gsp_path: GOOGLE_SERVICE_INFO_PATH,
+            binary_path: CRASHLYTICS_UPLOAD_SYMBOLS_PATH,
+            fail_on_error: true
+        )
     end
 end

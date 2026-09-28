@@ -24,6 +24,18 @@ public final class FirebaseSDK {
         application.registerForRemoteNotifications()
     }
     
+    /// Firebase Installation ID (configureFirebase 이후 호출)
+    public static func installationID() async -> String? {
+        do {
+            return try await Installations.installations().installationID()
+        } catch {
+            #if DEBUG
+            print("⚠️ Installation ID 조회 실패: \(error.localizedDescription)")
+            #endif
+            return nil
+        }
+    }
+    
     public static func didRegisterForRemoteNotificationsWithDeviceToken(deviceToken: Data) async -> String? {
         await proxy.requestFCMToken(deviceToken: deviceToken)
     }

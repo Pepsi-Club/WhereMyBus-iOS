@@ -1,6 +1,7 @@
 import Foundation
 
 public protocol CrashReporter {
+    func setUserID(_ userID: String)
     func reportFatal(_ error: Error, file: String, line: Int)
     func reportNonFatal(_ error: Error, file: String, line: Int)
 }
